@@ -11,9 +11,10 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <stdio.h>
+#include <es.h>
 
 int main(int argc, char* argv[])
 {
-    printf("hello, world\n");
+    esReport("hello, world.\n");
+    return 0;
 }

@@ -139,17 +139,16 @@ int main(int argc, char* argv[])
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
-    TEST(0 < diskSize);
 
     Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_IsoFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_IsoFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&isoFileSystem));
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
         Handle<IContext> root;
 
-        root = isoFileSystem->getRoot();
+        isoFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         TEST(root);
         test(root);
     }

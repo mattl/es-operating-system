@@ -11,76 +11,12 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
+#include <math.h>
 #include "esjs.h"
 #include "parser.h"
 #include "interface.h"
 
 ObjectValue* ArrayValue::prototype;  // Array.prototype
-
-namespace
-{
-    Value* getElement(Value* a, u32 i)
-    {
-        char name[12];
-
-        sprintf(name, "%u", i);
-        return a->get(name);
-    }
-
-    void putElement(Value* a, u32 i, Value* v)
-    {
-        char name[12];
-
-        sprintf(name, "%u", i);
-        ObjectValue* object = dynamic_cast<ObjectValue*>(a);
-        if (object)
-        {
-            // Bypass ArrayValue::put()
-            return object->ObjectValue::put(name, v);
-        }
-        else
-        {
-            return a->put(name, v);
-        }
-    }
-
-    bool hasElement(Value* a, u32 i)
-    {
-        char name[12];
-
-        sprintf(name, "%u", i);
-        return a->hasProperty(name);
-    }
-
-    bool removeElement(Value* a, u32 i)
-    {
-        char name[12];
-
-        sprintf(name, "%u", i);
-        return a->remove(name);
-    }
-
-    u32 getLength(Value* a)
-    {
-        return a->get("length")->toUint32();
-    }
-
-    Value* setLength(Value* a, u32 len)
-    {
-        Register<NumberValue> length = new NumberValue(len);
-        ObjectValue* object = dynamic_cast<ObjectValue*>(a);
-        if (object)
-        {
-            // Bypass ArrayValue::put()
-            object->ObjectValue::put("length", length);
-        }
-        else
-        {
-            a->put("length", length);
-        }
-        return length;
-    }
-}
 
 //
 // Array Methods
@@ -91,17 +27,7 @@ class ArrayMethod : public Code
     enum Method
     {
         ToString,
-        ToLocaleString,
-        Concat,
         Join,
-        Pop,
-        Push,
-        Reverse,
-        Shift,
-        Slice,
-        Sort,
-        Splice,
-        Unshift,
         MethodCount
     };
 
@@ -110,52 +36,21 @@ class ArrayMethod : public Code
 
     static const char*      names[MethodCount];
 
-    Value* concat(Value* e)
-    {
-        Register<ArrayValue> a = new ArrayValue;
-        int i = 0;
-        u32 n = 0;
-        ListValue* list = static_cast<ListValue*>(getScopeChain()->get("arguments"));
-        do
-        {
-            char name[12];
-
-            if (dynamic_cast<ArrayValue*>(e))
-            {
-                u32 len = getLength(e);
-                for (u32 k = 0; k < len; ++n, ++k)
-                {
-                    Value* elem = getElement(e, k);
-                    if (!elem->isUndefined())
-                    {
-                        putElement(a, n, elem);
-                    }
-                }
-            }
-            else
-            {
-                putElement(a, n, e);
-                ++n;
-            }
-            e = (*list)[i];
-        } while (i++ < list->length());
-        setLength(a, n);
-        return a;
-    }
-
     Value* join(Value* value)
     {
-        u32 n = getLength(value);
+        u32 length = value->get("length")->toUint32();
         Value* v = getScopeChain()->get("separator");
         std::string separator = v->isUndefined() ? ", " : v->toString();
-        if (n == 0)
+        if (length == 0)
         {
             return new StringValue("");
         }
         std::string r;
-        for (u32 i = 0; i < n; ++i)
+        for (u32 i = 0; i < length; ++i)
         {
-            v = getElement(value, i);
+            char name[12];
+            sprintf(name, "%d", i);
+            v = value->get(name);
             if (0 < i)
             {
                 r += separator;
@@ -166,298 +61,6 @@ class ArrayMethod : public Code
             }
         }
         return new StringValue(r);
-    }
-
-    Value* pop(Value* value)
-    {
-        u32 n = getLength(value);
-        if (n == 0)
-        {
-            setLength(value, n);
-            return UndefinedValue::getInstance();
-        }
-        --n;
-        Value* result = getElement(value, n);
-        removeElement(value, n);
-        setLength(value, n);
-        return result;
-    }
-
-    Value* push(Value* value)
-    {
-        u32 n = getLength(value);
-        ListValue* list = static_cast<ListValue*>(getScopeChain()->get("arguments"));
-        for (u32 i = 0; i < list->length(); ++n, ++i)
-        {
-            putElement(value, n, (*list)[i]);
-        }
-        return setLength(value, n);
-    }
-
-    Value* reverse(Value* value)
-    {
-        u32 n = getLength(value);
-        u32 end = n / 2;
-        for (u32 k = 0; k < end; ++k)
-        {
-            u32 j = n - k - 1;
-            Value* elem = getElement(value, k);
-            Value* pair = getElement(value, j);
-            if (!pair->isUndefined())
-            {
-                putElement(value, k, pair);
-                if (!elem->isUndefined())
-                {
-                    putElement(value, j, elem);
-                }
-                else
-                {
-                    removeElement(value, j);
-                }
-            }
-            else
-            {
-                removeElement(value, k);
-                if (!elem->isUndefined())
-                {
-                    putElement(value, j, elem);
-                }
-                else
-                {
-                    removeElement(value, j);
-                }
-            }
-        }
-        return value;
-    }
-
-    Value* shift(Value* value)
-    {
-        u32 n = getLength(value);
-        if (n == 0)
-        {
-            setLength(value, n);
-            return UndefinedValue::getInstance();
-        }
-        Register<Value> result = value->get("0");
-        for (u32 k = 1; k < n; ++k)
-        {
-            if (hasElement(value, k))
-            {
-                putElement(value, k - 1, getElement(value, k));
-            }
-            else
-            {
-                removeElement(value, k - 1);
-            }
-        }
-        --n;
-        removeElement(value, n);
-        setLength(value, n);
-        return result;
-    }
-
-    Value* slice(Value* value)
-    {
-        double len = getLength(value);
-
-        double start = getScopeChain()->get("start")->toInteger();
-        if (start < 0.0)
-        {
-            start = std::max(len + start, 0.0);
-        }
-        else
-        {
-            start = std::min(len, start);
-        }
-        u32 k = static_cast<u32>(start);
-
-        Value* endValue = getScopeChain()->get("end");
-        double end;
-        if (endValue->isUndefined())
-        {
-            end = len;
-        }
-        else
-        {
-            end = endValue->toInteger();
-            if (end < 0.0)
-            {
-                end = std::max(0.0, len + end);
-            }
-            else
-            {
-                end = std::min(len, end);
-            }
-        }
-        u32 j = static_cast<u32>(end);
-
-        Register<ArrayValue> a = new ArrayValue;
-        u32 n;
-        for (n = 0; k < j; ++k, ++n)
-        {
-            if (hasElement(value, k))
-            {
-                putElement(a, n, getElement(value, k));
-            }
-        }
-        setLength(a, n);
-        return a;
-    }
-
-    static int sortCompare(Value* x, Value* y)
-    {
-        if (x->isUndefined() && y->isUndefined())
-        {
-            return 0;
-        }
-        else if (x->isUndefined())
-        {
-            return 1;
-        }
-        else if (y->isUndefined())
-        {
-            return -1;
-        }
-
-        ObjectValue* function = dynamic_cast<ObjectValue*>(getScopeChain()->get("comparefn"));
-        if (function && function->getCode())
-        {
-            Register<ListValue> newList = new ListValue;
-            newList->push(x);
-            newList->push(y);
-            Value* result = function->call(NullValue::getInstance(), newList);
-            return static_cast<int>(result->toNumber());
-        }
-        else
-        {
-            return x->toString().compare(y->toString());
-        }
-    }
-
-    static int cmp(Value* x, Value* y)
-    {
-        return sortCompare(x, y) < 0;
-    }
-
-    Value* sort(Value* value)
-    {
-        u32 len = getLength(value);
-        Value* list[len];
-
-        for (u32 i = 0; i < len; ++i)
-        {
-            list[i] = getElement(value, i);
-        }
-
-        std::sort(list, list + len, cmp);
-
-        for (u32 i = 0; i < len; ++i)
-        {
-            putElement(value, i, list[i]);
-        }
-
-        return value;
-    }
-
-    Value* splice(Value* value)
-    {
-        u32 n = getLength(value);
-        double len = n;
-
-        double start = getScopeChain()->get("start")->toInteger();
-        if (start < 0.0)
-        {
-            start = std::max(len + start, 0.0);
-        }
-        else
-        {
-            start = std::min(len, start);
-        }
-        u32 s = static_cast<u32>(start);
-
-        double deleteCount = getScopeChain()->get("deleteCount")->toInteger();
-        deleteCount = std::min(std::max(deleteCount, 0.0), len - start);
-        u32 d = static_cast<u32>(deleteCount);
-
-        Register<ArrayValue> a = new ArrayValue;
-        for (u32 k = 0; k < d; ++k)
-        {
-            if (hasElement(value, s + k))
-            {
-                putElement(a, k, getElement(value, s + k));
-            }
-        }
-        setLength(a, d);
-
-        ListValue* list = static_cast<ListValue*>(getScopeChain()->get("arguments"));
-        u32 items = std::max(0, list->length() - 2);
-        if (items < d)
-        {
-            for (u32 k = s; k < n - d; ++k)
-            {
-                if (hasElement(value, k + d))
-                {
-                    putElement(value, k + items, getElement(value, k + d));
-                }
-                else
-                {
-                    removeElement(value, k + items);
-                }
-            }
-            for (u32 k = n; n - d + items < k; --k) // 31
-            {
-                removeElement(value, k - 1);
-            }
-        }
-        else if (d < items)
-        {
-            for (u32 k = n - d; k != s; --k)        // 38
-            {
-                if (hasElement(value, k + d - 1))
-                {
-                    putElement(value, k + items - 1, getElement(value, k + d - 1));
-                }
-                else
-                {
-                    removeElement(value, k + items - 1);
-                }
-            }
-        }
-
-        u32 k = s;
-        for (u32 j = 0; j < items; ++j, ++k)        // 48
-        {
-            putElement(value, k, (*list)[j + 2]);
-        }
-
-        setLength(value, n - d + items);            // 53
-        return a;
-    }
-
-    Value* unshift(Value* value)
-    {
-        u32 len = getLength(value);
-        ListValue* list = static_cast<ListValue*>(getScopeChain()->get("arguments"));
-        int items = list->length();
-        for (int k = items; 0 < k; --k)
-        {
-            if (hasElement(value, k - 1))
-            {
-                putElement(value, k + items - 1, getElement(value, k - 1));
-            }
-            else
-            {
-                removeElement(value, k + items - 1);
-            }
-        }
-
-        for (int k = 0; k < items; ++k)             // 15
-        {
-            putElement(value, k, (*list)[k]);
-        }
-
-        return setLength(value, len + items);       // 21
     }
 
 public:
@@ -471,17 +74,6 @@ public:
         {
         case Join:
             arguments->add(new Identifier("separator"));
-            break;
-        case Sort:
-            arguments->add(new Identifier("comparefn"));
-            break;
-        case Slice:
-            arguments->add(new Identifier("start"));
-            arguments->add(new Identifier("end"));
-            break;
-        case Splice:
-            arguments->add(new Identifier("start"));
-            arguments->add(new Identifier("deleteCount"));
             break;
         default:
             break;
@@ -503,13 +95,8 @@ public:
     CompletionType evaluate()
     {
         Register<Value> value;
-        Register<StringValue> separator;
         switch (method)
         {
-        case ToLocaleString:
-            separator = new StringValue(",");
-            getThis()->put("separator", separator);
-            // FALL THROUGH
         case ToString:
             if (!dynamic_cast<ArrayValue*>(getThis()))
             {
@@ -517,35 +104,8 @@ public:
             }
             value = join(getThis());
             break;
-        case Concat:
-            value = concat(getThis());
-            break;
         case Join:
             value = join(getThis());
-            break;
-        case Pop:
-            value = pop(static_cast<ObjectValue*>(getThis()));
-            break;
-        case Push:
-            value = push(getThis());
-            break;
-        case Reverse:
-            value = reverse(getThis());
-            break;
-        case Shift:
-            value = shift(getThis());
-            break;
-        case Slice:
-            value = slice(getThis());
-            break;
-        case Sort:
-            value = sort(getThis());
-            break;
-        case Splice:
-            value = splice(getThis());
-            break;
-        case Unshift:
-            value = unshift(getThis());
             break;
         }
         return CompletionType(CompletionType::Return, value, "");
@@ -565,17 +125,7 @@ public:
 const char* ArrayMethod::names[] =
 {
     "toString",
-    "toLocaleString",
-    "concat",
-    "join",
-    "pop",
-    "push",
-    "reverse",
-    "shift",
-    "slice",
-    "sort",
-    "splice",
-    "unshift"
+    "join"
 };
 
 //
@@ -586,19 +136,18 @@ class ArrayConstructor : public Code
 {
     ObjectValue*            array;
     FormalParameterList*    arguments;
-    ArrayValue*             prototype;  // Array.prototype
+    ObjectValue*            prototype;  // Array.prototype
 
 public:
     ArrayConstructor(ObjectValue* array) :
         array(array),
         arguments(new FormalParameterList),
-        prototype(0)
+        prototype(new ObjectValue)
     {
         ObjectValue* function = static_cast<ObjectValue*>(getGlobal()->get("Function"));
 
-        ArrayValue::prototype = static_cast<ObjectValue*>(function->getPrototype()->getPrototype());
-        prototype = new ArrayValue;
         prototype->put("constructor", array);
+        prototype->setPrototype(function->getPrototype()->getPrototype());
 
         for (int i = 0; i < ArrayMethod::methodCount(); ++i)
         {
@@ -698,7 +247,7 @@ void ArrayValue::put(const std::string& name, Value* value, int attributes)
                 remove(name);
             }
         }
-        property->putValue(value);
+        property->setValue(value);
     }
     catch (Exception& e)
     {

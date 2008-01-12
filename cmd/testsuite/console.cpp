@@ -22,8 +22,6 @@
 
 #include "../IEventQueue.h"
 
-using namespace es;
-
 int esInit(IInterface** nameSpace);
 IStream* esReportStream();
 
@@ -43,8 +41,8 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
     esReport("size: %lld\n", size);
 
     process->setRoot(root);
-    process->setInput(esReportStream());
-    process->setOutput(esReportStream());
+    process->setIn(esReportStream());
+    process->setOut(esReportStream());
     process->setError(esReportStream());
     process->start(file);
     esSleep(20000000LL); // [check] workaround.
@@ -69,19 +67,19 @@ int main(int argc, char* argv[])
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
     {
         Handle<IContext> root;
 
-        root = fatFileSystem->getRoot();
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         nameSpace->bind("file", root);
 
         // start event manager process.
         Handle<IProcess> eventProcess;
-        eventProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        esCreateInstance(CLSID_Process, IID_IProcess,
+                         reinterpret_cast<void**>(&eventProcess));
         TEST(eventProcess);
         Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
         TEST(eventElf);
@@ -89,8 +87,8 @@ int main(int argc, char* argv[])
 
         // start console process.
         Handle<IProcess> consoleProcess;
-        consoleProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        esCreateInstance(CLSID_Process, IID_IProcess,
+                         reinterpret_cast<void**>(&consoleProcess));
         TEST(consoleProcess);
         Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
         TEST(consoleElf);
@@ -98,8 +96,8 @@ int main(int argc, char* argv[])
 
         // start console client process.
         Handle<IProcess> consoleClientProcess;
-        consoleClientProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        esCreateInstance(CLSID_Process, IID_IProcess,
+                         reinterpret_cast<void**>(&consoleClientProcess));
         TEST(consoleClientProcess);
 
         Handle<IFile> consoleClientElf = nameSpace->lookup("file/consoleClient.elf");
@@ -114,8 +112,8 @@ int main(int argc, char* argv[])
         eventProcess->wait();
         esReport("event manager process exited.\n");
 
-        freeSpace = fatFileSystem->getFreeSpace();
-        totalSpace = fatFileSystem->getTotalSpace();
+        fatFileSystem->getFreeSpace(freeSpace);
+        fatFileSystem->getTotalSpace(totalSpace);
         esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
         nameSpace->unbind("file");

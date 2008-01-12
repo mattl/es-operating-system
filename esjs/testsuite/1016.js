@@ -1,5 +1,5 @@
 // check get[UTC]XXX()
-stdout = System.output;
+stdout = System.getOut();
 function print(s)
 {
     stdout.write(s, s.length);

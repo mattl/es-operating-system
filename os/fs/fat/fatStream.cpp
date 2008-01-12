@@ -29,8 +29,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 u32 FatStream::
 getClusNum(long long position)
 {
@@ -322,8 +320,9 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
     ASSERT(memcmp(fcb, FatFileSystem::nameDot, 11) != 0);
     ASSERT(memcmp(fcb, FatFileSystem::nameDotdot, 11) != 0);
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     memmove(this->fcb, fcb, 32);
     fstClus = word(fcb + DIR_FstClusLO) | (word(fcb + DIR_FstClusHI) << 16);
@@ -388,32 +387,32 @@ FatStream::
     monitor->release();
 }
 
-void* FatStream::
-queryInterface(const Guid& riid)
+bool FatStream::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (isDirectory() && riid == IContext::iid())
+    if (isDirectory() && riid == IID_IContext)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IFile::iid())
+    else if (riid == IID_IFile)
     {
-        objectPtr = static_cast<IFile*>(this);
+        *objectPtr = static_cast<IFile*>(this);
     }
-    else if (riid == IBinding::iid())
+    else if (riid == IID_IBinding)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int FatStream::

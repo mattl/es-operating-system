@@ -402,9 +402,9 @@ int esInit(IInterface** nameSpace)
     return 0;
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 void esSleep(s64 timeout)
@@ -519,19 +519,6 @@ int getDebugChar()
     return data;
 }
 
-extern "C"
-{
-    int _close(int file);
-    void _exit(int i);
-    int _write(int file, const char *ptr, size_t len);
-    int _read(int file, char *ptr, size_t len);
-}
-
-int _close(int file)
-{
-    return 0;
-}
-
 void _exit(int i)
 {
     if (!mps->getFloatingPointerStructure())
@@ -547,14 +534,4 @@ void _exit(int i)
     {
         __asm__ __volatile__ ("hlt");
     }
-}
-
-int _write(int file, const char *ptr, size_t len)
-{
-    return -1;
-}
-
-int _read(int file, char *ptr, size_t len)
-{
-    return -1;
 }

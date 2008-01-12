@@ -11,180 +11,164 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
+import "es/base/ICallback.idl", "es/base/IFile.idl", "es/base/IPageable.idl", "es/base/IThread.idl", "es/base/IMonitor.idl", "es/naming/IContext.idl";
 
-#include "es/base/ICallback.idl"
-#include "es/base/IFile.idl"
-#include "es/base/IPageable.idl"
-#include "es/base/IThread.idl"
-#include "es/base/IMonitor.idl"
-#include "es/naming/IContext.idl"
-
-module es
+/** This interface provides methods for handling child processes of the current process.
+ */
+[object, uuid(8a122054-1f92-11dc-9c02-0009bf000001)]
+interface IProcess : IInterface
 {
-    /** This interface provides methods for handling child processes of the current process.
+    /**
+     * Kills this process.
      */
-    interface IProcess : IInterface
-    {
-        #pragma ID IProcess = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
-
-        /**
-         * Kills this process.
-         */
-        void kill();
-        /**
-         * Starts this process, which executes a program <code>file</code> with arguments.
-         * @param file an executable file.
-         * @param command arguments to be passed to the program.
-         */
-        void start(in IFile file, in string command);
-        /**
-         * Starts this process, which executes a program <code>file</code>.
-         * @param file an executable file.
-         */
-        void start(in IFile file);
-        /**
-         * Starts this process.
-         */
-        void start();
-        /**
-         * Waits until this process is complete.
-         */
-        long wait();
-        /**
-         * Tests whether this process has exited.
-         * @return true if this process has exited. Otherwise, false.
-         */
-        boolean hasExited();
-        /**
-         * The root of the namespace for this process.
-         */
-        attribute IContext root;
-        /**
-         * The standard input for this process.
-         */
-        attribute IStream input;
-        /**
-         * The standard output for this process.
-         */
-        attribute IStream output;
-        /**
-         * The standard error for this process.
-         */
-        attribute IStream error;
-        /**
-         * The current working context in the namespace for this process.
-         */
-        attribute IContext current;
-
-        /**
-         * The exit value of this process.
-         */
-        readonly attribute long exitValue;
-    };
-
-    /** This interface provides methods for handling the current process.
+    void kill();
+    /**
+     * Starts this process, which executes a program <code>file</code> with arguments.
+     * @param file an executable file.
+     * @param command arguments to be passed to the program.
      */
-    interface ICurrentProcess : IInterface
-    {
-        #pragma ID ICurrentProcess = "DCE:3c10827b-44c2-11dc-9c02-0009bf000001";
-        const unsigned long PROT_NONE = 0x0;
-        const unsigned long PROT_READ = 0x1;
-        const unsigned long PROT_WRITE = 0x2;
-        const unsigned long PROT_EXEC = 0x4;
-        const unsigned long MAP_SHARED = 0x01;
-        const unsigned long MAP_PRIVATE = 0x02;
-        const unsigned long MAP_FIXED = 0x10;
+    void start(IFile* file, [in] char* command);
+    /**
+     * Starts this process, which executes a program <code>file</code>.
+     * @param file an executable file.
+     */
+    void start(IFile* file);
+    /**
+     * Starts this process.
+     */
+    void start();
+    /**
+     * Waits until this process is complete.
+     */
+    int wait();
+    /**
+     * Gets the exit value of this process.
+     * @return the exit value.
+     */
+    int getExitValue();
+    /**
+     * Tests whether this process has exited.
+     * @return true if this process has exited. Otherwise, false.
+     */
+    boolean hasExited();
+    /**
+     * Sets the root of the namespace for this process.
+     * @param root a namespace.
+     */
+    void setRoot(IContext* root);
+    /**
+     * Sets the standard input for this process.
+     * @param input an input stream.
+     */
+    void setIn(IStream* input);
+    /**
+     * Sets the standard output for this process.
+     * @param output an output stream.
+     */
+    void setOut(IStream* output);
+    /**
+     * Sets the standard error for this process.
+     * @param error an output stream.
+     */
+    void setError(IStream* error);
+}
 
-        /** Terminates the currently running process.
-         */
-        void exit(in long status);
+/** This interface provides methods for handling the current process.
+ */
+[object, uuid(765edc68-41f9-11db-9c02-0009bf000001)]
+interface ICurrentProcess : IInterface
+{
+    const unsigned int PROT_NONE = 0x0;
+    const unsigned int PROT_READ = 0x1;
+    const unsigned int PROT_WRITE = 0x2;
+    const unsigned int PROT_EXEC = 0x4;
+    const unsigned int MAP_SHARED = 0x01;
+    const unsigned int MAP_PRIVATE = 0x02;
+    const unsigned int MAP_FIXED = 0x10;
 
-        /**
-         * Maps the pageable object into memory.
-         * @param start the preferable address to start mapping (usually 0).
-         * @param length the mapping size.
-         * @param prot <code>PROT_*</code> flags.
-         * @param flags <code>MAP_*</code> flags.
-         * @param pageable a pageable object to be mapped.
-         * @param offset the start offset of <code>pageable</code>.
-         * @return the address of the mapping.
-         */
-        any map(in any start, in long long length, in unsigned long prot, in unsigned long flags,
-                in IPageable pageable, in long long offset);
+    /** Terminates the currently running process.
+     */
+    void exit(int status);
 
-        /**
-         * Deletes the mappings.
-         * @param start the address of the mapping.
-         * @param length the size of the mapping.
-         */
-        void unmap(in any start, in long long length);
+    /**
+     * Maps the pageable object into memory.
+     * @param start the preferable address to start mapping (usually 0).
+     * @param length the mapping size.
+     * @param prot <code>PROT_*</code> flags.
+     * @param flags <code>MAP_*</code> flags.
+     * @param pageable a pageable object to be mapped.
+     * @param offset the start offset of <code>pageable</code>.
+     * @return the address of the mapping.
+     */
+    void* map([in] void* start, long length, unsigned int prot, unsigned int flags,
+              IPageable* pageable, long offset);
 
-        /** Returns the currently executing thread.
-         */
-        ICurrentThread currentThread();
+    /**
+     * Deletes the mappings.
+     * @param start the address of the mapping.
+     * @param length the size of the mapping.
+     */
+    void unmap([in] void* start, long length);
 
-        /** Creates and returns a new thread.
-         * @return          a new thread.
-         * @param start     the function to be started in a new thread.
-         * @param param     the argument to be passed to <code>start</code>.
-         * @see IThread
-         */
-        IThread createThread(in any start, in any param);
+    /** Returns the currently executing thread.
+     */
+    ICurrentThread* currentThread();
 
-        /** Causes the currently executing thread to temporarily pause
-         * and allow other threads to execute.
-         */
-        void yield();
+    /** Creates and returns a new thread.
+     * @return          a new thread.
+     * @param start     the function to be started in a new thread.
+     * @param param     the argument to be passed to <code>start</code>.
+     * @see IThread
+     */
+    IThread* createThread(void* (*start)(void* param), void* param);
 
-        /** Creates and returns an unlocked monitor.
-         * @return          an unlocked monitor.
-         * @see IMonitor
-         */
-        IMonitor createMonitor();
+    /** Causes the currently executing thread to temporarily pause
+     * and allow other threads to execute.
+     */
+    void yield();
 
-        /**
-         * The root of the namespace.
-         */
-        readonly attribute IContext root;
+    /** Creates and returns an unlocked monitor.
+     * @return          an unlocked monitor.
+     * @see IMonitor
+     */
+    IMonitor* createMonitor();
 
-        /**
-         * The standard input.
-         */
-        readonly attribute IStream input;
-        /**
-         * The standard output.
-         */
-        readonly attribute IStream output;
-        /**
-         * The standard error.
-         */
-        readonly attribute IStream error;
+    /**
+     * Gets the root of the namespace.
+     * @return the root of the namespace.
+     */
+    IContext* getRoot();
 
-        /**
-         * Increments the program data space.
-         * @param increment the increment size in bytes.
-         */
-        any setBreak(in long long increment);
+    /**
+     * Gets the standard input.
+     * @return the standard input stream.
+     */
+    IStream* getIn();
+    /**
+     * Gets the standard output.
+     * @return the standard output stream.
+     */
+    IStream* getOut();
+    /**
+     * Gets the standard error.
+     * @return the standard error output stream.
+     */
+    IStream* getError();
 
-        /**
-         * Traces the system call invocation.
-         * @param on    enable/disable trace.
-         */
-        boolean trace(in boolean on);
+    /**
+     * Increments the program data space.
+     * @param increment the increment size in bytes.
+     */
+    void* setBreak(long increment);
 
-        /**
-         * The current time.
-         */
-        readonly attribute long long now;
+    /**
+     * Gets the current time.
+     */
+    long getNow();
 
-        /**
-         * The current working context in the namespace.
-         */
-        attribute IContext current;
-    };
-};
-
-#endif // NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
-
+    /**
+     * Traces the system call invocation.
+     * @param on    enable/disable trace.
+     */
+    boolean trace(boolean on);
+}

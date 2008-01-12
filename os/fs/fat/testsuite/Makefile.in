@@ -561,7 +561,6 @@ SUFFIXES = .img .gz
 @ES_TRUE@	fat_createmax.img fat16_createmax.img fat32_createmax.img
 
 @POSIX_TRUE@noinst_DATA = 2hd.img fat16_5MB.img fat32.img
-@ES_TRUE@TESTS_ENVIRONMENT = $(srcdir)/testLoader
 @ES_TRUE@noinst_SCRIPTS = $(TESTS)
 @ES_TRUE@CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 @ES_TRUE@AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map
@@ -612,7 +611,7 @@ AM_CPPFLAGS = \
 	-I../../../../include \
 	-I$(srcdir)/../../../../include
 
-EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript testLoader
+EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript
 all: all-am
 
 .SUFFIXES:
@@ -1085,7 +1084,9 @@ uninstall-am:
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% :: %.elf
+	$(srcdir)/makeScript "`pwd`" $@
 
 @ES_TRUE@clean-local:
 @ES_TRUE@	-rm -f *.map *.log

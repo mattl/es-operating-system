@@ -46,17 +46,11 @@ update()
 {
     unsigned x = Core::splHi();         // Cling to the current core
     spinLock();
-    Thread* thread = owner;
-    if (thread)
+    if (owner)
     {
-        thread->addRef();
+        owner->updatePriority();
     }
     spinUnlock();
-    if (thread)
-    {
-        thread->updatePriority();
-        thread->release();
-    }
     Core::splX(x);
 }
 
@@ -228,10 +222,7 @@ unlock()
     unsigned x = Core::splHi();
     DelegateTemplate<Monitor> d(this, &Thread::Monitor::condUnlock);
     rendezvous.wakeup(&d);
-    if (getCurrentThread()->state != TERMINATED)
-    {
-        reschedule();
-    }
+    reschedule();
     Core::splX(x);
 }
 
@@ -336,28 +327,28 @@ notifyAll()
     notify();
 }
 
-void* Thread::Monitor::
-queryInterface(const Guid& riid)
+bool Thread::Monitor::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IMonitor::iid())
+    if (riid == IID_IMonitor)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::Monitor::

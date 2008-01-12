@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,37 +11,42 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface represents properties of sound.
+ */
+[object, uuid(839febda-25dc-11db-9c02-0009bf000001)]
+interface IAudioFormat : IInterface
 {
     /**
-     * This interface represents properties of sound.
+     * Gets the number of bits in a sample of a sound in this audio format.
+     * @return the number of bits in a sample.
      */
-    interface IAudioFormat : IInterface
-    {
-        #pragma ID IAudioFormat = "DCE:839febda-25dc-11db-9c02-0009bf000001";
-
-        /**
-         * The number of bits in a sample of a sound in this audio format.
-         * @return the number of bits in a sample.
-         */
-        attribute octet bitsPerSample;
-        /**
-         * The number of audio channels in this audio format.
-         * @return the number of channels.
-         */
-        attribute octet channels;
-        /**
-         * The sampling rate in this audio format.
-         * @return the sampling rate.
-         */
-        attribute unsigned short samplingRate;
-    };
-};
-
-#endif // NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
-
+    unsigned byte getBitsPerSample();
+    /**
+     * Gets the number of audio channels in this audio format.
+     * @return the number of channels.
+     */
+    unsigned byte getChannels();
+    /**
+     * Gets the sampling rate in this audio format.
+     * @return the sampling rate.
+     */
+    unsigned short getSamplingRate();
+    /**
+     * Changes the number of bits in a sample of a sound in this audio format.
+     * @param bits the number of bits in a sample.
+     */
+    void setBitsPerSample(unsigned byte bits);
+    /**
+     * Changes the number of audio channels in this audio format.
+     * @param channels the number of channels.
+     */
+    void setChannels(unsigned byte channels);
+    /**
+     * Changes the sampling rate in this audio format.
+     * @param rate the sampling rate.
+     */
+    void setSamplingRate(unsigned short rate);
+}

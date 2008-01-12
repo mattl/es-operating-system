@@ -1,6 +1,6 @@
-stdin = System.input;
-stdout = System.output;
-root = System.root;
+stdin = System.getIn();
+stdout = System.getOut();
+root = System.getRoot();
 
 function readLine(prompt)
 {

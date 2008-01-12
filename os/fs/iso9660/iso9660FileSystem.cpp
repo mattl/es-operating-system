@@ -41,8 +41,9 @@ init()
     hashSize = 20;
     hashTable = new Iso9660StreamChain[hashSize];
 
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 }
 
 Iso9660FileSystem::
@@ -291,16 +292,16 @@ getRoot(IContext** root)
     }
 }
 
-long long  Iso9660FileSystem::
-getFreeSpace()
+void Iso9660FileSystem::
+getFreeSpace(long long& freeBytes)
 {
-    return 0;
+    freeBytes = 0;
 }
 
-long long Iso9660FileSystem::
-getTotalSpace()
+void Iso9660FileSystem::
+getTotalSpace(long long& bytes)
 {
-    return 0; // XXX
+    bytes = 0;  // XXX
 }
 
 int Iso9660FileSystem::
@@ -320,24 +321,24 @@ defrag()
     return 0;
 }
 
-void* Iso9660FileSystem::
-queryInterface(const Guid& riid)
+bool Iso9660FileSystem::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IFileSystem::iid())
+    if (riid == IID_IFileSystem)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        *objectPtr = static_cast<IFileSystem*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        *objectPtr = static_cast<IFileSystem*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Iso9660FileSystem::

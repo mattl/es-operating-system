@@ -43,20 +43,20 @@ int main(int argc, char* argv[])
 
     Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
     Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
 
     long long freeSpace;
     long long totalSpace;
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
+    fatFileSystem->getFreeSpace(freeSpace);
+    fatFileSystem->getTotalSpace(totalSpace);
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
     {
         Handle<IContext> root;
 
-        root = fatFileSystem->getRoot();
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         root->unbind(argv[2]);
     }
     fatFileSystem->dismount();

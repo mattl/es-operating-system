@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -26,8 +26,6 @@
 #include <es/base/IInterfaceStore.h>
 #include <es/naming/IContext.h>
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -36,9 +34,8 @@ ICurrentProcess* System();
 
 class TestServer : public IStream
 {
-public:
     Ref     ref;
-
+public:
     TestServer()
     {
     }
@@ -92,23 +89,23 @@ public:
     {
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IStream::iid())
+        if (riid == IID_IStream)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)
@@ -138,21 +135,18 @@ int main(int argc, char* argv[])
     Handle<ICurrentThread> currentThread = System()->currentThread();
 
     // create server
-    TestServer* server = new TestServer;
+    TestServer server;
 
     // register this console.
     Handle<IContext> device = nameSpace->lookup("device");
     ASSERT(device);
-    IBinding* ret = device->bind("testServer", static_cast<IStream*>(server));
+    IBinding* ret = device->bind("testServer", static_cast<IStream*>(&server));
     ASSERT(ret);
-    ret->release();
 
-    while (1 < server->ref)
+    for (;;)
     {
-        currentThread->sleep(10000000LL);
+        currentThread->sleep(180 * 10000000LL);
     }
-
-    server->release();
 
     System()->trace(false);
 }

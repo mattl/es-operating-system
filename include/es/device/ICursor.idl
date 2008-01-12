@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,61 +11,50 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface provides methods for managing a cursor.
+ */
+[object, uuid(83a1dfd0-25dc-11db-9c02-0009bf000001)]
+interface ICursor : IInterface
 {
     /**
-     * This interface provides methods for managing a cursor.
+     * Shows this cursor.
      */
-    interface ICursor : IInterface
-    {
-        #pragma ID ICursor = "DCE:83a1dfd0-25dc-11db-9c02-0009bf000001";
-
-        typedef unsigned long Pattern[32];
-
-        /**
-         * Shows this cursor.
-         */
-        long show();
-        /**
-         * Hides this cursor.
-         */
-        long hide();
-        /**
-         * Moves this cursor a specified distance.
-         * @param dx the amount to move in x-direction from the current position.
-         * @param dy the amount to move in y-direction from the current position.
-         */
-        void move(in long dx, in long dy);
-        /**
-         * Gets the position of this cursor.
-         * @param dx the x-coordinate of this cursor.
-         * @param dy the y-coordinate of this cursor.
-         */
-        void getPosition(out long x, out long y);
-        /**
-         * Sets the position of this cursor.
-         * @param dx the new x-coordinate of this cursor.
-         * @param dy the new y-coordinate of this cursor.
-         */
-        void setPosition(in long x, in long y);
-        /**
-         * Sets the pattern of this cursor.
-         * @param data 32x32 dots pattern of this cursor.
-         * @param mask 32x32 mask pattern.
-         * @param xHotSpot the positive offset of this cursor hotspot in x-direction.
-         * The offset is measured from the left of this cursor.
-         * @param yHotSpot the positive offset of this cursor hotspot in y-direction.
-         * The offset is measured from the top of this cursor.
-         */
-        void setPattern(in Pattern data, in Pattern mask,
-                        in unsigned short xHotSpot, in unsigned short yHotSpot);
-    };
-};
-
-#endif // NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
+    int show();
+    /**
+     * Hides this cursor.
+     */
+    int hide();
+    /**
+     * Moves this cursor a specified distance.
+     * @param dx the amount to move in x-direction from the current position.
+     * @param dy the amount to move in y-direction from the current position.
+     */
+    void move(int dx, int dy);
+    /**
+     * Gets the position of this cursor.
+     * @param dx the x-coordinate of this cursor.
+     * @param dy the y-coordinate of this cursor.
+     */
+    void getPosition([out] int& x, [out] int& y);
+    /**
+     * Sets the position of this cursor.
+     * @param dx the new x-coordinate of this cursor.
+     * @param dy the new y-coordinate of this cursor.
+     */
+    void setPosition(int x, int y);
+    /**
+     * Sets the pattern of this cursor.
+     * @param data 32x32 dots pattern of this cursor.
+     * @param mask 32x32 mask pattern.
+     * @param xHotSpot the positive offset of this cursor hotspot in x-direction.
+     * The offset is measured from the left of this cursor.
+     * @param yHotSpot the positive offset of this cursor hotspot in y-direction.
+     * The offset is measured from the top of this cursor.
+     */
+    void setPattern([in] unsigned int data[32], [in] unsigned int mask[32],
+                    unsigned short xHotSpot, unsigned short yHotSpot);
+}
 

@@ -16,7 +16,7 @@
 
 #include <es.h>
 #include <es/reflect.h>
-#include <es/apply.h>
+#include <es/uuid.h>
 
 class ObjectValue;
 
@@ -24,5 +24,36 @@ Reflect::Interface& getInterface(const Guid& iid);
 
 ObjectValue* constructInterfaceObject();
 ObjectValue* constructSystemObject(void* system);
+
+// Function apply system
+
+struct Param
+{
+    enum
+    {
+        S32,
+        S64,
+        F32,
+        F64,
+        PTR,
+        REF
+    };
+    union
+    {
+        int         s32;
+        long long   s64;
+        float       f32;
+        double      f64;
+        const void* ptr;
+        Guid        guid;
+    };
+    int             cls;    // S32, S64, F32, F64, PTR
+};
+
+extern "C" s32 applyS32(int argc, Param* argv, s32 (*function)());
+extern "C" s64 applyS64(int argc, Param* argv, s64 (*function)());
+extern "C" f32 applyF32(int argc, Param* argv, f32 (*function)());
+extern "C" f64 applyF64(int argc, Param* argv, f64 (*function)());
+extern "C" void* applyPTR(int argc, Param* argv, const void* (*function)());
 
 #endif // NINTENDO_ESJS_INTERFACE_H_INCLUDED

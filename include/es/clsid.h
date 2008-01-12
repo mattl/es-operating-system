@@ -76,9 +76,9 @@ const Guid CLSID_IsoFileSystem =
     0x397e8e00, 0x2e86, 0x11db, { 0x9c, 0x02, 0x00, 0x09, 0xbf, 0x00, 0x00, 0x01 }
 };
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid);
-void esRegisterFatFileSystemClass(es::IClassStore* classStore);
-void esRegisterIsoFileSystemClass(es::IClassStore* classStore);
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr);
+void esRegisterFatFileSystemClass(IClassStore* classStore);
+void esRegisterIsoFileSystemClass(IClassStore* classStore);
 
 #ifdef __cplusplus
 }

@@ -20,8 +20,6 @@
 #include <es/base/IProcess.h>
 #include <es/usage.h>
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -38,6 +36,7 @@ int main(int argc, char* argv[])
 
     Handle<IContext> nameSpace = System()->getRoot();
 
+
     Handle<IStream> server;
     while (!(server = nameSpace->lookup("device/testServer")))
     {
@@ -45,11 +44,14 @@ int main(int argc, char* argv[])
         currentThread->sleep(10000000);
     }
 
-    char message[64];
-    sprintf(message, "test message.");
-    server->write(message, strlen(message) + 1);
-
-    nameSpace->unbind("device/testServer");
+    u32 i;
+    for (i = 0; i < 2^16; ++i)
+    {
+        char message[64];
+        sprintf(message, "test message %d.", i);
+        server->write(message, strlen(message) + 1);
+        // currentThread->sleep(10000000 / 60);
+    }
 
     System()->trace(false);
 }

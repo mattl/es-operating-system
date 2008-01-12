@@ -194,7 +194,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = . testsuite posix
+SUBDIRS = . testsuite
 lib_LIBRARIES = libesnet.a
 AM_CPPFLAGS = \
 	-I../../include \

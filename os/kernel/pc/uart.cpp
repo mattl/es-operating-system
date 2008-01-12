@@ -74,7 +74,7 @@ setBaud(int rate)
 long long Uart::
 getPosition()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::
@@ -85,7 +85,7 @@ setPosition(long long pos)
 long long Uart::
 getSize()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::setSize(long long size)
@@ -201,24 +201,24 @@ invoke(int irq)
     return 0;
 }
 
-void* Uart::
-queryInterface(const Guid& riid)
+bool Uart::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Uart::

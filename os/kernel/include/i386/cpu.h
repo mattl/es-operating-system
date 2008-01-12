@@ -274,22 +274,6 @@ struct Ureg
         esReport("eflags %08x  esp %08x  ss %04x\n",
                  eflags, esp, (u16) ss);
     }
-
-    struct Frame
-    {
-        Frame* prev;
-        void*  pc;
-    };
-
-    void where()
-    {
-        Frame* frame = (Frame*) ebp;
-        while (frame)
-        {
-            esReport("%p %p\n", frame->pc, frame->prev);
-            frame = frame->prev;
-        }
-    }
 };
 
 #define rdmsr(msr, val1, val2)      \

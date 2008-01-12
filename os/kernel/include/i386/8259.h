@@ -17,8 +17,6 @@
 #include <es/device/IPic.h>
 #include <es/ref.h>
 
-using namespace es;
-
 class Pic : public IPic
 {
     Ref ref;
@@ -30,7 +28,7 @@ public:
     Pic();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 

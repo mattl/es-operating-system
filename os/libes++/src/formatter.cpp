@@ -20,8 +20,6 @@
 #include <es/types.h>
 #include <es/formatter.h>
 
-using namespace es;
-
 extern "C"
 {
     size_t strnlen(const char* string, size_t count);

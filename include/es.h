@@ -28,6 +28,36 @@ void esDump(const void* ptr, s32 len);
 void esSleep(s64 timeout);
 void esThrow(int result);
 
+#ifndef ES_ONCE_INIT
+
+typedef struct esOnceControl
+{
+    int  done;
+    long started;
+} esOnceControl;
+
+#define ES_ONCE_INIT {0, -1}
+
+int   esOnce(esOnceControl* control, void (*func)(void));
+
+int   esCreateThreadKey(unsigned int* key, void (*dtor)(void*));
+int   esDeleteThreadKey(unsigned int key);
+void* esGetThreadSpecific(unsigned int key);
+int   esSetThreadSpecific(unsigned int key, const void* ptr);
+void  esDeallocateSpecific(void);
+
+typedef struct esMonitor
+{
+    void* monitor;
+} esMonitor;
+
+void esCreateMonitor(esMonitor* monitor);
+void esLockMonitor(esMonitor* monitor);
+int  esTryLockMonitor(esMonitor* monitor);
+void esUnlockMonitor(esMonitor* monitor);
+
+#endif  // ES_ONCE_INIT
+
 #ifdef __es__
 
 #ifndef NDEBUG

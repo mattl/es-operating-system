@@ -1,7 +1,7 @@
 // check Date(number)
 function check(result)
 {
-    stdout = System.output;
+    stdout = System.getOut();
     if (result)
     {
         stdout.write("OK\n", 3);
@@ -13,7 +13,7 @@ function check(result)
     return result;
 }
 
-stdout = System.output;
+stdout = System.getOut();
 
 stdout.write("origin: ", 8);
 d = new Date(0);

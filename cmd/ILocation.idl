@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,32 +11,23 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ILOCATION_IDL_INCLUDED
-#define NINTENDO_ILOCATION_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+struct Point
 {
-    struct Point
-    {
-        long x;
-        long y;
-    };
+    int x;
+    int y;
+}
 
-    /**
-     * This interface provides a location service.
-     */
-    interface ILocation : IInterface
-    {
-        #pragma ID ILocation = "DCE:113772a7-bf4a-4c91-b4cc-50514cf3b4f0";
-
-        void set(in Point point);
-        void get(out Point point);
-        void move(in Point direction);
-
-        attribute string name;
-    };
-};
-
-#endif // NINTENDO_ILOCATION_IDL_INCLUDED
+/**
+ * This interface provides a location service.
+ */
+[object, uuid(113772a7-bf4a-4c91-b4cc-50514cf3b4f0)]
+interface ILocation : IInterface
+{
+    void set([in] Point* point);
+    void get([out] Point* point);
+    void move([in] Point* direction);
+    void setName([in] char* name);
+    int getName([out, size_is(len)] char* name, unsigned int len);
+}

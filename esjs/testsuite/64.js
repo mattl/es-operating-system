@@ -1,6 +1,6 @@
-stdin = System.input;
-stdout = System.output;
-root = System.root;
+stdin = System.getIn();
+stdout = System.getOut();
+root = System.getRoot();
 
 filename = "Makefile";
 
@@ -13,6 +13,6 @@ function print(stream)
 }
 
 file = IFile(root.lookup(filename));
-stream = file.stream;
+stream = file.getStream();
 print(stream);
 "Ok";

@@ -379,7 +379,6 @@ cancel()
         if (monitor)
         {
             monitor->update();        // Reset BPI
-            monitor = 0;
         }
         break;
       default:
@@ -504,28 +503,28 @@ checkStack()
     return *(int*) stack == 0xa5a5a5a5;
 }
 
-void* Thread::
-queryInterface(const Guid& riid)
+bool Thread::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IThread::iid())
+    if (riid == IID_IThread)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::

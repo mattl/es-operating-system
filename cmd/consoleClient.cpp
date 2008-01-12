@@ -22,8 +22,6 @@
 #include <string.h>
 #include <es/base/IService.h>
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -59,19 +57,19 @@ void command(Handle<IStream> console, char* buf, int size)
     }
     else if (memcmp("exit", buf, 4) == 0)
     {
-        char message[] = "suspend this console, then exit the client process.\n";
+        char* message = "suspend this console, then exit the client process.\n";
         console->write(message, strlen(message));
         Handle<IService> service = console;
         ASSERT(service);
         service->stop();
 
-        char warning[] = "*** This message must not be shown on the console ***\n";
+        char* warning = "*** This message must not be shown on the console ***\n";
         console->write(warning, strlen(warning));
         done = true; // exit this process.
     }
     else
     {
-        char error[] = ": command not found\n";
+        char* error = ": command not found\n";
         console->write(buf, size);
         console->write(error, strlen(error));
     }
@@ -97,10 +95,10 @@ int main(int argc, char* argv[])
     esReport("start console client loop.\n");
 
     // show a message on the console.
-    char data[] = "This console supports echo, date and exit commands.\n";
+    char* data = "This console supports echo, date and exit commands.\n";
     console->write(data, strlen(data));
 
-    char japanese[] = "これはテストです。";
+    char* japanese = "これはテストです。";
     console->write(japanese, strlen(japanese));
 
     Handle<IService> service = console;

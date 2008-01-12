@@ -20,8 +20,6 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFileSystem.h>
 
-using namespace es;
-
 int esInit(IInterface** nameSpace);
 IStream* esReportStream();
 
@@ -41,8 +39,8 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
     esReport("size: %lld\n", size);
 
     process->setRoot(root);
-    process->setInput(esReportStream());
-    process->setOutput(esReportStream());
+    process->setIn(esReportStream());
+    process->setOut(esReportStream());
     process->setError(esReportStream());
     process->start(file);
 }
@@ -66,19 +64,19 @@ int main(int argc, char* argv[])
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
     {
         Handle<IContext> root;
 
-        root = fatFileSystem->getRoot();
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         nameSpace->bind("file", root);
 
         // start server process.
         Handle<IProcess> serverProcess;
-        serverProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        esCreateInstance(CLSID_Process, IID_IProcess,
+                         reinterpret_cast<void**>(&serverProcess));
         TEST(serverProcess);
         Handle<IFile> serverElf = nameSpace->lookup("file/upcallTest.elf");
         TEST(serverElf);
@@ -86,8 +84,8 @@ int main(int argc, char* argv[])
 
         // start client process.
         Handle<IProcess> clientProcess;
-        clientProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        esCreateInstance(CLSID_Process, IID_IProcess,
+                         reinterpret_cast<void**>(&clientProcess));
         TEST(clientProcess);
         Handle<IFile> clientElf = nameSpace->lookup("file/upcallTestClient.elf");
         TEST(clientElf);
@@ -100,8 +98,8 @@ int main(int argc, char* argv[])
         serverProcess->wait();
         esReport("server process exited.\n");
 
-        freeSpace = fatFileSystem->getFreeSpace();
-        totalSpace = fatFileSystem->getTotalSpace();
+        fatFileSystem->getFreeSpace(freeSpace);
+        fatFileSystem->getTotalSpace(totalSpace);
         esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
         nameSpace->unbind("file");

@@ -537,7 +537,7 @@ function doread(n, fil)
     try
     {
         var file = IFile(cwd.lookup(fil));
-        var stream = file.stream;
+        var stream = file.getStream();
         var count = 0;
         curln = n;
         var inline;
@@ -570,7 +570,7 @@ function dowrite(n1, n2, fil)
             unknown = cwd.lookup(fil);
         }
         var file = IFile(unknown);
-        var stream = file.stream;
+        var stream = file.getStream();
         stream.setSize(0);  // truncate
         for (var i = n1; i <= n2; ++i)
         {

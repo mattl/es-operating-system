@@ -2,11 +2,11 @@ if POSIX
 SUBDIRS = . testsuite
 endif POSIX
 
-SUFFIXES = .ent
+SUFFIXES = .ird
 
-vpath %.ent = ../include/es
+vpath %.ird = ../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;
@@ -51,22 +51,18 @@ nodist_esjs_SOURCES = \
 	net/IResolver.c \
 	net/ISocket.c \
 	util/IIterator.c \
-	util/ISet.c \
-	util/ICanvasRenderingContext2D.c
+	util/ISet.c
 
 BUILT_SOURCES = lexer.cc parser.cc parser.h
 
 esjs_SOURCES = \
-	src/lexer.ll src/parser.yy src/esjs.cpp src/value.cpp \
+	src/apply.S src/lexer.ll src/parser.yy src/esjs.cpp src/value.cpp \
 	src/array.cpp \
 	src/boolean.cpp \
 	src/date.cpp \
-	src/function.cpp \
-	src/global.cpp \
 	src/interface.cpp \
 	src/math.cpp \
 	src/number.cpp \
-	src/object.cpp \
 	src/regexp.cpp \
 	src/string.cpp \
 	include/esjs.h include/value.h include/interface.h include/smartptr.h
@@ -98,7 +94,6 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/src \
 	-I- \
 	-I$(srcdir)/../include \
-	-I../include \
 	-I$(prefix)/include
 
 clean-local:
@@ -110,14 +105,8 @@ dist-hook:
 EXTRA_DIST = \
 	scripts/cat.js		\
 	scripts/cd.js		\
-	scripts/clear.js	\
-	scripts/date.js		\
 	scripts/echo.js		\
 	scripts/edit.js		\
-	scripts/figure.js	\
-	scripts/gradient.js	\
-	scripts/kanji.js	\
 	scripts/ls.js		\
-	scripts/pi.js		\
-	scripts/rm.js		\
-	scripts/shell.js
+	scripts/shell.js	\
+	scripts/date.js

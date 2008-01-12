@@ -29,22 +29,14 @@
 #include <es/base/IInterfaceStore.h>
 #include <es/device/ICursor.h>
 #include <es/naming/IContext.h>
-#include <es/interlocked.h>
 
 #include "eventManager.h"
-
-using namespace es;
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
 ICurrentProcess* System();
-
-namespace
-{
-    Interlocked registered = 0;
-};
 
 class EventManager : public IEventQueue
 {
@@ -489,11 +481,6 @@ public:
     //
     bool getEvent(InputEvent* event)
     {
-        if (!registered)
-        {
-            return false;
-        }
-
         Synchronized<IMonitor*> method(monitor);
 
         int count = eventRing.read(event, sizeof(InputEvent));
@@ -502,11 +489,6 @@ public:
 
     bool getKeystroke(int* stroke)
     {
-        if (!registered)
-        {
-            return false;
-        }
-
         Synchronized<IMonitor*> method(monitor);
 
         int count = keyRing.read(stroke, sizeof(int));
@@ -515,11 +497,6 @@ public:
 
     bool peekKeystroke(int* stroke)
     {
-        if (!registered)
-        {
-            return false;
-        }
-
         Synchronized<IMonitor*> method(monitor);
 
         int count = keyRing.peek(stroke, sizeof(int));
@@ -528,11 +505,6 @@ public:
 
     unsigned int getButtonState()
     {
-        if (!registered)
-        {
-            return 0;
-        }
-
         Synchronized<IMonitor*> method(monitor);
 
         return (modifiers << 3) |
@@ -541,24 +513,16 @@ public:
                ((button & 4) ? YellowButtonBit : 0);
     }
 
-    void getMousePoint(int* x, int *y)
+    void getMousePoint(int& x, int &y)
     {
-        if (registered)
-        {
-            Synchronized<IMonitor*> method(monitor);
+        Synchronized<IMonitor*> method(monitor);
 
-            *x = this->x;
-            *y = this->y;
-        }
+        x = this->x;
+        y = this->y;
     }
 
     bool keyEvent(const void* data, int size)
     {
-        if (!registered)
-        {
-            return false;
-        }
-
         Synchronized<IMonitor*> method(monitor);
         bool notify(false);
 
@@ -646,11 +610,6 @@ public:
 
     bool mouseEvent(const void* eventData, int size)
     {
-        if (!registered)
-        {
-            return false;
-        }
-
         Synchronized<IMonitor*> method(monitor);
         u8* data = (u8*) eventData;
         bool notify(false);
@@ -708,7 +667,7 @@ public:
     {
         Synchronized<IMonitor*> method(monitor);
 
-        if (registered && eventRing.getUsed() == 0)
+        if (eventRing.getUsed() == 0)
         {
             return monitor->wait(timeout);
         }
@@ -717,51 +676,38 @@ public:
 
     void notify()
     {
-        if (registered)
-        {
-            monitor->notifyAll();
-        }
+        monitor->notifyAll();
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            *objectPtr = static_cast<IEventQueue*>(this);
         }
-        else if (riid == IEventQueue::iid())
+        else if (riid == IID_IEventQueue)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            *objectPtr = static_cast<IEventQueue*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
     {
-        unsigned int count = ref.addRef();
-        if (count == 2)
-        {
-            registered = true;
-        }
-        return count;
+        return ref.addRef();
     }
 
     unsigned int release()
     {
         unsigned int count = ref.release();
-        if (count == 1)
+        if (count == 0)
         {
-            registered = false;
-        }
-        else if (count == 0)
-        {
-            monitor->notifyAll();
             delete this;
             return 0;
         }
@@ -769,30 +715,23 @@ public:
     }
 };
 
-static void* inputProcess(Handle<IContext> nameSpace)
+static void* inputProcess(Handle<IEventQueue> eventQueue)
 {
     using namespace UsageID;
 
-    // Create Event manager objects.
-    Handle<IEventQueue> eventQueue = new EventManager;
-    ASSERT(eventQueue);
-
-    // register the event queue.
-    Handle<IContext> device = nameSpace->lookup("device");
-    ASSERT(device);
-    IBinding* ret = device->bind("event", static_cast<IEventQueue*>(eventQueue));
-    ASSERT(ret);
-
-    Handle<IStream> keyboard(nameSpace->lookup("device/keyboard"));
+    Handle<IContext> root = System()->getRoot();
+    Handle<IStream> keyboard(root->lookup("device/keyboard"));
     ASSERT(keyboard);
-    Handle<IStream> mouse(nameSpace->lookup("device/mouse"));
+    Handle<IStream> mouse(root->lookup("device/mouse"));
     ASSERT(mouse);
     Handle<ICurrentThread> currentThread = System()->currentThread();
 
     int x;
     int y;
 
-    while (registered)
+    esReport("start server loop.\n");
+
+    for (;;)
     {
         u8 buffer[8];
         long count;
@@ -811,6 +750,7 @@ static void* inputProcess(Handle<IContext> nameSpace)
         ASSERT(currentThread);
         currentThread->sleep(10000000 / 60);
     }
+
     return 0;
 }
 
@@ -831,14 +771,24 @@ int main(int argc, char* argv[])
     Handle<IClassFactory> eventManagerFactory(new(ClassFactory<EventManager>));
     classStore->add(CLSID_EventManager, eventManagerFactory);
 
-    inputProcess(nameSpace);
+    // Create Event manager objects.
+    Handle<IEventQueue> eventQueue = new EventManager;
+    ASSERT(eventQueue);
+    // register the event queue.
+    Handle<IContext> device = nameSpace->lookup("device");
+    ASSERT(device);
+    IBinding* ret = device->bind("event", static_cast<IEventQueue*>(eventQueue));
+    ASSERT(ret);
+
+    TEST(nameSpace->lookup("device/event"));
+
+    inputProcess(eventQueue);
 
     // Unregister Event Manager factory.
     classStore->remove(CLSID_EventManager);
 
     // Unregister IEventQueue interface.
-    interfaceStore->remove(IEventQueue::iid());
+    interfaceStore->remove(IID_IEventQueue);
 
-    esReport("Event manager is terminated.\n");
     // System()->trace(false);
 }

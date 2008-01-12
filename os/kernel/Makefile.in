@@ -81,9 +81,16 @@ target_triplet = @target@
 #	pc/pci.h
 
 #
+# windows
+#
+@WIN32_TRUE@am__append_4 = \
+@WIN32_TRUE@	windows/ref.cpp
+
+
+#
 # posix
 #
-@POSIX_TRUE@am__append_4 = \
+@POSIX_TRUE@am__append_5 = \
 @POSIX_TRUE@	posix/posix_thread.cpp \
 @POSIX_TRUE@	posix/posix_monitor.cpp \
 @POSIX_TRUE@	posix/posix_core.cpp \
@@ -91,11 +98,11 @@ target_triplet = @target@
 @POSIX_TRUE@	posix/posix_init.cpp \
 @POSIX_TRUE@	posix/posix_ethernet.cpp
 
-@POSIX_TRUE@am__append_5 = \
+@POSIX_TRUE@am__append_6 = \
 @POSIX_TRUE@	include/posix/core.h \
 @POSIX_TRUE@	include/posix/tap.h
 
-@POSIX_TRUE@am__append_6 = -iquote $(srcdir)/include/posix
+@POSIX_TRUE@am__append_7 = -iquote $(srcdir)/include/posix
 subdir = kernel
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -134,7 +141,7 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/classStore.cpp \
 	pc/pci.cpp pc/pc_core.cpp pc/pc_dateTime.cpp pc/pc_init.cpp \
 	pc/pc_thread.cpp pc/rtc.cpp pc/sb16.cpp pc/es1370.cpp \
 	pc/uart.cpp pc/vesa.cpp pc/xreg.cpp pc/dp8390d.cpp \
-	posix/posix_thread.cpp posix/posix_monitor.cpp \
+	windows/ref.cpp posix/posix_thread.cpp posix/posix_monitor.cpp \
 	posix/posix_core.cpp posix/posix_dateTime.cpp \
 	posix/posix_init.cpp posix/posix_ethernet.cpp include/alarm.h \
 	include/arena.h include/cache.h include/classStore.h \
@@ -167,21 +174,22 @@ am__objects_2 =
 @ES_TRUE@	pc_thread.$(OBJEXT) rtc.$(OBJEXT) sb16.$(OBJEXT) \
 @ES_TRUE@	es1370.$(OBJEXT) uart.$(OBJEXT) vesa.$(OBJEXT) \
 @ES_TRUE@	xreg.$(OBJEXT) dp8390d.$(OBJEXT)
-@POSIX_TRUE@am__objects_4 = posix_thread.$(OBJEXT) \
+@WIN32_TRUE@am__objects_4 = ref.$(OBJEXT)
+@POSIX_TRUE@am__objects_5 = posix_thread.$(OBJEXT) \
 @POSIX_TRUE@	posix_monitor.$(OBJEXT) posix_core.$(OBJEXT) \
 @POSIX_TRUE@	posix_dateTime.$(OBJEXT) posix_init.$(OBJEXT) \
 @POSIX_TRUE@	posix_ethernet.$(OBJEXT)
-am__objects_5 = classStore.$(OBJEXT) elf.$(OBJEXT) init.$(OBJEXT) \
+am__objects_6 = classStore.$(OBJEXT) elf.$(OBJEXT) init.$(OBJEXT) \
 	interface.$(OBJEXT) arena.$(OBJEXT) cache.$(OBJEXT) \
 	cacheFactory.$(OBJEXT) heap.$(OBJEXT) line.$(OBJEXT) \
 	loopback.$(OBJEXT) page.$(OBJEXT) pageSet.$(OBJEXT) \
 	pageTable.$(OBJEXT) stream.$(OBJEXT) zero.$(OBJEXT) \
 	alarm.$(OBJEXT) partitionContext.$(OBJEXT) \
 	partitionStream.$(OBJEXT) partitionIterator.$(OBJEXT) \
-	$(am__objects_3) $(am__objects_4)
-am__objects_6 = $(am__objects_2) $(am__objects_2)
+	$(am__objects_3) $(am__objects_4) $(am__objects_5)
+am__objects_7 = $(am__objects_2) $(am__objects_2)
 am_libeskernel_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	$(am__objects_5) $(am__objects_6)
+	$(am__objects_6) $(am__objects_7)
 nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	ICallback.$(OBJEXT) IClassFactory.$(OBJEXT) \
 	IClassStore.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
@@ -196,8 +204,7 @@ nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
-	ISet.$(OBJEXT) ICanvasRenderingContext2D.$(OBJEXT) \
-	mbr.$(OBJEXT)
+	ISet.$(OBJEXT) mbr.$(OBJEXT)
 libeskernel_a_OBJECTS = $(am_libeskernel_a_OBJECTS) \
 	$(nodist_libeskernel_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -332,9 +339,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . testsuite
 lib_LIBRARIES = libeskernel.a
-SUFFIXES = .ent .c .bin
+SUFFIXES = .ird .c .bin
 AM_CPPFLAGS = -I../../include -I$(srcdir)/../../include -iquote \
-	$(srcdir)/include $(am__append_1) $(am__append_6)
+	$(srcdir)/include $(am__append_1) $(am__append_7)
 
 #
 # default interface information
@@ -353,8 +360,7 @@ nodist_libeskernel_a_SOURCES = base/IAlarm.c base/ICache.c \
 	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
 	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
-	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
-	mbr.c
+	util/IIterator.c util/ISet.c mbr.c
 
 #
 # port
@@ -371,7 +377,7 @@ cpp_source_files = port/classStore.cpp port/elf.cpp port/init.cpp \
 	port/pageTable.cpp port/stream.cpp port/zero.cpp \
 	port/alarm.cpp port/partitionContext.cpp \
 	port/partitionStream.cpp port/partitionIterator.cpp \
-	$(am__append_2) $(am__append_4)
+	$(am__append_2) $(am__append_4) $(am__append_5)
 
 # The filenames of the header files not intalled but used by the kernel
 
@@ -383,7 +389,7 @@ header_files = include/alarm.h include/arena.h include/cache.h \
 	include/interfaceStore.h include/line.h include/loopback.h \
 	include/partition.h include/process.h include/spinlock.h \
 	include/thread.h include/zero.h include/ata.h include/uart.h \
-	$(am__append_3) $(am__append_5)
+	$(am__append_3) $(am__append_6)
 
 # cpp_source_files += \
 #	pc/acpios.cpp
@@ -397,7 +403,7 @@ libeskernel_a_SOURCES = $(s_source_files) $(c_source_files) $(cpp_source_files) 
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .ent .c .bin .S .cpp .o .obj
+.SUFFIXES: .ird .c .bin .S .cpp .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -477,7 +483,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IBinding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICallback.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICanvasRenderingContext2D.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IContext.Po@am__quote@
@@ -556,6 +561,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_monitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ref.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rendezvous.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sb16.Po@am__quote@
@@ -1130,20 +1136,6 @@ ISet.obj: util/ISet.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ISet.c' object='ISet.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ISet.obj `if test -f 'util/ISet.c'; then $(CYGPATH_W) 'util/ISet.c'; else $(CYGPATH_W) '$(srcdir)/util/ISet.c'; fi`
-
-ICanvasRenderingContext2D.o: util/ICanvasRenderingContext2D.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ICanvasRenderingContext2D.o -MD -MP -MF $(DEPDIR)/ICanvasRenderingContext2D.Tpo -c -o ICanvasRenderingContext2D.o `test -f 'util/ICanvasRenderingContext2D.c' || echo '$(srcdir)/'`util/ICanvasRenderingContext2D.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/ICanvasRenderingContext2D.Tpo $(DEPDIR)/ICanvasRenderingContext2D.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ICanvasRenderingContext2D.c' object='ICanvasRenderingContext2D.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICanvasRenderingContext2D.o `test -f 'util/ICanvasRenderingContext2D.c' || echo '$(srcdir)/'`util/ICanvasRenderingContext2D.c
-
-ICanvasRenderingContext2D.obj: util/ICanvasRenderingContext2D.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ICanvasRenderingContext2D.obj -MD -MP -MF $(DEPDIR)/ICanvasRenderingContext2D.Tpo -c -o ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/ICanvasRenderingContext2D.Tpo $(DEPDIR)/ICanvasRenderingContext2D.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ICanvasRenderingContext2D.c' object='ICanvasRenderingContext2D.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1957,6 +1949,20 @@ dp8390d.obj: pc/dp8390d.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dp8390d.obj `if test -f 'pc/dp8390d.cpp'; then $(CYGPATH_W) 'pc/dp8390d.cpp'; else $(CYGPATH_W) '$(srcdir)/pc/dp8390d.cpp'; fi`
 
+ref.o: windows/ref.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ref.o -MD -MP -MF $(DEPDIR)/ref.Tpo -c -o ref.o `test -f 'windows/ref.cpp' || echo '$(srcdir)/'`windows/ref.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ref.Tpo $(DEPDIR)/ref.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='windows/ref.cpp' object='ref.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ref.o `test -f 'windows/ref.cpp' || echo '$(srcdir)/'`windows/ref.cpp
+
+ref.obj: windows/ref.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ref.obj -MD -MP -MF $(DEPDIR)/ref.Tpo -c -o ref.obj `if test -f 'windows/ref.cpp'; then $(CYGPATH_W) 'windows/ref.cpp'; else $(CYGPATH_W) '$(srcdir)/windows/ref.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ref.Tpo $(DEPDIR)/ref.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='windows/ref.cpp' object='ref.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ref.obj `if test -f 'windows/ref.cpp'; then $(CYGPATH_W) 'windows/ref.cpp'; else $(CYGPATH_W) '$(srcdir)/windows/ref.cpp'; fi`
+
 posix_thread.o: posix/posix_thread.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT posix_thread.o -MD -MP -MF $(DEPDIR)/posix_thread.Tpo -c -o posix_thread.o `test -f 'posix/posix_thread.cpp' || echo '$(srcdir)/'`posix/posix_thread.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/posix_thread.Tpo $(DEPDIR)/posix_thread.Po
@@ -2322,9 +2328,9 @@ uninstall-am: uninstall-libLIBRARIES
 	ps ps-am tags tags-recursive uninstall uninstall-am \
 	uninstall-libLIBRARIES
 
-vpath %.ent = ../../include/es
+vpath %.ird = ../../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;

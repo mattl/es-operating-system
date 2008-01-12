@@ -1,7 +1,7 @@
 // check a properties of date constructor, parse().
 function check(result)
 {
-    stdout = System.output;
+    stdout = System.getOut();
     if (result)
     {
         stdout.write("OK\n", 3);
@@ -13,7 +13,7 @@ function check(result)
     return result;
 }
 
-stdout = System.output;
+stdout = System.getOut();
 
 s = new String("Thu Jul 12 16:20:57 2007" /* localtime */);
 stdout.write("input  : \"" + s + "\"\n", s.length + 13);

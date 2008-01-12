@@ -63,7 +63,7 @@ class Formatter
 
     static int streamPutc(int c, void* opt)
     {
-        es::IStream* stream(static_cast<es::IStream*>(opt));
+        IStream* stream(static_cast<IStream*>(opt));
         if (stream)
         {
             char ch(static_cast<char>(c));
@@ -107,7 +107,7 @@ public:
      * The formated strings are written to the specified stream.
      * @param stream the output stream.
      */
-    Formatter(es::IStream* stream) throw();
+    Formatter(IStream* stream) throw();
     /**
      * Constructs a new formatter with the specified string.
      * The formated strings are written to the specified string.

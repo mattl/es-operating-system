@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,90 +11,109 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IFILE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IFILE_IDL_INCLUDED
+import "es/base/IStream.idl", "es/base/IPageable.idl";
 
-#include "es/base/IStream.idl"
-#include "es/base/IPageable.idl"
-
-module es
+/** This interface provides methods for handling files and directories.
+ */
+[object, uuid(0325f4e6-25db-11db-9c02-0009bf000001)]
+interface IFile : IInterface
 {
-    /** This interface provides methods for handling files and directories.
-     */
-    interface IFile : IInterface
+    enum Attributes
     {
-        #pragma ID IFile = "DCE:0325f4e6-25db-11db-9c02-0009bf000001";
-
-        const long ReadOnly = 0x01;
-        const long Hidden = 0x02;
-        const long System = 0x04;
-        const long Directory = 0x10;
-        const long Archive = 0x20;
-
-        /** The attributes of this file.
-         * @param attributes    A unsigned int value from which to obtain the attributes
-         *                      of this file.
-         */
-        attribute unsigned long attributes;
-
-        /** The time this file was created.
-         * @param time      A long value from which to obtain the creation
-         *                  time of this file.
-         */
-        attribute long long creationTime;
-
-        /** The time this file was last read.
-         * @param time      A long value from which to obtain the last
-         *                  read time of this file.
-         */
-        attribute long long lastAccessTime;
-
-        /** The time this file was last modified.
-         * @param time      A long value from which to obtain the last
-         *                  modified time of this file.
-         */
-        attribute long long lastWriteTime;
-
-        /** Test whether this file can be read.
-         */
-        boolean canRead();
-
-        /** Test whether this file can be modified.
-         */
-        boolean canWrite();
-
-        /** Tests whether this file is a directory.
-         * @return          true if and only if this file is a directory; false otherwise.
-         */
-        readonly attribute boolean directory;
-
-        /** Tests whether this file is a normal file.
-         * @return          true if and only if this file is a normal file; false otherwise.
-         */
-        readonly attribute boolean file;
-
-        /** Tests whether this file is a hidden file.
-         * @return          true if and only if this file is a hidden file; false otherwise.
-         */
-        readonly attribute boolean hidden;
-
-        /** The string representation of this file.
-         */
-        readonly attribute string name;
-
-        /** The unique IPageable interface associated with this file.
-         */
-        readonly attribute IPageable pageable;
-
-        /** The length of this file.
-         */
-        readonly attribute long long size;
-
-        /** The unique IStream interface associated with this file.
-         */
-        readonly attribute IStream stream;
+        ReadOnly = 0x01,
+        Hidden = 0x02,
+        System = 0x04,
+        Directory = 0x10,
+        Archive = 0x20
     };
-};
 
-#endif // NINTENDO_ES_BASE_IFILE_IDL_INCLUDED
+    /** Gets the attributes of this file.
+     * @param attributes    A unsigned int value from which to obtain the attributes
+     *                      of this file.
+     */
+    int getAttributes([out] unsigned int& attributes);
 
+    /** Gets the time this file was created.
+     * @param time      A long value from which to obtain the creation
+     *                  time of this file.
+     */
+    int getCreationTime([out] long& time);
+
+    /** Gets the time this file was last read.
+     * @param time      A long value from which to obtain the last
+     *                  read time of this file.
+     */
+    int getLastAccessTime([out] long& time);
+
+    /** Gets the time this file was last modified.
+     * @param time      A long value from which to obtain the last
+     *                  modified time of this file.
+     */
+    int getLastWriteTime([out] long& time);
+
+    /** Sets the attributes of this file.
+     * @param attributes    A unsigned int value to set for the attributes
+     *                      of this file.
+     */
+    int setAttributes(unsigned int attributes);
+
+    /** Sets the time this file was created.
+     * @param time      A long value to set for the creation time of this file.
+     */
+    int setCreationTime(long time);
+
+    /** Sets the time this file was last read.
+     * @param time      A long value to set for the last read time of this file.
+     */
+    int setLastAccessTime(long time);
+
+    /** Sets the time this file was last modified.
+     * @param time      A long value to set for the last modified time of this file.
+     */
+    int setLastWriteTime(long time);
+
+    /** Tests whether this file can be read.
+     * @return          true if and only if this file can be read; false otherwise.
+     */
+    boolean canRead();
+
+    /** Tests whether this file can be modified.
+     * @return          true if and only if this file can be modified; false otherwise.
+     */
+    boolean canWrite();
+
+    /** Tests whether this file is a directory.
+     * @return          true if and only if this file is a directory; false otherwise.
+     */
+    boolean isDirectory();
+
+    /** Tests whether this file is a normal file.
+     * @return          true if and only if this file is a normal file; false otherwise.
+     */
+    boolean isFile();
+
+    /** Tests whether this file is a hidden file.
+     * @return          true if and only if this file is a hidden file; false otherwise.
+     */
+    boolean isHidden();
+
+    /** Gets the length of this file.
+     * @return the length of this file.
+     */
+    long getSize();
+
+    /** Retrieves the string representation of this file.
+     * @return      The string representation of this file.
+     */
+    int getName([out, size_is(len)] char* name, unsigned int len);
+
+    /** Returns the unique IStream interface associated with this file.
+     * @return      the IStream interface associated with this file.
+     */
+    IStream* getStream();
+
+    /** Returns the unique IPageable interface associated with this file.
+     * @return      the IPageable interface associated with this file.
+     */
+    IPageable* getPageable();
+}

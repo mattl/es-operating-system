@@ -194,11 +194,6 @@ public:
         setValueProperty(time);
     }
 
-    const char* getClass() const
-    {
-        return "Date";
-    }
-
     Value* toPrimitive(int hint)
     {
         if (hint == Value::UndefinedType)
