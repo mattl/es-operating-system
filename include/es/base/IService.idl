@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_ES_BASE_ISERVICE_IDL_INCLUDED
+#define NINTENDO_ES_BASE_ISERVICE_IDL_INCLUDED
+
+#include "es/base/IInterface.idl"
+
+module es
+{
+    /**
+     * This interface represents a restartable service.
+     */
+    interface IService : IInterface
+    {
+        #pragma ID IService = "DCE:e9e58a92-c6c9-11db-8100-0009bf000001";
+
+        /**
+         * Starts this service.
+         */
+        boolean start();
+        /**
+         * Stops this service.
+         */
+        boolean stop();
+    };
+};
+
+#endif // NINTENDO_ES_BASE_ISERVICE_IDL_INCLUDED
+

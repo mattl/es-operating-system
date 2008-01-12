@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2006, 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
+#define NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
+
+#include "es/base/IInterface.idl"
+
+module es
+{
+    /**
+     * This interface represents properties of sound.
+     */
+    interface IAudioFormat : IInterface
+    {
+        #pragma ID IAudioFormat = "DCE:839febda-25dc-11db-9c02-0009bf000001";
+
+        /**
+         * The number of bits in a sample of a sound in this audio format.
+         * @return the number of bits in a sample.
+         */
+        attribute octet bitsPerSample;
+        /**
+         * The number of audio channels in this audio format.
+         * @return the number of channels.
+         */
+        attribute octet channels;
+        /**
+         * The sampling rate in this audio format.
+         * @return the sampling rate.
+         */
+        attribute unsigned short samplingRate;
+    };
+};
+
+#endif // NINTENDO_ES_DEVICE_IAUDIOFORMAT_IDL_INCLUDED
+

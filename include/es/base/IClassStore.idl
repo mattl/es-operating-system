@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2006, 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_ES_BASE_ICLASSSTORE_IDL_INCLUDED
+#define NINTENDO_ES_BASE_ICLASSSTORE_IDL_INCLUDED
+
+#include "es/base/IClassFactory.idl"
+
+module es
+{
+    /**
+     * This interface provides methods for managing class factories.
+     */
+    interface IClassStore : IInterface
+    {
+        #pragma ID IClassStore = "DCE:eeb4c758-4a0b-11db-9c02-0009bf000001";
+        /**
+         * Registers the specified class factory in this class store.
+         * @param rclsid    the class ID.
+         * @param factory   the class factory.
+         */
+        void add(in uuid rclsid, in IClassFactory factory);
+        /**
+         * Removes the specified class factory from this class store.
+         * @param rclsid    the class ID.
+         */
+        void remove(in uuid rclsid);
+        /**
+         * Creates an object from the class factory identified with the specified class ID.
+         * The class factory must be registered in this class store.
+         * @param rclsid    the class ID of the class factory.
+         * @param riid      the interface ID of the interface to be used to communicate with the new object.
+         * @return the new object if the object is successfully created. Otherwise, null.
+         */
+        Object createInstance(in uuid rclsid, in uuid riid);
+    };
+};
+
+#endif // NINTENDO_ES_BASE_ICLASSSTORE_IDL_INCLUDED
+

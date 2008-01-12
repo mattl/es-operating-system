@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2006
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#include <new>
+#include <stdlib.h>
+#include <es.h>
+#include <es/handle.h>
+#include "vdisk.h"
+#include "iso9660Stream.h"
+
+#define TEST(exp)                           \
+    (void) ((exp) ||                        \
+            (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
+
+void test(Handle<IContext> root)
+{
+    // A directory "data" exists.
+    Handle<IFile>       dir = root->lookup("data");
+    TEST(dir);
+
+    // A directory "dataRenamed" does not exist.
+    dir = 0;
+    dir = root->lookup("dataRenamed");
+    TEST(!dir);
+
+    // rename() must be failed.
+    long ret = root->rename("data", "dataRenamed");
+    TEST(ret < 0);
+
+    // check the directories are not modified.
+    dir = 0;
+    dir = root->lookup("data");
+    TEST(dir);
+
+    dir = 0;
+    dir = root->lookup("dataRenamed");
+    TEST(!dir);
+}
+
+int main(int argc, char* argv[])
+{
+    IInterface* ns = 0;
+    esInit(&ns);
+    Handle<IContext> nameSpace(ns);
+
+    Handle<IClassStore> classStore(nameSpace->lookup("class"));
+    esRegisterIsoFileSystemClass(classStore);
+
+#ifdef __es__
+    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+#else
+    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+#endif
+    TEST(disk);
+    long long diskSize;
+    diskSize = disk->getSize();
+    esReport("diskSize: %lld\n", diskSize);
+    TEST(0 < diskSize);
+
+    Handle<IFileSystem> isoFileSystem;
+    isoFileSystem = reinterpret_cast<IFileSystem*>(
+        esCreateInstance(CLSID_IsoFileSystem, IFileSystem::iid()));
+    TEST(isoFileSystem);
+    isoFileSystem->mount(disk);
+    {
+        Handle<IContext> root;
+
+        root = isoFileSystem->getRoot();
+        TEST(root);
+        test(root);
+    }
+    isoFileSystem->dismount();
+
+    esReport("done.\n");
+}

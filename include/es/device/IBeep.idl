@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2006, 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_ES_DEVICE_IBEEP_IDL_INCLUDED
+#define NINTENDO_ES_DEVICE_IBEEP_IDL_INCLUDED
+
+#include "es/base/IInterface.idl"
+
+module es
+{
+    /**
+     * This interface represents properties of beep sound.
+     */
+    interface IBeep : IInterface
+    {
+        #pragma ID IBeep = "DCE:83a0e378-25dc-11db-9c02-0009bf000001";
+
+        /**
+         * Generates a beep sound according to the setting in this beep object.
+         */
+        void beep();
+        /**
+         * The duration how long this beep plays (msec).
+         */
+        attribute unsigned long duration;
+        /**
+         * The frequency of this beep (Hz).
+         */
+        attribute unsigned long frequency;
+    };
+};
+
+#endif // NINTENDO_ES_DEVICE_IBEEP_IDL_INCLUDED
+

@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2006, 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+#define NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+
+#include "es/base/IThread.idl"
+
+module es
+{
+    /** Provides a mechanism that synchronizes access to objects.
+     * <p>
+     * The <code>createMonitor</code> method of <code>ICurrentProcess</code> creates
+     * an unlocked monitor.
+     *
+     * @see ICurrentProcess
+     */
+    interface IMonitor : IInterface
+    {
+        #pragma ID IMonitor = "DCE:0326e914-25db-11db-9c02-0009bf000001";
+
+        /** Acquires the lock on this monitor.
+         */
+        void lock();
+
+        /** Tries to acquires the lock on this monitor.
+         */
+        boolean tryLock();
+
+        /** Releases the lock on this monitor.
+         */
+        void unlock();
+
+        /** Releases the lock on this monitor and blocks the current thread until
+         * it reacquires the lock.
+         */
+        boolean wait();
+
+        /** Releases the lock on this monitor and blocks the current thread until
+         * either it reacquires the lock, or a specified time has elapsed.
+         */
+        boolean wait(in long long timeout);
+
+        /** Wakes up at least one thread that is waiting on this monitor.
+         */
+        void notify();
+
+        /** Wakes up all threads that are waiting on this monitor.
+         */
+        void notifyAll();
+    };
+};
+
+#endif // NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+

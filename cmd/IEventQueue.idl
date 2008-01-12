@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2006, 2007
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+#ifndef NINTENDO_IEVENTQUEUE_IDL_INCLUDED
+#define NINTENDO_IEVENTQUEUE_IDL_INCLUDED
+
+#include "es/base/IInterface.idl"
+
+module es
+{
+    /**
+     */
+    interface IEventQueue : IInterface
+    {
+        #pragma ID IEventQueue = "DCE:c466c947-602b-49c1-8d67-05d292fa65c4";
+        typedef sequence<octet> Buf;
+
+        /* User input recording II:
+           The following functions and definition can be used on
+           platform supporting events directly.
+        */
+        /* types of events */
+        const long EventTypeNone = 0;
+        const long EventTypeMouse = 1;
+        const long EventTypeKeyboard = 2;
+        const long EventTypeDragDropFiles = 3;
+
+        /* keypress state for keyboard events */
+        const long EventKeyChar = 0;
+        const long EventKeyDown = 1;
+        const long EventKeyUp = 2;
+
+        /* button definitions */
+        const long RedButtonBit = 4;
+        const long YellowButtonBit = 2;
+        const long BlueButtonBit = 1;
+
+        /* modifier definitions */
+        const long ShiftKeyBit = 1;
+        const long CtrlKeyBit = 2;
+        const long OptionKeyBit = 4;
+        const long CommandKeyBit = 8;
+
+        /* generic input event definition */
+        struct InputEvent
+        {
+            long type; /* type of event; either one of EventTypeXXX */
+            unsigned long timeStamp; /* time stamp */
+             /* the interpretation of the following fields depend on the type of the event */
+            long unused1;
+            long unused2;
+            long unused3;
+            long unused4;
+            long unused5;
+            long unused6;
+        };
+
+        /* mouse input event definition */
+        struct MouseEvent
+        {
+            long type; /* EventTypeMouse */
+            unsigned long timeStamp; /* time stamp */
+            long x; /* mouse position x */
+            long y; /* mouse position y */
+            long buttons; /* combination of xxxButtonBit */
+            long modifiers; /* combination of xxxKeyBit */
+            long reserved1; /* reserved for future use */
+            long reserved2; /* reserved for future use */
+        };
+
+        /* keyboard input event definition */
+        struct KeyboardEvent
+        {
+            long type; /* EventTypeKeyboard */
+            unsigned long timeStamp; /* time stamp */
+            long charCode; /* character code in Mac Roman encoding */
+            long pressCode; /* press code; any of EventKeyXXX */
+            long modifiers; /* combination of xxxKeyBit */
+            long reserved1; /* reserved for future use */
+            long reserved2; /* reserved for future use */
+            long reserved3; /* reserved for future use */
+        };
+
+        boolean getEvent(out InputEvent event);
+        boolean getKeystroke(out long stroke);
+        boolean peekKeystroke(out long stroke);
+        unsigned long getButtonState();
+        void getMousePoint(out long x, out long y);
+        boolean keyEvent(in Buf data);
+        boolean mouseEvent(in Buf data);
+        boolean wait(in long long timeout);
+        void notify();
+    };
+};
+
+#endif // NINTENDO_IEVENTQUEUE_IDL_INCLUDED

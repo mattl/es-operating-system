@@ -1,0 +1,15 @@
+This directory contains Squeak port for the es operating system.
+Squeak port for the es operating system is presumed subject to the
+Squeak license.  See the file License for copying permission.
+
+The latest version of the Squeak license will be available at
+http://www.squeak.org/SqueakLicense/.
+
+---------------------------------------------------------------------------
+
+The es operating system is open source software.  See the file COPYING
+for copying permission.  The manuals, and some of the software
+programs, are under different terms; see the individual source files
+for details.
+
+See http://sourceforge.jp/projects/nes/ for how to report bugs usefully.
