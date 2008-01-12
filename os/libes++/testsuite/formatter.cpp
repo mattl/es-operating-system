@@ -27,8 +27,6 @@
 #define INFINITY    __builtin_inf()
 #endif
 
-using namespace es;
-
 int print(const char* spec, ...)
 {
     va_list list;
@@ -97,10 +95,6 @@ int main()
     formatter.print(DBL_MIN);
     printf("\n\n");
 
-    formatter.setBase(36);
-    formatter.print(72 + 35);
-    printf("\n\n");
-
     print("|%14s|\n", "hello");
     print("|%-14s|\n", "hello");
     print("|%14c|\n", 'A');
@@ -123,7 +117,6 @@ int main()
     print("|%#14.2g|\n", 0.05);
     print("|%14g|\n", 1.4e+36);
     print("|%14g|\n", 1.4e-36);
-    print("|%14.2g|\n", 0.000001234567);
     print("|%14g|\n", 2e-36);
     print("|%14g|\n", NAN);
 
@@ -152,7 +145,6 @@ int main()
     printf("|%#14.2g|\n", 0.05);
     printf("|%14g|\n", 1.4e+36);
     printf("|%14g|\n", 1.4e-36);
-    printf("|%14.2g|\n", 0.000001234567);
     printf("|%14g|\n", 2e-36);
     printf("|%14g|\n", NAN);
 }

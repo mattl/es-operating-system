@@ -5,44 +5,29 @@ directory shall be presumed subject to the same license of the
 original software.
 
 
-- GNU Binutils 2.17 (binutils-2.17.patch)
+- GNU Binutils 2.16.1 (binutils-2.16.1.patch)
     http://www.gnu.org/software/binutils/
-    usage: $ tar -jxvf binutils-2.17.tar.bz2
-           $ patch -p0 -d . < binutils-2.17.patch
+    usage: $ tar -jxvf binutils-2.16.1.tar.bz2
+           $ patch -p0 -d . < binutils-2.16.1.patch
 
-- GCC, the GNU Compiler Collection 4.2.1 (gcc-4.2.1.patch)
-    http://gcc.gnu.org/
-    usage: $ tar -jxvf gcc-4.2.1.tar.bz2
-           $ patch -p0 -d . < gcc-4.2.1.patch
+- GCC, the GNU Compiler Collection 4.1.1 (gcc-4.1.1.patch)
+    http://gcc.gnu.org/      
+    usage: $ tar -jxvf gcc-4.1.1.tar.bz2
+           $ patch -p0 -d . < gcc-4.1.1.patch
 
-- Newlib 1.15.0 (newlib-1.15.0.patch)
+- GCC, the GNU Compiler Collection 4.1.0 (gcc-4.1.0.patch)
+    http://gcc.gnu.org/      
+    usage: $ tar -jxvf gcc-4.1.0.tar.bz2
+           $ patch -p0 -d . < gcc-4.1.0.patch
+
+- Newlib 1.14.0 (newlib-1.14.0.patch)
     http://sources.redhat.com/newlib/
-    usage: $ tar -zxvf newlib-1.15.0.tar.gz
-           $ patch -p0 -d . < newlib-1.15.0.patch
+    usage: $ tar -zxvf newlib-1.14.0.tar.gz
+           $ patch -p0 -d . < newlib-1.14.0.patch
 
-- PCRE - Perl Compatible Regular Expressions library 7.2 (pcre-7.2.patch)
+- PCRE - Perl Compatible Regular Expressions library 7.1 (pcre-7.1.patch)
     http://www.pcre.org/
-    usage: $ tar -zxvf pcre-7.2.tar.gz
-           $ patch -p0 -d . < pcre-7.2.patch
-
-- FreeType 2.3.5 (freetype-2.3.5.patch)
-    http://www.freetype.org/
-    usage: $ tar -zxvf freetype-2.3.5.tar.gz
-           $ patch -p0 -d . < freetype-2.3.5.patch
-
-- The Expat XML Parser 2.0.1 (expat-2.0.1.patch)
-    http://expat.sourceforge.net/
-    usage: $ tar -zxvf expat-2.0.1.tar.gz
-           $ patch -p0 -d . < expat-2.0.1.patch
-
-- fontconfig 2.4.2 (fontconfig-2.4.2.patch)
-    http://fontconfig.org/wiki/
-    usage: $ tar -zxvf fontconfig-2.4.2.tar.gz
-           $ patch -p0 -d . < fontconfig-2.4.2.patch
-
-- cairo 1.4.10 (cairo-1.4.10.patch)
-    http://cairographics.org/
-    usage: $ tar -zxvf cairo-1.4.10.tar.gz
-           $ patch -p0 -d . < cairo-1.4.10.patch
+    usage: $ tar -zxvf pcre-7.1.tar.gz
+           $ patch -p0 -d . < pcre-7.1.patch
 
 See http://sourceforge.jp/projects/nes/ for how to report bugs usefully.

@@ -11,90 +11,88 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_INETWORKINTERFACE_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_INETWORKINTERFACE_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+[object, uuid(0069e36a-c85c-11db-9c02-0009bf000001)]
+interface INetworkInterface : IInterface
 {
-    interface INetworkInterface : IInterface
+    // Interface type [http://www.iana.org/assignments/smi-numbers]
+    enum Type
     {
-        #pragma ID INetworkInterface = "DCE:0069e36a-c85c-11db-9c02-0009bf000001";
-
-        // Interface type [http://www.iana.org/assignments/smi-numbers]
-        const long Other = 1;      // none of the following
-        const long Ethernet = 6;   // Ethernet CSMACD
-        const long FDDI = 15;      // FDDI
-        const long PPP = 23;       // RFC 1331
-        const long Loopback = 24;  // loopback
-
-        struct Statistics
-        {
-            unsigned long long  inOctets;        // The total number of octets received.
-            unsigned long       inUcastPkts;     // The number of unicast packets delivered.
-            unsigned long       inNUcastPkts;    // The number of non-unicast delivered.
-            unsigned long       inDiscards;      // The number of inbound packets discarded.
-            unsigned long       inErrors;        // The number of inbound packets that contained errors.
-            unsigned long       inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
-            unsigned long long  outOctets;       // The total number of octets transmitted.
-            unsigned long       outUcastPkts;    // The total number of packets transmitted to a unicast address.
-            unsigned long       outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
-            unsigned long       outDiscards;     // The number of outbound packets discarded.
-            unsigned long       outErrors;       // The number of outbound packets that could not be transmitted because of errors.
-
-            unsigned long       outCollisions;   // Collisions on CSMA
-        };
-
-        typedef octet Mac[6];
-
-        /** Allows this network interface to receive frames sent to the specified
-         * multicast MAC address.
-         * @param mac the MAC address.
-         */
-        long addMulticastAddress(in Mac mac);
-
-        /** Gets the current link state of this network interface.
-         */
-        boolean getLinkState();
-
-        /** Gets the MAC address of this network interface.
-         * @param mac the MAC address.
-         */
-        void getMacAddress(out Mac mac);
-
-        /** Forbids this network interface to receive Ethernet frames sent to the
-         * specified multicast MAC address.
-         * @param mac the MAC address.
-         */
-        long removeMulticastAddress(in Mac mac);
-
-        /** Starts this network interface.
-         */
-        long start();
-
-        /** Stops this network interface.
-         */
-        long stop();
-
-        /** Maximum transmission unit of this network interface.
-         */
-        readonly attribute long MTU;
-
-        /** The statistics of this network interface.
-         */
-        readonly attribute Statistics statistics;
-
-        /** The type of interface.
-         */
-        readonly attribute long type;
-
-        /** Boolean if the promiscuous mode of this network interface is enabled or
-         * not.
-         */
-        attribute boolean promiscuousMode;
+        Other = 1,      // none of the following
+        Ethernet = 6,   // Ethernet CSMACD
+        FDDI = 15,      // FDDI
+        PPP = 23,       // RFC 1331
+        Loopback = 24   // loopback
     };
-};
 
-#endif // NINTENDO_ES_DEVICE_INETWORKINTERFACE_IDL_INCLUDED
+    struct Statistics
+    {
+        unsigned long  inOctets;        // The total number of octets received.
+        unsigned int   inUcastPkts;     // The number of unicast packets delivered.
+        unsigned int   inNUcastPkts;    // The number of non-unicast delivered.
+        unsigned int   inDiscards;      // The number of inbound packets discarded.
+        unsigned int   inErrors;        // The number of inbound packets that contained errors.
+        unsigned int   inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
+        unsigned long  outOctets;       // The total number of octets transmitted.
+        unsigned int   outUcastPkts;    // The total number of packets transmitted to a unicast address.
+        unsigned int   outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
+        unsigned int   outDiscards;     // The number of outbound packets discarded.
+        unsigned int   outErrors;       // The number of outbound packets that could not be transmitted because of errors.
 
+        unsigned int   outCollisions;   // Collisions on CSMA
+    };
+
+    /** Allows this network interface to receive frames sent to the specified
+     * multicast MAC address.
+     * @param mac the MAC address.
+     */
+    int addMulticastAddress([in] unsigned byte mac[6]);
+
+    /** Gets the MAC address of this network interface.
+     * @param mac the MAC address.
+     */
+    void getMacAddress([out] unsigned byte mac[6]);
+
+    /** Gets maximum transmission unit of this network interface.
+     */
+    int getMTU();
+
+    /** Gets the current link state of this network interface.
+     */
+    boolean getLinkState();
+
+    /** Checks if the promiscuous mode of this network interface is enabled or
+     * not.
+     */
+    boolean getPromiscuousMode();
+
+    /** Gets the statistics of this network interface.
+     * @param statistics the interface statistics.
+     */
+    void getStatistics([out] Statistics* statistics);
+
+    /** Gets the type of interface.
+     * @return the type of interface
+     */
+    int getType();
+
+    /** Forbids this network interface to receive Ethernet frames sent to the
+     * specified multicast MAC address.
+     * @param mac the MAC address.
+     */
+    int removeMulticastAddress([in] unsigned byte mac[6]);
+
+    /** Enables or disables the promiscuous mode of this network interface.
+     * @param on the boolean if the promiscuous mode is to be enabled or not.
+     */
+    void setPromiscuousMode(boolean on);
+
+    /** Starts this network interface.
+     */
+    int start();
+
+    /** Stops this network interface.
+     */
+    int stop();
+}

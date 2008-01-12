@@ -20,8 +20,6 @@
 #include <es.h>
 #include "mps.h"
 
-using namespace es;
-
 class Apic : public IPic, public ICallback
 {
     // Memory mapped registers for accessing IOAPIC registers
@@ -155,7 +153,6 @@ public:
     static void busFreq();
 
     void setTimer(int vec, long hz);
-    void enableWatchdog();
 
     void startupAllAP(u32 hltAP, u32 startAP)
     {
@@ -174,7 +171,7 @@ public:
     static void broadcastIPI(u8 vec);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 

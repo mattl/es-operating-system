@@ -14,10 +14,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <dirent.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -29,8 +27,6 @@
 #include <es/classFactory.h>
 #include <es/clsid.h>
 
-using namespace es;
-
 int esInit(IInterface** nameSpace);
 
 namespace
@@ -38,20 +34,20 @@ namespace
 
 class Stream : public IStream
 {
-    Ref ref;
-    int fd;
+    Ref     ref;
+    FILE*   file;
 
 public:
-    Stream(int fd) :
-        fd(fd)
+    Stream(FILE* file) :
+        file(file)
     {
     }
 
     ~Stream()
     {
-        if (3 <= fd)
+        if (file && !isatty(fileno(file)))
         {
-            close(fd);
+            fclose(file);
         }
     }
 
@@ -61,75 +57,76 @@ public:
 
     long long getPosition()
     {
-        return lseek(fd, 0, SEEK_CUR);
+        return ftell(file);
     }
 
     void setPosition(long long pos)
     {
-        lseek(fd, pos, SEEK_SET);
+        fseek(file, pos, SEEK_SET);
     }
 
     long long getSize()
     {
-        struct stat buf;
-
-        fstat(fd, &buf);
-        return buf.st_size;
+        long tmp = ftell(file);
+        fseek(file, 0, SEEK_END);
+        long size = ftell(file);
+        fseek(file, tmp, SEEK_SET);
+        return size;
     }
 
     void setSize(long long size)
     {
-        ftruncate(fd, size);
+        ftruncate(fileno(file), size);
     }
 
     int read(void* buffer, int size)
     {
-        return ::read(fd, buffer, size);
+        return fread(buffer, 1, size, file);
     }
 
     int read(void* buffer, int size, long long offset)
     {
         setPosition(offset);
-        return ::read(fd, buffer, size);
+        return fread(buffer, 1, size, file);
     }
 
     int write(const void* buffer, int size)
     {
-        return ::write(fd, buffer, size);
+        return fwrite(buffer, 1, size, file);
     }
 
     int write(const void* buffer, int size, long long offset)
     {
         setPosition(offset);
-        return ::write(fd, buffer, size);
+        return fwrite(buffer, 1, size, file);
     }
 
     void flush()
     {
-        fsync(fd);
+        fflush(file);
     }
 
     //
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IStream::iid())
+        if (riid == IID_IStream)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -189,28 +186,28 @@ public:
     }
 
     // IFile
-    unsigned int getAttributes()
+    int getAttributes(unsigned int& attributes)
     {
     }
-    long long getCreationTime()
+    int getCreationTime(long long& time)
     {
     }
-    long long getLastAccessTime()
+    int getLastAccessTime(long long& time)
     {
     }
-    long long getLastWriteTime()
+    int getLastWriteTime(long long& time)
     {
     }
-    void setAttributes(unsigned int attributes)
+    int setAttributes(unsigned int attributes)
     {
     }
-    void setCreationTime(long long time)
+    int setCreationTime(long long time)
     {
     }
-    void setLastAccessTime(long long time)
+    int setLastAccessTime(long long time)
     {
     }
-    void setLastWriteTime(long long time)
+    int setLastWriteTime(long long time)
     {
     }
     bool canRead()
@@ -235,7 +232,17 @@ public:
 
     IStream* getStream()
     {
-        return new Stream(dup(fd));
+        FILE* file = fdopen(fd, "rw");
+        if (!file)
+        {
+            file = fdopen(fd, "r");
+        }
+        if (!file)
+        {
+            return 0;
+        }
+        fd = dup(fd);
+        return new Stream(file);
     }
 
     IPageable* getPageable()
@@ -252,12 +259,12 @@ public:
         return static_cast<IFile*>(this);
     }
 
-    void setObject(IInterface* object)
+    int setObject(IInterface* object)
     {
-        esThrow(EACCES); // [check] appropriate?
+        return -1;
     }
 
-    int getName(char* name, int len)
+    int getName(char* name, unsigned int len)
     {
         const char* p = this->name;
         int i;
@@ -276,27 +283,27 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IFile::iid())
+        if (riid == IID_IFile)
         {
-            objectPtr = static_cast<IFile*>(this);
+            *objectPtr = static_cast<IFile*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (riid == IID_IBinding)
         {
-            objectPtr = static_cast<IBinding*>(this);
+            *objectPtr = static_cast<IBinding*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IFile*>(this);
+            *objectPtr = static_cast<IFile*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -375,23 +382,23 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IIterator::iid())
+        if (riid == IID_IIterator)
         {
-            objectPtr = static_cast<IIterator*>(this);
+            *objectPtr = static_cast<IIterator*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IIterator*>(this);
+            *objectPtr = static_cast<IIterator*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -442,12 +449,11 @@ public:
         {
             return 0;
         }
-        int fd = open(name, O_CREAT | O_RDWR | O_TRUNC, 0777);
+        int fd = open(name, O_CREAT | O_RDWR, 0777);
         if (fd == -1)
         {
             return 0;
         }
-
         return new File(fd, name);
     }
 
@@ -571,31 +577,31 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IFile::iid())
+        if (riid == IID_IFile)
         {
-            objectPtr = static_cast<IFile*>(this);
+            *objectPtr = static_cast<IFile*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (riid == IID_IBinding)
         {
-            objectPtr = static_cast<IBinding*>(this);
+            *objectPtr = static_cast<IBinding*>(this);
         }
-        else if (riid == IContext::iid())
+        else if (riid == IID_IContext)
         {
-            objectPtr = static_cast<IContext*>(this);
+            *objectPtr = static_cast<IContext*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IContext*>(this);
+            *objectPtr = static_cast<IContext*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -739,50 +745,28 @@ public:
     int getExitValue() { return 0; }
     bool hasExited() { return true; }
     void setRoot(IContext* root) {}
-    void setInput(IStream* in) {}
-    void setOutput(IStream* out) {}
+    void setIn(IStream* in) {}
+    void setOut(IStream* out) {}
     void setError(IStream* error) {}
-    void setCurrent(IContext* context) {}
-
-    IContext* getRoot()
-    {
-        esThrow(ENOSYS); // [check]
-    }
-    IStream* getInput()
-    {
-        esThrow(ENOSYS); // [check]
-    }
-    IStream* getOutput()
-    {
-        esThrow(ENOSYS); // [check]
-    }
-    IStream* getError()
-    {
-        esThrow(ENOSYS); // [check]
-    }
-    IContext* getCurrent()
-    {
-        esThrow(ENOSYS); // [check]
-    }
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IProcess::iid())
+        if (riid == IID_IProcess)
         {
-            objectPtr = static_cast<IProcess*>(this);
+            *objectPtr = static_cast<IProcess*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IProcess*>(this);
+            *objectPtr = static_cast<IProcess*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -805,28 +789,21 @@ public:
 class System : public ICurrentProcess
 {
     Ref         ref;
-    Stream*     in;     // 0
-    Stream*     out;    // 1
-    Stream*     error;  // 2
+    Stream*     in;
+    Stream*     out;
+    Stream*     error;
     IContext*   root;
-    IContext*   current;
 
 public:
-    System() :
-        current(0)
+    System()
     {
-        struct termio tty;
-        ioctl(0, TCGETA, &tty);
-        tty.c_lflag &= ~(ICANON|ECHO);
-        ioctl(0, TCSETAF, &tty);
-
-        in = new Stream(0);
-        out = new Stream(1);
-        error = new Stream(2);
+        in = new Stream(stdin);
+        out = new Stream(stdout);
+        error = new Stream(stderr);
 
         IInterface* unknown = 0;
         esInit(&unknown);
-        root = reinterpret_cast<IContext*>(unknown->queryInterface(IContext::iid()));
+        unknown->queryInterface(IID_IContext, (void**) &root);
 
         int fd = open(".", O_RDONLY);
         Dir* file = new Dir(fd, "");
@@ -842,17 +819,13 @@ public:
     ~System()
     {
         root->release();
-
-        struct termio tty;
-        ioctl(0, TCGETA, &tty);
-        tty.c_lflag |= ICANON|ECHO;
-        ioctl(0, TCSETAF, &tty);
     }
 
     void exit(int status)
     {
         ::exit(status);
     }
+
     void* map(const void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
     {
     }
@@ -865,7 +838,7 @@ public:
     {
     }
 
-    IThread* createThread(const void* start, const void* param) // [check] start must be a function pointer.
+    IThread* createThread(void* (*start)(void* param), void* param)
     {
     }
 
@@ -883,13 +856,13 @@ public:
         return root;
     }
 
-    IStream* getInput()
+    IStream* getIn()
     {
         in->addRef();
         return in;
     }
 
-    IStream* getOutput()
+    IStream* getOut()
     {
         out->addRef();
         return out;
@@ -899,28 +872,6 @@ public:
     {
         error->addRef();
         return error;
-    }
-
-    void setCurrent(IContext* context)
-    {
-        if (context)
-        {
-            context->addRef();
-        }
-        if (current)
-        {
-            current->release();
-        }
-        current = context;
-    }
-
-    IContext* getCurrent()
-    {
-        if (current)
-        {
-            current->addRef();
-        }
-        return current;
     }
 
     void* setBreak(long long increment)
@@ -940,23 +891,23 @@ public:
     {
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == ICurrentProcess::iid())
+        if (riid == IID_ICurrentProcess)
         {
-            objectPtr = static_cast<ICurrentProcess*>(this);
+            *objectPtr = static_cast<ICurrentProcess*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<ICurrentProcess*>(this);
+            *objectPtr = static_cast<ICurrentProcess*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()

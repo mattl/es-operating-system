@@ -18,8 +18,6 @@
 #include <es/context.h>
 #include "core.h"
 
-using namespace es;
-
 //
 // Binding Implementation
 //
@@ -29,8 +27,8 @@ Binding::Binding(const char* name, IInterface* object) :
     object(object),
     context(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor, IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
     size_t len = strlen(name);
     this->name = new char[len + 1];
     strcpy(this->name, name);
@@ -69,7 +67,7 @@ IInterface* Binding::getObject()
     return object;
 }
 
-void Binding::setObject(IInterface* unknown)
+int Binding::setObject(IInterface* unknown)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -82,9 +80,10 @@ void Binding::setObject(IInterface* unknown)
         unknown->addRef();
         object = unknown;
     }
+    return 0;
 }
 
-int Binding::getName(char* name, int len)
+int Binding::getName(char* name, unsigned int len)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -93,7 +92,7 @@ int Binding::getName(char* name, int len)
         return -1;
     }
     strncpy(name, this->name, len);
-    return strlen(name);    // for esjs
+    return 0;
 }
 
 // Makes this binding invisible from the context so that iterators can
@@ -131,23 +130,23 @@ void Binding::detach()
     }
 }
 
-void* Binding::queryInterface(const Guid& riid)
+bool Binding::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IBinding::iid())
+    if (riid == IID_IBinding)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Binding::addRef(void)
@@ -218,8 +217,8 @@ long Context::parse(const char* name, char* component, size_t len)
 Context::Context() :
     monitor(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor, IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
     Binding* binding = new Binding("", this);
     if (binding)
     {
@@ -320,7 +319,10 @@ Binding* Context::walk(Context* context, const char*& name)
         }
         context->release();
 
-        context = reinterpret_cast<Context*>(object->queryInterface(Context::iid()));
+        if (!object->queryInterface(IID_Context, (void**) &context))
+        {
+            context = 0;
+        }
         object->release();
     }
     if (context)
@@ -471,7 +473,11 @@ IIterator* Context::list(const char* name)
         return 0;
     }
 
-    Context* context = reinterpret_cast<Context*>(object->queryInterface(Context::iid()));
+    Context* context;
+    if (!object->queryInterface(IID_Context, (void**) &context))
+    {
+        context = 0;
+    }
 
     if (context)
     {
@@ -569,27 +575,27 @@ int Context::destroySubcontext(const char* name)
     return hcontext->destroySubcontext(name);
 }
 
-void* Context::queryInterface(const Guid& riid)
+bool Context::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IContext::iid())
+    if (riid == IID_IContext)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == Context::iid())
+    else if (riid == IID_Context)
     {
-        objectPtr = static_cast<Context*>(this);
+        *objectPtr = static_cast<Context*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Context::addRef(void)
@@ -616,8 +622,8 @@ Iterator::Iterator(Binding* binding) :
     monitor(0),
     binding(binding)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor, IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
     binding->addRef();
 }
 
@@ -699,23 +705,23 @@ int Iterator::remove(void)
     return 0;
 }
 
-void* Iterator::queryInterface(const Guid& riid)
+bool Iterator::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IIterator::iid())
+    if (riid == IID_IIterator)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        *objectPtr = static_cast<IIterator*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        *objectPtr = static_cast<IIterator*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Iterator::addRef(void)

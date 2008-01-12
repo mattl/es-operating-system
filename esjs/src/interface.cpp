@@ -19,8 +19,6 @@
 #include <es/hashtable.h>
 #include <es/reflect.h>
 
-using namespace es;
-
 // #define VERBOSE
 
 #ifndef VERBOSE
@@ -36,8 +34,6 @@ class InterfaceStore
     static unsigned char* defaultInterfaceInfo[];
 
     Hashtable<Guid, Reflect::Interface> hashtable;
-
-    void registerInterface(Reflect::Module& module);
 
 public:
     InterfaceStore(int capacity = 128);
@@ -105,8 +101,6 @@ extern unsigned char ISocketInfo[];
 extern unsigned char IIteratorInfo[];
 extern unsigned char ISetInfo[];
 
-extern unsigned char ICanvasRenderingContext2DInfo[];
-
 unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 {
     // Base classes first
@@ -151,8 +145,6 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 
     IIteratorInfo,
     ISetInfo,
-
-    ICanvasRenderingContext2DInfo,
 };
 
 namespace
@@ -232,19 +224,35 @@ void printGuid(const Guid& guid)
            guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
 }
 
-void InterfaceStore::
-registerInterface(Reflect::Module& module)
+void printType(Reflect::Type type)
 {
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
+    if (type.isConst())
     {
-        Reflect::Interface interface(module.getInterface(i));
-        hashtable.add(interface.getIid(), interface);
+        report("const ");
     }
 
-    for (int i = 0; i < module.getModuleCount(); ++i)
+    report("%s", type.getName());
+
+    if (type.getPointer() == 1)
     {
-        Reflect::Module m(module.getModule(i));
-        registerInterface(m);
+        report("*");
+    }
+    else if (type.getPointer() == 2)
+    {
+        report("**");
+    }
+
+    if (type.isReference())
+    {
+        report("&");
+    }
+
+    // We also need the byte count of each parameter.
+    report(" {%d}", type.getSize());
+
+    if (type.isPointer() || type.isReference())
+    {
+        report("-{%d}", type.getReferentSize());
     }
 }
 
@@ -257,8 +265,14 @@ InterfaceStore(int capacity) :
          ++i)
     {
         Reflect r(defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        registerInterface(global);
+        for (int j = 0; j < r.getInterfaceCount(); ++j)
+        {
+            if (r.getInterface(j).getType().isImported())
+            {
+                continue;
+            }
+            hashtable.add(r.getInterface(j).getIid(), r.getInterface(j));
+        }
     }
 }
 
@@ -301,336 +315,10 @@ public:
 };
 
 //
-// invoke
+// InterfaceMethodCode
 //
 
 typedef long long (*InterfaceMethod)(void* self, ...);
-
-static char heap[64*1024];
-
-static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListValue* list)
-{
-    InterfaceMethod** self = reinterpret_cast<InterfaceMethod**>(object->getObject());
-    if (!self)
-    {
-        throw getErrorInstance("TypeError");
-    }
-
-    Reflect::Interface interface = getInterface(iid);
-    Reflect::Method method(interface.getMethod(number));
-    PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
-
-    // Set up parameters
-    Param  argv[9];
-    Param* argp = argv;
-    int    ext = 0;
-    Guid   riid = IInterface::iid();
-
-    // Set this
-    argp->ptr = self;
-    argp->cls = Param::PTR;
-    ++argp;
-
-    // In the following implementation, we assume no out or inout attribute is
-    // used for parameters.
-
-    Reflect::Type returnType = method.getReturnType();
-    switch (returnType.getType())
-    {
-    case Ent::TypeSequence:
-        // int op(xxx* buf, int len, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
-        ++ext;
-        argp->s32 = (long) ((*list)[0])->toNumber();
-        argp->cls = Param::S32;
-        ++argp;
-        break;
-    case Ent::SpecString:
-    case Ent::SpecWString:
-        // int op(xxx* buf, int len, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
-        argp->s32 = sizeof(heap);
-        argp->cls = Param::S32;
-        ++argp;
-        break;
-    case Ent::SpecUuid:
-    case Ent::TypeStructure:
-        // void op(struct* buf, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
-        break;
-    case Ent::TypeArray:
-        // void op(xxx[x] buf, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
-        break;
-    }
-
-    for (int i = ext; i < ext + method.getParameterCount(); ++i, ++argp)
-    {
-        Reflect::Parameter param(method.getParameter(i));
-        Reflect::Type type(param.getType());
-        assert(param.isInput());
-
-        Value* value = (*list)[i];
-
-        switch (type.getType())
-        {
-        case Ent::TypeSequence:
-            // xxx* buf, int len, ...
-            // XXX Assume sequence<octet> now...
-            argp->ptr = value->toString().c_str();
-            argp->cls = Param::PTR;
-            ++argp;
-            value = (*list)[++i];
-            argp->s32 = (s32) value->toNumber();
-            argp->cls = Param::S32;
-            break;
-        case Ent::SpecString:
-            argp->ptr = value->toString().c_str();
-            argp->cls = Param::PTR;
-            break;
-        case Ent::SpecWString:
-            // XXX
-            break;
-        case Ent::SpecUuid:
-            if (!parseGuid(value->toString().c_str(), &argp->guid))
-            {
-                throw getErrorInstance("TypeError");
-            }
-            argp->cls = Param::REF;
-            riid = argp->guid;
-            break;
-        case Ent::TypeStructure:
-            // void op(struct* buf, ...);
-            // XXX expand data
-            break;
-        case Ent::TypeArray:
-            // void op(xxx[x] buf, ...);
-            // XXX expand data
-            break;
-        case Ent::SpecObject:
-        case Ent::TypeInterface:
-            {
-                InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value);
-                if (unknown)
-                {
-                    argp->ptr = unknown->getObject();
-                }
-                else
-                {
-                    argp->ptr = 0;
-                }
-                argp->cls = Param::PTR;
-            }
-            break;
-        case Ent::SpecBool:
-            argp->s32 = (bool) value->toBoolean();
-            argp->cls = Param::S32;
-            break;
-        case Ent::SpecAny:
-            if (sizeof(s32) < sizeof(void*))
-            {
-                argp->s64 = (long long) value->toNumber();
-                argp->cls = Param::S64;
-            }
-            else
-            {
-                argp->s32 = (long) value->toNumber();
-                argp->cls = Param::S32;
-            }
-            break;
-        case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
-        case Ent::SpecU8:
-        case Ent::SpecU16:
-        case Ent::SpecU32:
-            argp->s32 = (long) value->toNumber();
-            argp->cls = Param::S32;
-            break;
-        case Ent::SpecS64:
-        case Ent::SpecU64:
-            argp->s64 = (long long) value->toNumber();
-            argp->cls = Param::S64;
-            break;
-        case Ent::SpecF32:
-            argp->f32 = (float) value->toNumber();
-            argp->cls = Param::F32;
-            break;
-        case Ent::SpecF64:
-            argp->f64 = (double) value->toNumber();
-            argp->cls = Param::F64;
-            break;
-        default:
-            break;
-        }
-    }
-
-    // Invoke method
-    Register<Value> value;
-    unsigned methodNumber = interface.getInheritedMethodCount() + number;
-    int argc = argp - argv;
-    switch (returnType.getType())
-    {
-    case Ent::SpecBool:
-        value = BoolValue::getInstance(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])) ? true : false);
-        break;
-    case Ent::SpecChar:
-    case Ent::SpecWChar:
-    case Ent::SpecS8:
-    case Ent::SpecS16:
-    case Ent::SpecS32:
-    case Ent::SpecU8:
-    case Ent::SpecU16:
-    case Ent::SpecU32:
-        value = new NumberValue(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])));
-        break;
-    case Ent::SpecS64:
-    case Ent::SpecU64:
-        value = new NumberValue(applyS64(argc, argv, (s64 (*)()) ((*self)[methodNumber])));
-        break;
-    case Ent::SpecAny:
-        if (sizeof(s32) < sizeof(void*))
-        {
-            value = new NumberValue(applyS64(argc, argv, (s64 (*)()) ((*self)[methodNumber])));
-        }
-        else
-        {
-            value = new NumberValue(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])));
-        }
-        break;
-    case Ent::SpecF32:
-        value = new NumberValue(applyF32(argc, argv, (f32 (*)()) ((*self)[methodNumber])));
-        break;
-    case Ent::SpecF64:
-        value = new NumberValue(applyF64(argc, argv, (f64 (*)()) ((*self)[methodNumber])));
-        break;
-    case Ent::SpecString:
-        {
-            int result = applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
-            if (result < 0)
-            {
-                heap[0] = '\0';
-            }
-            value = new StringValue(heap);
-        }
-        break;
-    case Ent::TypeSequence:
-        {
-            // XXX Assume sequence<octet> now...
-            int count = applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
-            if (count < 0)
-            {
-                count = 0;
-            }
-            heap[count] = '\0';
-            value = new StringValue(heap);
-        }
-        break;
-    case Ent::TypeInterface:
-        riid = returnType.getInterface().getIid();
-        // FALL THROUGH
-    case Ent::SpecObject:
-        {
-            IInterface* unknown = (IInterface*) applyPTR(argc, argv, (const void* (*)()) ((*self)[methodNumber]));
-            if (unknown)
-            {
-                ObjectValue* instance = new InterfacePointerValue(unknown);
-                instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
-                value = instance;
-            }
-            else
-            {
-                value = NullValue::getInstance();
-            }
-        }
-        break;
-    case Ent::SpecVoid:
-        applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
-        value = NullValue::getInstance();
-        break;
-    }
-
-    if (iid == IInterface::iid() && number == 2)   // IInterface::release()
-    {
-        object->clearObject();
-    }
-
-    return value;
-}
-
-//
-// AttributeValue
-//
-
-class AttributeValue : public ObjectValue
-{
-    bool    readOnly;
-    Guid    iid;
-    int     getter;     // Method number
-    int     setter;     // Method number
-
-public:
-    AttributeValue(const Guid& iid) :
-        readOnly(true),
-        iid(iid),
-        getter(0),
-        setter(0)
-    {
-    }
-
-    ~AttributeValue()
-    {
-    }
-
-    void addSetter(int number)
-    {
-        readOnly = false;
-        setter = number;
-    }
-
-    void addGetter(int number)
-    {
-        getter = number;
-    }
-
-    // Getter
-    virtual Value* get(Value* self)
-    {
-        if (dynamic_cast<InterfacePointerValue*>(self))
-        {
-            Register<ListValue> list = new ListValue;
-            return invoke(iid, getter, static_cast<InterfacePointerValue*>(self), list);
-        }
-        else
-        {
-            return this;
-        }
-    }
-
-    // Setter
-    virtual bool put(Value* self, Value* value)
-    {
-        if (dynamic_cast<InterfacePointerValue*>(self) && !readOnly)
-        {
-            Register<ListValue> list = new ListValue;
-            list->push(value);
-            invoke(iid, setter, static_cast<InterfacePointerValue*>(self), list);
-        }
-        return true;
-    }
-};
-
-//
-// InterfaceMethodCode
-//
 
 class InterfaceMethodCode : public Code
 {
@@ -648,21 +336,48 @@ public:
         number(number)
     {
         Reflect::Interface interface = getInterface(iid);
-        Reflect::Method method(interface.getMethod(number));
+        Reflect::Function method(interface.getMethod(number));
 
-#if 0
         // Add as many arguments as required.
         for (int i = 0; i < method.getParameterCount(); ++i)
         {
-            Reflect::Parameter param(method.getParameter(i));
-            if (param.isInput())
+            Reflect::Identifier param(method.getParameter(i));
+            if (param.isInput() || !param.isOutput())
             {
+#ifdef VERBOSE
+                report("    %s : ", param.getName());
+                printType(param.getType());
+                if (param.getType().isInteger())
+                {
+                    report(" : Integer");
+                }
+                if (param.getType().isFloat())
+                {
+                    report(" : Float");
+                }
+                if (param.getType().isBoolean())
+                {
+                    report(" : Boolean");
+                }
+                if (param.getType().isString())
+                {
+                    report(" : String");
+                }
+                if (param.getType().isUuid())
+                {
+                    report(" : UUID");
+                }
+                if (param.getType().isInterfacePointer())
+                {
+                    report(" : Interface Pointer");
+                }
+                report("\n");
+#endif
                 // Note the name "arguments" is reserved in a ECMAScript function.
                 ASSERT(strcmp(param.getName(), "arguments") != 0);
                 arguments->add(new Identifier(param.getName()));
             }
         }
-#endif
 
         object->setParameterList(arguments);
         object->setScope(getGlobal());
@@ -672,7 +387,6 @@ public:
         object->put("prototype", prototype);
 
     }
-
     ~InterfaceMethodCode()
     {
         delete arguments;
@@ -680,13 +394,239 @@ public:
 
     CompletionType evaluate()
     {
+        Reflect::Interface interface = getInterface(iid);
+        Reflect::Function method(interface.getMethod(number));
+
+        // Get this.
         InterfacePointerValue* object = dynamic_cast<InterfacePointerValue*>(getThis());
         if (!object)
         {
             throw getErrorInstance("TypeError");
         }
+
+        // Copy parameters in
+        Param  argv[9];
+        Param* argp = argv;
+        int    size;
+
+        int    output = -1;
+
+        // Set this
+        InterfaceMethod** self = reinterpret_cast<InterfaceMethod**>(object->getObject());
+        argp->ptr = self;
+        argp->cls = Param::PTR;
+        ++argp;
+
+        unsigned baseMethodCount = interface.getTotalMethodCount() - interface.getMethodCount();
+
+        PRINTF("evaluate %s.%s(%p) %d\n", interface.getName(), method.getName(), self, baseMethodCount);
+
+        if (!self)
+        {
+            throw getErrorInstance("TypeError");
+        }
+
         ListValue* list = static_cast<ListValue*>(getScopeChain()->get("arguments"));
-        Register<Value> value = invoke(iid, number, object, list);
+        for (int i = 0, j = 0; i < method.getParameterCount(); ++i, ++argp)
+        {
+            Reflect::Identifier param(method.getParameter(i));
+            Reflect::Type type(param.getType());
+
+            size = type.getSize();
+            if (param.isInput() || !param.isOutput())
+            {
+                Value* value = (*list)[j++];
+                if (type.isInteger())
+                {
+                    if (size == sizeof(s64))
+                    {
+                        argp->s64 = (long long) value->toNumber();
+                        argp->cls = Param::S64;
+                    }
+                    else
+                    {
+                        argp->s32 = (long) value->toNumber();
+                        argp->cls = Param::S32;
+                    }
+                }
+                else if (type.isFloat())
+                {
+                    if (size == sizeof(f64))
+                    {
+                        argp->f64 = (double) value->toNumber();
+                        argp->cls = Param::F64;
+                    }
+                    else
+                    {
+                        argp->f32 = (float) value->toNumber();
+                        argp->cls = Param::F32;
+                    }
+                }
+                else if (type.isBoolean())
+                {
+                    argp->s32 = (bool) value->toBoolean();
+                    argp->cls = Param::S32;
+                }
+                else if (type.isUuid())
+                {
+                    if (!parseGuid(value->toString().c_str(), &argp->guid))
+                    {
+                        throw getErrorInstance("TypeError");
+                    }
+                    argp->cls = Param::REF;
+                }
+                else if (type.isInterfacePointer())
+                {
+                    InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value);
+                    if (!unknown)
+                    {
+                        throw getErrorInstance("TypeError");
+                    }
+                    argp->ptr = unknown->getObject();
+                    argp->cls = Param::PTR;
+                }
+                else if (type.isString() || type.isPointer())   // XXX
+                {
+                    argp->ptr = value->toString().c_str();
+                    argp->cls = Param::PTR;
+                }
+            }
+            else
+            {
+                output = i;
+                if (param.isInterfacePointer())
+                {
+                    argp->ptr = 0;
+                    argp->cls = Param::REF;
+                }
+                else if (type.isString() || type.isPointer() || type.isReference())   // XXX
+                {
+                    // Determine the size of the object pointed.
+                    int count(0);
+                    if (0 <= param.getSizeIs())
+                    {
+                        count = (int) ((*list)[param.getSizeIs() - 1]->toNumber()); // XXX - 1
+                    }
+                    else
+                    {
+                        // Determine the size of object pointed by this parameter.
+                        count = param.getType().getReferentSize();
+                    }
+                    argp->ptr = malloc(count + 1);
+                    argp->cls = Param::PTR;
+                }
+                else
+                {
+                    ASSERT(0);  // XXX
+                }
+            }
+        }
+
+        // Invoke method
+        Reflect::Type returnType(method.getReturnType());
+        size = returnType.getSize();
+        Param result;
+        Register<Value> value;
+
+        if (returnType.isInteger())
+        {
+            if (size == sizeof(s64))
+            {
+                value = new NumberValue(applyS64(1 + method.getParameterCount(), argv, (s64 (*)()) ((*self)[baseMethodCount + number])));
+            }
+            else
+            {
+                value = new NumberValue(applyS32(1 + method.getParameterCount(), argv, (s32 (*)()) ((*self)[baseMethodCount + number])));
+            }
+        }
+        else if (returnType.isFloat())
+        {
+            if (size == sizeof(f64))
+            {
+                value = new NumberValue(applyF64(1 + method.getParameterCount(), argv, (f64 (*)()) ((*self)[baseMethodCount + number])));
+            }
+            else
+            {
+                value = new NumberValue(applyF32(1 + method.getParameterCount(), argv, (f32 (*)()) ((*self)[baseMethodCount + number])));
+            }
+        }
+        else if (returnType.isBoolean())
+        {
+            bool r = applyS32(1 + method.getParameterCount(), argv, (s32 (*)()) ((*self)[baseMethodCount + number]));
+            value = BoolValue::getInstance(r ? true : false);
+        }
+        else if (returnType.isString())
+        {
+            value = new StringValue((char*) applyPTR(1 + method.getParameterCount(), argv, (const void* (*)()) ((*self)[baseMethodCount + number])));
+        }
+        else if (returnType.isInterfacePointer())
+        {
+            IInterface* unknown = (IInterface*) applyPTR(1 + method.getParameterCount(), argv, (const void* (*)()) ((*self)[baseMethodCount + number]));
+            if (unknown)
+            {
+                ObjectValue* instance = new InterfacePointerValue(unknown);
+                instance->setPrototype(getGlobal()->get(returnType.getName())->get("prototype"));   // XXX Should use IID
+                value = instance;
+            }
+            else
+            {
+                value = NullValue::getInstance();
+            }
+        }
+        else
+        {
+            applyS32(1 + method.getParameterCount(), argv, (s32 (*)()) ((*self)[baseMethodCount + number]));
+            value = NullValue::getInstance();
+        }
+
+        // Process output
+        if (0 <= output)
+        {
+            Reflect::Identifier param(method.getParameter(output));
+            Reflect::Type type(param.getType());
+            if (param.isInterfacePointer())
+            {
+                IInterface* unknown = (IInterface*) argv[1 + output].ptr;
+                if (unknown)
+                {
+                    ObjectValue* instance = new InterfacePointerValue(unknown);
+                    if (0 <= param.getIidIs())
+                    {
+                        instance->setPrototype(getGlobal()->get(getInterface(argv[1 + param.getIidIs()].guid).getName())->get("prototype"));   // XXX Should use IID
+                    }
+                    else
+                    {
+                        instance->setPrototype(getGlobal()->get(type.getName())->get("prototype"));   // XXX Should use IID
+                    }
+                    value = instance;
+                }
+                else
+                {
+                    value = NullValue::getInstance();
+                }
+            }
+            else if (type.isString() || type.isPointer() || type.isReference())   // XXX
+            {
+                int count = (int) value->toNumber();
+                if (0 <= count)
+                {
+                    argp = &argv[1 + output];   // 1 for this
+                    ((char*) (argp->ptr))[count] = '\0';
+                    value = new StringValue((char*) argp->ptr);
+                }
+                free((void*) argp->ptr);
+            }
+            else
+            {
+                ASSERT(0);  // XXX
+            }
+        }
+
+        if (iid == IID_IInterface && number == 2)   // IInterface::release()
+        {
+            object->clearObject();
+        }
+
         return CompletionType(CompletionType::Return, value, "");
     }
 };
@@ -717,49 +657,16 @@ public:
         for (int i = 0; i < interface.getMethodCount(); ++i)
         {
             // Construct Method object
-            Reflect::Method method(interface.getMethod(i));
+            Reflect::Function method(interface.getMethod(i));
             if (prototype->hasProperty(method.getName()))
             {
-                if (method.isOperation())
-                {
-                    // XXX Currently overloaded functions are just ignored.
-                }
-                else
-                {
-                    AttributeValue* attribute = static_cast<AttributeValue*>(prototype->get(method.getName()));
-                    if (method.isGetter())
-                    {
-                        attribute->addGetter(i);
-                    }
-                    else
-                    {
-                        attribute->addSetter(i);
-                    }
-                }
+                // XXX Currently overloaded functions are just ignored.
+                continue;
             }
-            else
-            {
-                if (method.isOperation())
-                {
-                    ObjectValue* function = new ObjectValue;
-                    function->setCode(new InterfaceMethodCode(function, iid, i));
-                    prototype->put(method.getName(), function);
-                }
-                else
-                {
-                    // method is an attribute
-                    AttributeValue* attribute = new AttributeValue(iid);
-                    if (method.isGetter())
-                    {
-                        attribute->addGetter(i);
-                    }
-                    else
-                    {
-                        attribute->addSetter(i);
-                    }
-                    prototype->put(method.getName(), attribute);
-                }
-            }
+            PRINTF("function: %s\n", method.getName());
+            ObjectValue* function = new ObjectValue;
+            function->setCode(new InterfaceMethodCode(function, iid, i));
+            prototype->put(method.getName(), function);
         }
 
         if (interface.getSuperIid() == GUID_NULL)
@@ -793,7 +700,7 @@ public:
 
         IInterface* object;
         object = self->getObject();
-        if (!object || !(object = reinterpret_cast<IInterface*>(object->queryInterface(iid))))
+        if (!object || !object->queryInterface(iid, (void**) &object))
         {
             // We should throw an error in case called by a new expression.
             throw getErrorInstance("TypeError");
@@ -876,27 +783,6 @@ ObjectValue* constructInterfaceObject()
     return object;
 }
 
-static void constructSystemObject(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface = module.getInterface(i);
-
-        // Construct Default Interface Object
-        PRINTF("%s\n", interface.getName());
-        ObjectValue* object = new ObjectValue;
-        object->setCode(new InterfaceConstructor(object, interface.getIid()));
-        object->setPrototype(getGlobal()->get("Interface")->getPrototype());
-        getGlobal()->put(interface.getName(), object);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
-    {
-        Reflect::Module m(module.getModule(i));
-        constructSystemObject(m);
-    }
-}
-
 ObjectValue* constructSystemObject(void* system)
 {
     for (int i = 0;
@@ -904,12 +790,37 @@ ObjectValue* constructSystemObject(void* system)
          ++i)
     {
         Reflect r(InterfaceStore::defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        constructSystemObject(global);
+        for (int j = 0; j < r.getInterfaceCount(); ++j)
+        {
+            if (r.getInterface(j).getType().isImported())
+            {
+                continue;
+            }
+
+            // Construct Default Interface Object
+            PRINTF("%s\n", r.getInterface(j).getName());
+            ObjectValue* object = new ObjectValue;
+            object->setCode(new InterfaceConstructor(object, r.getInterface(j).getIid()));
+            object->setPrototype(getGlobal()->get("Interface")->getPrototype());
+            getGlobal()->put(r.getInterface(j).getName(), object);
+        }
     }
 
     System()->addRef();
     ObjectValue* object = new InterfacePointerValue(System());
     object->setPrototype(getGlobal()->get("ICurrentProcess")->get("prototype"));
     return object;
+}
+
+int report(const char* spec, ...)
+{
+    va_list list;
+
+    va_start(list, spec);
+    IStream* output(System()->getOut());
+    Formatter formatter(output);
+    int count = formatter.format(spec, list);
+    output->release();
+    va_end(list);
+    return count;
 }

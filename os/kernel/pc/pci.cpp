@@ -16,7 +16,7 @@
 #include "i386/dp8390d.h"
 #include "i386/es1370.h"
 
-// #define VERBOSE
+#define VERBOSE
 
 Pci::
 Pci(Mps* mps, IContext* device) :

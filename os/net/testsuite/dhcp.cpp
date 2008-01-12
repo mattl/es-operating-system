@@ -31,8 +31,6 @@
 #include <es/net/dns.h>
 #include <es/net/udp.h>
 
-using namespace es;
-
 extern int esInit(IInterface** nameSpace);
 extern IThread* esCreateThread(void* (*start)(void* param), void* param);
 extern void esRegisterInternetProtocol(IContext* context);

@@ -17,8 +17,6 @@
 #include <es/ref.h>
 #include <es/base/ICallback.h>
 
-using namespace es;
-
 class A : public ICallback
 {
     Ref ref;
@@ -29,23 +27,23 @@ public:
         printf("done.\n");
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<ICallback*>(this);
+            *objectPtr = static_cast<ICallback*>(this);
         }
-        else if (riid == ICallback::iid())
+        else if (riid == IID_ICallback)
         {
-            objectPtr = static_cast<ICallback*>(this);
+            *objectPtr = static_cast<ICallback*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)

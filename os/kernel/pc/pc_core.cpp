@@ -18,13 +18,12 @@
 #include <es/exception.h>
 #include "apic.h"
 #include "core.h"
-#include "8254.h"
 
 // #define VERBOSE
 
-extern void debug(Ureg* ureg);
+extern "C" void _exit(int i);
 
-extern bool nmiHandler();
+extern void debug(Ureg* ureg);
 
 namespace
 {
@@ -66,23 +65,23 @@ namespace
         unsigned int splLo() { return 0; }
         unsigned int splHi() { return 0; }
         void splX(unsigned int x) {}
-        void* queryInterface(const Guid& riid)
+        bool queryInterface(const Guid& riid, void** objectPtr)
         {
-            void* objectPtr;
-            if (riid == IPic::iid())
+            if (riid == IID_IPic)
             {
-                objectPtr = static_cast<IPic*>(this);
+                *objectPtr = static_cast<IPic*>(this);
             }
-            else if (riid == IInterface::iid())
+            else if (riid == IID_IInterface)
             {
-                objectPtr = static_cast<IPic*>(this);
+                *objectPtr = static_cast<IPic*>(this);
             }
             else
             {
-                return NULL;
+                *objectPtr = NULL;
+                return false;
             }
-            static_cast<IInterface*>(objectPtr)->addRef();
-            return objectPtr;
+            static_cast<IInterface*>(*objectPtr)->addRef();
+            return true;
         }
         unsigned int addRef(void)
         {
@@ -121,8 +120,6 @@ u8 Core::isaBus;
 
 extern "C"
 {
-    asm("   .text");
-    asm("   .align  16, 0");
     asm("catchException:");
     asm("   pushl   %ds");
     asm("   pushl   %es");
@@ -442,22 +439,6 @@ static void settr(register u16 sel)
         :: "a" (sel));
 }
 
-void Core::
-doubleFault()
-{
-    Core* core = getCurrentCore();
-    Tss* tss = core->tss1;
-
-    esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
-    tss->dump();
-    for (;;)
-    {
-#ifdef __i386__
-        __asm__ __volatile__ ("hlt\n");
-#endif
-    }
-}
-
 Core::
 Core(Sched* sched) :
     sched(sched),
@@ -472,10 +453,8 @@ Core(Sched* sched) :
 
     u8* ptr = reinterpret_cast<u8*>((reinterpret_cast<unsigned long>(this) & ~0xff) - 256);
 
-    tss0 = reinterpret_cast<Tss*>(ptr);
-    ASSERT(reinterpret_cast<unsigned long>(tss0) % 128 == 0);
-    tss1 = reinterpret_cast<Tss*>(ptr + 128);
-    ASSERT(reinterpret_cast<unsigned long>(tss1) % 128 == 0);
+    tss = reinterpret_cast<Tss*>(ptr);
+    ASSERT(reinterpret_cast<unsigned long>(tss) % 256 == 0);
 
     stack = ptr + 256 + ((sizeof(Core) + 15) & ~15);
     *(int*) stack = 0xa5a5a5a5;
@@ -485,29 +464,18 @@ Core(Sched* sched) :
     id = Sched::numCores - 1;
     coreTable[id] = this;
 
-    esReport("Core %d at %p:%p:%p %p:%d\n", id, this, ptr, tss0, stack, stackSize);
+    esReport("Core %d at %p:%p:%p %p:%d\n", id, this, ptr, tss, stack, stackSize);
 
     // Reserve a page for TCBs that can be read from the user level.
     tcb = reinterpret_cast<Tcb*>(0x80011000 + id * sizeof(Tcb));
     memset(tcb, 0, sizeof(Tcb));
 
-    memset(tss0, 0, sizeof(Tss));
-    tss0->ss0 = tss0->ds = tss0->es = tss0->fs = tss0->ss = KDATASEL;
-    tss0->gs = KTCBSEL;
-    tss0->cs = KCODESEL;
-    tss0->iomap = sizeof(Tss);
-    tss0->sp0 = 0;   // kernel stack pointer
-
-    memset(tss1, 0, sizeof(Tss));
-    tss1->ss0 = tss1->ds = tss1->es = tss1->fs = tss1->ss = KDATASEL;
-    tss1->gs = KTCBSEL;
-    tss1->cs = KCODESEL;
-    tss1->iomap = sizeof(Tss);
-    tss1->sp0 = 0x80014000;  // kernel stack pointer
-    tss1->eip = (u32) doubleFault;
-    tss1->esp = 0x80014000;
-    tss1->eflags = 0x02;
-    tss1->cr3 = 0x10000;
+    memset(tss, 0, sizeof(Tss));
+    tss->ss0 = tss->ds = tss->es = tss->fs = tss->ss = KDATASEL;
+    tss->gs = KTCBSEL;
+    tss->cs = KCODESEL;
+    tss->iomap = sizeof(Tss);
+    tss->sp0 = 0;   // kernel stack pointer
 
     gdt[0].init(0, 0, 0);
 
@@ -528,7 +496,7 @@ Core(Sched* sched) :
                 sizeof(tcb) - 1, Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGDATA);
 
     // TSSSEL
-    gdt[6].init((u32) tss0, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
+    gdt[6].init((u32) tss, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
 
     // UCODESEL
     gdt[7].init(0, 0x7ffff, Segdesc::SEGG | Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGEXEC | Segdesc::SEGR, 3);
@@ -540,9 +508,6 @@ Core(Sched* sched) :
     gdt[9].init(0x80000000 - 8192 + id * sizeof(Tcb),
                 sizeof(tcb) - 1, Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGDATA, 3);
 
-    // TSS1SEL
-    gdt[10].init((u32) tss1, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
-
     if (id == 0)
     {
         u32 exceptionAddr = reinterpret_cast<u32>(exceptionTable);
@@ -553,7 +518,6 @@ Core(Sched* sched) :
             {
             case NO_DE:     // Divide Error
             case NO_DB:     // Debug
-            case NO_NMI:    // NMI Interrupt
             case NO_BP:     // Breakpoint
             case NO_OF:     // Overflow
             case NO_BR:     // BOUND Range Exceeded
@@ -567,12 +531,8 @@ Core(Sched* sched) :
             case NO_PF:     // Page Fault
             case NO_MF:     // Floating-Point Error (Math Fault)
             case NO_AC:     // Alignment Check
-            case NO_MC:     // Machine Check
             case NO_XF:     // SIMD Floating-Point Exception
                 desc->setInterruptHandler(KCODESEL, exceptionAddr);
-                break;
-            case NO_DF:     // Double Fault
-                desc->setTaskGate(TSS1SEL);
                 break;
             case 65:        // System call
             case 66:        // Upcall
@@ -597,7 +557,7 @@ Core(Sched* sched) :
         ::: "%eax");
 
     int eax, ebx, ecx, edx;
-    cpuid(0x01, &eax, &ebx, &ecx, &edx);
+    cpuid(1, &eax, &ebx, &ecx, &edx);
     esReport("cpuid(1): %08x %08x\n", ecx, edx);
     fxsr = (edx & (1u << 24)) ? true : false;
     sse = (edx & (1u << 25)) ? true : false;
@@ -614,7 +574,6 @@ void Core::
 reschedule(void* param)
 {
     unsigned x = splHi();
-    Apic::started();
     Core* core = getCurrentCore();
     for (;;)
     {
@@ -669,20 +628,14 @@ reschedule(void* param)
                 core->tcb->tcb = current->tcb;
                 current->process->load();
             }
-            else
-            {
-                // To make kernel threads be able to call kill(), etc. safely.
-                core->currentProc = 0;
-            }
         }
         else
         {
             // The current thread is upcalling a server process.
             core->tcb->tcb = record->tcb;
-            ASSERT(record->process);
             record->process->load();
         }
-        core->tss0->sp0 = current->sp0;
+        core->tss->sp0 = current->sp0;
 
 #ifdef VERBOSE
         esReport("[%d:%p] Core::reschedule out. current = %p: %p %p\n",
@@ -828,13 +781,13 @@ dispatchException(Ureg* ureg)
                 break;
             }
         }
-        esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
+        esReport("Kernel panic [%d]\n", core->id);
         ureg->dump();
         if (process)
         {
             process->dump();
         }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x cr2:%x", ureg->trap, ureg->eip, cr2);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x cr2:%x\n", ureg->trap, ureg->eip, cr2);
         break;
       case 65:  // system call interface
         // ureg->eax: self
@@ -886,10 +839,10 @@ dispatchException(Ureg* ureg)
             current->testCancel();
             break;
         }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         break;
       case 66:  // upcall interface
-        if (process)
+        if (core->currentProc)
         {
             splLo();
 
@@ -899,19 +852,8 @@ dispatchException(Ureg* ureg)
             current->testCancel();
             break;
         }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         break;
-      case NO_NMI:
-        if (nmiHandler())
-        {
-            static long long nmiTick;
-            if (Pit::tick != nmiTick)
-            {
-                nmiTick = Pit::tick;
-                break;
-            }
-        }
-        // FALL THROUGH
       default:
         if (32 <= ureg->trap)
         {
@@ -936,9 +878,9 @@ dispatchException(Ureg* ureg)
         }
         else
         {
-            esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
+            esReport("Kernel panic [%d]\n", core->id);
             ureg->dump();
-            esPanic(__FILE__, __LINE__, "Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+            esPanic(__FILE__, __LINE__, "Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         }
         break;
     }
@@ -1060,11 +1002,6 @@ checkStack()
 {
     return *(int*) stack == 0xa5a5a5a5;
 }
-
-// Core memory layout:
-//
-// [ TSS0 (128 bytes) | Tss1 (128 bytes for DF#) | Core | Stack ] in 16384 bytes
-//
 
 // Allocates memory for Core, Core stack, and Core TSS at the same time.
 void* Core::

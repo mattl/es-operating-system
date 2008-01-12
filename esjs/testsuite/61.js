@@ -1,12 +1,12 @@
-stdin = System.input;
-stdout = System.output;
-root = System.root;
+stdin = System.getIn();
+stdout = System.getOut();
+root = System.getRoot();
 
 iter = root.list("");
 while (iter.hasNext())
 {
     file = IFile(iter.next());
-    name = file.name;
+    name = file.getName(256);
     stdout.write(name + '\n', name.length + 1);
 }
 "Ok";

@@ -38,8 +38,9 @@ FloppyDrive(FloppyController* ctlr, u8 drive) :
     gpl = 0x1b;
     fgpl = 0x54;
 
-    alarm = reinterpret_cast<IAlarm*>(
-        esCreateInstance(CLSID_Alarm, IAlarm::iid()));
+    esCreateInstance(CLSID_Alarm,
+                     IID_IAlarm,
+                     reinterpret_cast<void**>(&alarm));
 
     alarm->setEnabled(false);
     alarm->setInterval(10000000);
@@ -370,7 +371,7 @@ initialize()
     return 0;
 }
 
-void FloppyDrive::
+int FloppyDrive::
 getGeometry(Geometry* geometry)
 {
     Synchronized<IMonitor*> method(ctlr->monitor);
@@ -383,40 +384,43 @@ getGeometry(Geometry* geometry)
                          geometry->heads *
                          geometry->sectorsPerTrack *
                          geometry->bytesPerSector;
+    return 0;
 }
 
-void FloppyDrive::
+int FloppyDrive::
 getLayout(Partition* partition)
 {
+    return 0;
 }
 
-void FloppyDrive::
-setLayout(const Partition* partition)
+int FloppyDrive::
+setLayout(Partition* partition)
 {
+    return 0;
 }
 
-void* FloppyDrive::
-queryInterface(const Guid& riid)
+bool FloppyDrive::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IDiskManagement::iid())
+    if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int FloppyDrive::

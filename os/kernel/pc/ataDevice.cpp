@@ -40,8 +40,9 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
     using namespace DeviceIdentification;
     using namespace Status;
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     if (!identify(signature))
     {
@@ -259,7 +260,7 @@ int AtaDevice::initialize()
     return 0;
 }
 
-void AtaDevice::
+int AtaDevice::
 getGeometry(Geometry* geometry)
 {
     geometry->cylinders = id[1];        // 0..1023
@@ -267,18 +268,19 @@ getGeometry(Geometry* geometry)
     geometry->sectorsPerTrack = id[6];  // 1..63
     geometry->bytesPerSector = sectorSize;
     geometry->diskSize = size;
+    return 0;
 }
 
-void AtaDevice::
+int AtaDevice::
 getLayout(Partition* partition)
 {
-    // [check] throw excpetion.
+    return -1;
 }
 
-void AtaDevice::
-setLayout(const Partition* partition)
+int AtaDevice::
+setLayout(Partition* partition)
 {
-    // [check] throw excpetion.
+    return -1;
 }
 
 IContext* AtaDevice::
@@ -288,8 +290,9 @@ getPartition()
     {
         Synchronized<IMonitor*> method(monitor);
 
-        partition = reinterpret_cast<IContext*>(
-            esCreateInstance(CLSID_Partition, IContext::iid()));
+        esCreateInstance(CLSID_Partition,
+                         IID_IContext,
+                         reinterpret_cast<void**>(&partition));
         if (partition)
         {
             Handle<IPartition> handle(partition);
@@ -372,32 +375,32 @@ list(const char* name)
     return partition->list(name);
 }
 
-void* AtaDevice::
-queryInterface(const Guid& riid)
+bool AtaDevice::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IContext::iid() && getPartition())
+    else if (riid == IID_IContext && getPartition())
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaDevice::

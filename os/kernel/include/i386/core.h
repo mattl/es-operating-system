@@ -50,7 +50,6 @@ public:
     static const u16 UCODESEL = 56 | 3;
     static const u16 UDATASEL = 64 | 3;
     static const u16 TCBSEL = 72 | 3;   // for TCB
-    static const u16 TSS1SEL = 80;
 
 private:
     u8                  id;             // Core ID (may not be equal to local APIC ID)
@@ -62,11 +61,10 @@ private:
 
     void*               stack;
     Label               label;
-    Tss*                tss0;           // 128 byte aligned
-    Tss*                tss1;           // 128 byte aligned
+    Tss*                tss;            // 256 byte aligned
     Tcb*                tcb;
     Tcb                 ktcb;
-    Segdesc             gdt[11] __attribute__ ((aligned (16)));
+    Segdesc             gdt[10] __attribute__ ((aligned (16)));
     SegdescLoc          gdtLoc;
 
     static Core*        coreTable[CORE_MAX];
@@ -145,7 +143,6 @@ public:
     static void enableFPU();
     static void disableFPU();
     static void shutdown();
-    static void doubleFault();
 
     // class specific allocator
     static void* operator new(size_t size) throw(std::bad_alloc);

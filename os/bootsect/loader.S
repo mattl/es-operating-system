@@ -50,7 +50,6 @@
 // 0x00011000 - 0x00011fff      User TCB
 // 0x00012000 - 0x00012fff      Kernel TCBs
 // 0x00013000 - 0x00013fff      AP initial stack
-// 0x00014000 - 0x00014fff      Kernel page table
 // 0x00020000 - 0x00020fff      FDC DMA buffer
 // 0x00021000 - 0x00021fff      SB16 8-bit DMA buffer
 // 0x00022000 - 0x00023fff      SB16 16-bit DMA buffer
@@ -473,7 +472,9 @@ text_mode:
 
         cli
 
-        lgdt    gdt48                   // Load GDT
+        // Set up GDT and IDT
+        lgdt    gdt48
+        lidt    idt48
 
         // Switch to the protected mode
         movl    %cr0, %eax
@@ -484,9 +485,6 @@ text_mode:
         .byte 0x66                      // Need prefix as still using 16bit CS
         ljmp    $8, $(0x3000*16 + 0f)   // Clear prefetch and normalize %eip
 0:
-        xorl    %eax, %eax
-        lldt    %ax                     // Invalidate LDTR
-
         movw    $16, %ax
         movw    %ax, %ds
         movw    %ax, %es
@@ -496,7 +494,8 @@ text_mode:
         movw    $40, %ax
         movw    %ax, %gs
 
-        lidt    idt48                   // Load IDT
+        xorl    %eax, %eax
+        lldt    %ax                     // Invalidate LDTR
 
         // Turn on PSE
         movl    %cr4, %eax
@@ -1065,7 +1064,14 @@ _startap:
         cli
         cld
 
-        lgdt    gdt48                   // Load GDT
+        // Set up GDT and IDT
+        lgdt    gdt48
+        lidt    idt48
+
+        // Switch to the protected mode
+        movl    %cr0, %eax
+        orl     $1, %eax
+        movl    %eax, %cr0
 
         // Switch to the protected mode
         movl    %cr0, %eax
@@ -1076,9 +1082,6 @@ _startap:
         .byte 0x66                      // Need prefix as still using 16bit CS
         ljmp    $8, $(0x3000*16 + 0f)   // Clear prefetch and normalize %eip
 0:
-        xorl    %eax, %eax
-        lldt    %ax                     // Invalidate LDTR
-
         movw    $16, %ax
         movw    %ax, %ds
         movw    %ax, %es
@@ -1088,8 +1091,10 @@ _startap:
         movw    $40, %ax
         movw    %ax, %gs
 
-        lidt    idt48                   // Load IDT
+        xorl    %eax, %eax
+        lldt    %ax                     // Invalidate LDTR
 
+#if 1
         // Turn on PSE
         movl    %cr4, %eax
         orl     $0x10, %eax
@@ -1103,8 +1108,9 @@ _startap:
         movl    %cr0, %eax
         orl     $0x80010000, %eax
         movl    %eax, %cr0              // and set paging (PG) bit with WP
+#endif
 
-        movl    $0x80014000, %esp
+        movl    $0x80040000, %esp
         pushl   %esp
         movl    %esp, %gs:0             // Set AP TLS thread pointer
         xorl    %eax, %eax
@@ -1114,7 +1120,7 @@ _startap:
 
         pushl   %eax                    // argv
         pushl   %eax                    // argc
-        jmp     *(0x30000 + Entryap)    // Jump to the es.img
+        ljmpl   *(0x30000 + Entryap)    // Jump to the es.img
 
         .code16
 

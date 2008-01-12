@@ -65,12 +65,11 @@ public:
     void beep();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 
     friend class Apic;
-    friend class Core;
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_8254_H_INCLUDED

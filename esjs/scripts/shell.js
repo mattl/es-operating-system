@@ -1,12 +1,11 @@
 CLSID_Process = "3979e8b4-2e86-11db-9c02-0009bf000001";
-IID_IProcess = "3b6bc7bd-44c2-11dc-9c02-0009bf000001";
+IID_IProcess = "8a122054-1f92-11dc-9c02-0009bf000001";
 
-stdin = System.input;
-stdout = System.output;
-stderr = System.error;
-root = System.root;
+stdin = System.getIn();
+stdout = System.getOut();
+stderr = System.getError();
+root = System.getRoot();
 classStore = IClassStore(root.lookup("class"));
-cwd = root;
 
 path = [ "file" ];
 
@@ -37,7 +36,7 @@ function readLine(prompt)
     throw "EOF";
 }
 
-elem = /('([^'\\]|\\.)*')|(\"([^"\\]|\\.)*\"|(([^ \\\t]|\\.)+))/g;
+elem = /('([^'\\]|\\.)*')|(\"([^"\\]|\\.)*\"|(([^ \\\t\v\f]|\\.)+))/g;
 
 function getFile(pathname)
 {
@@ -62,7 +61,8 @@ function getFile(pathname)
     }
 }
 
-do {
+for (;;)
+{
     var line = readLine("% ");
 
     var params = line.match(elem);
@@ -74,16 +74,15 @@ do {
     try
     {
         var file = getFile(params[0]);
-        var stream = file.stream;
+        var stream = file.getStream();
         var x = stream.read(4);
         if (x == "\x7fELF")
         {
             process = classStore.createInstance(CLSID_Process, IID_IProcess);
-            process.root = root;
-            process.current = cwd;
-            process.input = stdin;
-            process.output = stdout;
-            process.error = stderr;
+            process.setRoot(root);
+            process.setIn(stdin);
+            process.setOut(stdout);
+            process.setError(stderr);
             process.start(file, params.join(' '));
             process.wait();
         }
@@ -102,4 +101,4 @@ do {
         var message = String(e) + '\n';
         stdout.write(message, message.length);
     }
-} while (params[0] != 'exit');
+}

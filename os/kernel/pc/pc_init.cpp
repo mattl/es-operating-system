@@ -144,6 +144,7 @@ static void initAP(...)
     apic->splHi();
     apic->setTimer(32, 1000);
     Core* core = new Core(sched);
+    apic->started();
     core->start();
     // NOT REACHED HERE
 }
@@ -199,15 +200,20 @@ int esInit(IInterface** nameSpace)
         apic->busFreq();
         Core::pic = apic;
 
-        Core::registerExceptionHandler(32, apic);
         if (2 <= mps->getProcessorCount())
         {
             // Startup APs
             u32 hltAP = 0x30000 + *(u16*) (0x30000 + 138);
             u32 startAP = 0x30000 + *(u16*) (0x30000 + 126);
-            *(volatile u32*) (0x30000 + 132) = (u32) initAP;
+            *(u32*) (0x30000 + 132) = (u32) initAP;
+
+            esReport("Startap: %x\n", startAP);
+            esReport("Halt: %x\n", hltAP);
+
             apic->startupAllAP(hltAP, startAP);
         }
+
+        Core::registerExceptionHandler(32, apic);
         apic->setTimer(32, 1000);
     }
 
@@ -333,19 +339,6 @@ int esInit(IInterface** nameSpace)
         breakpoint();
         //  Core::pic->startup(4);
     }
-    else if (apic)
-    {
-        // Check Architectural Performance Monitoring leaf.
-        int eax, ebx, ecx, edx;
-        Core::cpuid(0x0a, &eax, &ebx, &ecx, &edx);
-        if (0 < (eax & 0x0f) && // Check the version identifier
-            !(ebx & 0x04))      // Check the availability of UnHalted Reference Cycles event
-        {
-            esReport("Enabled NMI kernel watchdog.\n");
-
-            apic->enableWatchdog();
-        }
-    }
 
     root->bind("device/beep", static_cast<IBeep*>(pit));
 
@@ -402,9 +395,9 @@ int esInit(IInterface** nameSpace)
     return 0;
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 void esSleep(s64 timeout)
@@ -493,15 +486,6 @@ IThread* esCreateThread(void* (*start)(void* param), void* param)
     return new Thread(start, param, IThread::Normal);
 }
 
-bool nmiHandler()
-{
-    if (apic)
-    {
-        apic->enableWatchdog();
-    }
-    return true;
-}
-
 /* write a single character      */
 void putDebugChar(int ch)
 {
@@ -519,19 +503,6 @@ int getDebugChar()
     return data;
 }
 
-extern "C"
-{
-    int _close(int file);
-    void _exit(int i);
-    int _write(int file, const char *ptr, size_t len);
-    int _read(int file, char *ptr, size_t len);
-}
-
-int _close(int file)
-{
-    return 0;
-}
-
 void _exit(int i)
 {
     if (!mps->getFloatingPointerStructure())
@@ -547,14 +518,4 @@ void _exit(int i)
     {
         __asm__ __volatile__ ("hlt");
     }
-}
-
-int _write(int file, const char *ptr, size_t len)
-{
-    return -1;
-}
-
-int _read(int file, char *ptr, size_t len)
-{
-    return -1;
 }

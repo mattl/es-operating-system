@@ -86,11 +86,6 @@ public:
         regfree(&regex);
     }
 
-    const char* getClass() const
-    {
-        return "RegExp";
-    }
-
     int match(std::string& s, int nmatch, regmatch_t* pmatch, int offset = 0)
     {
         if (offset < 0 || s.length() < offset)
@@ -98,8 +93,7 @@ public:
             return REG_NOMATCH;
         }
 
-        int code = regexec(&regex, s.c_str() + offset, nmatch, pmatch,
-                           (offset == 0) ? 0 : REG_NOTBOL);
+        int code = regexec(&regex, s.c_str() + offset, nmatch, pmatch, 0);
         if (code == 0)
         {
             int index = 0;
@@ -609,7 +603,7 @@ Value* stringReplace()
         }
 
         t.replace(pmatch[0].rm_so + diff, pmatch[0].rm_eo - pmatch[0].rm_so, n);
-        diff += n.length() - (pmatch[0].rm_eo - pmatch[0].rm_so);
+        diff = n.length() - (pmatch[0].rm_eo - pmatch[0].rm_so);
 
     } while (regexp && regexp->isGlobal());
 
@@ -629,132 +623,6 @@ Value* stringSearch()
     regmatch_t pmatch[regexp->getCapturingParens() + 1];
     int code = regexp->match(s, regexp->getCapturingParens() + 1, pmatch);
     return new NumberValue(code /* == REG_NOMATCH */ ? -1 : pmatch[0].rm_so);
-}
-
-static int splitMatch(Value* reg, std::string& s, int q, int nmatch, regmatch_t* pmatch)
-{
-    RegExpValue* regexp = dynamic_cast<RegExpValue*>(reg);
-    if (!regexp)
-    {
-        std::string r = reg->toString();
-        int pos = s.substr(q).find(r);
-        if (pos == std::string::npos)
-        {
-            return REG_NOMATCH;
-        }
-        pos += q;
-        pmatch[0].rm_so = pos;
-        pmatch[0].rm_eo = pos + r.length();
-        return 0;
-    }
-    else
-    {
-        return regexp->match(s, nmatch, pmatch, q);
-    }
-}
-
-Value* stringSplit()
-{
-    std::string s = getThis()->toString();
-
-    Register<ArrayValue> a = new ArrayValue;
-
-    Value* limit = getScopeChain()->get("limit");
-    u32 lim = limit->isUndefined() ? 4294967295u : limit->toUint32();
-
-    int p = 0;
-
-    Value* separator = getScopeChain()->get("separator");
-    Register<Value> r;
-    RegExpValue* regexp = dynamic_cast<RegExpValue*>(separator);
-    int nmatch;
-    if (regexp)
-    {
-        r = separator;
-        nmatch = regexp->getCapturingParens() + 1;
-    }
-    else
-    {
-        r = new StringValue(separator->toString());
-        nmatch = 1;
-    }
-    regmatch_t pmatch[nmatch];
-
-    if (lim == 0)
-    {
-        return a;
-    }
-
-    u32 length = 0; // a.length
-    if (!separator->isUndefined())
-    {
-        if (0 < s.length())
-        {
-            char name[12];
-            int  q = p;
-
-            while (q < s.length() && splitMatch(r, s, q, nmatch, pmatch) == 0)
-            {
-                int e = pmatch[0].rm_eo;                    // endIndex
-                if (e == p)                                 // 15
-                {
-                    ASSERT(pmatch[0].rm_so == q);
-                    u32 utf32;
-                    const char* u = s.c_str();
-                    q = utf8to32(u + q, &utf32) - u;        // move q to the next character
-                    continue;
-                }
-
-                ASSERT(p <= pmatch[0].rm_so);
-                q = pmatch[0].rm_so;
-                std::string t = s.substr(p, q - p);         // 16
-                Register<StringValue> stringValue = new StringValue(t);
-                sprintf(name, "%u", length);
-                a->put(name, stringValue);                  // 17
-                if (lim == ++length)
-                {
-                    return a;                               // 18
-                }
-
-                p = e;
-                for (int i = 1; i < nmatch; ++i)
-                {
-                    Register<Value> value;
-                    if (0 <= pmatch[i].rm_so)
-                    {
-                        std::string t = s.substr(pmatch[i].rm_so, pmatch[i].rm_eo - pmatch[i].rm_so);
-                        value = new StringValue(t);
-                    }
-                    else
-                    {
-                        value = UndefinedValue::getInstance();
-                    }
-                    sprintf(name, "%u", length);
-                    a->put(name, value);                    // 23
-                    if (lim == ++length)
-                    {
-                        return a;                           // 24
-                    }
-                }
-                q = p;
-            }
-
-            ASSERT(p <= s.length());
-            std::string t = s.substr(p, s.length() - p);    // 28
-            Register<StringValue> stringValue = new StringValue(t);
-            sprintf(name, "%u", length);
-            a->put(name, stringValue);                      // 29
-            return a;                                       // 30
-        }
-        else if (splitMatch(r, s, 0, nmatch, pmatch) == 0)  // 31
-        {
-            return a;
-        }
-    }
-
-    Register<StringValue> stringValue = new StringValue(s);
-    a->put("0", stringValue);                               // 33
-    return a;
 }
 
 //

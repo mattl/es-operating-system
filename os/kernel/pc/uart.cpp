@@ -23,15 +23,20 @@ Uart(int baseaddr, int bus, int irq) :
     baseaddr(baseaddr),
     ring(buffer, sizeof buffer)
 {
+    esReport("COM %x: ", baseaddr);
+
     outpb(baseaddr + FCR, 0xC7); // FIFO Control Register
     u8 x = inpb(baseaddr + IIR);
     switch (x & 0xc0)
     {
-      case 0xc0:    // 16550a
+      case 0xc0:
+        esReport("16550a\n");
         break;
-      case 0x80:    // 16550
+      case 0x80:
+        esReport("16550\n");
         break;
-      case 0x00:    // 16450
+      case 0x00:
+        esReport("16450\n");
         break;
     }
 
@@ -74,7 +79,7 @@ setBaud(int rate)
 long long Uart::
 getPosition()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::
@@ -85,7 +90,7 @@ setPosition(long long pos)
 long long Uart::
 getSize()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::setSize(long long size)
@@ -201,24 +206,24 @@ invoke(int irq)
     return 0;
 }
 
-void* Uart::
-queryInterface(const Guid& riid)
+bool Uart::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Uart::

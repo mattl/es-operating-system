@@ -20,8 +20,6 @@
 #include <es/types.h>
 #include <es/formatter.h>
 
-using namespace es;
-
 extern "C"
 {
     size_t strnlen(const char* string, size_t count);
@@ -29,14 +27,14 @@ extern "C"
 
 Formatter::
 Formatter(int (*putc)(int, void*), void* opt) throw() :
-    mode(Mode::C), putc(putc), opt(opt)
+    putc(putc), opt(opt)
 {
     reset();
 }
 
 Formatter::
 Formatter(IStream* stream) throw() :
-    mode(Mode::C), putc(streamPutc), opt(stream)
+    putc(streamPutc), opt(stream)
 {
     stream->addRef();
     reset();
@@ -44,14 +42,14 @@ Formatter(IStream* stream) throw() :
 
 Formatter::
 Formatter(std::string& string) throw() :
-    mode(Mode::C), putc(stringPutc), opt(&string)
+    putc(stringPutc), opt(&string)
 {
     reset();
 }
 
 Formatter::
 Formatter(const Formatter& o) throw() :
-    mode(Mode::C), putc(o.putc), opt(o.opt)
+    putc(o.putc), opt(o.opt)
 {
     reset();
 }
@@ -172,9 +170,9 @@ printInteger(I u)
     p = &buf[BUFSIZE];
     do {
         if (cap)
-            *--p = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[u % base];
+            *--p = "0123456789ABCDEF"[u % base];
         else
-            *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[u % base];
+            *--p = "0123456789abcdef"[u % base];
     } while ((u /= base) != 0);
     n = &buf[BUFSIZE] - p;
 
@@ -262,14 +260,31 @@ print(unsigned long long n)
     return count;
 }
 
+void Formatter::
+general()
+{
+    conversion = 'g';
+}
+
+void Formatter::
+scientific()
+{
+    conversion = 'e';
+}
+
+void Formatter::
+fixed()
+{
+    conversion = 'f';
+}
+
 // Get number of significant digits plus '.' ane 'e-dd'.
 // Adjust precision to the number of digits to print.
 template <typename U, int Bit>
 int Formatter::
 digitlen(int& k, int& dd, U f, U r)
 {
-    int  n;
-    bool fixed = false;
+    int n;
 
     dd = -16383;
     switch (conversion)
@@ -283,15 +298,7 @@ digitlen(int& k, int& dd, U f, U r)
         {
             precision = 1;
         }
-        if (mode == Mode::ECMAScript)
-        {
-            fixed = (-6 <= k && k < precision);
-        }
-        else
-        {
-            fixed = (-4 <= k && k < precision);
-        }
-        if (fixed)
+        if (-4 <= k && k < precision)
         {
             // fixed
             if (!alt)
@@ -386,14 +393,7 @@ digitlen(int& k, int& dd, U f, U r)
     case 'e':
         if (precision < 0)
         {
-            if (mode == Mode::ECMAScript)
-            {
-                precision = significantlen<U, Bit>(f, r) - 1;
-            }
-            else
-            {
-                precision = 6;
-            }
+            precision = 6;
         }
 
         n = (k < 0) ? -k : k;
@@ -528,43 +528,26 @@ printFloat(U x)
 
     if (e == MaxExp + 1)
     {
-        char seq[10];
+        char seq[5];
         char* p = seq;
-        int prec;
 
         if (sign != 0)
         {
             *p++ = sign;
-            prec = 4;
+            setPrecision(4);
         }
         else
         {
-            prec = 3;
+            setPrecision(3);
         }
         if (f == ((U) 1 << (MantDig - 1)))
         {
-            if (mode == Mode::ECMAScript)
-            {
-                prec += 5;
-                strcpy(p, "Infinity");
-            }
-            else
-            {
-                strcpy(p, cap ? "INF" : "inf");
-            }
+            strcpy(p, cap ? "INF" : "inf");
         }
         else
         {
-            if (mode == Mode::ECMAScript)
-            {
-                strcpy(p, "NaN");
-            }
-            else
-            {
-                strcpy(p, cap ? "NAN" : "nan");
-            }
+            strcpy(p, cap ? "NAN" : "nan");
         }
-        setPrecision(prec);
         return count + print(seq);
     }
 

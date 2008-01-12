@@ -1,3 +1,6 @@
+var stdout = System.getOut();
+var root = System.getRoot();
+
 if (params.length < 2)
 {
     params[1] = "";
@@ -7,22 +10,25 @@ for (var i = 1; i < params.length; ++i)
 {
     try
     {
-        var iter = cwd.list(params[i]);
+        var iter = root.list(params[i]);
         while (iter.hasNext())
         {
             unknown = iter.next();
-            binding = IBinding(unknown);
-            name = binding.name;
+            file = IFile(unknown);
+            name = file.getName(256);
             if (name != "." && name != "..")
             {
                 stdout.write(name + '\n', name.length + 1);
             }
-            binding.release();
+            file.release();
             unknown.release();
         }
         iter.release();
     }
-    catch (e)
+    finally
     {
     }
 }
+
+stdout.release();
+root.release();

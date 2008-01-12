@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,33 +11,23 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IRUNTIME_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IRUNTIME_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/** This interface provides methods for run-time setup.
+ * @since 0.0.2
+ */
+[object, uuid(fd4ad80c-414b-11db-9c02-0009bf000001)]
+interface IRuntime : IInterface
 {
-    /** This interface provides methods for run-time setup.
-     * @since 0.0.2
+    /**
+     * Sets the startup routine of threads.
+     * @param startup the function to start up a thread.
      */
-    interface IRuntime : IInterface
-    {
-        #pragma ID IRuntime = "DCE:fd4ad80c-414b-11db-9c02-0009bf000001";
+    void setStartup(void (*startup)(void* (*start)(void* param), void* param));
 
-        /**
-         * Sets the startup routine of threads.
-         * @param startup the function to start up a thread.
-         */
-        void setStartup(in any startup);
-
-        /**
-         * Sets the focus routine for upcalls from the operating system kernel.
-         * @param focus the function to process upcalls.
-         */
-        void setFocus(in any focus);
-    };
-};
-
-#endif // NINTENDO_ES_BASE_IRUNTIME_IDL_INCLUDED
-
+    /**
+     * Sets the focus routine for upcalls from the operating system kernel.
+     * @param focus the function to process upcalls.
+     */
+    void setFocus(void* (*focus)(void* param));
+}

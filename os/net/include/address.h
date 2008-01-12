@@ -20,8 +20,6 @@
 #include <es/net/IInternetAddress.h>
 #include "conduit.h"
 
-using namespace es;
-
 class Socket;
 
 class Address : public IInternetAddress

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -27,7 +27,6 @@ size_t utf32to8len(u32 utf32);
 u16* utf16to32(const u16* utf16, u32* utf32);
 u16* utf32to16(u32 utf32, u16* utf16);
 u32 utftolower(u32 utf32);
-u32 utftoupper(u32 utf32);
 int utf16cmp(const u16* a, const u16* b);
 int utf16icmp(const u16* a, const u16* b);
 int utf16ncmp(const u16* a, const u16* b, size_t len);

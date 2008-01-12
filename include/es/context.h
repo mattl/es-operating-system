@@ -26,12 +26,17 @@ class Binding;
 class Context;
 class Iterator;
 
-class Binding : public es::IBinding
+static const Guid IID_Context =
+{
+    0x8017f170, 0x1a13, 0x11dc, { 0x9c, 0x02, 0x00, 0x09, 0xbf, 0x00, 0x00, 0x01 }
+};
+
+class Binding : public IBinding
 {
     friend class Context;
     friend class Iterator;
 
-    es::IMonitor*  monitor;
+    IMonitor*   monitor;
     Ref         ref;
     char*       name;
     IInterface* object;
@@ -47,24 +52,24 @@ public:
     Binding(const char* name, IInterface* object);
     ~Binding();
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
     IInterface* getObject();
-    void setObject(IInterface* object);
-    int getName(char* name, int len);
+    int setObject(IInterface* object);
+    int getName(char* name, unsigned int len);
 
     typedef List<Binding, &Binding::link> List;
 };
 
 // In Context, the first binding points to the Context itself named "".
-class Context : public es::IContext
+class Context : public IContext
 {
     friend class Binding;
     friend class Iterator;
 
-    es::IMonitor*   monitor;
+    IMonitor*       monitor;
     Ref             ref;
     Binding::List   bindingList;
 
@@ -81,31 +86,27 @@ public:
     Context();
     ~Context();
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
-    es::IBinding* bind(const char* name, es::IInterface* object);
-    es::IContext* createSubcontext(const char* name);
+    IBinding* bind(const char* name, IInterface* object);
+    IContext* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::IInterface* lookup(const char* name);
+    IInterface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    es::IIterator* list(const char* name);
+    IIterator* list(const char* name);
 
-    static const Guid& iid()
+    static const Guid& interfaceID()
     {
-        static const Guid iid =
-        {
-            0x8017f170, 0x1a13, 0x11dc, { 0x9c, 0x02, 0x00, 0x09, 0xbf, 0x00, 0x00, 0x01 }
-        };
-        return iid;
+        return IID_Context;
     }
 };
 
-class Iterator : public es::IIterator
+class Iterator : public IIterator
 {
-    es::IMonitor*  monitor;
+    IMonitor*   monitor;
     Ref         ref;
     Binding*    binding;
 
@@ -113,12 +114,12 @@ public:
     Iterator(Binding* binding);
     ~Iterator();
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
     bool hasNext(void);
-    es::IInterface* next();
+    IInterface* next();
     int remove(void);
 };
 

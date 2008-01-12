@@ -11,15 +11,12 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <pthread.h>
 #include <setjmp.h>
 #include <stdlib.h>
 #include <unwind.h>
 #include <es.h>
 #include <es/exception.h>
 #include <es/base/IProcess.h>
-
-using namespace es;
 
 ICurrentProcess* System();
 
@@ -55,9 +52,9 @@ void* start(void* param)
     testB = 5;
     esReport("start(): %x %x %x\n", testA, testB, &testA);
 
-    pthread_key_t key;
-    pthread_key_create(&key, dtor);
-    pthread_setspecific(key, (void*) 0x1234);
+    unsigned int key;
+    esCreateThreadKey(&key, dtor);
+    esSetThreadSpecific(key, (void*) 0x1234);
 
     esReport("m->lock();\n");
     m->lock();
@@ -86,11 +83,11 @@ int main(int argc, char* argv[])
 
     esReport("%x %x %x\n", testA, testB, &testA);
 
-    System()->trace(true);
+    System()->trace(false);
 
     m = System()->createMonitor();
 
-    IThread* thread = System()->createThread((void*) start, 0);
+    IThread* thread = System()->createThread(start, 0);
     thread->start();
 
     ICurrentThread* current(System()->currentThread());
@@ -107,8 +104,17 @@ int main(int argc, char* argv[])
 
     esReport("main(): %x %x %x\n", testA, testB, &testA);
 
-#if 1
-    current = reinterpret_cast<ICurrentThread*>(current->queryInterface(IInterface::iid()));
+    // Check kernel page fault
+    try
+    {
+        current->queryInterface(IID_IInterface, (void**) 0x8000);
+    }
+    catch (Exception& error)
+    {
+        esReport("catch error: %d\n", error.getResult());
+    }
+
+    current->queryInterface(IID_IInterface, (void**) &current);
     try
     {
         current->sleep(30000000);   // Should raise an exception.
@@ -117,7 +123,6 @@ int main(int argc, char* argv[])
     {
         esReport("catch error: %d\n", error.getResult());
     }
-#endif
 
     esReport("hello, world.\n");
 }

@@ -1,3 +1,5 @@
+var stdout = System.getOut();
+
 var n = true;
 for (var i = 1; i < params.length; ++i)
 {
