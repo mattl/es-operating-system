@@ -11,19 +11,9 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <new>
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include <es.h>
 #include <es/classFactory.h>
 #include <es/clsid.h>
-#include <es/context.h>
 #include <es/exception.h>
 #include <es/endian.h>
 #include <es/formatter.h>
@@ -33,18 +23,24 @@
 #include "alarm.h"
 #include "cache.h"
 #include "classStore.h"
-#include "loopback.h"
+#include "context.h"
 #include "partition.h"
-#include "posix/tap.h"
 
+#include <new>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 namespace
 {
     IContext*       root;
     IClassStore*    classStore;
     IClassFactory*  alarmFactory;
-    u8              loopbackBuffer[64 * 1024];
 };
 
 const int Page::SIZE = 4096;
@@ -80,22 +76,23 @@ int esInit(IInterface** nameSpace)
     thread->setPriority(IThread::Normal);
     pthread_setspecific(Thread::cleanupKey, thread);
 
-    // Create class store
-    classStore = static_cast<IClassStore*>(new ClassStore);
-
-    // Register CLSID_MonitorFactory which is used by Context
-    IClassFactory* monitorFactory = new(ClassFactory<Monitor>);
-    classStore->add(CLSID_Monitor, monitorFactory);
-
     root = new Context;
     if (nameSpace)
     {
         *nameSpace = root;
     }
 
-    // Create class name space
+    classStore = static_cast<IClassStore*>(new ClassStore);
     IBinding* binding = root->bind("class", classStore);
     binding->release();
+
+    // Register CLSID_CacheFactory
+    IClassFactory* cacheFactoryFactory = new(ClassFactory<CacheFactory>);
+    classStore->add(CLSID_CacheFactory, cacheFactoryFactory);
+
+    // Register CLSID_MonitorFactory
+    IClassFactory* monitorFactory = new(ClassFactory<Monitor>);
+    classStore->add(CLSID_Monitor, monitorFactory);
 
     // Initialize the page table
     int fd = open("/dev/zero", O_RDWR);
@@ -105,10 +102,6 @@ int esInit(IInterface** nameSpace)
     esReport("arena: %p, size: %zu\n", arena, size);
 #endif
     PageTable::init(arena, size);
-
-    // Register CLSID_CacheFactory
-    IClassFactory* cacheFactoryFactory = new(ClassFactory<CacheFactory>);
-    classStore->add(CLSID_CacheFactory, cacheFactoryFactory);
 
     // Register CLSID_PageSet
     classStore->add(CLSID_PageSet, static_cast<IClassFactory*>(PageTable::pageSet));
@@ -121,43 +114,18 @@ int esInit(IInterface** nameSpace)
     IClassFactory* partitionFactory = new(ClassFactory<PartitionContext>);
     classStore->add(CLSID_Partition, partitionFactory);
 
-    // Create device name space
-    IContext* device = root->createSubcontext("device");
-
-    // Register the loopback interface
-    Loopback* loopback = new Loopback(loopbackBuffer, sizeof loopbackBuffer);
-    device->bind("loopback", static_cast<IStream*>(loopback));
-
-    // Register the Ethernet interface
-    try
-    {
-        Tap* tap = new Tap("eth1");
-        device->bind("ethernet", static_cast<IStream*>(tap));
-    }
-    catch (...)
-    {
-    }
-
-    device->release();
-
-    // Create network name space
-    IContext* network = root->createSubcontext("network");
-    network->release();
-
     return 0;
 }
 
 int esReportv(const char* spec, va_list list)
 {
     Formatter formatter((int (*)(int, void*)) putc, stdout);
-    int len = formatter.format(spec, list);
-    fflush(stdout);
-    return len;
+    return formatter.format(spec, list);
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 void esSleep(s64 timeout)
@@ -186,9 +154,4 @@ void esPanic(const char* file, int line, const char* msg, ...)
     va_end(marker);
     esReport(" in \"%s\" on line %d.\n", file, line);
     exit(EXIT_FAILURE);
-}
-
-IThread* esCreateThread(void* (*start)(void* param), void* param)
-{
-    return new Thread(start, param, IThread::Normal);
 }

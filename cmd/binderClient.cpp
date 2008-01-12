@@ -19,8 +19,6 @@
 #include <es/naming/IBinding.h>
 #include "binder.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -40,10 +38,11 @@ int main(int argc, char* argv[])
     Handle<IBinding> binder[2];
     for (int i(0); i < 2; ++i)
     {
-        binder[i] = reinterpret_cast<IBinding*>(
+        bool result =
             classStore->createInstance(CLSID_Binder,
-                                       binder[i]->iid()));
-        TEST(binder[i]);
+                                       binder[i]->interfaceID(),
+                                       reinterpret_cast<void**>(&binder[i]));
+        TEST(result);
 
         char name[14];
         binder[i]->getName(name, sizeof(name));

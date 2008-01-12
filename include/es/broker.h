@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -28,7 +28,7 @@ class Broker
     typedef long long (*Method)(void* self, ...);
 
     static Method* ptbl[maxInterface];
-    static Method vtbl[64];
+    static Method vtbl[33];
 
     static long long method0(void* self, ...)
     {
@@ -360,316 +360,6 @@ class Broker
         return rc;
     }
 
-    static long long method33(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 33, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method34(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 34, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method35(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 35, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method36(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 36, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method37(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 37, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method38(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 38, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method39(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 39, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method40(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 40, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method41(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 41, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method42(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 42, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method43(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 43, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method44(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 44, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method45(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 45, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method46(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 46, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method47(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 47, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method48(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 48, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method49(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 49, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method50(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 50, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method51(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 51, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method52(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 52, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method53(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 53, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method54(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 54, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method55(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 55, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method56(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 56, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method57(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 57, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method58(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 58, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method59(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 59, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method60(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 60, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method61(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 61, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method62(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 62, ap);
-        va_end(ap);
-        return rc;
-    }
-
-    static long long method63(void* self, ...)
-    {
-        va_list ap;
-
-        va_start(ap, self);
-        long long rc = broker(self, ptbl, 63, ap);
-        va_end(ap);
-        return rc;
-    }
-
 public:
 
     /**
@@ -691,26 +381,13 @@ public:
         }
         return reinterpret_cast<void**>(ptbl);
     }
-
-    static int getInterfaceNo(void* interfacePointer)
-    {
-        Method** p = reinterpret_cast<Method**>(interfacePointer);
-        if (ptbl <= p && p < ptbl + maxInterface)
-        {
-            return p - ptbl;
-        }
-        else
-        {
-            return -1;  // Not a member
-        }
-    }
 };
 
 template<long long (*broker)(void*, void*, int, va_list), unsigned maxInterface>
 long long (**Broker<broker, maxInterface>::ptbl[maxInterface])(void* self, ...);
 
 template<long long (*broker)(void*, void*, int, va_list), unsigned maxInterface>
-long long (*Broker<broker, maxInterface>::vtbl[64])(void* self, ...) =
+long long (*Broker<broker, maxInterface>::vtbl[33])(void* self, ...) =
 {
     method0,
     method1,
@@ -744,38 +421,7 @@ long long (*Broker<broker, maxInterface>::vtbl[64])(void* self, ...) =
     method29,
     method30,
     method31,
-    method32,
-    method33,
-    method34,
-    method35,
-    method36,
-    method37,
-    method38,
-    method39,
-    method40,
-    method41,
-    method42,
-    method43,
-    method44,
-    method45,
-    method46,
-    method47,
-    method48,
-    method49,
-    method50,
-    method51,
-    method52,
-    method53,
-    method54,
-    method55,
-    method56,
-    method57,
-    method58,
-    method59,
-    method60,
-    method61,
-    method62,
-    method63
+    method32
 };
 
 #endif  // NINTENDO_ES_BROKER_H_INCLUDED

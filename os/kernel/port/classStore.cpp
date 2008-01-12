@@ -55,10 +55,10 @@ remove(const Guid& clsid)
     registered->release();
 }
 
-void* ClassStore::
-createInstance(const Guid& rclsid, const Guid& riid)
+bool ClassStore::
+createInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    void* objectPtr = 0;
+    *objectPtr = 0;
     IClassFactory* factory;
     {
         SpinLock::Synchronized method(spinLock);
@@ -67,27 +67,27 @@ createInstance(const Guid& rclsid, const Guid& riid)
         ASSERT(factory);
     }
     // XXX Should ensure 'factory' is valid while calling createInstance().
-    return factory->createInstance(riid);
+    return factory->createInstance(riid, objectPtr);
 }
 
-void* ClassStore::
-queryInterface(const Guid& riid)
+bool ClassStore::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IClassStore::iid())
+    if (riid == IID_IClassStore)
     {
-        objectPtr = static_cast<IClassStore*>(this);
+        *objectPtr = static_cast<IClassStore*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IClassStore*>(this);
+        *objectPtr = static_cast<IClassStore*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int ClassStore::

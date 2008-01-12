@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -12,13 +12,10 @@
  */
 
 #include <new>
-#include "core.h"
 #include "thread.h"
 
 Thread::Monitor::
-Monitor() :
-    lockCount(0),
-    owner(0)
+Monitor() : lockCount(0), owner(0)
 {
     return;
 }
@@ -35,36 +32,23 @@ spinUnlock()
     rendezvous.unlock();
 }
 
-int Thread::Monitor::
-getPriority()
-{
-    return rendezvous.getPriority();
-}
-
 void Thread::Monitor::
 update()
 {
-    unsigned x = Core::splHi();         // Cling to the current core
+    unsigned x = splHi();         // Cling to the current core
     spinLock();
-    Thread* thread = owner;
-    if (thread)
+    if (owner)
     {
-        thread->addRef();
+        owner->updatePriority();
     }
     spinUnlock();
-    if (thread)
-    {
-        thread->updatePriority();
-        thread->release();
-    }
-    Core::splX(x);
+    splX(x);
 }
 
 int Thread::Monitor::
 condLock(int)
 {
-    // current is NOT locked by sleep().
-Retry:
+    // current is locked by sleep().
     Thread* current = getCurrentThread();
     current->monitor = 0;
 
@@ -84,56 +68,8 @@ Retry:
         return true;
     }
 
-#ifdef VERBOSE
-    esReport("%s: %d\n%p\n%p\n", __func__, __LINE__, owner->func, current->func);
-#endif
-
-    // Note we cannot call owner->updatePriority() since this monitor's
-    // rendezvous is locked and owner->updatePriority() also tries to
-    // lock this rendezvous.
-    Thread* next;
-    current->lock();
-    int effective = getPriority();
-    if (effective < current->priority)
-    {
-        effective = current->priority;
-    }
-
-    ASSERT(owner);
-    if (owner->tryLock())
-    {
-        if (owner->priority < effective)
-        {
-            next = owner->setEffectivePriority(effective);
-        }
-        else
-        {
-            next = 0;
-        }
-        owner->unlock();
-        current->monitor = this;
-        current->unlock();
-    }
-    else
-    {
-        Thread* prec = owner;
-        prec->addRef();
-        current->unlock();
-        spinUnlock();
-        prec->wait();
-        // Now owner may not be equal to prec.
-        prec->release();
-        spinLock();
-        goto Retry;
-    }
-
-    if (next)
-    {
-        // next must inherit the new effective priority
-        // and since next does not own this monitor, we can finally call:
-        next->updatePriority();
-    }
-
+    current->monitor = this;
+    owner->updatePriority();
     ASSERT(!current->isDeadlocked());
     return false;
 }
@@ -148,7 +84,7 @@ lock()
 int Thread::Monitor::
 condTryLock(int)
 {
-    // current is NOT locked by sleep().
+    // current is locked by sleep().
     Thread* current = getCurrentThread();
 
     if (owner == 0)
@@ -156,9 +92,7 @@ condTryLock(int)
         ASSERT(lockCount == 0);
         owner = current;
         ++lockCount;
-        current->lock();
         current->monitorList.addLast(this);
-        current->unlock();
         addRef();
         return true;
     }
@@ -183,74 +117,47 @@ tryLock()
 int Thread::Monitor::
 condUnlock(int)
 {
-    if (!owner)
+    Thread* current = getCurrentThread();
+
+    ASSERT(0 < lockCount);
+    ASSERT(current == owner);
+    --lockCount;
+    if (0 < lockCount)
     {
         return false;
     }
-    ASSERT(0 < lockCount);
 
-    // owner is locked and is being terminated.
-    if (owner->state == TERMINATED)
-    {
-        lockCount = 0;
-        owner->monitorList.remove(this);
-        owner = 0;
-        release();
-        return true;
-    }
+    // Recaluculate the effective scheduling priority after
+    // removing the monitor from the queue.
+    current->lock();
+    current->monitorList.remove(this);
+    current->unlock();
+    owner = 0;
+    release();
 
-    Thread* current = getCurrentThread();
-    if (current == owner)
-    {
-        --lockCount;
-        if (0 < lockCount)
-        {
-            return false;
-        }
-
-        // Recalculate the effective scheduling priority after
-        // removing the monitor from the queue.
-        current->lock();
-        current->monitorList.remove(this);
-        current->unlock();
-        owner = 0;
-        release();
-        current->updatePriority();
-        return true;
-    }
-
-    return false;
+    current->updatePriority();
+    return true;
 }
 
 void Thread::Monitor::
 unlock()
 {
-    unsigned x = Core::splHi();
     DelegateTemplate<Monitor> d(this, &Thread::Monitor::condUnlock);
     rendezvous.wakeup(&d);
-    if (getCurrentThread()->state != TERMINATED)
-    {
-        reschedule();
-    }
-    Core::splX(x);
+    reschedule();
 }
 
 int Thread::Monitor::
 condWait(int)
 {
-    // current is NOT locked by sleep().
+    // current is locked by sleep().
     Thread* current = getCurrentThread();
     if (current == owner)
     {
-        rendezvous.lock();
         lockCount = 0;
-        owner = 0;
-        rendezvous.unlock();
-
-        current->lock();
         current->monitorList.remove(this);
-        current->resetPriority();
-        current->unlock();
+        owner = 0;
+        current->updatePriority();
         rendezvous.wakeup();
         return false;
     }
@@ -260,14 +167,14 @@ condWait(int)
 bool Thread::Monitor::
 wait()
 {
-    unsigned x = Core::splHi();         // Cling to the current core
+    unsigned x = splHi();         // Cling to the current core
 
     Thread* current = getCurrentThread();
     ASSERT(current);
     ASSERT(current->state == IThread::RUNNING);
     if (owner != current)
     {
-        Core::splX(x);
+        splX(x);
         return false;
     }
 
@@ -282,7 +189,7 @@ wait()
     release();
     ASSERT(0 < lockCount);
 
-    Core::splX(x);
+    splX(x);
     return true;
 }
 
@@ -296,38 +203,34 @@ invoke(int)
 bool Thread::Monitor::
 wait(s64 timeout)
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
 
     Thread* current = getCurrentThread();
     ASSERT(current);
     ASSERT(current->state == IThread::RUNNING);
+    current->alarm.setInterval(timeout);
+    current->alarm.setEnabled(true);
+    current->alarm.setCallback(static_cast<ICallback*>(this));
 
-    bool expired(false);
-    if (0 < timeout)
-    {
-        current->alarm.setInterval(timeout);
-        current->alarm.setCallback(static_cast<ICallback*>(this));
-        current->alarm.setEnabled(true);
-        wait();
-        expired = current->condSleep(0);
-        current->alarm.setEnabled(false);
-    }
-    else
-    {
-        wait();
-    }
+    wait();
 
-    Core::splX(x);
-    return !expired;
+    current->alarm.setEnabled(false);
+
+    splX(x);
+    return !current->condSleep(0);
 }
 
 void Thread::Monitor::
 notify()
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();         // Cling to the current core
     cv.wakeup();
-    reschedule();
-    Core::splX(x);
+    Thread* current = getCurrentThread();
+    if (current && current->state == IThread::RUNNING)
+    {
+        reschedule();
+    }
+    splX(x);
 }
 
 void Thread::Monitor::
@@ -336,28 +239,34 @@ notifyAll()
     notify();
 }
 
-void* Thread::Monitor::
-queryInterface(const Guid& riid)
+int Thread::Monitor::
+getPriority()
 {
-    void* objectPtr;
-    if (riid == IMonitor::iid())
+    return rendezvous.getPriority();
+}
+
+bool Thread::Monitor::
+queryInterface(const Guid& riid, void** objectPtr)
+{
+    if (riid == IID_IMonitor)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::Monitor::

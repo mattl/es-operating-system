@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -28,8 +28,6 @@
 #include <es/exception.h>
 #include <es/handle.h>
 #include "fatStream.h"
-
-using namespace es;
 
 u32 FatStream::
 getClusNum(long long position)
@@ -312,18 +310,16 @@ flush()
 
 FatStream::
 FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
-    ref(2),     // Plus one for fileSystem->standbyList management
-    fileSystem(fileSystem),
-    cache(0),
-    parent(parent),
-    offset(offset),
+    fileSystem(fileSystem), cache(0),
+    parent(parent), offset(offset),
     flags(0)
 {
     ASSERT(memcmp(fcb, FatFileSystem::nameDot, 11) != 0);
     ASSERT(memcmp(fcb, FatFileSystem::nameDotdot, 11) != 0);
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     memmove(this->fcb, fcb, 32);
     fstClus = word(fcb + DIR_FstClusLO) | (word(fcb + DIR_FstClusHI) << 16);
@@ -345,6 +341,7 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
         dirClus = 0;
     }
 
+
     if (!isDirectory())
     {
         cache = fileSystem->cacheFactory->create(this);
@@ -358,8 +355,6 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
 
     lastPosition = 0;
     lastClus = fstClus;
-
-    ref.release();  // Revert to normal
 }
 
 FatStream::
@@ -388,54 +383,46 @@ FatStream::
     monitor->release();
 }
 
-void* FatStream::
-queryInterface(const Guid& riid)
+bool FatStream::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (isDirectory() && riid == IContext::iid())
+    if (isDirectory() && riid == IID_IContext)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IFile::iid())
+    else if (riid == IID_IFile)
     {
-        objectPtr = static_cast<IFile*>(this);
+        *objectPtr = static_cast<IFile*>(this);
     }
-    else if (riid == IBinding::iid())
+    else if (riid == IID_IBinding)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int FatStream::
 addRef(void)
 {
-    unsigned int count = ref.addRef();
-    if (count == 2)
-    {
-        // This stream has been standing by.
-        fileSystem->activate(this);
-    }
-    return count;
+    return ref.addRef();
 }
 
 unsigned int FatStream::
 release(void)
 {
-    unsigned int count;
-
     if (isRemoved())
     {
-        count = ref.release();
+        unsigned int count = ref.release();
         if (count == 0)
         {
             delete this;
@@ -457,15 +444,8 @@ release(void)
                 parent = 0;
             }
         }
+        return count;
     }
-    else
-    {
-        cache->flush();
-        count = ref.release();
-        if (count == 1)
-        {
-            fileSystem->standBy(this);
-        }
-    }
-    return count;
+    cache->flush();
+    return fileSystem->standBy(this);
 }

@@ -26,14 +26,12 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-using namespace es;
-
 ICurrentProcess* System();
 Handle<IClassStore> classStore;
 
-void* createInstance(const Guid& rclsid, const Guid& riid)
+bool createInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 class Stream : public IStream, public IBinding
@@ -110,7 +108,7 @@ public:
         return object;
     }
 
-    void setObject(IInterface* element)
+    int setObject(IInterface* element)
     {
         esReport("Stream::setObject(%p)\n", element);
         if (element)
@@ -124,36 +122,35 @@ public:
         object = element;
     }
 
-    int getName(char* name, int len)
+    int getName(char* name, unsigned int len)
     {
-        ASSERT(0 <= len);
         unsigned count = (len < 7) ? len : 7;
         strncpy(name, "Stream", count);
         return count;
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IStream::iid())
+        else if (riid == IID_IStream)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (riid == IID_IBinding)
         {
-            objectPtr = static_cast<IBinding*>(this);
-            esReport("Stream::queryInterface: %p@%p\n", objectPtr, &objectPtr);
+            *objectPtr = static_cast<IBinding*>(this);
+            esReport("Stream::queryInterface: %p@%p\n", *objectPtr, objectPtr);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -176,7 +173,6 @@ public:
 int main(int argc, char* argv[])
 {
     esReport("Hello, world.\n");
-    System()->trace(false);
 
     Handle<IContext> nameSpace = System()->getRoot();
     classStore = nameSpace->lookup("class");
@@ -184,13 +180,14 @@ int main(int argc, char* argv[])
 
     // Create a client process.
     Handle<IProcess> client;
-    client = reinterpret_cast<IProcess*>(createInstance(CLSID_Process, IProcess::iid()));
-    TEST(client);
+    bool result = createInstance(CLSID_Process, IID_IProcess,
+                                 reinterpret_cast<void**>(&client));
+    TEST(result);
 
     // Set the standard output to the client process.
     Stream stream;
     stream.write("Test stream.\n", 13);
-    client->setOutput(&stream);
+    client->setOut(&stream);
 
     // Start the client process.
     Handle<IFile> file = nameSpace->lookup("file/client.elf");

@@ -1,37 +1,31 @@
-LDADD = ../../os/fs/fat/libesfat.a ../../os/kernel/libeskernel.a ../../os/libes++/libessup++.a -lfreetype
+LDADD = ../../os/fs/fat/libesfat.a ../../os/kernel/libeskernel.a ../../os/libes++/libessup++.a
 
 SUFFIXES = .img .gz
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
 
-% :: %.elf
-	$(srcdir)/makeScript "`pwd`" $(srcdir) $@
+% : %.img
+	$(srcdir)/makeScript "`pwd`" $@
 
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
+TESTS = main start binder location
 
-noinst_SCRIPTS = main start binder location eventManager console upcallTest newlib
+noinst_SCRIPTS = $(TESTS)
 
 noinst_PROGRAMS = $(noinst_SCRIPTS)
-
-TESTS = $(noinst_SCRIPTS)
 
 noinst_DATA = disk.img \
 	main.img \
 	start.img \
 	binder.img \
-	location.img \
-	eventManager.img \
-	console.img \
-	upcallTest.img \
-	newlib.img
+	location.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 
 clean-local:
-	-rm -f *.map
+	-rm -f *.map *.log
 
-AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map -L$(prefix)/lib
+AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map
 
 main_SOURCES = main.cpp
 
@@ -41,14 +35,6 @@ binder_SOURCES = binder.cpp
 
 location_SOURCES = location.cpp
 
-eventManager_SOURCES = eventManager.cpp
-
-console_SOURCES = console.cpp
-
-upcallTest_SOURCES = upcallTest.cpp
-
-newlib_SOURCES = newlib.cpp
-
 disk.img: disk.img.gz
 	gunzip -c $< > $@
 	vformat $@
@@ -56,8 +42,6 @@ disk.img: disk.img.gz
 AM_CPPFLAGS = \
 	-I- \
 	-I../../include \
-	-I$(srcdir)/../../include \
-	-I$(prefix)/include \
-	-I$(prefix)/include/freetype2
+	-I$(srcdir)/../../include
 
-EXTRA_DIST = disk.img.gz makeScript testLoader
+EXTRA_DIST = disk.img.gz makeScript

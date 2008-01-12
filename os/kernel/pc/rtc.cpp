@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -18,19 +18,21 @@
 #include "io.h"
 #include "rtc.h"
 
-Lock Rtc::spinLock;
+SpinLock Rtc::spinLock;
 long long Rtc::epoch;
 
 Rtc::
 Rtc() :
     ref(1)
 {
-    epoch = getTime();
+    getTime(epoch);
 }
 
 int Rtc::
 getCounter(int addr)
 {
+    SpinLock::Synchronized method(spinLock);
+
     outpb(PORT_ADDR, addr);
     u8 bcd = inpb(PORT_DATA);
     return (bcd & 0xf) + 10 * (bcd >> 4);
@@ -39,23 +41,15 @@ getCounter(int addr)
 void Rtc::
 setCounter(int addr, int count)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     outpb(PORT_ADDR, addr);
     outpb(PORT_DATA, (count % 10) | ((count / 10 % 10) << 4));
 }
 
 DateTime Rtc::
-getDateTime()
+getTime()
 {
-    Lock::Synchronized method(spinLock);
-
-    do
-    {
-        outpb(Rtc::PORT_ADDR, Rtc::PORT_A);
-    }
-    while (inpb(Rtc::PORT_DATA) & 0x80);    // wait UIP
-
     int second = getCounter(SECONDS);
     int minute = getCounter(MINUTES);
     int hour = getCounter(HOURS);
@@ -68,7 +62,7 @@ getDateTime()
 void Rtc::
 setTime(long long ticks)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     DateTime date(ticks);
 
@@ -96,35 +90,32 @@ setTime(long long ticks)
     epoch += ticks - DateTime::getNow().getTicks();
 }
 
-long long Rtc::
-getTime()
+void Rtc::
+getTime(long long& ticks)
 {
-    long long ticks;
     do {
-        ticks = getDateTime().getTicks();
-    } while (ticks != getDateTime().getTicks());
-
-    return ticks;
+        ticks = getTime().getTicks();
+    } while (ticks != getTime().getTicks());
 }
 
-void* Rtc::
-queryInterface(const Guid& riid)
+bool Rtc::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IRtc::iid())
+    if (riid == IID_IRtc)
     {
-        objectPtr = static_cast<IRtc*>(this);
+        *objectPtr = static_cast<IRtc*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IRtc*>(this);
+        *objectPtr = static_cast<IRtc*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Rtc::
@@ -143,20 +134,4 @@ release(void)
         return 0;
     }
     return count;
-}
-
-u8 Rtc::
-cmosRead(u8 offset)
-{
-    ASSERT(0x0e <= offset);
-    outpb(PORT_ADDR, offset);
-    return inpb(PORT_DATA);
-}
-
-void Rtc::
-cmosWrite(u8 offset, u8 val)
-{
-    ASSERT(0x0e <= offset);
-    outpb(PORT_ADDR, offset);
-    outpb(PORT_DATA, val);
 }

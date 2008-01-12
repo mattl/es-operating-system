@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -48,28 +48,18 @@
 // 0x00009000 - 0x0000ffff      Default kernel stack
 // 0x00010000 - 0x00010fff      Page directory table
 // 0x00011000 - 0x00011fff      User TCB
-// 0x00012000 - 0x00012fff      Kernel TCBs
-// 0x00013000 - 0x00013fff      AP initial stack
-// 0x00014000 - 0x00014fff      Kernel page table
+// 0x00012000 - 0x00012fff      Kernel TCB
 // 0x00020000 - 0x00020fff      FDC DMA buffer
 // 0x00021000 - 0x00021fff      SB16 8-bit DMA buffer
 // 0x00022000 - 0x00023fff      SB16 16-bit DMA buffer
-// 0x00030000 - 0x0004ffff      MPS Core objects
-// 0x00100000 - 0x00ffffff      Heap
+// 0x00040000 - 0x00080000      Heap
 // 0x01000000 -                 Kernel
 
 #include "fat.h"
 
-#define USE_SVGA
-// #define USE_CHS         // Do not use LBA mode
-
 //
 // Configuration
 //
-
-#define XResolution             18      // Horizontal resolution
-#define YResolution             20      // Vertical resolution
-#define BitsPerPixel            25      // Bits per pixel
 
 // 0x141 1024x768  32bit Dcolr A000 RW ---- -- 64 64 C000:6F01 FD000000 VMWare
 // 0x144 1024x768  32bit Dcolr A000 RW ---- -- 64 64 C000:6C4B E0000000 Bochs
@@ -101,13 +91,8 @@
 
 #define Dest                    124
 
-#define Shutdown                124     // _shutdown address
-#define Startap                 126     // _startap address
+#define Bios                    124     // _shutdown address
 #define Font                    128     // VGA font address
-#define Entryap                 132     // AP protected-mode entry address [m16:32]
-#define Halt                    138
-#define Width                   140     // Screen width
-#define Height                  142     // Screen height
 
 .code16
 .text
@@ -120,15 +105,7 @@ _start:                                 // at location 3000:0000
 
         // BPB is copied here
 
-        .org    Entryap
-        .word   0, 0, 8
-        .org    Halt
-        .word   0
-        .org    Width
-        .word   1024                    // Screen width
-        .org    Height
-        .word   768                     // Screen height
-
+        .org    132
 0:
         // Set %sp
         cli
@@ -145,26 +122,6 @@ _start:                                 // at location 3000:0000
         // Print title message
         leaw    title, %si
         call    prtstr
-
-        // Enable A20 gate
-        call    testA20
-        jnz     a20_enabled
-
-        movw    $0x2401, %ax            // Via BIOS
-        int     $0x15
-        call    testA20
-        jnz     a20_enabled
-
-        inb     $0x92, %al              // Via System Control Port A
-        orb     $0x02, %al              // Bit 1: 0: disable A20, 1: enable A20
-        andb    $0xfe, %al
-        outb    %al, $0x92
-        call    testA20
-        jnz     a20_enabled
-
-        jmp     hang
-a20_enabled:
-        wbinvd
 
         // Initialize bss
         xorw    %ax, %ax
@@ -393,9 +350,9 @@ run:
         movw    $0x4f00, %ax
         int     $0x10
         cmpb    $0x4f, %al
-        jne     text_mode
+        jne     kernel_mode
         andb    %ah, %ah
-        jnz     text_mode
+        jnz     kernel_mode
 
         movw    %es:(14), %di
         movw    %es:(16), %ax
@@ -403,13 +360,12 @@ run:
 0:
         movw    %es:(%di), %cx
         cmpw    $0xffff, %cx
-        je      text_mode
+        je      kernel_mode
         addw    $2, %di
 
         // Get VESA SVGA mode information at 0820:0000
         pushw   %es
         pushw   %di
-
         movw    $0x0820, %ax
         movw    %ax, %es
         xorw    %di, %di
@@ -421,13 +377,10 @@ run:
         jnz     1f
         andb    $1, %es:(0)
         jz      1f
-        movw    %es:(XResolution), %ax
-        cmpw    (Width), %ax
-        jne     1f
-        movw    %es:(YResolution), %ax
-        cmpw    (Height), %ax
-        jne     1f
-        movb    %es:(BitsPerPixel), %al           // 24 <= depth ?
+        movw    %es:(18), %ax           // 1024 <= width ?
+        cmpw    $1024, %ax
+        jb      1f
+        movb    %es:(25), %al           // 24 <= depth ?
         cmpb    $24, %al
         jae     2f
 1:
@@ -439,7 +392,7 @@ run:
         popw    %es
 3:
         // Switch to SVGA mode using VESA BIOS
-#ifdef USE_SVGA
+#if 1
         movw    $0x4f02, %ax
         movw    $0x4000, %bx            // 0x4000: enable linear frame-buffer
         orw     %cx, %bx
@@ -457,23 +410,17 @@ run:
         movw    %es, %ax
         movw    %ax, (Font+2)
 #endif
-text_mode:
 
         // Save APM _shutdown address
         leaw    _shutdown, %ax
-        movw    %ax, (Shutdown)
+        movw    %ax, (Bios)
 
-        // Save MPS _startap address
-        leaw    _startap, %ax
-        movw    %ax, (Startap)
-
-        // Save _halt address
-        leaw    _halt, %ax
-        movw    %ax, (Halt)
-
+kernel_mode:
         cli
 
-        lgdt    gdt48                   // Load GDT
+        // Set up GDT and IDT
+        lgdt    gdt48
+        lidt    idt48
 
         // Switch to the protected mode
         movl    %cr0, %eax
@@ -484,9 +431,6 @@ text_mode:
         .byte 0x66                      // Need prefix as still using 16bit CS
         ljmp    $8, $(0x3000*16 + 0f)   // Clear prefetch and normalize %eip
 0:
-        xorl    %eax, %eax
-        lldt    %ax                     // Invalidate LDTR
-
         movw    $16, %ax
         movw    %ax, %ds
         movw    %ax, %es
@@ -496,8 +440,10 @@ text_mode:
         movw    $40, %ax
         movw    %ax, %gs
 
-        lidt    idt48                   // Load IDT
+        xorl    %eax, %eax
+        lldt    %ax                     // Invalidate LDTR
 
+#if 1
         // Turn on PSE
         movl    %cr4, %eax
         orl     $0x10, %eax
@@ -523,20 +469,19 @@ text_mode:
         addl    $0x00400000, %eax
         loop    0b
 
-        // Load page directory
         movl    $0x10000, %eax
-        movl    %eax, %cr3
+        movl    %eax, %cr3              // set the page table pointer
 
         // Enable paging
         movl    %cr0, %eax
         orl     $0x80010000, %eax
         movl    %eax, %cr0              // and set paging (PG) bit with WP
+#endif
 
         movl    $0x80010000, %esp
-        pushl   %esp
         movl    %esp, %gs:0             // Set kernel TLS thread pointer
         xorl    %eax, %eax
-        movl    $511, %ecx              // Reserve 2KB for the default TLS
+        movl    $512, %ecx              // Reserve 2KB for the default TLS
 0:      pushl   %eax
         loop    0b
 
@@ -606,22 +551,16 @@ _shutdown:
         movw    $0x0003, %cx
         int     $0x15
 
-3:
-        // Switch to text mode
-        movw    $0x0003, %ax
-        int     $0x10
-
-        leaw    turnoff, %si
+3:      leaw    turnoff, %si
         call    prtstr
-        jmp     _halt
+4:      hlt
+        jmp     4b
 
 hang:
         leaw    failed, %si
         call    prtstr
-.global _halt
-_halt:
-        hlt
-        jmp     _halt
+0:      hlt
+        jmp     0b
 
 prtchr:
         pushw   %ax
@@ -686,7 +625,6 @@ read:
         movl    %edx, (PacketLBA32)
         movb    (DeviceNum), %dl
 
-#ifndef USE_CHS
         // Check LBA support
         movb    $0x41, %ah
         movw    $0x55aa, %bx
@@ -702,9 +640,7 @@ read:
         movw    %es, (PacketSeg)
         movb    $0x42, %ah              // extended read
         movw    $Packet, %si
-        int     $0x13
-        jnc     2f
-#endif
+        jmp     2f
 
         // Use CHS
 1:      movw    (PacketLBA0), %ax
@@ -722,10 +658,10 @@ read:
         movb    $1, %al                 // number of sectors to read
         movw    %di, %bx
         movb    (DeviceNum), %dl
-        int     $0x13
+
+2:      int     $0x13
         jc      hang
 
-2:
         addw    (BPB_BytsPerSec), %di
         jnc     3f
         movw    %es, %ax
@@ -736,8 +672,7 @@ read:
         addl    $1, %eax
         adcl    $0, %edx
         popw    %cx
-        decw    %cx
-        jnz     0b
+        loop    0b
 
         popl    %esi
         ret
@@ -1046,87 +981,3 @@ gdt48:
 idt48Real:
         .word   0x400                   // idt limit = 0
         .word   0, 0                    // idt base = 0L
-
-        .align  4096
-        // Application processor startup routine
-.global _startap
-_startap:
-        // Set %sp
-        cli
-        xorw    %ax, %ax
-        movw    %ax, %ss
-        movw    $0x7c00, %sp
-
-        // Set %ds and %es
-        movw    $0x3000, %ax
-        movw    %ax, %ds
-        movw    %ax, %es
-
-        cli
-        cld
-
-        lgdt    gdt48                   // Load GDT
-
-        // Switch to the protected mode
-        movl    %cr0, %eax
-        orl     $1, %eax
-        movl    %eax, %cr0
-
-        .code32
-        .byte 0x66                      // Need prefix as still using 16bit CS
-        ljmp    $8, $(0x3000*16 + 0f)   // Clear prefetch and normalize %eip
-0:
-        xorl    %eax, %eax
-        lldt    %ax                     // Invalidate LDTR
-
-        movw    $16, %ax
-        movw    %ax, %ds
-        movw    %ax, %es
-        movw    %ax, %fs
-        movw    %ax, %ss
-
-        movw    $40, %ax
-        movw    %ax, %gs
-
-        lidt    idt48                   // Load IDT
-
-        // Turn on PSE
-        movl    %cr4, %eax
-        orl     $0x10, %eax
-        movl    %eax, %cr4
-
-        // Load page directory
-        movl    $0x10000, %eax
-        movl    %eax, %cr3
-
-        // Enable paging
-        movl    %cr0, %eax
-        orl     $0x80010000, %eax
-        movl    %eax, %cr0              // and set paging (PG) bit with WP
-
-        movl    $0x80014000, %esp
-        pushl   %esp
-        movl    %esp, %gs:0             // Set AP TLS thread pointer
-        xorl    %eax, %eax
-        movl    $511, %ecx              // Reserve 2KB for the default TLS
-0:      pushl   %eax
-        loop    0b
-
-        pushl   %eax                    // argv
-        pushl   %eax                    // argc
-        jmp     *(0x30000 + Entryap)    // Jump to the es.img
-
-        .code16
-
-testA20:
-        xorw    %ax, %ax
-        movw    %ax, %fs                // 0x0000
-        decw    %ax
-        movw    %ax, %gs                // 0xffff
-        movw    $2, %cx
-0:      incw    %ax
-        movw    %ax, %fs:(0x200)
-        outb    %al,$0x80               // delay
-        cmpw    %gs:(0x210), %ax
-        loope   0b
-        ret

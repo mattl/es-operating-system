@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -32,7 +32,6 @@
 #include "label.h"
 #include "spinlock.h"
 
-class Core;
 class Delegate;
 class UpcallProxy;
 class Process;
@@ -86,7 +85,7 @@ class UpcallRecord
     UpcallProxy*        proxy;
     int                 methodNumber;
     va_list             param;
-    Reflect::Method     method;
+    Reflect::Function   method;
 
     friend class Core;
     friend class Thread;
@@ -97,7 +96,6 @@ class UpcallRecord
         process(process),
         client(0)
     {
-        ASSERT(process);
     }
 
     int getState()
@@ -133,7 +131,7 @@ class UpcallRecord
     }
 };
 
-class Thread : public IThread, public ICallback, public Lock
+class Thread : public IThread, public ICallback, public SpinLock
 {
     friend class Sched;
     friend class Process;
@@ -148,7 +146,6 @@ public:
 
     State               state;
     unsigned            attr;
-    Core*               core;
 
     int                 base;       // base priority
 
@@ -185,7 +182,7 @@ public:
         };
     };
 
-    class Rendezvous : public Lock
+    class Rendezvous : public SpinLock
     {
         Queue queue;
 
@@ -202,12 +199,14 @@ public:
     {
         friend class Thread;
 
-        Ref             ref;
-        Rendezvous      rendezvous;
-        int             lockCount;
-        Rendezvous      cv;
-        Thread*         owner;      // the current owner
-        Link<Monitor>   link;
+        Ref         ref;
+
+        Rendezvous  rendezvous;
+        int         lockCount;
+
+        Rendezvous  cv;
+
+        Thread*     owner;      // the current owner
 
         int condLock(int);
         int condTryLock(int);
@@ -217,6 +216,8 @@ public:
         int invoke(int);
 
     public:
+        Link<Monitor>   link;
+
         Monitor();
 
         int getPriority();
@@ -226,7 +227,7 @@ public:
         void spinUnlock();
 
         // IInterface
-        void* queryInterface(const Guid& riid);
+        bool queryInterface(const Guid& riid, void** objectPtr);
         unsigned int addRef(void);
         unsigned int release(void);
 
@@ -258,13 +259,12 @@ public:
         };
     };
 
-    typedef List<Monitor, &Monitor::link> MonitorList;
-
     Rendezvous*         rendezvous; // rendezvous currently sleeping
     Monitor*            monitor;    // monitor trying to lock
 
     Rendezvous          joinPoint;
-    MonitorList         monitorList;
+    List<Monitor, &Monitor::link>
+                        monitorList;
 
     Alarm               alarm;
     Rendezvous          sleepPoint;
@@ -281,7 +281,7 @@ public:
                         upcallList;     // List of upcall records
 
     Thread(void* (*run)(void*), void* param, int priority,
-           void* stack = 0, unsigned stackSize = 32768);
+           void* stack = 0, unsigned stackSize = 8192);
 
     ~Thread();
 
@@ -303,7 +303,6 @@ public:
     int getEffectivePriority();
     void updatePriority();
     Thread* setEffectivePriority(int priority);
-    Thread* resetPriority();
 
     bool isDeadlocked();
     void unlockAllMonitors();
@@ -326,8 +325,6 @@ public:
 
     Process* returnToClient();
     Process* leapIntoServer(UpcallRecord* record);
-
-    bool checkStack();
 
     //
     // ICurrentThread (called by Sched)
@@ -359,7 +356,7 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -367,15 +364,15 @@ public:
 
     // Architecture specific functions
     static Thread* getCurrentThread();
+    static unsigned splIdle();
+    static unsigned splLo();
+    static unsigned splHi();
+    static void splX(unsigned x);
     static void reschedule();
 };
 
-class Sched : public ICurrentThread, public ICurrentProcess, public IRuntime,
-              public ICallback, public Lock
+class Sched : public ICurrentThread, public ICurrentProcess, public IRuntime, public SpinLock
 {
-    friend class Core;
-    friend class Lock;
-    friend class SpinLock;
     friend class Thread;
 
     Ref                 ref;
@@ -383,21 +380,16 @@ class Sched : public ICurrentThread, public ICurrentProcess, public IRuntime,
     bool                runQueueHint;
     Thread::Queue       runQueue[IThread::Highest + 1];
 
-    static Ref          numCores;
-
 public:
     Sched();
     void setRun(Thread* thread);
     void unsetRun(Thread* thread);
     Thread* selectThread();
 
-    // ICallback
-    int invoke(int result);
-
     //
     // ICurrentThread
     //
-    void exit(const void* val);
+    void exit(void* val);
     void sleep(long long timeout);
     int setCancelState(int state);
     int setCancelType(int type);
@@ -410,39 +402,122 @@ public:
               IPageable* pageable, long long offset);
     void unmap(const void* start, long long length);
     ICurrentThread* currentThread();
-    // [check] start must be a function pointer.
-    // IThread* createThread(void* (*start)(void* param), void* param);
-    IThread* createThread(const void* start, const void* param);
+    IThread* createThread(void* (*start)(void* param), void* param);
     void yield(void);
     IMonitor* createMonitor();
     IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
+    IStream* getIn();
+    IStream* getOut();
     IStream* getError();
     void* setBreak(long long increment);
     long long getNow();
     bool trace(bool on);
-    void setCurrent(IContext* context);
-    IContext* getCurrent();
 
     // IRuntime
-    /* [check] function pointer.
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
     void setFocus(void* (*focus)(void* param));
-    */
-    void setStartup(const void* startup);
-    void setFocus(const void* focus);
 
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };
 
+inline SpinLock::
+SpinLock() :
+    spin(0),
+    owner(0),
+    count(0)
+{
+}
+
+inline bool SpinLock::
+isLocked()
+{
+    if (!spin)
+    {
+        return false;
+    }
+    if (owner == Thread::getCurrentThread())
+    {
+        return false;
+    }
+    return true;
+}
+
+inline void SpinLock::
+wait()
+{
+    while (spin && owner != Thread::getCurrentThread())
+    {
+#if defined(__i386__) || defined(__x86_64__)
+        // Use the pause instruction for Hyper-Threading
+        __asm__ __volatile__ ("pause\n");
+#endif
+    }
+}
+
+inline bool SpinLock::
+tryLock()
+{
+    Thread* current = Thread::getCurrentThread();
+    if (!spin.exchange(1))
+    {
+        ++count;
+        owner = current;
+        return true;
+    }
+    if (owner == current)
+    {
+        ++count;
+        return true;
+    }
+    return false;
+}
+
+inline void SpinLock::
+lock()
+{
+    ASSERT(!spin || owner == Thread::getCurrentThread());   // XXX single processor only
+    do
+    {
+        wait();
+    }
+    while (!tryLock());
+    ASSERT(0 < count);
+}
+
+inline void SpinLock::
+unlock()
+{
+    ASSERT(owner == Thread::getCurrentThread());
+    ASSERT(0 < count);
+    if (--count == 0)
+    {
+        spin.exchange(0);
+    }
+}
+
+inline SpinLock::Synchronized::
+Synchronized(SpinLock& spinLock) :
+    spinLock(spinLock)
+{
+    x = Thread::splHi();
+    spinLock.lock();
+}
+
+inline SpinLock::Synchronized::
+~Synchronized()
+{
+    spinLock.unlock();
+    Thread::splX(x);
+}
+
 typedef Thread::Monitor     Monitor;
-typedef Thread::MonitorList MonitorList;
+typedef List<Thread::Monitor, &Thread::Monitor::link>
+                            MonitorList;
 typedef Thread::Rendezvous  Rendezvous;
 
 #endif  // __es__

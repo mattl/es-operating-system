@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,113 +16,22 @@
 #include <string.h>
 #include <es.h>
 #include <es/exception.h>
-#include "apic.h"
 #include "core.h"
-#include "8254.h"
 
-// #define VERBOSE
+extern "C" void _exit(int i);
 
-extern void debug(Ureg* ureg);
-
-extern bool nmiHandler();
-
-namespace
-{
-    // The NullPic class is only used until the Pic class object for 8259 or
-    // the Apic class object for APIC are constructed.
-    class NullPic : public IPic
-    {
-        Ref ref;
-    public:
-        int startup(unsigned int bus, unsigned int irq)
-        {
-            return -1;
-        }
-        int shutdown(unsigned int bus, unsigned int irq)
-        {
-            return -1;
-        }
-        int enable(unsigned int bus, unsigned int irq)
-        {
-            return -1;
-        }
-        int disable(unsigned int bus, unsigned int irq)
-        {
-            return -1;
-        }
-        bool ack(int vec)
-        {
-            return false;
-        }
-        bool end(int vec)
-        {
-            return false;
-        }
-        int setAffinity(unsigned int bus, unsigned int irq, unsigned int mask)
-        {
-            return -1;
-        }
-        unsigned int splIdle() { return 0; }
-        unsigned int splLo() { return 0; }
-        unsigned int splHi() { return 0; }
-        void splX(unsigned int x) {}
-        void* queryInterface(const Guid& riid)
-        {
-            void* objectPtr;
-            if (riid == IPic::iid())
-            {
-                objectPtr = static_cast<IPic*>(this);
-            }
-            else if (riid == IInterface::iid())
-            {
-                objectPtr = static_cast<IPic*>(this);
-            }
-            else
-            {
-                return NULL;
-            }
-            static_cast<IInterface*>(objectPtr)->addRef();
-            return objectPtr;
-        }
-        unsigned int addRef(void)
-        {
-            return ref.addRef();
-        }
-        unsigned int release(void)
-        {
-            unsigned int count = ref.release();
-            if (count == 0)
-            {
-                delete this;
-                return 0;
-            }
-            return count;
-        }
-    };
-
-    NullPic nullPic __attribute__ ((init_priority (101)));
-
-    struct Frame
-    {
-        Frame* prev;
-        void*  pc;
-    };
-}
-
-Core* Core::coreTable[Core::CORE_MAX];
+Ref Core::numCores(0);
+Core* Core::coreTable[Core::MaxCore];
 bool Core::fxsr;
 bool Core::sse;
 Segdesc Core::idt[256] __attribute__ ((aligned (16)));
 SegdescLoc Core::idtLoc(sizeof idt - 1, idt);
-Lock Core::spinLock;
+SpinLock Core::spinLock;
 ICallback* Core::exceptionHandlers[255];
-IPic* Core::pic = &nullPic;
-u8 Core::isaBus;
+IPic* Core::pic;
 
 extern "C"
 {
-    asm("   .text");
-    asm("   .align  16, 0");
     asm("catchException:");
     asm("   pushl   %ds");
     asm("   pushl   %es");
@@ -442,72 +351,38 @@ static void settr(register u16 sel)
         :: "a" (sel));
 }
 
-void Core::
-doubleFault()
-{
-    Core* core = getCurrentCore();
-    Tss* tss = core->tss1;
-
-    esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
-    tss->dump();
-    for (;;)
-    {
-#ifdef __i386__
-        __asm__ __volatile__ ("hlt\n");
-#endif
-    }
-}
-
 Core::
-Core(Sched* sched) :
+Core(Sched* sched, void* stack, unsigned stackSize, Tss* tss) :
     sched(sched),
     currentProc(0),
     current(0),
     currentFPU(0),
-    freeze(0),
+    yieldable(true),
+    label(stack, stackSize, reschedule, this),
+    tss(tss),
     gdtLoc(sizeof gdt - 1, gdt),
     tcb(0)
 {
-    ASSERT(reinterpret_cast<unsigned long>(this) % 16 == 0);
+    ASSERT((unsigned long) this % 16 == 0);
+    ASSERT((unsigned long) tss % 256 == 0);
 
-    u8* ptr = reinterpret_cast<u8*>((reinterpret_cast<unsigned long>(this) & ~0xff) - 256);
-
-    tss0 = reinterpret_cast<Tss*>(ptr);
-    ASSERT(reinterpret_cast<unsigned long>(tss0) % 128 == 0);
-    tss1 = reinterpret_cast<Tss*>(ptr + 128);
-    ASSERT(reinterpret_cast<unsigned long>(tss1) % 128 == 0);
-
-    stack = ptr + 256 + ((sizeof(Core) + 15) & ~15);
-    *(int*) stack = 0xa5a5a5a5;
-    unsigned stackSize = CORE_SIZE - 256 - ((sizeof(Core) + 15) & ~15);
-    label.init(stack, stackSize, reschedule, this);
-
-    id = Sched::numCores - 1;
+    id = numCores.addRef() - 1;
+    ASSERT(id < MaxCore);
     coreTable[id] = this;
 
-    esReport("Core %d at %p:%p:%p %p:%d\n", id, this, ptr, tss0, stack, stackSize);
-
-    // Reserve a page for TCBs that can be read from the user level.
-    tcb = reinterpret_cast<Tcb*>(0x80011000 + id * sizeof(Tcb));
+    // Reserve a page for TCB that can be read from the user level.
+    tcb = (Tcb*) Mmu::getPointer(0x11000 + (id * sizeof(Tcb)));
     memset(tcb, 0, sizeof(Tcb));
 
-    memset(tss0, 0, sizeof(Tss));
-    tss0->ss0 = tss0->ds = tss0->es = tss0->fs = tss0->ss = KDATASEL;
-    tss0->gs = KTCBSEL;
-    tss0->cs = KCODESEL;
-    tss0->iomap = sizeof(Tss);
-    tss0->sp0 = 0;   // kernel stack pointer
+    ktcb = (Tcb*) Mmu::getPointer(0x12000 + (id * sizeof(Tcb)));
+    memset(ktcb, 0, sizeof(Tcb));
 
-    memset(tss1, 0, sizeof(Tss));
-    tss1->ss0 = tss1->ds = tss1->es = tss1->fs = tss1->ss = KDATASEL;
-    tss1->gs = KTCBSEL;
-    tss1->cs = KCODESEL;
-    tss1->iomap = sizeof(Tss);
-    tss1->sp0 = 0x80014000;  // kernel stack pointer
-    tss1->eip = (u32) doubleFault;
-    tss1->esp = 0x80014000;
-    tss1->eflags = 0x02;
-    tss1->cr3 = 0x10000;
+    memset(tss, 0, sizeof(Tss));
+    tss->ss0 = tss->ds = tss->es = tss->fs = tss->ss = KDATASEL;
+    tss->gs = KTCBSEL;
+    tss->cs = KCODESEL;
+    tss->iomap = sizeof(Tss);
+    tss->sp0 = 0;   // kernel stack pointer
 
     gdt[0].init(0, 0, 0);
 
@@ -524,11 +399,11 @@ Core(Sched* sched) :
     gdt[4].init(0x30000, 0xffff, Segdesc::SEGP | Segdesc::SEGDATA | Segdesc::SEGW);
 
     // KTCBSEL
-    gdt[5].init(reinterpret_cast<u32>(&ktcb),
+    gdt[5].init(0x80000000 + 0x12000 + id * sizeof(Tcb),
                 sizeof(tcb) - 1, Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGDATA);
 
     // TSSSEL
-    gdt[6].init((u32) tss0, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
+    gdt[6].init((u32) tss, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
 
     // UCODESEL
     gdt[7].init(0, 0x7ffff, Segdesc::SEGG | Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGEXEC | Segdesc::SEGR, 3);
@@ -540,51 +415,17 @@ Core(Sched* sched) :
     gdt[9].init(0x80000000 - 8192 + id * sizeof(Tcb),
                 sizeof(tcb) - 1, Segdesc::SEGD | Segdesc::SEGP | Segdesc::SEGDATA, 3);
 
-    // TSS1SEL
-    gdt[10].init((u32) tss1, sizeof(Tss) - 1, Segdesc::SEGP | Segdesc::SEGTSS);
-
     if (id == 0)
     {
-        u32 exceptionAddr = reinterpret_cast<u32>(exceptionTable);
-        for (int vec = 0; vec < 256; ++vec, exceptionAddr += 16)
+        u32 exceptionAddr = (u32) exceptionTable;
+        for (Segdesc* desc = idt; desc < &idt[256]; ++desc, exceptionAddr += 16)
         {
-            Segdesc* desc = &idt[vec];
-            switch (vec)
-            {
-            case NO_DE:     // Divide Error
-            case NO_DB:     // Debug
-            case NO_NMI:    // NMI Interrupt
-            case NO_BP:     // Breakpoint
-            case NO_OF:     // Overflow
-            case NO_BR:     // BOUND Range Exceeded
-            case NO_UD:     // Invalid Opcode (UnDefined Opcode)
-            case NO_NM:     // Device Not Available (No Math Coprocessor)
-            case NO_MF386:  // CoProcessor Segment Overrun
-            case NO_TS:     // Invalid TSS
-            case NO_NP:     // Segment Not Present
-            case NO_SS:     // Stack Segment Fault
-            case NO_GP:     // General Protection
-            case NO_PF:     // Page Fault
-            case NO_MF:     // Floating-Point Error (Math Fault)
-            case NO_AC:     // Alignment Check
-            case NO_MC:     // Machine Check
-            case NO_XF:     // SIMD Floating-Point Exception
-                desc->setInterruptHandler(KCODESEL, exceptionAddr);
-                break;
-            case NO_DF:     // Double Fault
-                desc->setTaskGate(TSS1SEL);
-                break;
-            case 65:        // System call
-            case 66:        // Upcall
-                desc->setInterruptHandler(KCODESEL, exceptionAddr);
-                desc->setDPL(3);
-                break;
-            default:
-                desc->setInterruptHandler(KCODESEL, exceptionAddr);
-                break;
-            }
+            desc->setExceptionHandler(KCODESEL, (void (*)()) exceptionAddr);
         }
     }
+
+    idt[65].setDPL(3);  // for system call
+    idt[66].setDPL(3);  // for upcall
 
     gdtLoc.loadGDT();
     idtLoc.loadIDT();
@@ -597,40 +438,36 @@ Core(Sched* sched) :
         ::: "%eax");
 
     int eax, ebx, ecx, edx;
-    cpuid(0x01, &eax, &ebx, &ecx, &edx);
+    cpuid(1, &eax, &ebx, &ecx, &edx);
     esReport("cpuid(1): %08x %08x\n", ecx, edx);
     fxsr = (edx & (1u << 24)) ? true : false;
     sse = (edx & (1u << 25)) ? true : false;
     initFPU();
+
+    if (!pic)
+    {
+        pic = new Pic();
+    }
 }
 
 Core* Core::
 getCurrentCore()
 {
-    return coreTable[Apic::getLocalApicID()];   // XXX The Local APIC IDs need not to be consecutive.
+    return coreTable[0];
 }
 
 void Core::
 reschedule(void* param)
 {
-    unsigned x = splHi();
-    Apic::started();
+    unsigned x = Thread::splHi();
     Core* core = getCurrentCore();
     for (;;)
     {
         core->label.set();
-        Thread* current = core->current;
+        Thread* current = (Thread*) core->current;
         if (current)
         {
-            // Note the current has been locked when rescheduled by
-            // Rendezvous::sleep().
-            current->tryLock();
-            core->current = 0;
-#ifdef VERBOSE
-            esReport("[%d:%p] Core::reschedule in. current = %p %p %p\n",
-                     core->id, &param, current, current ? current->label.esp : 0);
-#endif
-            ASSERT(current->core == core);
+            current->lock();
             switch (current->getState())
             {
               case IThread::TERMINATED:
@@ -642,6 +479,7 @@ reschedule(void* param)
                 current->release();
                 break;
               case IThread::RUNNING:
+                current->state = IThread::RUNNABLE;
                 current->setRun();
                 // FALL THROUGH
               default:
@@ -650,16 +488,14 @@ reschedule(void* param)
                     current->xreg.save();
                     disableFPU();
                 }
-                ASSERT(current->label.isSane());
-                current->core = 0;
                 current->unlock();
                 break;
             }
+            core->current = 0;
         }
         core->current = current = core->sched->selectThread();
-        ASSERT(core->checkStack());
         core->currentFPU = 0;
-        core->ktcb.tcb = current->ktcb;
+        core->ktcb->tcb = current->ktcb;
 
         UpcallRecord* record = current->upcallList.getLast();
         if (!record)
@@ -669,30 +505,22 @@ reschedule(void* param)
                 core->tcb->tcb = current->tcb;
                 current->process->load();
             }
-            else
-            {
-                // To make kernel threads be able to call kill(), etc. safely.
-                core->currentProc = 0;
-            }
         }
         else
         {
             // The current thread is upcalling a server process.
             core->tcb->tcb = record->tcb;
-            ASSERT(record->process);
             record->process->load();
         }
-        core->tss0->sp0 = current->sp0;
+        core->tss->sp0 = current->sp0;
 
 #ifdef VERBOSE
-        esReport("[%d:%p] Core::reschedule out. current = %p: %p %p\n",
-                 core->id, &param, current, current ? current->label.esp : 0);
+        esReport("reschedule: %d %p %p\n", core->id, current, current->label.eip);
 #endif
 
-        ASSERT(current->label.isSane());
         current->label.jump();
     }
-    splX(x);
+    Thread::splX(x);
     // NOT REACHED HERE
 }
 
@@ -750,27 +578,13 @@ static void kernelFault()
 void Core::
 dispatchException(Ureg* ureg)
 {
-    unsigned x = splHi();
     Core* core = getCurrentCore();
-    Thread* current = core->current;
-    Process* process = core->currentProc;
-
-#ifdef VERBOSE
-    esReport("[%d:%p]: dispatchException(%p:%d) at %p\n",
-              core->id, (u8*) &ureg + sizeof(Ureg) - 8,
-              ureg, ureg->trap, ureg->eip);
-#endif
-
     switch (ureg->trap)
     {
-      case NO_DB:   // Debug
-      case NO_BP:   // Breakpoint
-        debug(ureg);
-        break;
       case NO_NM:   // Device Not Available (No Math Coprocessor)
-        if (current)
+        if (core->current)
         {
-            core->currentFPU = current;
+            core->currentFPU = core->current;
             enableFPU();
             core->current->xreg.restore();
         }
@@ -782,80 +596,61 @@ dispatchException(Ureg* ureg)
             "movl   %%cr2, %0\n"
             : "=r"(cr2));
 #endif // __i386__
-        if (process)
+        if (core->currentProc)
         {
-            // splLo();
-
             int rc;
             if (ureg->error & Page::PTEVALID)
             {
-                rc = process->protectionFault((void*) cr2, ureg->error);
+                rc = core->currentProc->protectionFault((void*) cr2, ureg->error);
             }
             else
             {
-                rc = process->validityFault((void*) cr2, ureg->error);
+                rc = core->currentProc->validityFault((void*) cr2, ureg->error);
             }
             if (0 <= rc)
             {
                 break;
             }
-            if (ureg->cs == KCODESEL && process->isValid((void*) cr2, 1))
+            if (ureg->cs == KCODESEL && core->currentProc->isValid((void*) cr2, 1))
             {
                 // Kernel page fault: Create a stack frame as if kernelFault() is
                 // called. By using the -fnon-call-exceptions g++ compiler option,
                 // the function incurred a kernel page fault will receive an
                 // EFFALT system exception.
-                if (process->log)
+                if (core->currentProc->log)
                 {
-                    esReport("[kernel page fault at %p]\n", cr2);
-                    Frame* frame = (Frame*) (&ureg - 2);
-                    while (frame)
-                    {
-                        esReport("%p %p\n", frame->pc, frame->prev);
-                        frame = frame->prev;
-                    }
+                    esReport("[kernel page fault at %p]", cr2);
                 }
                 Ureg* exc = (Ureg*) ((char*) ureg - sizeof(u32));
                 memmove(exc, ureg, sizeof(Ureg) - 8);
                 u32 ret = exc->eip;
                 exc->esp = ret;     // Note &exc->esp is the new esp address after iret.
                 exc->eip = (u32) kernelFault;
-
-                ASSERT(!current || current->checkStack());
-
-                splX(x);
                 exc->load();
                 break;
             }
         }
-        esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
         ureg->dump();
-        if (process)
-        {
-            process->dump();
-        }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x cr2:%x", ureg->trap, ureg->eip, cr2);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x cr2:%x\n", ureg->trap, ureg->eip, cr2);
         break;
       case 65:  // system call interface
         // ureg->eax: self
         // ureg->ecx: array of parameters
         // ureg->edx: method number
         // ureg->esi: base
-        if (process)
+        if (core->currentProc)
         {
-            splLo();
-
-            // esReport("[%p]::dispatchException: %u @ %x\n", process, ureg->trap, ureg->eip);
+            // esReport("[%p]::dispatchException: %u @ %x\n", core->currentProc, ureg->trap, ureg->eip);
             int errorCode(0);
             long long result;
 
-            current->param = ureg;
+            core->current->param = ureg;
             try
             {
                 va_list param(reinterpret_cast<va_list>(ureg->ecx));
 
                 ureg->ecx = 0;  // To indicate this is not an exception call
-                result = process->systemCall(
+                result = core->currentProc->systemCall(
                     reinterpret_cast<void**>(ureg->eax),
                     ureg->edx,
                     param,
@@ -883,81 +678,66 @@ dispatchException(Ureg* ureg)
             ureg->eax = (u32) result;
             ureg->ecx = (u32) errorCode;
             ureg->edx = (u32) (result >> 32);
-            current->testCancel();
+            core->current->testCancel();
             break;
         }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         break;
       case 66:  // upcall interface
-        if (process)
+        if (core->currentProc)
         {
-            splLo();
-
+            // esReport("[%p]::dispatchException: %u @ %x\n", core->currentProc, ureg->trap, ureg->eip);
             ureg->ecx = 0;  // To indicate this is not an exception call
-            current->param = ureg;
-            process->returnFromUpcall(ureg);
-            current->testCancel();
+            core->current->param = ureg;
+            core->currentProc->returnFromUpcall(ureg);
+            core->current->testCancel();
             break;
         }
-        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+        esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         break;
-      case NO_NMI:
-        if (nmiHandler())
-        {
-            static long long nmiTick;
-            if (Pit::tick != nmiTick)
-            {
-                nmiTick = Pit::tick;
-                break;
-            }
-        }
-        // FALL THROUGH
       default:
+        ICallback* callback = core->exceptionHandlers[ureg->trap];
         if (32 <= ureg->trap)
         {
-            core->freeze.increment();
-            core->current = 0;
-            if (pic->ack(ureg->trap))
+            core->yieldable = false;
+            int irq = ureg->trap - 32;
+            if (pic->ack(irq))
             {
-                // x = splLo();     // Enable interrupts
-                ICallback* callback = core->exceptionHandlers[ureg->trap];
                 if (callback)
                 {
-                    callback->invoke(ureg->trap);
+                    callback->invoke(irq);
                 }
-                pic->end(ureg->trap);
-                // splX(x);
+                pic->end(irq);
             }
-
-            core->current = current;
-            ASSERT(!current || current->checkStack());
-            core->freeze.decrement();
+            core->yieldable = true;
             Thread::reschedule();
         }
         else
         {
-            esReport("Kernel panic [%d:%p]\n", core->id, core->currentProc);
             ureg->dump();
-            esPanic(__FILE__, __LINE__, "Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
+            esPanic(__FILE__, __LINE__, "Core::dispatchException: %u @ %x\n", ureg->trap, ureg->eip);
         }
         break;
     }
-
-    ASSERT(!current || current->checkStack());
-    splX(x);
 }
 
 long Core::
 registerExceptionHandler(u8 exceptionNumber, ICallback* callback)
 {
-    Lock::Synchronized method(spinLock);
-
     if (!callback)
     {
         return -1;
     }
+    unsigned x = Thread::splHi();
+    spinLock.lock();
     ICallback* old = exceptionHandlers[exceptionNumber];
     exceptionHandlers[exceptionNumber] = callback;
+    if (32 <= exceptionNumber && !old)
+    {
+        pic->startup(exceptionNumber - 32);
+    }
+    spinLock.unlock();
+    Thread::splX(x);
     callback->addRef();
     if (old)
     {
@@ -969,9 +749,9 @@ registerExceptionHandler(u8 exceptionNumber, ICallback* callback)
 long Core::
 unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback)
 {
-    Lock::Synchronized method(spinLock);
-
     long rc;
+    unsigned x = Thread::splHi();
+    spinLock.lock();
     ICallback* old = exceptionHandlers[exceptionNumber];
     if (!callback || old == callback)
     {
@@ -982,6 +762,12 @@ unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback)
     {
         rc = -1;
     }
+    if (32 <= exceptionNumber && old)
+    {
+        pic->shutdown(exceptionNumber - 32);
+    }
+    spinLock.unlock();
+    Thread::splX(x);
     if (old)
     {
         old->release();
@@ -989,57 +775,10 @@ unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback)
     return rc;
 }
 
-long Core::
-registerInterruptHandler(u8 bus, u8 irq, ICallback* callback)
-{
-    Lock::Synchronized method(spinLock);
-
-    if (!callback)
-    {
-        return -1;
-    }
-
-    int vec = pic->startup(bus, irq);
-    if (vec < 0 || exceptionHandlers[vec])
-    {
-        return -1;
-    }
-
-    callback->addRef();
-    exceptionHandlers[vec] = callback;
-
-    return pic->enable(bus, irq);;
-}
-
-long Core::
-unregisterInterruptHandler(u8 bus, u8 irq, ICallback* callback)
-{
-    Lock::Synchronized method(spinLock);
-
-    if (!callback)
-    {
-        return -1;
-    }
-
-    int vec = pic->disable(bus, irq);
-    if (vec < 0 || !exceptionHandlers[vec])
-    {
-        return -1;
-    }
-
-    ICallback* old = exceptionHandlers[vec];
-    ASSERT(old == callback);
-    pic->shutdown(bus, irq);
-    old->release();
-    exceptionHandlers[vec] = 0;
-
-    return pic->shutdown(bus, irq);;
-}
-
 void Core::
 shutdown()
 {
-    unsigned x = splHi();
+    unsigned x = Thread::splHi();
     // Restore default kernel memory map
     u32* table = static_cast<u32*>(Mmu::getPointer(0x10000));
     for (int i = 0; i < 512; ++i)
@@ -1052,36 +791,5 @@ shutdown()
         ::: "%eax");
 
     ((int (*)()) (0x30000 + (*(u16*) (0x30000 + 124))))();
-    splX(x);
-}
-
-bool Core::
-checkStack()
-{
-    return *(int*) stack == 0xa5a5a5a5;
-}
-
-// Core memory layout:
-//
-// [ TSS0 (128 bytes) | Tss1 (128 bytes for DF#) | Core | Stack ] in 16384 bytes
-//
-
-// Allocates memory for Core, Core stack, and Core TSS at the same time.
-void* Core::
-operator new(size_t size) throw(std::bad_alloc)
-{
-    u8* ptr = reinterpret_cast<u8*>(0x80030000);
-    int n = Sched::numCores.addRef() - 1;
-    ASSERT(n < CORE_MAX);
-    if (CORE_MAX <= n)
-    {
-        throw std::bad_alloc();
-    }
-    ptr += CORE_SIZE * n;
-    return ptr + 256;
-}
-
-void Core::
-operator delete(void*) throw()
-{
+    Thread::splX(x);
 }

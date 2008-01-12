@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,57 +16,86 @@
 #include "thread.h"
 #include "core.h"
 
+unsigned Thread::
+splIdle()
+{
+    register unsigned eax;
+
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl    %0\n"
+        "sti"
+        : "=a" (eax));
+
+    return eax;
+}
+
+unsigned Thread::
+splLo()
+{
+    register unsigned eax;
+
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl   %0\n"
+        "sti"
+        : "=a" (eax));
+
+    return eax;
+}
+
+unsigned Thread::
+splHi()
+{
+    register unsigned eax;
+
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl   %0\n"
+        "cli"
+        : "=a" (eax));
+
+    return eax;
+}
+
+void Thread::
+splX(unsigned x)
+{
+    __asm__ __volatile__ (
+        "pushl   %0\n"
+        "popfl"
+        :: "r" (x));
+}
+
 Thread* Thread::
 getCurrentThread()
 {
-    if (Sched::numCores == 0)
-    {
-        return 0;
-    }
-
-    unsigned x = Core::splHi();
     Core* core = Core::getCurrentCore();
-    Thread* current = core ? core->current : 0;
-    Core::splX(x);
-    return current;
+    return core ? core->current : 0;
 }
 
 void Thread::
 reschedule()
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     Core* core = Core::getCurrentCore();
-    if (core->freeze)
+    if (!core->yieldable)
     {
-        Core::splX(x);
+        splX(x);
         return;
     }
     Thread* current = core->current;
-
-    if (!current)
+    if (current)
     {
-        core->label.jump();     // Jump to Core::reschedule().
-        // NOT REACHED HERE
+        if (current->label.set())
+        {
+            // This thread resumes from here.
+            splX(x);
+            return;
+        }
     }
-
-    if (current->state == IThread::RUNNING && !core->sched->runQueueHint)
-    {
-        current->tryLock();
-        current->unlock();
-        Core::splX(x);
-        return;
-    }
-
-    ASSERT(current->core == core);
-
-    if (current->label.set() == 0)
-    {
-        core->label.jump();     // Jump to Core::reschedule().
-        // NOT REACHED HERE
-    }
-
-    // This thread resumes from here.
-    Core::splX(x);
+    core->label.jump();     // Jump to reschedule().
+    // NOT REACHED HERE
 }
 
 void Thread::
@@ -90,17 +119,15 @@ entry(unsigned long start)
 void* Thread::
 tls(unsigned size, unsigned align)
 {
-    unsigned x = (size + sizeof(void*) + align - 1) & ~(align -1);
+    size = (size + align - 1) & ~(align -1);
 
     Ureg* ureg(static_cast<Ureg*>(param));
-    ureg->esp -= x;
+    ureg->esp -= size;
     tcb = reinterpret_cast<void*>(ureg->esp + size);
-    *(void**) tcb = tcb;
     return reinterpret_cast<void*>(ureg->esp);
 }
 
-void Thread::
-setArguments(char* arguments)
+void Thread::setArguments(char* arguments)
 {
     ASSERT(arguments[-1] == '\0');
     Ureg* ureg(static_cast<Ureg*>(param));
@@ -131,7 +158,7 @@ setArguments(char* arguments)
     char** argv = (char**) frame;
     char* a = (char*) frame;
     *--a = '\0';
-    argv[n] = 0;
+    argv[n] = a;
     --p;
     while (*p)
     {

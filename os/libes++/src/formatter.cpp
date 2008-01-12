@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -20,8 +20,6 @@
 #include <es/types.h>
 #include <es/formatter.h>
 
-using namespace es;
-
 extern "C"
 {
     size_t strnlen(const char* string, size_t count);
@@ -29,29 +27,22 @@ extern "C"
 
 Formatter::
 Formatter(int (*putc)(int, void*), void* opt) throw() :
-    mode(Mode::C), putc(putc), opt(opt)
+    putc(putc), opt(opt)
 {
     reset();
 }
 
 Formatter::
 Formatter(IStream* stream) throw() :
-    mode(Mode::C), putc(streamPutc), opt(stream)
+    putc(streamPutc), opt(stream)
 {
     stream->addRef();
     reset();
 }
 
 Formatter::
-Formatter(std::string& string) throw() :
-    mode(Mode::C), putc(stringPutc), opt(&string)
-{
-    reset();
-}
-
-Formatter::
 Formatter(const Formatter& o) throw() :
-    mode(Mode::C), putc(o.putc), opt(o.opt)
+    putc(o.putc), opt(o.opt)
 {
     reset();
 }
@@ -88,8 +79,9 @@ fillBlank(int count, char c)
 int Formatter::
 print(char c)
 {
-    char s[2] = { c, '\0' };
-    return print(s);
+    int count = printChar(c);
+    reset();
+    return count;
 }
 
 int Formatter::
@@ -172,9 +164,9 @@ printInteger(I u)
     p = &buf[BUFSIZE];
     do {
         if (cap)
-            *--p = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[u % base];
+            *--p = "0123456789ABCDEF"[u % base];
         else
-            *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[u % base];
+            *--p = "0123456789abcdef"[u % base];
     } while ((u /= base) != 0);
     n = &buf[BUFSIZE] - p;
 
@@ -262,81 +254,59 @@ print(unsigned long long n)
     return count;
 }
 
+void Formatter::
+general()
+{
+    conversion = 'g';
+}
+
+void Formatter::
+scientific()
+{
+    conversion = 'e';
+}
+
+void Formatter::
+fixed()
+{
+    conversion = 'f';
+}
+
 // Get number of significant digits plus '.' ane 'e-dd'.
 // Adjust precision to the number of digits to print.
-template <typename U, int Bit>
 int Formatter::
-digitlen(int& k, int& dd, U f, U r)
+digitlen(int& k, int& dd)
 {
-    int  n;
-    bool fixed = false;
+    int n;
 
     dd = -16383;
     switch (conversion)
     {
     case 'g':
-        if (precision < 0)
-        {
-            precision = 6;
-        }
-        else if (precision == 0)
+        if (precision <= 0)
         {
             precision = 1;
         }
-        if (mode == Mode::ECMAScript)
-        {
-            fixed = (-6 <= k && k < precision);
-        }
-        else
-        {
-            fixed = (-4 <= k && k < precision);
-        }
-        if (fixed)
+        if (-4 <= k && k < precision)
         {
             // fixed
-            if (!alt)
+            n = 1;
+            if (0 < k)
             {
-                int sig = significantlen<U, Bit>(f, r);
-                if (sig < precision)
-                {
-                    precision = sig;
-                }
-            }
-
-            if (0 <= k)
-            {
-                n = 1 + k;
-                if (precision < n)
-                {
-                    precision = n;
-                }
-                if (k - precision < -1)
-                {
-                    if (n < precision)
-                    {
-                        n += (precision - n);    // 000
-                    }
-                    ++n;    // .
-                }
+                n += k;
             }
             else
             {
                 precision += -k;
-                n = precision + 1;
+            }
+            if (n < precision)
+            {
+                n += 1 + (precision - n);    // .ddd
             }
         }
         else
         {
             // scientific
-            if (!alt)
-            {
-                int sig = significantlen<U, Bit>(f, r);
-                if (sig < precision)
-                {
-                    precision = sig;
-                }
-            }
-
             n = (k < 0) ? -k : k;
             if (n < 100)
             {
@@ -350,12 +320,10 @@ digitlen(int& k, int& dd, U f, U r)
             {
                 n = 4;  // dddd
             }
-            n += 2;     // e+
-            n += precision;
-            if (1 < precision)
-            {
-                ++n;
-            }
+            n += 3;     // d e+
+
+            ++precision;
+            n += precision;     // .ddd
             dd = k;
             k = 0;      // Adjust k
         }
@@ -377,7 +345,7 @@ digitlen(int& k, int& dd, U f, U r)
         }
 
         ++precision;
-        if (0 < k)
+        if (0 <= k)
         {
             precision += k;
         }
@@ -386,14 +354,7 @@ digitlen(int& k, int& dd, U f, U r)
     case 'e':
         if (precision < 0)
         {
-            if (mode == Mode::ECMAScript)
-            {
-                precision = significantlen<U, Bit>(f, r) - 1;
-            }
-            else
-            {
-                precision = 6;
-            }
+            precision = 6;
         }
 
         n = (k < 0) ? -k : k;
@@ -419,10 +380,6 @@ digitlen(int& k, int& dd, U f, U r)
         k = 0;          // Adjust k
         break;
     default:
-        if (precision <= 0)
-        {
-            precision = significantlen<U, Bit>(f, r);
-        }
         if (0 <= k)
         {
             n = 1 + k;
@@ -432,10 +389,6 @@ digitlen(int& k, int& dd, U f, U r)
             }
             if (k - precision < -1)
             {
-                if (n < precision)
-                {
-                    n += (precision - n);    // 000
-                }
                 ++n;    // .
             }
         }
@@ -528,43 +481,26 @@ printFloat(U x)
 
     if (e == MaxExp + 1)
     {
-        char seq[10];
+        char seq[5];
         char* p = seq;
-        int prec;
 
         if (sign != 0)
         {
             *p++ = sign;
-            prec = 4;
+            setPrecision(4);
         }
         else
         {
-            prec = 3;
+            setPrecision(3);
         }
         if (f == ((U) 1 << (MantDig - 1)))
         {
-            if (mode == Mode::ECMAScript)
-            {
-                prec += 5;
-                strcpy(p, "Infinity");
-            }
-            else
-            {
-                strcpy(p, cap ? "INF" : "inf");
-            }
+            strcpy(p, cap ? "INF" : "inf");
         }
         else
         {
-            if (mode == Mode::ECMAScript)
-            {
-                strcpy(p, "NaN");
-            }
-            else
-            {
-                strcpy(p, cap ? "NAN" : "nan");
-            }
+            strcpy(p, cap ? "NAN" : "nan");
         }
-        setPrecision(prec);
         return count + print(seq);
     }
 
@@ -605,7 +541,26 @@ printFloat(U x)
         f &= (~((U) 0) >> 4);
     }
 
-    n = digitlen<U, Bit>(k, dd, f, r);
+    switch (conversion)
+    {
+    case 'g':
+        if (!alt)
+        {
+            int sig = significantlen<U, Bit>(f, r);
+            if (sig < precision)
+            {
+                precision = sig;
+            }
+        }
+        break;
+    case 0:
+        if (precision <= 0)
+        {
+            precision = significantlen<U, Bit>(f, r);
+        }
+        break;
+    }
+    n = digitlen(k, dd);
     width -= n;
 
     if (filler != '0' && !leftJustified)
@@ -966,10 +921,7 @@ ConversionSpecifier:
             // FALL THROUGH
         case 'f':
             fixed();
-            {
-                double x = va_arg(args, double);
-                count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(*(u64*) &x);
-            }
+            count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(va_arg(args, u64));
             break;
 
         case 'E':
@@ -977,10 +929,7 @@ ConversionSpecifier:
             // FALL THROUGH
         case 'e':
             scientific();
-            {
-                double x = va_arg(args, double);
-                count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(*(u64*) &x);
-            }
+            count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(va_arg(args, u64));
             break;
 
         case 'G':
@@ -988,10 +937,7 @@ ConversionSpecifier:
             // FALL THROUGH
         case 'g':
             general();
-            {
-                double x = va_arg(args, double);
-                count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(*(u64*) &x);
-            }
+            count += printFloat<u64, sizeof(u64) * 8, 53, 1023>(va_arg(args, u64));
             break;
 
         case '%':

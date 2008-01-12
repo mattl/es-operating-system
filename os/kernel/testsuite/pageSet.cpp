@@ -82,8 +82,9 @@ int main()
 #endif
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     unsigned long maxFreeCount = PageTable::getFreeCount();
 
@@ -92,8 +93,9 @@ int main()
 #endif
     // Reserve (maxFreeCount - NON_RESERVED_PAGE) pages.
     IPageSet* pageSet;
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    esCreateInstance(CLSID_PageSet,
+                     IID_IPageSet,
+                     reinterpret_cast<void**>(&pageSet));
     unsigned long reserved = maxFreeCount - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 

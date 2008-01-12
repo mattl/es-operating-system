@@ -17,12 +17,54 @@ CREATEMAX=`grep createmax "$2"`
 
 if [ -n "$FAT32" ]; then
     echo 'vformat '$DIR'/fat32.img > /dev/null 2>&1' >> $SCRIPT
-    echo '(qemu -fda '$DIR'/2hd.img -hda '$DIR'/fat32.img -serial stdio -boot a -soundhw sb16 $QFLAGS > '$DIR'/$LOG 2>&1) &' >> $SCRIPT
+    echo '(qemu -fda '$DIR'/2hd.img -hda '$DIR'/fat32.img -serial stdio -boot a -soundhw sb16 > '$DIR'/$LOG 2>&1) &' >> $SCRIPT
 else
-    echo '(qemu -fda '$DIR'/2hd.img -hda '$DIR'/fat16_5MB.img -serial stdio -boot a -soundhw sb16 $QFLAGS | tee '$DIR'/$LOG 2>&1)' >> $SCRIPT
+    echo '(qemu -fda '$DIR'/2hd.img -hda '$DIR'/fat16_5MB.img -serial stdio -boot a -soundhw sb16 > '$DIR'/$LOG 2>&1) &' >> $SCRIPT
 fi
 echo '' >> $SCRIPT
+echo '# Keep PID.' >> $SCRIPT
+echo 'QEMU=$!' >> $SCRIPT
+echo 'TIME=0' >> $SCRIPT
+echo 'RET=1' >> $SCRIPT
 
+if [ -n "$FAT32" ]; then
+echo '# No timeout.' >> $SCRIPT
+echo 'while [ true ]' >> $SCRIPT
+echo 'do' >> $SCRIPT
+elif [ -n "$CREATEMAX" ]; then
+echo '# No timeout.' >> $SCRIPT
+echo 'while [ true ]' >> $SCRIPT
+echo 'do' >> $SCRIPT
+else
+echo '# Timeout after 60 seconds.' >> $SCRIPT
+echo 'while [ $TIME -lt 60 ]' >> $SCRIPT
+echo 'do' >> $SCRIPT
+fi
+echo '    PASS=`grep done. '$DIR'/$LOG`' >> $SCRIPT
+echo '    FAIL=`grep Fail '$DIR'/$LOG`' >> $SCRIPT
+echo '    if [ -n "$FAIL" ]; then' >> $SCRIPT
+echo '        break;' >> $SCRIPT
+echo '    fi' >> $SCRIPT
+echo '    if [ -n "$PASS" ]; then' >> $SCRIPT
+echo '        RET=0' >> $SCRIPT
+echo '        break;' >> $SCRIPT
+echo '    fi' >> $SCRIPT
+echo '    RUNNING=`ps -p $QEMU | grep $QEMU`' >> $SCRIPT
+echo '    if [ -z "$RUNNING" ]; then' >> $SCRIPT
+echo '        break;' >> $SCRIPT
+echo '    fi' >> $SCRIPT
+echo '    sleep 1' >> $SCRIPT
+echo '    TIME=`expr $TIME + 1`' >> $SCRIPT
+echo 'done' >> $SCRIPT
+echo 'stty sane' >> $SCRIPT
+echo '' >> $SCRIPT
+echo 'RUNNING=`ps $QEMU | grep $QEMU`' >> $SCRIPT
+echo 'if [ -n "$RUNNING" ]; then' >> $SCRIPT
+echo '    kill -9 $QEMU' >> $SCRIPT
+echo 'fi' >> $SCRIPT
+echo '' >> $SCRIPT
+echo 'stty sane' >> $SCRIPT
+echo 'cat '$DIR'/$LOG' >> $SCRIPT
+echo 'exit $RET' >> $SCRIPT
 
 chmod u+x $SCRIPT
-

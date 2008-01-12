@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -29,8 +29,6 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-using namespace es;
-
 ICurrentProcess* System();
 
 class Location : public ILocation
@@ -46,7 +44,6 @@ public:
     {
         point.x = point.y = 0;
         sprintf(name, "id%d", ++id);
-        name[13] = '\0';
     }
 
     ~Location()
@@ -69,12 +66,12 @@ public:
         point.y += direction->y;
     }
 
-    int setName(const char* name)
+    void setName(const char* name)
     {
-        strncpy(this->name, name, 13);
+        strncpy(this->name, name, sizeof name);
     }
 
-    int getName(char* name, int len)
+    int getName(char* name, unsigned int len)
     {
         unsigned count(strlen(this->name) + 1);
         if (len < count)
@@ -85,23 +82,23 @@ public:
         return count;
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<ILocation*>(this);
+            *objectPtr = static_cast<ILocation*>(this);
         }
-        else if (riid == ILocation::iid())
+        else if (riid == IID_ILocation)
         {
-            objectPtr = static_cast<ILocation*>(this);
+            *objectPtr = static_cast<ILocation*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -143,10 +140,11 @@ int main(int argc, char* argv[])
 
     // Create a client process.
     Handle<IProcess> client;
-    client = reinterpret_cast<IProcess*>(
+    bool result =
         classStore->createInstance(CLSID_Process,
-                                   client->iid()));
-    TEST(client);
+                                   client->interfaceID(),
+                                   reinterpret_cast<void**>(&client));
+    TEST(result);
 
     // Start the client process.
     Handle<IFile> file = nameSpace->lookup("file/locationClient.elf");

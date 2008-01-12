@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -21,34 +21,6 @@
 
 class Thread;
 
-/** A non-reentrant spinlock.
- */
-class Lock
-{
-    Interlocked spin;
-
-public:
-    Lock();
-    ~Lock();
-    bool isLocked();
-    void wait();
-    bool tryLock();
-    void lock();
-    void unlock();
-
-    class Synchronized
-    {
-        Lock& spinLock;
-        unsigned x;
-        Synchronized& operator=(const Synchronized&);
-    public:
-        Synchronized(Lock& spinLock);
-        ~Synchronized();
-    };
-};
-
-/** A reentrant spinlock.
- */
 class SpinLock
 {
     Interlocked spin;

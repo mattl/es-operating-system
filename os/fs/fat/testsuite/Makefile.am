@@ -4,21 +4,23 @@ SUFFIXES = .img .gz
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% : %.img
+	$(srcdir)/makeScript "`pwd`" $@
 
 if POSIX
 
 TESTS = fat replace \
-	fat_createdir fat_createfile fat_readwrite fat_attribute fat_size \
-	fat_getStream fat_time fat_removedir fat_object fat_writemax \
-	fat16 fat16_replace \
-	fat16_createdir fat16_createfile fat16_readwrite fat16_attribute fat16_size \
-	fat16_getStream fat16_time fat16_removedir fat16_object fat16_writemax \
-	fat32_test fat32_replace \
-	fat32_createdir fat32_createfile fat32_readwrite fat32_attribute fat32_size \
-	fat32_getStream fat32_time fat32_removedir fat32_object fat32_writemax \
-	fileSystem \
-	fat_createmax fat16_createmax fat32_createmax
+        fat_createdir fat_createfile fat_readwrite fat_attribute fat_size \
+        fat_getStream fat_time fat_removedir fat_object fat_createmax fat_writemax \
+        fat16 fat16_replace \
+        fat16_createdir fat16_createfile fat16_readwrite fat16_attribute fat16_size \
+        fat16_getStream fat16_time fat16_removedir fat16_object fat16_createmax fat16_writemax \
+        fat32_test fat32_replace \
+        fat32_createdir fat32_createfile fat32_readwrite fat32_attribute fat32_size \
+        fat32_getStream fat32_time fat32_removedir fat32_object fat32_writemax \
+        fileSystem
+##        fat32_createmax
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -30,34 +32,32 @@ endif POSIX
 
 if ES
 
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
-
-TESTS = fat16 fat16_replace \
-	fat16_createdir fat16_createfile fat16_readwrite fat16_attribute fat16_size \
-	fat16_getStream fat16_time fat16_removedir fat16_object fat16_writemax \
-	fat replace \
-	fat_createdir fat_createfile fat_readwrite fat_attribute fat_size \
-	fat_getStream fat_time fat_removedir fat_object fat_writemax \
-	fat32_test fat32_replace \
-	fat32_createdir fat32_createfile fat32_readwrite fat32_attribute fat32_size \
-	fat32_getStream fat32_time fat32_removedir fat32_object fat32_writemax \
-	fat_createmax fat16_createmax fat32_createmax
+TESTS = fat replace \
+        fat_createdir fat_createfile fat_readwrite fat_attribute fat_size \
+        fat_getStream fat_time fat_removedir fat_object fat_createmax fat_writemax \
+	fat16 fat16_replace \
+        fat16_createdir fat16_createfile fat16_readwrite fat16_attribute fat16_size \
+        fat16_getStream fat16_time fat16_removedir fat16_object fat16_createmax fat16_writemax \
+        fat32_test fat32_replace \
+        fat32_createdir fat32_createfile fat32_readwrite fat32_attribute fat32_size \
+        fat32_getStream fat32_time fat32_removedir fat32_object fat32_writemax
+##        fat32_createmax
 
 noinst_SCRIPTS = $(TESTS)
 
 noinst_PROGRAMS = $(noinst_SCRIPTS)
 
 noinst_DATA = 2hd.img fat16_5MB.img fat32.img \
-	fat16.img fat16_replace.img \
-	fat16_createdir.img fat16_createfile.img fat16_readwrite.img fat16_attribute.img fat16_size.img \
-	fat16_getStream.img fat16_time.img fat16_removedir.img fat16_object.img fat16_writemax.img \
 	fat.img replace.img \
-	fat_createdir.img fat_createfile.img fat_readwrite.img fat_attribute.img fat_size.img \
-	fat_getStream.img fat_time.img fat_removedir.img fat_object.img fat_writemax.img \
-	fat32_test.img fat32_replace.img \
-	fat32_createdir.img fat32_createfile.img fat32_readwrite.img fat32_attribute.img fat32_size.img \
-	fat32_getStream.img fat32_time.img fat32_removedir.img fat32_object.img fat32_writemax.img \
-	fat_createmax.img fat16_createmax.img fat32_createmax.img
+        fat_createdir.img fat_createfile.img fat_readwrite.img fat_attribute.img fat_size.img \
+        fat_getStream.img fat_time.img fat_removedir.img fat_object.img fat_createmax.img fat_writemax.img \
+	fat16.img fat16_replace.img \
+        fat16_createdir.img fat16_createfile.img fat16_readwrite.img fat16_attribute.img fat16_size.img \
+        fat16_getStream.img fat16_time.img fat16_removedir.img fat16_object.img fat16_createmax.img fat16_writemax.img \
+        fat32_test.img fat32_replace.img \
+        fat32_createdir.img fat32_createfile.img fat32_readwrite.img fat32_attribute.img fat32_size.img \
+        fat32_getStream.img fat32_time.img fat32_removedir.img fat32_object.img fat32_writemax.img
+##        fat32_createmax.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 
@@ -140,7 +140,7 @@ fat32_removedir_SOURCES = fat32_removedir.cpp vdisk.h
 
 fat32_object_SOURCES = fat32_object.cpp vdisk.h
 
-fat32_createmax_SOURCES = fat32_createmax.cpp vdisk.h
+## fat32_createmax_SOURCES = fat32_createmax.cpp vdisk.h
 
 fat32_writemax_SOURCES = fat32_writemax.cpp vdisk.h
 
@@ -167,4 +167,4 @@ AM_CPPFLAGS = \
 	-I../../../../include \
 	-I$(srcdir)/../../../../include
 
-EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript testLoader
+EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript

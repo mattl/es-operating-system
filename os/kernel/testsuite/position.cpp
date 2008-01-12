@@ -32,8 +32,9 @@ int main()
     esInit(&root);
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     MemoryStream* backingStore = new(std::nothrow) MemoryStream(128*1024);
     TEST(backingStore);

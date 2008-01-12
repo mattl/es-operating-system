@@ -11,9 +11,6 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_KERNEL_I386_IO_H_INCLUDED
-#define NINTENDO_ES_KERNEL_I386_IO_H_INCLUDED
-
 #include <es/types.h>
 
 static inline void outpb(int port, u8 value)
@@ -114,5 +111,3 @@ static inline void inpsl(int port, void* addr, unsigned long count)
         "insl"
         : "+D"(addr), "+c"(count) : "d"(port));
 }
-
-#endif  // NINTENDO_ES_KERNEL_I386_IO_H_INCLUDED

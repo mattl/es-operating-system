@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -290,11 +290,10 @@ setSize(long long newSize)
     }
 }
 
-int Cache::
-getSectorSize()
+void Cache::
+getSectorSize(int& size)
 {
     size = this->sectorSize;
-    return size;
 }
 
 void Cache::
@@ -382,7 +381,6 @@ Cache::
 Cache(CacheFactory* cacheFactory, IStream* backingStore, PageSet* pageSet) :
     cacheFactory(cacheFactory),
     backingStore(backingStore),
-    file(static_cast<IFile*>(backingStore->queryInterface(IFile::iid()))),
     pageSet(pageSet),
     pageCount(0),
     sectorSize(Page::SIZE)
@@ -398,10 +396,6 @@ Cache::
 {
     ASSERT(ref == 0);
     ASSERT(pageCount == 0);
-    if (file)
-    {
-        file->release();
-    }
     backingStore->release();
     cacheFactory->remove(this);
     pageSet->release();
@@ -446,28 +440,28 @@ getPageCount()
     return pageCount;
 }
 
-void* Cache::
-queryInterface(const Guid& riid)
+bool Cache::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICache::iid())
+    if (riid == IID_ICache)
     {
-        objectPtr = static_cast<ICache*>(this);
+        *objectPtr = static_cast<ICache*>(this);
     }
-    else if (riid == IPageable::iid())
+    else if (riid == IID_IPageable)
     {
-        objectPtr = static_cast<IPageable*>(this);
+        *objectPtr = static_cast<IPageable*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICache*>(this);
+        *objectPtr = static_cast<ICache*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Cache::

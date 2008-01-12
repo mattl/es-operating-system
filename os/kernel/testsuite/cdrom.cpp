@@ -26,9 +26,8 @@ u8 buf[2048];
 
 void testDisk(Handle<IStream> disk, long count)
 {
-    esReport("disk->read: ");
     long rc = disk->read(buf, count, 0x8000);
-    esReport("%d\n", rc);
+    esReport("disk->read: %d\n", rc);
     TEST(count == rc);
     esDump(buf, rc);
 }
@@ -59,7 +58,7 @@ int main()
     }
 
     Handle<IStream> disk(root->lookup("device/ata/channel1/device0"));
-    TEST(disk.get());
+    TEST(disk);
 
     IDiskManagement::Geometry geo;
     Handle<IDiskManagement> dm(disk);

@@ -262,42 +262,6 @@ public:
     }
 
     /**
-     * Adds the specified time span to this object.
-     */
-    TimeSpan& operator+=(TimeSpan d)
-    {
-        ticks += d.getTicks();
-        return *this;
-    }
-
-    /**
-     * Subtracts the specified time span from this object.
-     */
-    TimeSpan& operator-=(TimeSpan d)
-    {
-        ticks -= d.getTicks();
-        return *this;
-    }
-
-    /**
-     * Multiplies this object by the specified value.
-     */
-    TimeSpan& operator*=(s64 m)
-    {
-        ticks *= m;
-        return *this;
-    }
-
-    /**
-     * Divides this object by the specified value.
-     */
-    TimeSpan& operator/=(s16 d)
-    {
-        ticks /= d;
-        return *this;
-    }
-
-    /**
      * A conversion operator.
      */
     operator s64() const

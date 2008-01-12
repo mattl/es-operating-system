@@ -174,32 +174,32 @@ findNext(IStream* dir, u8* record)
     return false;
 }
 
-void* Iso9660Stream::
-queryInterface(const Guid& riid)
+bool Iso9660Stream::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (isDirectory() && riid == IContext::iid())
+    if (isDirectory() && riid == IID_IContext)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IFile::iid())
+    else if (riid == IID_IFile)
     {
-        objectPtr = static_cast<IFile*>(this);
+        *objectPtr = static_cast<IFile*>(this);
     }
-    else if (riid == IBinding::iid())
+    else if (riid == IID_IBinding)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        *objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Iso9660Stream::
