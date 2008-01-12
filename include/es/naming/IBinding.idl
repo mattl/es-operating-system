@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,27 +11,25 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_NAMING_IBINDING_IDL_INCLUDED
-#define NINTENDO_ES_NAMING_IBINDING_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/** This interface represents a name-to-object binding.
+ */
+[object, uuid(33f5e13e-25dc-11db-9c02-0009bf000001)]
+interface IBinding : IInterface
 {
-    /** This interface represents a name-to-object binding.
+    /** Retrieves the object bound to this binding.
+     * @return          The object bound.
      */
-    interface IBinding : IInterface
-    {
-        #pragma ID IBinding = "DCE:33f5e13e-25dc-11db-9c02-0009bf000001";
-        /** The object bound to this binding.
-         */
-        attribute IInterface object;
+    IInterface* getObject();
 
-        /** The string representation of this binding.
-         */
-        readonly attribute string name;
-    };
-};
+    /** Sets the object associated with this binding.
+     * @return          The object to set.
+     */
+    int setObject(IInterface* element);
 
-#endif // NINTENDO_ES_NAMING_IBINDING_IDL_INCLUDED
-
+    /** Retrieves the string representation of this binding.
+     * @return          The string representation of this binding.
+     */
+    int getName([out, size_is(len)] char* name, unsigned int len);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,54 +11,46 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface provides methods for managing a DMA controller.
+ */
+[object, uuid(83a550e8-25dc-11db-9c02-0009bf000001)]
+interface IDmac : IInterface
 {
     /**
-     * This interface provides methods for managing a DMA controller.
+     * DMA transfer mode.
      */
-    interface IDmac : IInterface
+    enum Mode
     {
-        #pragma ID IDmac = "DCE:83a550e8-25dc-11db-9c02-0009bf000001";
-
-        typedef sequence<octet> Buf;
-
-        /**
-         * DMA transfer mode.
-         */
-        const long READ = 0x04;
-        const long WRITE = 0x08;
-        const long AUTO_INITIALIZE = 0x10;
-
-        /**
-         * Sets up this DMA controller.
-         * @param addr the address of the memory accessed by this DMA controller.
-         * @param addrLength the DMA transfer counter.
-         * @param mode <code>READ</code>, <code>WRITE</code> or <code>AUTO_INITIALIZE</code>.
-         */
-        void setup(inout Buf addr, in octet mode);
-        /**
-         * Starts the DMA transfer.
-         */
-        void start();
-        /**
-         * Terminates the DMA transfer.
-         */
-        void stop();
-        /**
-         * Boolean whether the DMA transfer is complete.
-         */
-        readonly attribute boolean done;
-        /**
-         * The current DMA transfer counter of this DMA controller.
-         */
-        readonly attribute long count;
+        READ = 0x04,
+        WRITE = 0x08,
+        AUTO_INITIALIZE = 0x10
     };
-};
 
-#endif // NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
-
+    /**
+     * Sets up this DMA controller.
+     * @param addr the address of the memory accessed by this DMA controller.
+     * @param count the DMA transfer counter.
+     * @param mode <code>READ</code>, <code>WRITE</code> or <code>AUTO_INITIALIZE</code>.
+     */
+    void setup([in, out, size_is(count)] void* addr, int count, unsigned byte mode);
+    /**
+     * Starts the DMA transfer.
+     */
+    void start();
+    /**
+     * Terminates the DMA transfer.
+     */
+    void stop();
+    /**
+     * Tests whether the DMA transfer is complete.
+     * @return true if the DMA transfer is complete. Otherwise, false.
+     */
+    boolean isDone();
+    /**
+     * Reads the current DMA transfer counter of this DMA controller.
+     */
+    int getCount();
+}

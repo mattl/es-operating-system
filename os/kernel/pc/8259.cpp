@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -13,7 +13,6 @@
 
 // 8259 interrupt controllers
 
-#include <es.h>
 #include "io.h"
 #include "8259.h"
 
@@ -39,20 +38,20 @@ Pic() :
     outpb(PORT_MASTER_IMR, imrMaster);
 }
 
-int Pic::
-startup(unsigned bus, unsigned irq)
+void Pic::
+startup(unsigned irq)
 {
-    return 32 + irq;
+    enable(irq);
 }
 
-int Pic::
-shutdown(unsigned bus, unsigned irq)
+void Pic::
+shutdown(unsigned irq)
 {
-    return disable(bus, irq);
+    disable(irq);
 }
 
-int Pic::
-enable(unsigned bus, unsigned irq)
+void Pic::
+enable(unsigned irq)
 {
     if (irq & 8)
     {
@@ -64,11 +63,10 @@ enable(unsigned bus, unsigned irq)
         imrMaster &= ~(1u << (irq & 7));
         outpb(PORT_MASTER_IMR, imrMaster);
     }
-    return 32 + irq;
 }
 
-int Pic::
-disable(unsigned bus, unsigned irq)
+void Pic::
+disable(unsigned irq)
 {
     if (irq & 8)
     {
@@ -80,7 +78,6 @@ disable(unsigned bus, unsigned irq)
         imrMaster |= (1u << (irq & 7));
         outpb(PORT_MASTER_IMR, imrMaster);
     }
-    return 32 + irq;
 }
 
 int Pic::
@@ -103,10 +100,8 @@ readISR(unsigned irq)
 }
 
 bool Pic::
-ack(int vec)
+ack(unsigned irq)
 {
-    ASSERT(32 <= vec && vec < 32 + 16);
-    unsigned irq = vec - 32;
     unsigned irqmask = 1u << (irq & 7);
     if (readISR(irq) & irqmask)
     {
@@ -128,17 +123,16 @@ ack(int vec)
     return false;
 }
 
-bool Pic::
-end(int vec)
+void Pic::
+end(unsigned irq)
 {
-    enable(0, vec - 32);
-    return true;
+    enable(irq);
 }
 
-int Pic::
-setAffinity(unsigned bus, unsigned irq, unsigned int cpuMask)
+void Pic::
+setAffinity(unsigned irq, unsigned int cpuMask)
 {
-    return 32 + irq;
+    return;
 }
 
 unsigned Pic::
@@ -196,24 +190,24 @@ splX(unsigned x)
 // IInterface
 //
 
-void* Pic::
-queryInterface(const Guid& riid)
+bool Pic::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IPic::iid())
+    if (riid == IID_IPic)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Pic::

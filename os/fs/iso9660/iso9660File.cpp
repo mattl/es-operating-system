@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -46,8 +46,8 @@ isHidden()
     return (flags & FF_Existence) ? true : false;
 }
 
-unsigned int Iso9660Stream::
-getAttributes()
+int Iso9660Stream::
+getAttributes(unsigned int& attributes)
 {
     u32 attr = IFile::ReadOnly;
     if (flags & FF_Existence)
@@ -58,50 +58,53 @@ getAttributes()
     {
         attr |= IFile::Directory;
     }
-
-    return attr;
+    attributes = attr;
+    return 0;
 }
 
-long long Iso9660Stream::
-getCreationTime()
+int Iso9660Stream::
+getCreationTime(long long& time)
 {
-    return dateTime.getTicks();
+    time = dateTime.getTicks();
+    return 0;
 }
 
-long long Iso9660Stream::
-getLastAccessTime()
+int Iso9660Stream::
+getLastAccessTime(long long& time)
 {
-    return dateTime.getTicks();
+    time = dateTime.getTicks();
+    return 0;
 }
 
-long long Iso9660Stream::
-getLastWriteTime()
+int Iso9660Stream::
+getLastWriteTime(long long& time)
 {
-    return dateTime.getTicks();
+    time = dateTime.getTicks();
+    return 0;
 }
 
-void Iso9660Stream::
+int Iso9660Stream::
 setAttributes(unsigned int attributes)
 {
-    esThrow(EROFS);
+    return -1;
 }
 
-void Iso9660Stream::
+int Iso9660Stream::
 setCreationTime(long long time)
 {
-    esThrow(EROFS);
+    return -1;
 }
 
-void Iso9660Stream::
+int Iso9660Stream::
 setLastAccessTime(long long time)
 {
-    esThrow(EROFS);
+    return -1;
 }
 
-void Iso9660Stream::
+int Iso9660Stream::
 setLastWriteTime(long long time)
 {
-    esThrow(EROFS);
+    return -1;
 }
 
 IStream* Iso9660Stream::
@@ -123,6 +126,6 @@ getPageable()
     }
 
     IPageable* pageable;
-    pageable = reinterpret_cast<IPageable*>(cache->queryInterface(IPageable::iid()));
+    cache->queryInterface(IID_IPageable, (void**) &pageable);
     return pageable;
 }

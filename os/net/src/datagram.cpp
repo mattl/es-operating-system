@@ -21,7 +21,7 @@ input(InetMessenger* m, Conduit* c)
 
     long len = m->getLength();
 
-    RingHdr ringhdr(len, m->getRemote(), m->getRemotePort());
+    RingHdr ringhdr(len);
 
     // Copy-in data
     Synchronized<IMonitor*> method(monitor);
@@ -33,7 +33,7 @@ input(InetMessenger* m, Conduit* c)
     }
     recvRing.write(&ringhdr, sizeof ringhdr);
     recvRing.write(m->fix(len), len);
-    notify();
+    monitor->notifyAll();
     return true;
 }
 
@@ -50,7 +50,7 @@ error(InetMessenger* m, Conduit* c)
 
     esReport("DatagramReceiver::error()\n");
     errorCode = m->getErrorCode();
-    notify();
+    monitor->notifyAll();
     return true;
 }
 
@@ -61,16 +61,14 @@ read(SocketMessenger* m, Conduit* c)
 
     esReport("DatagramReceiver::read()\n");
 
+    Socket* socket = getSocket();
     ASSERT(socket);
 
     // Copy-out data
-    while (!isReadable())
+    RingHdr ringhdr;
+    long len;
+    while ((len = recvRing.peek(&ringhdr, sizeof ringhdr)) == 0 && errorCode == 0)
     {
-        if (!socket->isBlocking())
-        {
-            m->setErrorCode(errorCode ? errorCode : EAGAIN);
-            return false;
-        }
         if (!monitor->wait(socket->getTimeout()))
         {
             if (errorCode == 0)
@@ -78,6 +76,11 @@ read(SocketMessenger* m, Conduit* c)
                 errorCode = ETIMEDOUT;
             }
         }
+    }
+
+    if (len < 0)
+    {
+        return false;
     }
 
     if (errorCode)
@@ -88,23 +91,10 @@ read(SocketMessenger* m, Conduit* c)
         return false;
     }
 
-    RingHdr ringhdr;
-    long len = recvRing.read(&ringhdr, sizeof ringhdr);
-    ASSERT(len == sizeof ringhdr);
-    len = ringhdr.len;
-    m->setRemote(ringhdr.addr);
-    m->setRemotePort(ringhdr.port);
-    ringhdr.addr->release();
-    if (len <= m->getSize())
-    {
-        m->setSize(len);
-        recvRing.read(m->fix(len), len);
-    }
-    else
-    {
-        recvRing.read(m->fix(m->getSize()), m->getSize());
-        recvRing.skip(len - m->getSize());
-    }
+    recvRing.read(&ringhdr, sizeof ringhdr);
+    ASSERT(ringhdr.len <= m->getSize());    // XXX
+    m->setSize(ringhdr.len);
+    recvRing.read(m->fix(ringhdr.len), ringhdr.len);
     return false;
 }
 
@@ -130,6 +120,8 @@ write(SocketMessenger* m, Conduit* c)
 bool DatagramReceiver::
 close(SocketMessenger* m, Conduit* c)
 {
+    SocketUninstaller uninstaller(getSocket());
+    conduit->getB()->accept(&uninstaller);
     return false;
 }
 
@@ -139,6 +131,6 @@ notify(SocketMessenger* m, Conduit* c)
     Synchronized<IMonitor*> method(monitor);
 
     errorCode = ETIMEDOUT;
-    notify();
+    monitor->notifyAll();
     return false;
 }

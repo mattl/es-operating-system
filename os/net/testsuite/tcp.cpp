@@ -66,7 +66,6 @@ static void* serve(void* param)
     ASSERT(memcmp(input, "abc", 4) == 0);
 
     socket->close();
-    esReport("close() by serve()\n");
     socket->release();
 
     // Wait for 2 MSL time wait
@@ -142,7 +141,6 @@ int main()
     client.read(input, 4);
 
     client.close();
-    esReport("close() by main()\n");
     visualize();
 
     void* val;

@@ -37,7 +37,7 @@ bool ICMPReceiver::input(InetMessenger* m, Conduit* c)
     int len = m->getLength();
     if (len < sizeof(ICMPHdr) || checksum(m) != 0)
     {
-        return false;
+        return false;       // XXX
     }
     return true;
 }

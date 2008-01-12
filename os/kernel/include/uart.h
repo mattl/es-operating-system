@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -17,11 +17,9 @@
 #include <es/types.h>
 #include <es/ref.h>
 #include <es/base/IStream.h>
-#include <es/base/ICallback.h>
-#include <es/ring.h>
-#include "thread.h"
+#include "spinlock.h"
 
-class Uart : public IStream, public ICallback
+class Uart : public IStream
 {
     static const u8 IER = 1;
     static const u8 IIR = 2;   // read
@@ -31,25 +29,12 @@ class Uart : public IStream, public ICallback
     static const u8 LSR = 5;
     static const u8 MSR = 6;
 
-    // IIR
-    static const u8 IIR_ID_MASK       = 0x0e;
-    static const u8 IIR_MODEM_STATUS  = 0x00;
-    static const u8 IIR_THR_EMPTY     = 0x02;
-    static const u8 IIR_RECV_DATA     = 0x04;
-    static const u8 IIR_RECV_STATUS   = 0x06;
-    static const u8 IIR_CHAR_TIMEOUT  = 0x0c;
-
-    Ref         ref;
-    int         baseaddr;
-    Monitor     monitor;        // for Filled
-    Lock        lock;
-    u8          buffer[128];
-    Ring        ring;
-    bool        interrupt;
+    Ref  ref;
+    int  baseaddr;
+    Lock lock;
 
 public:
-    Uart(int baseaddr, int bus = 0, int irq = -1);
-    ~Uart();
+    Uart(int baseaddr);
 
     // Set Baud rate - Divisor Latch Low Byte
     // Default 0x03 = 38,400 BPS
@@ -71,11 +56,9 @@ public:
     int write(const void* src, int count, long long offset);
     void flush();
 
-    int invoke(int);
-
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef();
-    unsigned int release();
+    bool queryInterface(const Guid& riid, void** objectPtr);
+    unsigned int addRef(void);
+    unsigned int release(void);
 };
 
 #endif // NINTENDO_ES_KERNEL_UART_H_INCLUDED

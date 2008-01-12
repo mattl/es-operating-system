@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,35 +11,24 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IINTERFACESTORE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IINTERFACESTORE_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface provides methods for managing interface reflection data.
+ * @since 0.0.3
+ */
+[object, uuid(3e34081e-4928-11db-9c02-0009bf000001)]
+interface IInterfaceStore : IInterface
 {
     /**
-     * This interface provides methods for managing interface reflection data.
-     * @since 0.0.3
+     * Registers the interface reflection data in this interface store.
+     * @param data  the interface reflection data.
+     * @param length    the size of data.
      */
-    interface IInterfaceStore : IInterface
-    {
-        #pragma ID IInterfaceStore = "DCE:3e34081e-4928-11db-9c02-0009bf000001";
-        typedef sequence<octet> Buf;
-
-        /**
-         * Registers the interface reflection data in this interface store.
-         * @param data  the interface reflection data.
-         * @param dataLength the size of data.
-         */
-        void add(in Buf data);
-        /**
-         * Removes the specified interface reflection data in this interface store.
-         * @param       riid the interface ID.
-         */
-        void remove(in uuid riid);
-    };
-};
-
-#endif // NINTENDO_ES_BASE_IINTERFACESTORE_IDL_INCLUDED
-
+    void add([in, size_is(length)] void* data, int length);
+    /**
+     * Removes the specified interface reflection data in this interface store.
+     * @param       riid the interface ID.
+     */
+    void remove([in] uuid& riid);
+}

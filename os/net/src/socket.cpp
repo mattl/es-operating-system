@@ -114,12 +114,13 @@ addInterface(INetworkInterface* networkInterface)
 void Socket::
 removeInterface(INetworkInterface* networkInterface)
 {
-    for (int n = 1; n < Socket::INTERFACE_MAX; ++n)
+    int n;
+    for (n = 1; n < Socket::INTERFACE_MAX; ++n)
     {
         Interface* i = interfaces[n];
         if (i && i->networkInterface == networkInterface)
         {
-            interfaces[n] = 0;
+            interfaces[0] = 0;
             delete i;
             break;
         }
@@ -132,12 +133,8 @@ Socket(int family, int type, int protocol) :
     type(type),
     protocol(protocol),
     adapter(0),
-    af(0),
     recvBufferSize(8192),
-    sendBufferSize(8192),
-    errorCode(0),
-    selector(0),
-    blocking(true)
+    sendBufferSize(8192)
 {
     af = getAddressFamily(family);
 }
@@ -147,11 +144,6 @@ Socket::
 {
     // Leave from multicast groups XXX
 
-    if (adapter)
-    {
-        SocketUninstaller uninstaller(this);
-        adapter->accept(&uninstaller);
-    }
 }
 
 bool Socket::
@@ -179,13 +171,12 @@ error(InetMessenger* m, Conduit* c)
 bool Socket::
 isBound()
 {
-    return getLocalPort();
+    return getAdapter();    // installed?
 }
 
 bool Socket::
 isClosed()
 {
-    return isBound() && !getAdapter();    // bound and then uninstalled?
 }
 
 bool Socket::
@@ -262,16 +253,6 @@ bind(IInternetAddress* addr, int port)
     if (isBound())
     {
         return;
-    }
-
-    if (port == 0)
-    {
-        port = af->selectEphemeralPort(this);
-        if (port == 0)
-        {
-            return;
-        }
-        // XXX Reserve anon from others
     }
 
     Conduit* protocol = af->getProtocol(this);
@@ -364,11 +345,6 @@ connect(IInternetAddress* addr, int port)
     SocketMessenger m(this, &SocketReceiver::connect);
     Visitor v(&m);
     adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code != EINPROGRESS)
-    {
-        errorCode = code;
-    }
 }
 
 ISocket* Socket::
@@ -377,12 +353,6 @@ accept()
     SocketMessenger m(this, &SocketReceiver::accept);
     Visitor v(&m);
     adapter->accept(&v);
-    errorCode = m.getErrorCode();
-    int code = m.getErrorCode();
-    if (code != EAGAIN)
-    {
-        errorCode = code;
-    }
     return m.getSocket();
 }
 
@@ -397,11 +367,6 @@ close()
     SocketMessenger m(this, &SocketReceiver::close);
     Visitor v(&m);
     adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code != EAGAIN)
-    {
-        errorCode = code;
-    }
 }
 
 void Socket::
@@ -419,55 +384,18 @@ read(void* dst, int count)
 {
     if (!adapter)
     {
-        errorCode = ENOTCONN;
-        return -errorCode;
+        return -1;
     }
 
     SocketMessenger m(this, &SocketReceiver::read, dst, count);
     Visitor v(&m);
     adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code)
-    {
-        if (code != EAGAIN)
-        {
-            errorCode = code;
-        }
-        return -errorCode;
-    }
     return m.getLength();
 }
 
 int Socket::
 recvFrom(void* dst, int count, int flags, IInternetAddress** addr, int* port)
 {
-    if (!adapter)
-    {
-        errorCode = ENOTCONN;
-        return -errorCode;
-    }
-
-    SocketMessenger m(this, &SocketReceiver::read, dst, count);
-    Visitor v(&m);
-    adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code)
-    {
-        if (code != EAGAIN)
-        {
-            errorCode = code;
-        }
-        return -errorCode;
-    }
-    if (addr)
-    {
-        *addr = m.getRemote();
-    }
-    if (port)
-    {
-        *port = m.getRemotePort();
-    }
-    return m.getLength();
 }
 
 int Socket::
@@ -475,8 +403,7 @@ sendTo(const void* src, int count, int flags, IInternetAddress* addr, int port)
 {
     if (!adapter)
     {
-        errorCode = ENOTCONN;
-        return -errorCode;
+        return -1;
     }
 
     SocketMessenger m(this, &SocketReceiver::write, const_cast<void*>(src), count);
@@ -486,15 +413,6 @@ sendTo(const void* src, int count, int flags, IInternetAddress* addr, int port)
 
     Visitor v(&m);
     adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code)
-    {
-        if (code != EAGAIN)
-        {
-            errorCode = code;
-        }
-        return -errorCode;
-    }
     return m.getLength();
 }
 
@@ -509,7 +427,6 @@ shutdownInput()
     SocketMessenger m(this, &SocketReceiver::shutdownInput);
     Visitor v(&m);
     adapter->accept(&v);
-    errorCode = m.getErrorCode();
 }
 
 void Socket::
@@ -523,7 +440,6 @@ shutdownOutput()
     SocketMessenger m(this, &SocketReceiver::shutdownOutput);
     Visitor v(&m);
     adapter->accept(&v);
-    errorCode = m.getErrorCode();
 }
 
 int Socket::
@@ -531,83 +447,21 @@ write(const void* src, int count)
 {
     if (!adapter)
     {
-        errorCode = ENOTCONN;
-        return -errorCode;
+        return -1;
     }
 
     SocketMessenger m(this, &SocketReceiver::write, const_cast<void*>(src), count);
     Visitor v(&m);
     adapter->accept(&v);
-    int code = m.getErrorCode();
-    if (code)
-    {
-        if (code != EAGAIN)
-        {
-            errorCode = code;
-        }
-        return -errorCode;
-    }
     return m.getLength();
-}
-
-bool Socket::
-isAcceptable()
-{
-    if (!adapter)
-    {
-        return false;
-    }
-    SocketMessenger m(this, &SocketReceiver::isAcceptable);
-    Visitor v(&m);
-    adapter->accept(&v);
-    return m.getErrorCode();
-}
-
-bool Socket::
-isConnectable()
-{
-    if (!adapter)
-    {
-        return false;
-    }
-    SocketMessenger m(this, &SocketReceiver::isConnectable);
-    Visitor v(&m);
-    adapter->accept(&v);
-    return m.getErrorCode();
-}
-
-bool Socket::
-isReadable()
-{
-    if (!adapter)
-    {
-        return false;
-    }
-    SocketMessenger m(this, &SocketReceiver::isReadable);
-    Visitor v(&m);
-    adapter->accept(&v);
-    return m.getErrorCode();
-}
-
-bool Socket::
-isWritable()
-{
-    if (!adapter)
-    {
-        return false;
-    }
-    SocketMessenger m(this, &SocketReceiver::isWritable);
-    Visitor v(&m);
-    adapter->accept(&v);
-    return m.getErrorCode();
 }
 
 //
 // IMulticastSocket
 //
 
-bool Socket::
-isLoopbackMode()
+int Socket::
+getLoopbackMode()
 {
 }
 
@@ -638,8 +492,7 @@ leaveGroup(IInternetAddress* addr)
     }
 }
 
-void Socket::
-notify()
+void Socket::notify()
 {
     if (!adapter)
     {
@@ -651,64 +504,32 @@ notify()
     adapter->accept(&v);
 }
 
-int Socket::
-add(IMonitor* selector)
-{
-    esReport("Socket::%s(%p) : %p\n", __func__, selector, this->selector);
-    if (!selector || this->selector)
-    {
-        return -1;
-    }
-
-    selector->addRef();
-    this->selector = selector;
-    return 1;
-}
-
-int Socket::
-remove(IMonitor* selector)
-{
-    esReport("Socket::%s(%p) : %p\n", __func__, selector, this->selector);
-    if (!selector || selector != this->selector)
-    {
-        return -1;
-    }
-
-    selector->release();
-    this->selector = 0;
-    return 1;
-}
-
 //
 // IInterface
 //
 
-void* Socket::
-queryInterface(const Guid& riid)
+bool Socket::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ISocket::iid())
+    if (riid == IID_ISocket)
     {
-        objectPtr = static_cast<ISocket*>(this);
+        *objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == ISelectable::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ISelectable*>(this);
+        *objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IMulticastSocket && type == ISocket::Datagram)
     {
-        objectPtr = static_cast<ISocket*>(this);
-    }
-    else if (riid == IMulticastSocket::iid() && type == ISocket::Datagram)
-    {
-        objectPtr = static_cast<Socket*>(this);
+        *objectPtr = static_cast<Socket*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Socket::

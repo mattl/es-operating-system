@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -91,15 +91,12 @@ set(const void* addr, Page* page, unsigned long pte)
 {
     unsigned long offset(reinterpret_cast<unsigned long>(addr));
 
-    long long tableOffset = 4096 * (1 + offset / 0x400000);
-    Page* table = pageTable->lookupPage(tableOffset);
+    Page* table(pageTable->getPage(4096 * (1 + offset / 0x400000)));
+    ASSERT(table);
     if (!table)
     {
-        table = pageTable->getPage(tableOffset);
-        ASSERT(table);
-        memset(table->getPointer(), 0, 4096);
+        return; // XXX
     }
-
     int i = (offset % 0x400000) / 4096;
     u32* pt = static_cast<u32*>(table->getPointer());
     u32 prev = pt[i];

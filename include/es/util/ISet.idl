@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,28 +11,18 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_UTIL_ISET_IDL_INCLUDED
-#define NINTENDO_ES_UTIL_ISET_IDL_INCLUDED
+import "es/util/IIterator.idl";
 
-#include "es/util/IIterator.idl"
-
-module es
+/** This interface represents a group of objects without duplication.
+ */
+[object, uuid(64108b9e-25dc-11db-9c02-0009bf000001)]
+interface ISet : IInterface
 {
-    /** This interface represents a group of objects without duplication.
-     */
-    interface ISet : IInterface
-    {
-        #pragma ID ISet = "DCE:64108b9e-25dc-11db-9c02-0009bf000001";
-
-        boolean add(in IInterface element);
-        boolean clear();
-        boolean contains(in IInterface element);
-        readonly attribute boolean empty;
-        IIterator iterator();
-        boolean remove(in IInterface element);
-        long size();
-    };
-};
-
-#endif // NINTENDO_ES_UTIL_ISET_IDL_INCLUDED
-
+    boolean add(IInterface* element);
+    boolean clear();
+    boolean contains(IInterface* element);
+    boolean isEmpty();
+    IIterator* iterator();
+    boolean remove(IInterface* element);
+    int size();
+}

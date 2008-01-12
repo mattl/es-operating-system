@@ -1,4 +1,4 @@
-SUBDIRS = . testsuite posix
+SUBDIRS = . testsuite
 
 lib_LIBRARIES = libesnet.a
 

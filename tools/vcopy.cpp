@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -29,63 +29,18 @@
 
 u8 sec[512];
 
-static IContext* checkDestinationPath(char* dst, Handle<IContext> root)
+void copy(Handle<IContext> root, char* filename)
 {
-    Handle<IContext> currentDir = root;
-    char buf[1024];
-    ASSERT(strlen(dst)+1 <= sizeof(buf));
-    memmove(buf, dst, strlen(dst)+1);
-
-    char* path = buf;
-    char* end = &buf[strlen(dst)];
-    char* next;
-    while (path < end)
+    FILE* f = fopen(filename, "rb");
+    if (f == 0)
     {
-        next = strchr(path, '/');
-        if (next)
-        {
-            *next = 0;
-        }
-        else
-        {
-            Handle<IFile> last = currentDir->lookup(path);
-            if (!last || last->isFile())
-            {
-                return 0; // This indicates destination filename is specified.
-            }
-            currentDir = last;
-            break;
-        }
-
-        Handle<IInterface> interface = currentDir->lookup(path);
-        if (interface)
-        {
-            Handle<IFile> file = interface;
-            if (file->isFile())
-            {
-                esReport("Error: invalid path. %s is a file.\n", path);
-                esThrow(EINVAL);
-                // NOT REACHED HERE
-            }
-            currentDir = interface;
-        }
-        else
-        {
-            Handle<IContext> dir = interface;
-            currentDir = currentDir->createSubcontext(path);
-            ASSERT(currentDir);
-        }
-        path = next + 1;
+        esReport("Could not open %s\n", filename);
+        exit(EXIT_FAILURE);
     }
 
-    return currentDir; // This indicates destination directory is specified.
-}
-
-static const char* getFilename(const char* p)
-{
-    const char* head = p;
+    const char* p = filename;
     p += strlen(p);
-    while (head < --p)
+    while (filename < --p)
     {
         if (strchr(":/\\", *p))
         {
@@ -93,34 +48,11 @@ static const char* getFilename(const char* p)
             break;
         }
     }
-    return p;
-}
 
-void copy(Handle<IContext> root, char* filename, char* dst)
-{
-    FILE* f = fopen(filename, "rb");
-    if (f == 0)
-    {
-        fprintf(stderr, "Could not open %s\n", filename);
-        exit(EXIT_FAILURE);
-    }
-
-    const char* p;
-    Handle<IContext> currentDir = checkDestinationPath(dst, root);
-    if (currentDir)
-    {
-        p = getFilename(filename);
-    }
-    else
-    {
-        p = dst;
-        currentDir = root;
-    }
-
-    Handle<IFile> file(currentDir->bind(p, 0));
+    Handle<IFile> file(root->bind(p, 0));
     if (!file)
     {
-        file = currentDir->lookup(p);
+        file = root->lookup(p);
     }
     Handle<IStream> stream(file->getStream());
     stream->setSize(0);
@@ -157,27 +89,27 @@ int main(int argc, char* argv[])
 
     if (argc < 3)
     {
-        esReport("usage: %s disk_image file [destination_path]\n", argv[0]);
+        esReport("usage: %s disk_image file\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
     Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
     Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
 
     long long freeSpace;
     long long totalSpace;
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
+    fatFileSystem->getFreeSpace(freeSpace);
+    fatFileSystem->getTotalSpace(totalSpace);
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
     {
         Handle<IContext> root;
-        root = fatFileSystem->getRoot();
-        char* dst = (char*) (3 < argc ? argv[3] : "");
-        copy(root, argv[2], dst);
+
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
+        copy(root, argv[2]);
     }
     fatFileSystem->dismount();
     fatFileSystem = 0;

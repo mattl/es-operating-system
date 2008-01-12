@@ -113,7 +113,7 @@ read(void* dst, long count)
         long snip = end - head;
         ASSERT(snip <= count);
         memmove(ptr, head, snip);
-        memmove(ptr + snip, buf, count - snip);
+        memmove(ptr + size, buf, count - snip);
         head = buf + count - snip;
     }
     ASSERT(buf <= head && head < end);

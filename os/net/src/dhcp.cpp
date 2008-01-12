@@ -763,7 +763,7 @@ public:
         {
             IThread* thread = esCreateThread(run, this);
             thread->start();
-            thread->setPriority(IThread::Highest - 2);
+            thread->setPriority(IThread::Highest + 2);
             thread->release();
         }
         return enabled;
@@ -780,23 +780,23 @@ public:
         return enabled;
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IService::iid())
+        if (riid == IID_IService)
         {
-            objectPtr = static_cast<IService*>(this);
+            *objectPtr = static_cast<IService*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IService*>(this);
+            *objectPtr = static_cast<IService*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)

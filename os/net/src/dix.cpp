@@ -39,25 +39,6 @@ DIXInterface::DIXInterface(INetworkInterface* networkInterface) :
 
 bool DIXReceiver::input(InetMessenger* m, Conduit* c)
 {
-    static const u8 bcast[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-    u32 flag;
-
-    // [RFC1122] The link layer MUST include a flag to indicate
-    // whether the incoming packet was addressed to a link-layer
-    // broadcast address.
-    DIXHdr* dixhdr = static_cast<DIXHdr*>(m->fix(sizeof(DIXHdr)));
-    if (memcmp(dixhdr->dst, bcast, 6) == 0)
-    {
-        m->setFlag(InetMessenger::Broadcast);
-    }
-    else if (dixhdr->dst[0] & 0x01)
-    {
-        m->setFlag(InetMessenger::Multicast);
-    }
-    else
-    {
-        m->setFlag(InetMessenger::Unicast);
-    }
     return true;
 }
 
@@ -70,10 +51,8 @@ bool DIXReceiver::output(InetMessenger* m, Conduit* c)
     {
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# dix output\n");
         esDump(packet, len);
-#endif
         dix->write(packet, len);
     }
     // else discard the packet

@@ -64,33 +64,6 @@ sendReset(InetMessenger* m)
     conduit->accept(&v, conduit->getB());
 }
 
-// Send a reset segment: <SEQ=SND.NXT><CTL=RST>
-void StreamReceiver::
-sendReset()
-{
-    int size = 14 + 60 + sizeof(TCPHdr);  // XXX Assume MAC, IPv4
-    Handle<InetMessenger> rst = new InetMessenger(&InetReceiver::output, size, size - sizeof(TCPHdr));
-
-    TCPHdr* tcphdr = static_cast<TCPHdr*>(rst->fix(sizeof(TCPHdr)));
-    tcphdr->src = htons(socket->getLocalPort());
-    tcphdr->dst = htons(socket->getRemotePort());
-    tcphdr->seq = htonl(sendMax);
-    tcphdr->ack = 0;
-    tcphdr->flag = htons(TCPHdr::RST);
-    tcphdr->win = 0;
-    tcphdr->sum = 0;
-    tcphdr->urg = 0;
-    tcphdr->setHdrSize(sizeof(TCPHdr));
-
-    rst->setLocal(Handle<Address>(socket->getLocal()));
-    rst->setRemote(Handle<Address>(socket->getRemote()));
-    rst->setLocalPort(socket->getLocalPort());
-    rst->setRemotePort(socket->getRemotePort());
-    rst->setType(IPPROTO_TCP);
-    Visitor v(rst);
-    conduit->accept(&v, conduit->getB());
-}
-
 bool StreamReceiver::
 trim(u16& flag, TCPSeq& seq, u16& urg, long& len, long& offset)
 {
@@ -423,7 +396,7 @@ ack(TCPSeq seq, TCPSeq ack, s32 win, s32 sent, long len)
         sendLen -= len;
         sent -= len;
 
-        notify();
+        monitor->notifyAll();
     }
 
     // Update RTT estimators
@@ -480,6 +453,7 @@ urg(InetMessenger* m, TCPSeq seq, u16 urg, long len)
 }
 
 // Copy data into recvRing
+// monitor->notifyAll();
 bool StreamReceiver::
 text(InetMessenger* m, u16& flag, TCPSeq seq,
      long len, long offset)
@@ -517,7 +491,7 @@ text(InetMessenger* m, u16& flag, TCPSeq seq,
             recvNext += adv;
             recvWin -= adv;
 
-            notify();
+            monitor->notifyAll();
         }
     }
     else    // Out-of-order:
@@ -678,8 +652,7 @@ StateListen::input(InetMessenger* m, StreamReceiver* s)
     Handle<Address> local = m->getLocal();
 
     // Clone new socket
-    ASSERT(s->socket);
-    Socket* socket = new Socket(s->socket->getAddressFamily(), ISocket::Stream);
+    Socket* socket = new Socket(s->getSocket()->getAddressFamily(), ISocket::Stream);
     socket->setLocal(local);
     socket->setLocalPort(m->getLocalPort());
     socket->setRemote(Handle<Address>(m->getRemote()));
@@ -793,7 +766,7 @@ StateSynSent::input(InetMessenger* m, StreamReceiver* s)
         s->sendMaxWin = s->sendWin;
 
         // ++interface->tcpStat.currEstab;
-        s->notify();
+        s->monitor->notifyAll();
 
         s->ackNow = true;   // XXX
     }
@@ -833,8 +806,6 @@ StateSynSent::input(InetMessenger* m, StreamReceiver* s)
 
     if (flag & TCPHdr::FIN)
     {
-        ++s->recvNext;
-        s->ackNow = true;
         s->setState(stateCloseWait);
     }
 
@@ -941,7 +912,7 @@ StateSynReceived::input(InetMessenger* m, StreamReceiver* s)
                 Synchronized<IMonitor*> method(listening->monitor);
 
                 listening->accepted.addLast(s);
-                listening->notify();
+                listening->monitor->notifyAll();
             }
         }
 
@@ -964,8 +935,6 @@ StateSynReceived::input(InetMessenger* m, StreamReceiver* s)
 
     if (flag & TCPHdr::FIN)
     {
-        ++s->recvNext;
-        s->ackNow = true;
         s->setState(stateCloseWait);
     }
 
@@ -1030,8 +999,6 @@ StateEstablished::input(InetMessenger* m, StreamReceiver* s)
 
     if (flag & TCPHdr::FIN)
     {
-        ++s->recvNext;
-        s->ackNow = true;
         s->setState(stateCloseWait);
     }
 
@@ -1101,7 +1068,6 @@ StateFinWait1::input(InetMessenger* m, StreamReceiver* s)
     if (flag & TCPHdr::FIN)
     {
         // Note if FIN has been acked, TCP has been switched to stateFinWait2.
-        ++s->recvNext;
         s->ackNow = true;
         if (s->getState() == &stateFinWait1)
         {
@@ -1174,7 +1140,6 @@ StateFinWait2::input(InetMessenger* m, StreamReceiver* s)
 
     if (flag & TCPHdr::FIN)
     {
-        ++s->recvNext;
         s->ackNow = true;
         s->setState(stateTimeWait);
     }

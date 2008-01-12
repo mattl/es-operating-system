@@ -20,6 +20,9 @@
 
 // #define VERBOSE
 
+#define MIN(a, b)   (((a) <= (b)) ? (a) : (b))
+#define MAX(a, b)   (((b) <= (a)) ? (a) : (b))
+
 u32 Vesa::data[32] =
 {
     0xc0000000, // 1100000000000000
@@ -116,8 +119,6 @@ Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font, IContext* device) :
 int Vesa::
 show()
 {
-    Monitor::Synchronized method(monitor);
-
     int show = count.increment();
     if (show == 1)
     {
@@ -130,8 +131,6 @@ show()
 int Vesa::
 hide()
 {
-    Monitor::Synchronized method(monitor);
-
     int show = count.decrement();
     if (show == 0)
     {
@@ -147,19 +146,15 @@ move(int dx, int dy)
 }
 
 void Vesa::
-getPosition(int* x, int* y)
+getPosition(int& x, int& y)
 {
-    Monitor::Synchronized method(monitor);
-
-    *x = xPosition;
-    *y = yPosition;
+    x = xPosition;
+    y = yPosition;
 }
 
 void Vesa::
 setPosition(int x, int y)
 {
-    Monitor::Synchronized method(monitor);
-
     if (x == xPosition && y == yPosition)
     {
         return;
@@ -200,8 +195,6 @@ setPosition(int x, int y)
 void Vesa::
 setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot)
 {
-    Monitor::Synchronized method(monitor);
-
     if (0 < count)
     {
         restoreBackground();
@@ -212,7 +205,6 @@ setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot)
     this->yHotSpot = yHotSpot;
     if (0 < count)
     {
-        saveBackground();
         drawCursor();
     }
 }
@@ -300,7 +292,7 @@ drawCursor()
     }
     if (x < 0)
     {
-        offset = -x;
+        offset = x;
         len -= -x;
         x = 0;
     }
@@ -463,32 +455,32 @@ put(long long offset, unsigned long long pte)
 {
 }
 
-void* Vesa::
-queryInterface(const Guid& riid)
+bool Vesa::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICursor::iid())
+    if (riid == IID_ICursor)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        *objectPtr = static_cast<ICursor*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        *objectPtr = static_cast<ICursor*>(this);
     }
-    else if (riid == IPageable::iid())
+    else if (riid == IID_IPageable)
     {
-        objectPtr = static_cast<IPageable*>(this);
+        *objectPtr = static_cast<IPageable*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Vesa::

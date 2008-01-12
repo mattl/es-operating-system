@@ -2,34 +2,32 @@ SUFFIXES = .h .idl
 
 if ES
 
-%.h %.ent : %.idl
-	esidl -C -I $(srcdir) $<
+%.h %.ird : %.idl
+	esidl -I $(srcdir) $<
 
 else !ES
 
-%.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -I $(srcdir) $<
+%.h %.ird : %.idl
+	../esidl/esidl -I $(srcdir) $<
 
 endif !ES
 
 nobase_include_HEADERS = \
 	es.h \
-	es/apply.h \
 	es/broker.h \
 	es/classFactory.h \
 	es/clsid.h \
-	es/color.h \
 	es/collection.h \
 	es/context.h \
 	es/dateTime.h \
 	es/elf.h \
-	es/ent.h \
 	es/endian.h \
 	es/exception.h \
 	es/formatter.h \
 	es/handle.h \
 	es/hashtable.h \
 	es/interlocked.h \
+	es/irf.h \
 	es/list.h \
 	es/md5.h \
 	es/ref.h \
@@ -69,7 +67,6 @@ nobase_nodist_include_HEADERS = \
 	es/base/IPageSet.h \
 	es/base/IProcess.h \
 	es/base/IRuntime.h \
-	es/base/ISelectable.h \
 	es/base/IService.h \
 	es/base/IStream.h \
 	es/base/IThread.h \
@@ -92,48 +89,45 @@ nobase_nodist_include_HEADERS = \
 	es/net/IResolver.h \
 	es/net/ISocket.h \
 	es/util/IIterator.h \
-	es/util/ISet.h \
-	es/util/ICanvasRenderingContext2D.h
+	es/util/ISet.h
 
 nobase_nodist_include_HEADERS += \
-	es/base/IAlarm.ent \
-	es/base/ICache.ent \
-	es/base/ICallback.ent \
-	es/base/IClassFactory.ent \
-	es/base/IClassStore.ent \
-	es/base/IFile.ent \
-	es/base/IInterface.ent \
-	es/base/IInterfaceStore.ent \
-	es/base/IMonitor.ent \
-	es/base/IPageable.ent \
-	es/base/IPageSet.ent \
-	es/base/IProcess.ent \
-	es/base/IRuntime.ent \
-	es/base/ISelectable.ent \
-	es/base/IService.ent \
-	es/base/IStream.ent \
-	es/base/IThread.ent \
-	es/device/IAudioFormat.ent \
-	es/device/IBeep.ent \
-	es/device/ICursor.ent \
-	es/device/IDevice.ent \
-	es/device/IDiskManagement.ent \
-	es/device/IDmac.ent \
-	es/device/IFileSystem.ent \
-	es/device/INetworkInterface.ent \
-	es/device/IPic.ent \
-	es/device/IRemovableMedia.ent \
-	es/device/IRtc.ent \
-	es/device/IPartition.ent \
-	es/naming/IBinding.ent \
-	es/naming/IContext.ent \
-	es/net/IInternetAddress.ent \
-	es/net/IInternetConfig.ent \
-	es/net/IResolver.ent \
-	es/net/ISocket.ent \
-	es/util/IIterator.ent \
-	es/util/ISet.ent \
-	es/util/ICanvasRenderingContext2D.ent
+	es/base/IAlarm.ird \
+	es/base/ICache.ird \
+	es/base/ICallback.ird \
+	es/base/IClassFactory.ird \
+	es/base/IClassStore.ird \
+	es/base/IFile.ird \
+	es/base/IInterface.ird \
+	es/base/IInterfaceStore.ird \
+	es/base/IMonitor.ird \
+	es/base/IPageable.ird \
+	es/base/IPageSet.ird \
+	es/base/IProcess.ird \
+	es/base/IRuntime.ird \
+	es/base/IService.ird \
+	es/base/IStream.ird \
+	es/base/IThread.ird \
+	es/device/IAudioFormat.ird \
+	es/device/IBeep.ird \
+	es/device/ICursor.ird \
+	es/device/IDevice.ird \
+	es/device/IDiskManagement.ird \
+	es/device/IDmac.ird \
+	es/device/IFileSystem.ird \
+	es/device/INetworkInterface.ird \
+	es/device/IPic.ird \
+	es/device/IRemovableMedia.ird \
+	es/device/IRtc.ird \
+	es/device/IPartition.ird \
+	es/naming/IBinding.ird \
+	es/naming/IContext.ird \
+	es/net/IInternetAddress.ird \
+	es/net/IInternetConfig.ird \
+	es/net/IResolver.ird \
+	es/net/ISocket.ird \
+	es/util/IIterator.ird \
+	es/util/ISet.ird
 
 nobase_include_HEADERS += \
 	es/base/IAlarm.idl \
@@ -149,7 +143,6 @@ nobase_include_HEADERS += \
 	es/base/IPageSet.idl \
 	es/base/IProcess.idl \
 	es/base/IRuntime.idl \
-	es/base/ISelectable.idl \
 	es/base/IService.idl \
 	es/base/IStream.idl \
 	es/base/IThread.idl \
@@ -172,8 +165,8 @@ nobase_include_HEADERS += \
 	es/net/IResolver.idl \
 	es/net/ISocket.idl \
 	es/util/IIterator.idl \
-	es/util/ISet.idl \
-	es/util/ICanvasRenderingContext2D.idl
+	es/util/ISet.idl
+
 
 clean-local:
 	-rm -rf es

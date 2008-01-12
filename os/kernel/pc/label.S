@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -44,9 +44,3 @@ _ZN5Label4jumpEv:
         movl    0(%ecx), %esp
         movl    $1, %eax        // return 1
         jmp     *%edx
-
-// void Label::start();
-        .align  2
-        .globl  _ZN5Label5startEv
-_ZN5Label5startEv:
-        call    *%ebx

@@ -44,10 +44,6 @@ class Inet4Address :
         {
             return false;
         }
-        virtual bool isDeprecated()
-        {
-            return false;
-        }
 
         virtual void start(Inet4Address* a)
         {
@@ -144,11 +140,6 @@ class Inet4Address :
         {
             return true;
         }
-        bool isDeprecated()
-        {
-            return true;
-        }
-        void start(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -213,15 +204,49 @@ class Inet4Address :
     int         pathMTU;
 
 public:
-    Inet4Address(InAddr addr, State& state, int scopeID = 0, int prefix = 0);
-    virtual ~Inet4Address();
+    Inet4Address(InAddr addr, State& state, int scopeID = 0, int prefix = 0) :
+        state(&state),
+        addr(addr),
+        scopeID(scopeID),
+        prefix(prefix),
+        inFamily(0),
+        adapter(0),
+        timeoutCount(0),
+        pathMTU(1500)
+    {
+        ASSERT(0 <= prefix && prefix < 32);
+        u8 mac[6];
+
+        if (IN_IS_ADDR_MULTICAST(addr))
+        {
+            mac[0] = 0x01;
+            mac[1] = 0x00;
+            mac[2] = 0x5e;
+            memmove(&mac[3], &reinterpret_cast<u8*>(&addr)[1], 3);
+            mac[3] &= 0x7f;
+            setMacAddress(mac);
+        }
+        else if (IN_ARE_ADDR_EQUAL(addr, InAddrBroadcast))  // XXX or directed mcast
+        {
+            memset(mac, 0xff, 6);
+            setMacAddress(mac);
+        }
+    }
+
+    virtual ~Inet4Address()
+    {
+    }
 
     State* getState()
     {
         return state;
     }
 
-    void setState(State& state);
+    void setState(State& state)
+    {
+        timeoutCount = 0;   // Reset timeout count
+        this->state = &state;
+    }
 
     s32 sumUp()
     {
@@ -301,11 +326,11 @@ public:
     void cancel();
 
     // IInternetAddress
-    int getAddress(void* address, int len);
+    int getAddress(void* address, unsigned int len);
     int getAddressFamily();
-    int getCanonicalHostName(char* hostName, int len);
-    int getHostAddress(char* hostAddress, int len);
-    int getHostName(char* hostName, int len);
+    int getCanonicalHostName(char* hostName, unsigned int len);
+    int getHostAddress(char* hostAddress, unsigned int len);
+    int getHostName(char* hostName, unsigned int len);
 
     int getScopeID()
     {
@@ -340,10 +365,6 @@ public:
     {
         return state->isPreferred();
     }
-    bool isDeprecated()
-    {
-        return state->isDeprecated();
-    }
 
     int getPathMTU()
     {
@@ -360,7 +381,7 @@ public:
     IInterface* socket(int type, int protocol, int port);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 
