@@ -102,12 +102,6 @@ module es
         attribute float shadowBlur;
         attribute string shadowColor;
 
-        // Text (drawString enhancement as in mozilla1.9 M7)
-        attribute string textStyle;
-        void drawText(in string textToDraw);
-        float measureText(in string textToMeasure);
-        void pathText(in string textToPath);
-        void textAlongPath(in string textToDraw, in boolean stroke);
     };
 };
 

@@ -74,15 +74,16 @@ int main()
     // Test close operation
     TEST(!socket->isClosed());
     socket->close();
-    // TEST(socket->isClosed());    // XXX This test doesn't work now...
+    TEST(socket->isClosed());
 
+#if 1
     // Setup DIX interface
-    Handle<INetworkInterface> nic = context->lookup("device/ethernet");
-    nic->start();
-    int dixID = config->addInterface(nic);
+    Handle<INetworkInterface> ethernetInterface = context->lookup("device/ethernet");
+    ethernetInterface->start();
+    int dixID = config->addInterface(ethernetInterface);
     esReport("dixID: %d\n", dixID);
 
-    ASSERT(config->getScopeID(nic) == dixID);
+    ASSERT(config->getScopeID(ethernetInterface) == dixID);
 
     // Register host address (192.168.2.40)
     InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
@@ -95,19 +96,19 @@ int main()
     Handle<IInternetAddress> router = resolver->getHostByAddress(&addrRouter.addr, sizeof addr, dixID);
     config->addRouter(router);
 
-    // Test remote ping
-    for (int i = 1; i <= 3; ++i)
-    {
-        bool reachable = router->isReachable(10000000);
-        esReport("ping #%d: %d\n", i, reachable);
-    }
+    // Test remote ping (192.195.204.26 / www.nintendo.com)
+    InAddr addrRemote = { htonl(192 << 24 | 195 << 16 | 204 << 8 | 26) };
+    Handle<IInternetAddress> remote = resolver->getHostByAddress(&addrRemote.addr, sizeof addr, 0);
+    esReport("ping #1\n");
+    remote->isReachable(10000000);
+    esReport("ping #2\n");
+    remote->isReachable(10000000);
+    esReport("ping #3\n");
+    remote->isReachable(10000000);
 
-    esSleep(10000000);
-
-    config->removeRouter(router);
-    config->removeAddress(host);
-
-    nic->stop();
+    esSleep(100000000);
+    ethernetInterface->stop();
+#endif
 
     esReport("done.\n");
 }

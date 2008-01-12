@@ -58,7 +58,6 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
     esReport("size: %lld\n", size);
 
     process->setRoot(root);
-    process->setCurrent(root);
     process->setInput(esReportStream());
     process->setOutput(esReportStream());
     process->setError(esReportStream());
@@ -93,7 +92,6 @@ void init(Handle<IContext> root)
         esCreateInstance(CLSID_Process, IProcess::iid()));
     ASSERT(process);
     process->setRoot(root);
-    process->setCurrent(root);
     process->setInput(console);
     process->setOutput(console);
     process->setError(console);
@@ -178,7 +176,9 @@ int main(int argc, char* argv[])
         esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root = fatFileSystem->getRoot();
+        Handle<IContext> root;
+
+        root = fatFileSystem->getRoot();
 
         nameSpace->bind("file", root);
 
@@ -203,14 +203,12 @@ int main(int argc, char* argv[])
         consoleProcess->kill();
         eventProcess->kill();
 
-        esSleep(10000000);
+        freeSpace = fatFileSystem->getFreeSpace();
+        totalSpace = fatFileSystem->getTotalSpace();
+        esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     }
-
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
-    esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
-
     fatFileSystem->dismount();
     fatFileSystem = 0;
+
     esSleep(10000000);
 }

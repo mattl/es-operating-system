@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
         esReport("%s\n", name);
 
         sprintf(name, "foo%d", i);
-        location[i]->setName(name);
+        location[i]->setName(name, sizeof(name));
         memset(name, 0, sizeof(name));
         location[i]->getName(name, sizeof(name));
         esReport("%s\n", name);

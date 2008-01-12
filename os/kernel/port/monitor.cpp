@@ -46,17 +46,11 @@ update()
 {
     unsigned x = Core::splHi();         // Cling to the current core
     spinLock();
-    Thread* thread = owner;
-    if (thread)
+    if (owner)
     {
-        thread->addRef();
+        owner->updatePriority();
     }
     spinUnlock();
-    if (thread)
-    {
-        thread->updatePriority();
-        thread->release();
-    }
     Core::splX(x);
 }
 
@@ -228,10 +222,7 @@ unlock()
     unsigned x = Core::splHi();
     DelegateTemplate<Monitor> d(this, &Thread::Monitor::condUnlock);
     rendezvous.wakeup(&d);
-    if (getCurrentThread()->state != TERMINATED)
-    {
-        reschedule();
-    }
+    reschedule();
     Core::splX(x);
 }
 

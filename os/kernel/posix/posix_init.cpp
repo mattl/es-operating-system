@@ -129,14 +129,8 @@ int esInit(IInterface** nameSpace)
     device->bind("loopback", static_cast<IStream*>(loopback));
 
     // Register the Ethernet interface
-    try
-    {
-        Tap* tap = new Tap("eth1");
-        device->bind("ethernet", static_cast<IStream*>(tap));
-    }
-    catch (...)
-    {
-    }
+    Tap* tap = new Tap("tap0", "br0", "/etc/qemu-ifup");
+    device->bind("ethernet", static_cast<IStream*>(tap));
 
     device->release();
 

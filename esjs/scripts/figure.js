@@ -9,33 +9,33 @@ var height;
 var x;
 var y;
 
-c.strokeStyle = "rgb(0, 0, 0)";
+c.strokeStyle = "rgba(0, 0, 0, 1)";
 
 height = 100;
 x = 100;
 c.lineWidth = 3;
-c.fillStyle = "rgb(255, 0, 0)";
+c.fillStyle = "rgba(255, 0, 0, 1)";
 
 c.fillRect(x, bottom - height, width, height);
 
 x += 50;
 height = 200;
-c.fillStyle = "rgb(0, 255, 0)";
+c.fillStyle = "rgba(0, 255, 0, 1)";
 c.fillRect(x, bottom - height, width, height);
 
 x += 50;
 height = 80;
-c.fillStyle = "rgb(0, 0, 255)";
+c.fillStyle = "rgba(0, 0, 255, 1)";
 c.fillRect(x, bottom - height, width, height);
 
 x += 50;
 height = 50;
-c.fillStyle = "rgb(255, 255, 0)";
+c.fillStyle = "rgba(255, 255, 0, 1)";
 c.fillRect(x, bottom - height, width, height);
 
 x += 50;
 height = 30;
-c.fillStyle = "rgb(0, 255, 255)";
+c.fillStyle = "rgba(0, 255, 255, 1)";
 c.fillRect(x, bottom - height, width, height);
 
 c.moveTo(80, top);
@@ -52,7 +52,7 @@ var cy = 450; // center
 var s = 270/180;
 var e = 120/180;
 
-c.fillStyle = "rgb(255, 0, 0)";
+c.fillStyle = "rgba(255, 0, 0, 1)";
 c.beginPath();
 c.arc(cx, cy, r, Math.PI * s, Math.PI * e, 0);
 c.lineTo(cx, cy);
@@ -61,7 +61,7 @@ c.fill();
 
 s = e;
 e = 240/180;
-c.fillStyle = "rgb(0, 255, 0)";
+c.fillStyle = "rgba(0, 255, 0, 1)";
 c.beginPath();
 c.arc(cx, cy, r, Math.PI * s, Math.PI * e, 0);
 c.lineTo(cx, cy);
@@ -70,7 +70,7 @@ c.fill();
 
 s = e;
 e = 260/180;
-c.fillStyle = "rgb(0, 0, 255)";
+c.fillStyle = "rgba(0, 0, 255, 1)";
 c.beginPath();
 c.arc(cx, cy, r, Math.PI * s, Math.PI * e, 0);
 c.lineTo(cx, cy);
@@ -79,34 +79,9 @@ c.fill();
 
 s = e;
 e = 270/180;
-c.fillStyle = "rgb(255, 255, 0)";
+c.fillStyle = "rgba(255, 255, 0, 1)";
 c.beginPath();
 c.arc(cx, cy, r, Math.PI * s, Math.PI * e, 0);
 c.lineTo(cx, cy);
 c.closePath();
 c.fill();
-
-c.fillStyle = "red";
-c.moveTo(512, 200);
-c.textStyle = "36pt Italic Liberation Serif";
-c.drawText("Hello, world.");
-
-c.fillStyle = "lime";
-c.moveTo(512, 250);
-c.textStyle = "40pt Bold Liberation Sans";
-c.drawText("Hello, world.");
-
-c.fillStyle = "blue";
-c.moveTo(512, 300);
-c.textStyle = "48pt Liberation Mono";
-c.drawText("Hello, world.");
-
-c.fillStyle = "fuchsia";
-c.moveTo(512, 350);
-c.textStyle = "48pt Sazanami Gothic";
-c.drawText("こんにちは、世界。");
-
-c.fillStyle = "aqua";
-c.moveTo(512, 400);
-c.textStyle = "48pt Sazanami Mincho";
-c.drawText("こんにちは、世界。");

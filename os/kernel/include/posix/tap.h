@@ -14,26 +14,28 @@
 #ifndef NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED
 #define NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED
 
-#include <sys/ioctl.h>
-#include <net/if.h>
 #include <es.h>
-#include <es/ref.h>
-#include <es/base/IStream.h>
 #include <es/device/INetworkInterface.h>
+#include <es/base/IStream.h>
+#include <es/ref.h>
 #include "posix/core.h"
 
 class Tap : public INetworkInterface, public IStream
 {
-    IMonitor*  monitor;
-    Ref        ref;
-    int        sd;
-    u8         mac[6];
-    char       interfaceName[IFNAMSIZ];
-    int        ifindex;
-    Statistics statistics;
+    IMonitor* monitor;
+    Ref ref;
+    int fd;
+    unsigned char mac[6];
+
+    char ifName[256]; // name of this tap interface.
+    char bridge[256]; // name of the bridge interface.
+    char script[256]; // startup script.
+
+    int setup(void);
+    int getBridgeMacAddress(void);
 
 public:
-    Tap(const char* interfaceName);
+    Tap(const char* ifName, const char* bridge, const char* script);
     ~Tap();
 
     // INetworkInterface
@@ -45,17 +47,35 @@ public:
     int start();
     int stop();
 
-    bool isPromiscuousMode();
-    void setPromiscuousMode(bool on);
+    bool isPromiscuousMode()
+    {
+        return false;
+    }
 
-    int addMulticastAddress(const unsigned char macaddr[6]);
-    int removeMulticastAddress(const unsigned char macaddr[6]);
+    void setPromiscuousMode(bool on)
+    {
+    }
+
+    int addMulticastAddress(const unsigned char macaddr[6])
+    {
+        return -1;
+    }
+
+    int removeMulticastAddress(const unsigned char macaddr[6])
+    {
+        return -1;
+    }
 
     void getMacAddress(unsigned char macaddr[6]);
 
-    bool getLinkState();
+    bool getLinkState(void)
+    {
+        return true;
+    }
 
-    void getStatistics(Statistics* statistics);
+    void getStatistics(Statistics* statistics)
+    {
+    }
 
     int getMTU()
     {
@@ -96,6 +116,9 @@ public:
     void flush()
     {
     }
+
+    // ICallback
+    int invoke(int irq);
 
     // IInterface
     void* queryInterface(const Guid& riid);

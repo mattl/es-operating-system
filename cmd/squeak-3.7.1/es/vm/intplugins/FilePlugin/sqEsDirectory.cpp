@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -184,26 +184,23 @@ int dir_Lookup(char *pathString, int pathStringLength, int index /* starting at 
             }
 
             Handle<IContext> context(binding);
+            Handle<IStream> stream(file->getStream());
             if (context)
             {
                 *isDirectory = true;
                 *sizeIfFile = 0;
             }
+            else if (stream)
+            {
+                *isDirectory = false;
+                long long size;
+                size = stream->getSize();
+                *sizeIfFile = size;
+            }
             else
             {
-                Handle<IStream> stream(file->getStream());  // XXX Check exception
-                if (stream)
-                {
-                    *isDirectory = false;
-                    long long size;
-                    size = stream->getSize();
-                    *sizeIfFile = size;
-                }
-                else
-                {
-                    ++index;
-                    continue;
-                }
+                ++index;
+                continue;
             }
             return ENTRY_FOUND;
         }

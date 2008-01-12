@@ -57,9 +57,8 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/color.h>
-#include <es/classFactory.h>
 #include <es/handle.h>
+#include <es/classFactory.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
@@ -69,6 +68,7 @@
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
 #include <es/util/ICanvasRenderingContext2D.h>
+#include <cairo.h>
 
 using namespace es;
 
@@ -265,7 +265,7 @@ class Canvas : public ICanvasRenderingContext2D
         {
             for (int i = 0; i < STYLE_MAX; i++)
             {
-                colorStyles[i] = 0xff000000;
+                colorStyles[i] = 0; // [check] default?
                 gradientStyles[i] = NULL;
                 patternStyles[i] = NULL;
             }
@@ -312,8 +312,6 @@ class Canvas : public ICanvasRenderingContext2D
     typedef List<ContextState, &ContextState::link> StyleStack;
     StyleStack styleStack;
 
-    std::string textStyle;
-
     // style handling
     u32 lastStyle;
     bool dirtyStyle[STYLE_MAX];
@@ -322,7 +320,7 @@ class Canvas : public ICanvasRenderingContext2D
     void applyStyle(u32 aWhichStyle);
     void dirtyAllStyles();
     int getStyle(u32 aWhichStyle, char* color, unsigned int len);
-    void setCairoColor(Rgb color);
+    void setCairoColor(u32 color);
     void setStyle(u32 aWhichStyle, const char* color);
     void setStyle(u32 aWhichStyle, ICanvasGradient* grad);
     void setStyle(u32 aWhichStyle, ICanvasPattern* pat);
@@ -331,6 +329,38 @@ class Canvas : public ICanvasRenderingContext2D
     {
         return styleStack.getLast();
     }
+
+    static inline u32 NS_RGB(u8 r, u8 g, u8 b)
+    {
+        return ((255 << 24) | ((b)<<16) | ((g)<<8) | r);
+    }
+
+    static inline u32 NS_RGB(u8 r, u8 g, u8 b, u8 a)
+    {
+        return (((a) << 24) | ((b)<<16) | ((g)<<8) | r);
+    }
+
+    static inline u8 NS_GET_R(u32 rgba)
+    {
+        return (u8) (rgba & 0xff);
+    }
+
+    static inline u8 NS_GET_G(u32 rgba)
+    {
+        return (u8) ((rgba >> 8) & 0xff);
+    }
+
+    static inline u8 NS_GET_B(u32 rgba)
+    {
+        return (u8) ((rgba >> 16) & 0xff);
+    }
+
+    static inline u8 NS_GET_A(u32 rgba)
+    {
+        return (u8) ((rgba >> 24) & 0xff);
+    }
+
+    static u32 parser(const char* color);
 
 public:
     Canvas(cairo_surface_t* surface, int screenWidth, int screenHeight);
@@ -372,16 +402,16 @@ public:
     void rotate(float angle);
     void save();
     void scale(float scaleW, float scaleH);
-    int setFillStyle(const char* color);
+    int setFillStyle(const char* color, int len);
     void setFillGradient(ICanvasGradient* gradient);
     void setFillPattern(ICanvasPattern* pattern);
     void setGlobalAlpha(float alpha);
-    int setGlobalCompositeOperation(const char* operation);
+    int setGlobalCompositeOperation(const char* operation, int len);
     void setMiterLimit(float limit);
     void setLineWidth(float width);
-    int setLineCap(const char* capStyle);
-    int setLineJoin(const char* joinStyle);
-    int setStrokeStyle(const char* color);
+    int setLineCap(const char* capStyle, int len);
+    int setLineJoin(const char* joinStyle, int len);
+    int setStrokeStyle(const char* color, int len);
     void stroke();
     void strokeRect(float x, float y, float width, float height);
     void translate(float tx, float ty);
@@ -390,7 +420,7 @@ public:
     void setShadowBlur(float blur)
     {
     }
-    int setShadowColor(const char* color)
+    int setShadowColor(const char* color, int len)
     {
         return -1;
     }
@@ -420,14 +450,6 @@ public:
     {
         return 0.0;
     }
-
-    // drawString enhancement
-    int getTextStyle(char* textStyle, int textStyleLength);
-    int setTextStyle(const char* textStyle);
-    void drawText(const char* textToDraw);
-    float measureText(const char* textToMeasure);
-    void pathText(const char* textToPath);
-    void textAlongPath(const char* textToDraw, bool stroke);
 
     void* queryInterface(const Guid& riid)
     {

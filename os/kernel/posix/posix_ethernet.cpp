@@ -12,83 +12,39 @@
  */
 
 #include "posix/tap.h"
-
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netpacket/packet.h>
-#include <net/ethernet.h>
-#include <net/if_arp.h>
-#include <linux/if_ether.h>
-
-#include <es/clsid.h>
-#include <es/exception.h>
 #include <es/synchronized.h>
+#include <es/clsid.h>
+#include <es/types.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <net/if.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/if_tun.h>
 
-namespace
+Tap::Tap(const char* ifName, const char* bridge, const char* script) : ref(0), fd(-1)
 {
-    unsigned char scratchBuffer[1518];
-}
-
-// cf. $ man netdevice
-
-Tap::Tap(const char* interfaceName) :
-    monitor(0),
-    sd(-1)
-{
-    struct ifreq ifr;
-
-    memset(&statistics, 0, sizeof(statistics));
-
-    ASSERT(interfaceName);
-    strncpy(this->interfaceName, interfaceName, IFNAMSIZ - 1);
-    this->interfaceName[IFNAMSIZ - 1] = '\0';
-
-    int s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    if (s == -1)
+    if (!ifName || !bridge)
     {
-        throw SystemException<ENODEV>();
+        return;
+    }
+    strcpy(this->ifName, ifName); // TAP interface.
+    strcpy(this->bridge, bridge); // bridge interface.
+
+    if (script)
+    {
+        strcpy(this->script, script); // startup script.
+    }
+    else
+    {
+        this->script[0] = 0;
     }
 
-    // Get interface index number
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    if (ioctl(s, SIOCGIFINDEX, &ifr) == -1)
-    {
-        perror("SIOCGIFINDEX");
-        throw SystemException<ENODEV>();
-    }
-    ifindex = ifr.ifr_ifindex;
-    esReport("ifindex: %d\n", ifindex);
+    getBridgeMacAddress();
 
-    // Get hardware address
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    if (ioctl(s, SIOCGIFHWADDR, &ifr) == -1)
-    {
-        perror("SIOCGIFINDEX");
-        throw SystemException<ENODEV>();
-    }
-    struct sockaddr hwaddr;
-    hwaddr = ifr.ifr_hwaddr;
-    if (hwaddr.sa_family != ARPHRD_ETHER)
-    {
-        fprintf(stderr, "ARPHRD_ETHER");
-        throw SystemException<ENODEV>();
-    }
-    memmove(mac, hwaddr.sa_data, 6);
-    esReport("MAC: %02x:%02x:%02x:%02x:%02x:%02x\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-
-    close(s);
-
-    monitor = reinterpret_cast<IMonitor*>(esCreateInstance(CLSID_Monitor, IMonitor::iid()));
-    ASSERT(monitor);
+    monitor = reinterpret_cast<IMonitor*>(
+        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
 }
 
 Tap::~Tap()
@@ -100,6 +56,70 @@ Tap::~Tap()
     }
 }
 
+int Tap::
+setup()
+{
+    int pid;
+    int ret;
+    int status;
+    char*  args[3];
+    char** parg;
+
+    if (script[0])
+    {
+        pid = fork();
+        if (0 <= pid)
+        {
+            if (pid == 0)
+            {
+                // child process
+                parg = args;
+                *parg++ = (char*) script;
+                *parg++ = (char*) ifName;
+                *parg++ = NULL;
+                execv(script, args);
+                _exit(1);
+            }
+
+            // parent process
+            while (waitpid(pid, &status, 0) != pid)
+            {
+                ;
+            }
+            if (!WIFEXITED(status) ||
+                WEXITSTATUS(status) != 0)
+            {
+                esReport("%s: could not launch network script\n", script);
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int Tap::
+getBridgeMacAddress()
+{
+    int fd;
+    struct ifreq ifr;
+
+    // get the mac address of the bridge interface.
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+    {
+        return -1;
+    }
+
+    ifr.ifr_addr.sa_family = AF_INET;
+    strncpy(ifr.ifr_name, bridge, IFNAMSIZ-1);
+    ioctl(fd, SIOCGIFHWADDR, &ifr);
+
+    memmove(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
+
+    return 0;
+}
+
 //
 // IStream
 //
@@ -107,52 +127,43 @@ Tap::~Tap()
 int Tap::
 start()
 {
-    Synchronized<IMonitor*> method(monitor);
+    int ret;
+    struct ifreq ifr;
 
-    if (0 <= sd)
+    fd = open("/dev/net/tun", O_RDWR);
+#ifdef VERBOSE
+    esReport("%s fd %d\n", __func__, fd);
+#endif // VERBOSE
+    if (fd < 0)
     {
-        return 0;
-    }
-
-    sd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    if (sd == -1)
-    {
-        perror("socket()");
+        esReport("warning: could not open /dev/net/tun: no virtual network emulation\n");
         return -1;
     }
 
-    // Bind to the interface
-    struct sockaddr_ll sll;
-    memset(&sll, 0xff, sizeof(sll));
-    sll.sll_family = AF_PACKET;
-    sll.sll_protocol = htons(ETH_P_ALL);
-    sll.sll_ifindex = ifindex;
-    if (bind(sd, (struct sockaddr*) &sll, sizeof sll) == -1)
+    memset(&ifr, 0, sizeof(ifr));
+    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    strcpy(ifr.ifr_name, ifName);
+
+    ret = ioctl(fd, TUNSETIFF, (void *) &ifr);
+    if (ret != 0)
     {
-        perror("bind()");
+        esReport("warning: could not configure /dev/net/tun: no virtual network emulation\n");
+        close(fd);
         return -1;
     }
 
-    // Flush packets before the binding
-    ssize_t len;
-    do {
-        len = recv(sd, scratchBuffer, sizeof scratchBuffer, MSG_DONTWAIT);
-    } while (0 < len);
-
-    memset(&statistics, 0, sizeof(statistics));
-
+    setup();
     return 0;
 }
 
 int Tap::
 stop()
 {
-    Synchronized<IMonitor*> method(monitor);
-
-    if (0 <= sd)
+    if (0 <= fd)
     {
-        close(sd);
-        sd = -1;
+        int n = fd;
+        fd = -1;
+        close(n);
     }
     return 0;
 }
@@ -160,171 +171,36 @@ stop()
 int Tap::
 read(void* dst, int count)
 {
-    ssize_t len = recv(sd, dst, count, 0);
-    if (len == -1)
+    if (fd < 0)
     {
-        ++statistics.inErrors;
+        return -1;
     }
-    else
-    {
-        statistics.inOctets += len;
-        if (0 < len)
-        {
-            if (static_cast<u8*>(dst)[0] & 0x01)
-            {
-                ++statistics.inNUcastPkts;
-            }
-            else
-            {
-                ++statistics.inUcastPkts;
-            }
-        }
-    }
-    return len;
+    return ::read(fd, dst, count);
 }
 
 int Tap::
 write(const void* src, int count)
 {
-    struct sockaddr_ll sll;
-
-    memset(&sll, 0, sizeof(sll));
-    sll.sll_ifindex = ifindex;
-    ssize_t len = sendto(sd, src, count, 0, (struct sockaddr*) &sll, sizeof(sll));
-    if (len == -1)
+    if (fd < 0)
     {
-        ++statistics.outErrors;
+        return -1;
     }
-    else
-    {
-        statistics.outOctets += len;
-        if (0 < len)
-        {
-            if (static_cast<const u8*>(src)[0] & 0x01)
-            {
-                ++statistics.outNUcastPkts;
-            }
-            else
-            {
-                ++statistics.outUcastPkts;
-            }
-        }
-    }
-    return len;
+    return ::write(fd, src, (size_t) count);
 }
 
 //
 // INetworkInterface
 //
 
-bool Tap::
-isPromiscuousMode()
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    if (sd < 0)
-    {
-        return false;
-    }
-
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    ioctl(sd, SIOCGIFFLAGS, &ifr);
-    return (ifr.ifr_flags & IFF_PROMISC) ? true : false;
-}
-
-void Tap::
-setPromiscuousMode(bool on)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    if (sd < 0)
-    {
-        return;
-    }
-
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    ioctl(sd, SIOCGIFFLAGS, &ifr);
-    if (on)
-    {
-        ifr.ifr_flags |= IFF_PROMISC;
-    }
-    else
-    {
-        ifr.ifr_flags &= ~IFF_PROMISC;
-    }
-    ioctl(sd, SIOCSIFFLAGS, &ifr);
-}
-
-int Tap::
-addMulticastAddress(const unsigned char macaddr[6])
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    if (sd < 0)
-    {
-        return -1;
-    }
-
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
-    memmove(ifr.ifr_hwaddr.sa_data, macaddr, 6);
-    return ioctl(sd, SIOCADDMULTI, &ifr);
-}
-
-int Tap::
-removeMulticastAddress(const unsigned char macaddr[6])
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    if (sd < 0)
-    {
-        return -1;
-    }
-
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
-    memmove(ifr.ifr_hwaddr.sa_data, macaddr, 6);
-    return ioctl(sd, SIOCDELMULTI, &ifr);
-}
-
 void Tap::
 getMacAddress(unsigned char* mac)
 {
+    // Use 10-00-00 private MAC-48 for now XXX
+    static const u8 oui[3] = { 0x10, 0x00, 0x00 };
     memmove(mac, this->mac, 6);
+    memmove(mac, oui, 3);
 }
 
-bool Tap::
-getLinkState()
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    if (sd < 0)
-    {
-        return false;
-    }
-
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, interfaceName, IFNAMSIZ - 1);
-    ioctl(sd, SIOCGIFFLAGS, &ifr);
-    return (ifr.ifr_flags & IFF_RUNNING) ? true : false;
-}
-
-void Tap::
-getStatistics(Statistics* statistics)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    *statistics = this->statistics;
-};
 
 //
 // IInterface

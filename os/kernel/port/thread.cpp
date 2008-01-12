@@ -379,7 +379,6 @@ cancel()
         if (monitor)
         {
             monitor->update();        // Reset BPI
-            monitor = 0;
         }
         break;
       default:

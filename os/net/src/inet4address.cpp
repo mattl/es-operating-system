@@ -27,54 +27,6 @@ Inet4Address::StateIdleMember       Inet4Address::stateIdleMember;
 Inet4Address::StateDestination      Inet4Address::stateDestination;
 Inet4Address::StatePrefix           Inet4Address::statePrefix;
 
-Inet4Address::
-Inet4Address(InAddr addr, State& state, int scopeID, int prefix) :
-    state(&state),
-    addr(addr),
-    scopeID(scopeID),
-    prefix(prefix),
-    inFamily(0),
-    adapter(0),
-    timeoutCount(0),
-    pathMTU(1500)
-{
-    ASSERT(0 <= prefix && prefix <= 32);
-    u8 mac[6];
-
-    if (IN_IS_ADDR_MULTICAST(addr))
-    {
-        mac[0] = 0x01;
-        mac[1] = 0x00;
-        mac[2] = 0x5e;
-        memmove(&mac[3], &reinterpret_cast<u8*>(&addr)[1], 3);
-        mac[3] &= 0x7f;
-        setMacAddress(mac);
-    }
-    else if (IN_ARE_ADDR_EQUAL(addr, InAddrBroadcast))  // XXX or directed mcast
-    {
-        memset(mac, 0xff, 6);
-        setMacAddress(mac);
-    }
-}
-
-Inet4Address::
-~Inet4Address()
-{
-    cancel();
-    if (inFamily)
-    {
-        inFamily->removeAddress(this);
-        inFamily = 0;
-    }
-}
-
-void Inet4Address::
-setState(State& state)
-{
-    timeoutCount = 0;   // Reset timeout count
-    this->state = &state;
-}
-
 Address* Inet4Address::
 getNextHop()
 {

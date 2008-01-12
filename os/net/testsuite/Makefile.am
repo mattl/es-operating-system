@@ -14,8 +14,7 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
-	udpEchoClient udpEchoServer
+TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -67,9 +66,5 @@ dhcp_SOURCES = dhcp.cpp
 dns_SOURCES = dns.cpp
 
 unreach_SOURCES = unreach.cpp
-
-udpEchoClient_SOURCES = udpEchoClient.cpp
-
-udpEchoServer_SOURCES = udpEchoServer.cpp
 
 EXTRA_DIST = makeScript testLoader

@@ -14,6 +14,7 @@
 #ifndef NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
 #define NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
 
+#include "es/base/IStream.idl"
 #include "es/device/INetworkInterface.idl"
 #include "es/net/IInternetAddress.idl"
 
@@ -26,8 +27,8 @@ module es
     {
         #pragma ID IInternetConfig = "DCE:6db45dae-c85e-11db-9c02-0009bf000001";
 
-        /** Adds the specified internet address as a local host address with the
-         * specified prefix to the TCP/IP network subsystem.
+        /** Registers the specified internet address with the specified prefix
+         *  to the TCP/IP network subsystem.
          * @param address the internet address to be registered.
          * @param prefix length of the prefix.
          * @see IInternetAddress
@@ -41,14 +42,12 @@ module es
          */
         IInternetAddress getAddress(in unsigned long scopeID);
 
-        /** Removes the specified internet local host address from the TCP/IP
-         * network subsystem.
+        /** Unregisters the specified internet address from the TCP/IP network subsystem.
          * @param address the internet address of the network interface.
          */
         void removeAddress(in IInternetAddress address);
 
-        /** Adds the specified internet address as a router to the TCP/IP
-         * network subsystem.
+        /** Adds the specified internet address as a router to the TCP/IP network subsystem.
          * @param router the internet address of the router.
          */
         void addRouter(in IInternetAddress router);
@@ -63,8 +62,7 @@ module es
          */
         void removeRouter(in IInternetAddress router);
 
-        /** Adds the specified network interface to the TCP/IP network
-         * subsystem.
+        /** Registers the specified network interface to the TCP/IP network subsystem.
          * @param stream stream of the network interface to be registered.
          * @param hrd the hardware type of the network interface (ARPHdr::HRD_*).
          * @return DIX ID of the network interface.
@@ -84,14 +82,12 @@ module es
          */
         long getScopeID(in INetworkInterface networkInterface);
 
-        /** Removes the specified network interface from the TCP/IP network
-         * subsystem.
+        /** Unregisters the specified network interface.
          * @param stream stream of the network interface to be unregistered.
          */
         void removeInterface(in INetworkInterface networkInterface);
 
-        /** Adds the specified internet address as a DNS server to the TCP/IP
-        * network subsystem.
+        /** Adds the specified internet address as a DNS server to the TCP/IP network subsystem.
          * @param address the internet address of the DNS server.
          */
         void addNameServer(in IInternetAddress address);
@@ -109,3 +105,4 @@ module es
 };
 
 #endif // NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
+

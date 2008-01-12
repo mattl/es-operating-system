@@ -1194,7 +1194,7 @@ int main(int argc, char* argv[])
     // create console.
     int bufSize = 4096;
     u8* keyBuffer = new u8[bufSize];
-    Handle<IFile> font = nameSpace->lookup("file/fonts/sazanami-mincho.ttf");
+    Handle<IFile> font = nameSpace->lookup("file/sazanami-mincho.ttf");
     Console* console = new Console(font, 12, keyBuffer, bufSize); // font size is set to 12 pt.
 
     // check if the event queue is ready.

@@ -51,11 +51,10 @@ removeAddress(IInternetAddress* address)
     {
     case AF_INET:
         Inet4Address* host = dynamic_cast<Inet4Address*>(address);
-        if (host && host->isLocalAddress())
+        if (host)
         {
-            host->cancel();
-            host->setState(Inet4Address::stateDeprecated);
-            host->start();
+            InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
+            inFamily->removeAddress(host);
         }
         break;
     }
@@ -68,11 +67,11 @@ addRouter(IInternetAddress* router)
     switch (af)
     {
     case AF_INET:
-        Inet4Address* node = dynamic_cast<Inet4Address*>(router);
-        if (node)
+        Inet4Address* host = dynamic_cast<Inet4Address*>(router);
+        if (host)
         {
             InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-            inFamily->addRouter(node);
+            inFamily->addRouter(host);
         }
         break;
     }
@@ -80,8 +79,7 @@ addRouter(IInternetAddress* router)
 
 IInternetAddress* InternetConfig::getRouter()
 {
-    InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-    return inFamily->getRouter();
+    return 0;   // XXX
 }
 
 void InternetConfig::
@@ -91,11 +89,11 @@ removeRouter(IInternetAddress* router)
     switch (af)
     {
     case AF_INET:
-        Inet4Address* node = dynamic_cast<Inet4Address*>(router);
-        if (node)
+        Inet4Address* host = dynamic_cast<Inet4Address*>(router);
+        if (host)
         {
             InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-            inFamily->removeRouter(node);
+            inFamily->removeRouter(host);
         }
         break;
     }
@@ -167,7 +165,7 @@ queryInterface(const Guid& riid)
     }
     else
     {
-        return 0;
+        return NULL;
     }
     static_cast<IInterface*>(objectPtr)->addRef();
     return objectPtr;

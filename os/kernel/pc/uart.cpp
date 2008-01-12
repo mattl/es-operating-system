@@ -74,7 +74,7 @@ setBaud(int rate)
 long long Uart::
 getPosition()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::
@@ -85,7 +85,7 @@ setPosition(long long pos)
 long long Uart::
 getSize()
 {
-    return -1;
+    return 0;
 }
 
 void Uart::setSize(long long size)

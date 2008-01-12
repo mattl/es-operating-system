@@ -41,8 +41,8 @@ public:
 
 namespace
 {
-    Thread* ThreadHi;
-    Thread* ThreadMid;
+    IThread* ThreadHi;
+    IThread* ThreadMid;
     IMonitor* MonitorA;
     IMonitor* MonitorB;
     bool Flag = false;
@@ -72,7 +72,6 @@ static void* Mid(void* param)
 
     MonitorB->lock();
     MonitorA->lock();
-    ThreadMid->testCancel();
     // NOT REACHED HERE
     TEST(0);
     MonitorA->unlock();

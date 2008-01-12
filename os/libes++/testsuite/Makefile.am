@@ -8,13 +8,11 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-TESTS = collection colorTest list hashtable tree rand smartptr formatter
+TESTS = collection list hashtable tree rand smartptr formatter
 
 noinst_PROGRAMS = $(TESTS)
 
 collection_SOURCES = collection.cpp
-
-colorTest_SOURCES = colorTest.cpp
 
 list_SOURCES = list.cpp
 

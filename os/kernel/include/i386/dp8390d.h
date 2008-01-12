@@ -15,7 +15,6 @@
 #define NINTENDO_ES_KERNEL_I386_DP8390D_H_INCLUDED
 
 #include <es/device/INetworkInterface.h>
-#include <es/base/IAlarm.h>
 #include <es/base/IStream.h>
 #include <es/base/ICallback.h>
 #include <es/ref.h>
@@ -25,14 +24,164 @@
 
 class Dp8390d : public INetworkInterface, public IStream, public ICallback
 {
-    static const int MIN_SIZE = 64;
-    static const int MAX_SIZE = 1518;
+    Lock            spinLock;
+    IMonitor*       monitor;
+    Ref             ref;
+
+    unsigned        base;    // I/O base address
+    int             irq;     // IRQ
+
+    u8              mac[6];
+
+    unsigned int    nicMemSize;   // total NIC memory size
+    unsigned int    reservedPage; // reserved memory size
+    bool            sendDone;
+
+    Interlocked     overflow;
+    DateTime        lastOverflow;
+    bool            resend;
+
+    Statistics      statistics;
 
     static const int PAGE_SIZE = 256;
     static const int NUM_TX_PAGE = 6;
     static const int NUM_HASH_REGISTER = 8;
 
-    static const unsigned int POLY = 0xedb88320;    // CRC-32 poly (little endian)
+    // Receive
+    struct RingHeader
+    {
+        u8 status;
+        u8 nextPage;
+        u8 lenLow;
+        u8 lenHigh;
+    };
+
+    struct Ring
+    {
+        u8 pageStart;
+        u8 pageStop;
+        u8 nextPacket;
+    };
+    Ring ring;
+
+    // Send
+    u8 txPageStart;
+
+    // Multicast
+    u8 hashTable[NUM_HASH_REGISTER];
+    int hashRef[8 * NUM_HASH_REGISTER];   // reference count of an entry in the hash table.
+    u8 rcr; // keep RCR register value. (because no register for page 2 works properly).
+
+    // initialization
+    int readProm();
+    int initializeMacAddress();
+    int initializeMulticastAddress();
+    int initializeRing();
+    int reset();
+
+    // write
+    int writeLocked(const void* src, int count);
+
+    // read
+    int getPacketSize(RingHeader* header);
+    int checkRingStatus(RingHeader* header, int len);
+    int updateRing(RingHeader* header);
+    bool isRingEmpty();
+    void updateReceiveStatistics(RingHeader* header, int len);
+    int readLocked(void* dst, int count);
+    unsigned int generateCrc(const u8* mca);
+
+    // error
+    int recoverFromOverflow();
+    void issueStopCommand();
+
+    // misc
+    int readNicMemory(unsigned short src, u8* buf, unsigned short len);
+    int writeToNicMemory(unsigned short dst, u8* buf, unsigned short len);
+    u8 setPage(int page);
+    void restorePage(u8 cr);
+    u8 getIsr();
+    u8 getCurr();
+
+public:
+    Dp8390d(u8 bus, unsigned base, int irq);
+    ~Dp8390d();
+
+    // INetworkInterface
+    int getType()
+    {
+        return INetworkInterface::Ethernet;
+    }
+    int start();
+    int stop();
+    int probe();
+
+    bool isPromiscuousMode();
+    void setPromiscuousMode(bool on);
+    int addMulticastAddress(const u8 mac[6]);
+    int removeMulticastAddress(const u8 mac[6]);
+
+    void getMacAddress(u8 mac[6]);
+    bool getLinkState();
+
+    void getStatistics(Statistics* statistics);
+
+    int getMTU()
+    {
+        return 1500;
+    }
+
+    // IStream
+    long long getPosition()
+    {
+        return 0;
+    }
+
+    void setPosition(long long pos)
+    {
+    }
+
+    long long getSize()
+    {
+        return 0;
+    }
+
+    void setSize(long long size)
+    {
+    }
+
+    int read(void* dst, int count);
+
+    int read(void* dst, int count, long long offset)
+    {
+        return -1;
+    }
+
+    int write(const void* src, int count);
+
+    int write(const void* src, int count, long long offset)
+    {
+        return -1;
+    }
+
+    void flush()
+    {
+    }
+
+    // ICallback
+    int invoke(int irq);
+
+    // IInterface
+    void* queryInterface(const Guid& riid);
+    unsigned int addRef();
+    unsigned int release();
+
+private:
+
+    static const int MIN_SIZE = 60;
+    static const int MAX_SIZE = 1514;
+
+    static const unsigned int POLY  = 0xedb88320; // CRC-32 poly (little endian)
 
     // Register address (Page 0)
     static const int CR     = 0x00;
@@ -83,11 +232,6 @@ class Dp8390d : public INetworkInterface, public IStream, public ICallback
     static const int MAR6   = 0x0e;
     static const int MAR7   = 0x0f;
 
-    // Register address (Page 3 for RTL8029AS)
-    static const int CONFIG0 = 0x03;
-    static const int CONFIG2 = 0x05;
-    static const int CONFIG3 = 0x06;
-
     // Command Register(CR)
     static const int CR_STP = 1<<0;
     static const int CR_STA = 1<<1;
@@ -102,7 +246,6 @@ class Dp8390d : public INetworkInterface, public IStream, public ICallback
     static const int CR_PAGE0 = 0x00;
     static const int CR_PAGE1 = CR_PS0;
     static const int CR_PAGE2 = CR_PS1;
-    static const int CR_PAGE3 = CR_PS0 | CR_PS1;    // RTL8029AS Configuration
 
     // Interrupt status register(ISR)
     static const int ISR_PRX = 1<<0;
@@ -165,145 +308,6 @@ class Dp8390d : public INetworkInterface, public IStream, public ICallback
     static const int RSR_PHY = 1<<5;
     static const int RSR_DIS = 1<<6;
     static const int RSR_DFR = 1<<7;
-
-    static const int CONFIG0_BNC = 1<<2;
-
-    struct RingHeader
-    {
-        u8 status;
-        u8 nextPage;
-        u8 lenLow;
-        u8 lenHigh;
-    };
-
-    Lock        spinLock;       // for invoke()
-    IMonitor*   monitor;
-    Ref         ref;
-
-    u8          bus;
-    unsigned    base;           // I/O base address
-    int         irq;
-
-    u8          mac[6];
-
-    u16         ramStart;       // The start address of the buffer memory
-    u16         ramEnd;         // The end address of the buffer memory
-
-    bool        enabled;
-
-    int         sending;        // The number of octets being sent. Zero if not sending.
-    bool        sendingUcast;   // True if sending a ucast packet.
-
-    IAlarm*     alarm;
-    bool        overflow;
-    bool        resend;
-
-    Statistics  statistics;
-
-    // Ring
-    u8          pageStart;
-    u8          pageStop;
-    u8          nextPacket;
-
-    // Send
-    u8          txPageStart;
-
-    // Multicast
-    u8          hashTable[NUM_HASH_REGISTER];
-    int         hashRef[8 * NUM_HASH_REGISTER]; // Reference count of each entry in the hash table.
-    u8          rcr;                            // Saved RCR register value. (because no register for page 2 works properly).
-
-    // Initialization
-    bool reset();
-    bool readMacAddress();
-    bool initialize();
-
-    // Read
-    int getPacketSize(RingHeader* header);
-    int updateRing(u8 nextPage);
-    bool isRingEmpty();
-    unsigned int generateCrc(const u8 macaddr[6]);
-
-    // Overflow
-    void recover();
-
-    // Misc.
-    int remoteRead(unsigned short src, void* buf, unsigned short len);
-    int remoteWrite(unsigned short dst, const void* buf, unsigned short len);
-    u8 setPage(int page);
-    void restorePage(u8 cr);
-
-public:
-    Dp8390d(u8 bus, unsigned base, int irq);
-    ~Dp8390d();
-
-    // INetworkInterface
-    int getType()
-    {
-        return INetworkInterface::Ethernet;
-    }
-    int start();
-    int stop();
-
-    bool isPromiscuousMode();
-    void setPromiscuousMode(bool on);
-    int addMulticastAddress(const u8 mac[6]);
-    int removeMulticastAddress(const u8 mac[6]);
-
-    void getMacAddress(u8 mac[6]);
-    bool getLinkState();
-
-    void getStatistics(Statistics* statistics);
-
-    int getMTU()
-    {
-        return 1500;
-    }
-
-    // IStream
-    long long getPosition()
-    {
-        return 0;
-    }
-
-    void setPosition(long long pos)
-    {
-    }
-
-    long long getSize()
-    {
-        return 0;
-    }
-
-    void setSize(long long size)
-    {
-    }
-
-    int read(void* dst, int count);
-
-    int read(void* dst, int count, long long offset)
-    {
-        return -1;
-    }
-
-    int write(const void* src, int count);
-
-    int write(const void* src, int count, long long offset)
-    {
-        return -1;
-    }
-
-    void flush()
-    {
-    }
-
-    // ICallback
-    int invoke(int irq);
-
-    // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef();
-    unsigned int release();
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_DP8390D_H_INCLUDED

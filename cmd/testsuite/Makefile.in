@@ -35,8 +35,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-noinst_PROGRAMS = $(am__EXEEXT_1)
-TESTS = $(am__EXEEXT_1)
+TESTS = main$(EXEEXT) start$(EXEEXT) binder$(EXEEXT) location$(EXEEXT) \
+	eventManager$(EXEEXT) console$(EXEEXT) upcallTest$(EXEEXT)
+noinst_PROGRAMS = $(am__EXEEXT_2)
 subdir = testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,7 +48,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 am__EXEEXT_1 = main$(EXEEXT) start$(EXEEXT) binder$(EXEEXT) \
 	location$(EXEEXT) eventManager$(EXEEXT) console$(EXEEXT) \
-	upcallTest$(EXEEXT) newlib$(EXEEXT)
+	upcallTest$(EXEEXT)
+am__EXEEXT_2 = $(am__EXEEXT_1)
 PROGRAMS = $(noinst_PROGRAMS)
 am_binder_OBJECTS = binder.$(OBJEXT)
 binder_OBJECTS = $(am_binder_OBJECTS)
@@ -74,11 +76,6 @@ main_OBJECTS = $(am_main_OBJECTS)
 main_LDADD = $(LDADD)
 main_DEPENDENCIES = ../../os/fs/fat/libesfat.a \
 	../../os/kernel/libeskernel.a ../../os/libes++/libessup++.a
-am_newlib_OBJECTS = newlib.$(OBJEXT)
-newlib_OBJECTS = $(am_newlib_OBJECTS)
-newlib_LDADD = $(LDADD)
-newlib_DEPENDENCIES = ../../os/fs/fat/libesfat.a \
-	../../os/kernel/libeskernel.a ../../os/libes++/libessup++.a
 am_start_OBJECTS = start.$(OBJEXT)
 start_OBJECTS = $(am_start_OBJECTS)
 start_LDADD = $(LDADD)
@@ -99,11 +96,11 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(binder_SOURCES) $(console_SOURCES) $(eventManager_SOURCES) \
-	$(location_SOURCES) $(main_SOURCES) $(newlib_SOURCES) \
-	$(start_SOURCES) $(upcallTest_SOURCES)
+	$(location_SOURCES) $(main_SOURCES) $(start_SOURCES) \
+	$(upcallTest_SOURCES)
 DIST_SOURCES = $(binder_SOURCES) $(console_SOURCES) \
 	$(eventManager_SOURCES) $(location_SOURCES) $(main_SOURCES) \
-	$(newlib_SOURCES) $(start_SOURCES) $(upcallTest_SOURCES)
+	$(start_SOURCES) $(upcallTest_SOURCES)
 DATA = $(noinst_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -212,7 +209,7 @@ top_srcdir = @top_srcdir@
 LDADD = ../../os/fs/fat/libesfat.a ../../os/kernel/libeskernel.a ../../os/libes++/libessup++.a -lfreetype
 SUFFIXES = .img .gz
 TESTS_ENVIRONMENT = $(srcdir)/testLoader
-noinst_SCRIPTS = main start binder location eventManager console upcallTest newlib
+noinst_SCRIPTS = $(TESTS)
 noinst_DATA = disk.img \
 	main.img \
 	start.img \
@@ -220,8 +217,7 @@ noinst_DATA = disk.img \
 	location.img \
 	eventManager.img \
 	console.img \
-	upcallTest.img \
-	newlib.img
+	upcallTest.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map -L$(prefix)/lib
@@ -232,7 +228,6 @@ location_SOURCES = location.cpp
 eventManager_SOURCES = eventManager.cpp
 console_SOURCES = console.cpp
 upcallTest_SOURCES = upcallTest.cpp
-newlib_SOURCES = newlib.cpp
 AM_CPPFLAGS = \
 	-I- \
 	-I../../include \
@@ -292,9 +287,6 @@ location$(EXEEXT): $(location_OBJECTS) $(location_DEPENDENCIES)
 main$(EXEEXT): $(main_OBJECTS) $(main_DEPENDENCIES) 
 	@rm -f main$(EXEEXT)
 	$(CXXLINK) $(main_OBJECTS) $(main_LDADD) $(LIBS)
-newlib$(EXEEXT): $(newlib_OBJECTS) $(newlib_DEPENDENCIES) 
-	@rm -f newlib$(EXEEXT)
-	$(CXXLINK) $(newlib_OBJECTS) $(newlib_LDADD) $(LIBS)
 start$(EXEEXT): $(start_OBJECTS) $(start_DEPENDENCIES) 
 	@rm -f start$(EXEEXT)
 	$(CXXLINK) $(start_OBJECTS) $(start_LDADD) $(LIBS)
@@ -313,7 +305,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eventManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/location.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/start.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upcallTest.Po@am__quote@
 
@@ -584,12 +575,10 @@ uninstall-am:
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-
-% :: %.elf
-	$(srcdir)/makeScript "`pwd`" $(srcdir) $@
+	$(srcdir)/makeScript "`pwd`" $(*F)
 
 clean-local:
-	-rm -f *.map
+	-rm -f *.map *.log
 
 disk.img: disk.img.gz
 	gunzip -c $< > $@

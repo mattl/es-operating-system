@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -46,7 +46,6 @@ public:
     {
         point.x = point.y = 0;
         sprintf(name, "id%d", ++id);
-        name[13] = '\0';
     }
 
     ~Location()
@@ -69,9 +68,13 @@ public:
         point.y += direction->y;
     }
 
-    int setName(const char* name)
+    int setName(const char* name, int len)
     {
-        strncpy(this->name, name, 13);
+        if (sizeof(name) < len)
+        {
+            len = sizeof(name);
+        }
+        strncpy(this->name, name, len);
     }
 
     int getName(char* name, int len)

@@ -80,7 +80,6 @@ do {
         {
             process = classStore.createInstance(CLSID_Process, IID_IProcess);
             process.root = root;
-            process.current = cwd;
             process.input = stdin;
             process.output = stdout;
             process.error = stderr;

@@ -33,9 +33,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@POSIX_TRUE@TESTS = collection$(EXEEXT) colorTest$(EXEEXT) \
-@POSIX_TRUE@	list$(EXEEXT) hashtable$(EXEEXT) tree$(EXEEXT) \
-@POSIX_TRUE@	rand$(EXEEXT) smartptr$(EXEEXT) formatter$(EXEEXT)
+@POSIX_TRUE@TESTS = collection$(EXEEXT) list$(EXEEXT) \
+@POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
+@POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT)
 @POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = libes++/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -45,20 +45,15 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
-@POSIX_TRUE@am__EXEEXT_1 = collection$(EXEEXT) colorTest$(EXEEXT) \
-@POSIX_TRUE@	list$(EXEEXT) hashtable$(EXEEXT) tree$(EXEEXT) \
-@POSIX_TRUE@	rand$(EXEEXT) smartptr$(EXEEXT) formatter$(EXEEXT)
+@POSIX_TRUE@am__EXEEXT_1 = collection$(EXEEXT) list$(EXEEXT) \
+@POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
+@POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am__collection_SOURCES_DIST = collection.cpp
 @POSIX_TRUE@am_collection_OBJECTS = collection.$(OBJEXT)
 collection_OBJECTS = $(am_collection_OBJECTS)
 collection_LDADD = $(LDADD)
 collection_DEPENDENCIES = ../libessup++.a
-am__colorTest_SOURCES_DIST = colorTest.cpp
-@POSIX_TRUE@am_colorTest_OBJECTS = colorTest.$(OBJEXT)
-colorTest_OBJECTS = $(am_colorTest_OBJECTS)
-colorTest_LDADD = $(LDADD)
-colorTest_DEPENDENCIES = ../libessup++.a
 am__formatter_SOURCES_DIST = formatter.cpp
 @POSIX_TRUE@am_formatter_OBJECTS = formatter.$(OBJEXT)
 formatter_OBJECTS = $(am_formatter_OBJECTS)
@@ -97,14 +92,13 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(collection_SOURCES) $(colorTest_SOURCES) \
-	$(formatter_SOURCES) $(hashtable_SOURCES) $(list_SOURCES) \
-	$(rand_SOURCES) $(smartptr_SOURCES) $(tree_SOURCES)
+SOURCES = $(collection_SOURCES) $(formatter_SOURCES) \
+	$(hashtable_SOURCES) $(list_SOURCES) $(rand_SOURCES) \
+	$(smartptr_SOURCES) $(tree_SOURCES)
 DIST_SOURCES = $(am__collection_SOURCES_DIST) \
-	$(am__colorTest_SOURCES_DIST) $(am__formatter_SOURCES_DIST) \
-	$(am__hashtable_SOURCES_DIST) $(am__list_SOURCES_DIST) \
-	$(am__rand_SOURCES_DIST) $(am__smartptr_SOURCES_DIST) \
-	$(am__tree_SOURCES_DIST)
+	$(am__formatter_SOURCES_DIST) $(am__hashtable_SOURCES_DIST) \
+	$(am__list_SOURCES_DIST) $(am__rand_SOURCES_DIST) \
+	$(am__smartptr_SOURCES_DIST) $(am__tree_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -217,7 +211,6 @@ AM_CPPFLAGS = \
 	-I $(srcdir)/../../../include
 
 @POSIX_TRUE@collection_SOURCES = collection.cpp
-@POSIX_TRUE@colorTest_SOURCES = colorTest.cpp
 @POSIX_TRUE@list_SOURCES = list.cpp
 @POSIX_TRUE@hashtable_SOURCES = hashtable.cpp
 @POSIX_TRUE@rand_SOURCES = rand.cpp
@@ -263,9 +256,6 @@ clean-noinstPROGRAMS:
 collection$(EXEEXT): $(collection_OBJECTS) $(collection_DEPENDENCIES) 
 	@rm -f collection$(EXEEXT)
 	$(CXXLINK) $(collection_OBJECTS) $(collection_LDADD) $(LIBS)
-colorTest$(EXEEXT): $(colorTest_OBJECTS) $(colorTest_DEPENDENCIES) 
-	@rm -f colorTest$(EXEEXT)
-	$(CXXLINK) $(colorTest_OBJECTS) $(colorTest_LDADD) $(LIBS)
 formatter$(EXEEXT): $(formatter_OBJECTS) $(formatter_DEPENDENCIES) 
 	@rm -f formatter$(EXEEXT)
 	$(CXXLINK) $(formatter_OBJECTS) $(formatter_LDADD) $(LIBS)
@@ -292,7 +282,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/collection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colorTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formatter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hashtable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list.Po@am__quote@

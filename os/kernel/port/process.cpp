@@ -662,7 +662,7 @@ createThread(const unsigned stackSize)
         return 0;
     }
 
-    u8* stack = new u8[16*1024];
+    u8* stack = new u8[8192];
     if (!stack)
     {
         unmap(userStack, stackSize - Page::SIZE);
@@ -680,7 +680,7 @@ createThread(const unsigned stackSize)
                                 ureg,               // argument to thread function
                                 IThread::Normal,    // priority
                                 stack,              // stack
-                                16*1024);           // stack size
+                                8192);              // stack size
     if (!thread)
     {
         unmap(userStack, stackSize - Page::SIZE);
@@ -688,12 +688,11 @@ createThread(const unsigned stackSize)
         return 0;
     }
 
-    // Add this thread to this process.
+    // Add this thread to this process and memorize the user stack address.
     ++threadCount;
     thread->process = this;
     thread->userStack = userStack;
     threadList.addLast(thread);
-    addRef();
     return thread;
 }
 
@@ -712,8 +711,6 @@ detach(Thread* thread)
     threadList.remove(thread);
     --threadCount;
     waitPoint.wakeup();
-
-    release();
 }
 
 IThread* Process::
@@ -911,7 +908,17 @@ exit(int status)
 
     exitValue = status;
 
-    // Cancel all the threads.
+    for (SyscallProxy* proxy(syscallTable);
+         proxy < &syscallTable[INTERFACE_POINTER_MAX];
+         ++proxy)
+    {
+        proxy->addRef();
+        while (0 < proxy->release())
+            ;
+    }
+
+    // Cancel all the threads. Note do not release threads here as they are
+    // stored in syscallTable.
     Thread* thread;
     List<Thread, &Thread::linkProcess>::Iterator iter = threadList.begin();
     while ((thread = iter.next()))
@@ -941,7 +948,7 @@ kill()
         // NOT REACHED HERE
     }
 
-    // Cancel all the threads.
+    // Cancel all the threads
     Monitor::Synchronized method(monitor);
     Thread* thread;
     List<Thread, &Thread::linkProcess>::Iterator iter = threadList.begin();
@@ -949,8 +956,9 @@ kill()
     {
         ASSERT(thread != Thread::getCurrentThread());
         thread->setCancelState(ICurrentThread::CANCEL_ENABLE);
-        thread->setCancelType(ICurrentThread::CANCEL_DEFERRED);
+        thread->setCancelType(ICurrentThread::CANCEL_ASYNCHRONOUS);
         thread->cancel();
+        thread->release();
     }
 }
 

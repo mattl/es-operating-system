@@ -51,7 +51,7 @@ TESTS = handle interlocked exception utf ring fpu \
 	position size write_read write_read2 \
 	write read create_release getPageCount \
 	invalidate \
-	pageSet \
+	pageSet process \
 	loopback ethernet
 
 noinst_SCRIPTS = $(TESTS)
@@ -69,7 +69,7 @@ noinst_DATA = fat16.img isotest.iso \
 	position.img size.img write_read.img write_read2.img \
 	write.img read.img create_release.img getPageCount.img \
 	invalidate.img \
-	pageSet.img \
+	pageSet.img process.img \
 	ethernet.img loopback.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
@@ -118,6 +118,8 @@ es1370_SOURCES = es1370.cpp wave.cpp
 cdrom_SOURCES = cdrom.cpp
 
 pageSet_SOURCES = pageSet.cpp  memoryStream.h
+
+process_SOURCES = process.cpp
 
 position_SOURCES = position.cpp memoryStream.h
 

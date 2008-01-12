@@ -521,7 +521,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         inputProxies[i] = proxy;
                         argp->ptr = reinterpret_cast<void*>(inputProxies[i]->getObject());
                     }
-                    else    // XXX Check range
+                    else
                     {
                         // Allocate an entry in the upcall table and set the
                         // interface pointer to the broker for the upcall table.
@@ -540,7 +540,6 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         }
                     }
                 }
-                ptr = 0;
             }
             else
             {

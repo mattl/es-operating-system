@@ -16,7 +16,6 @@ c_source_files = \
 
 cpp_source_files = \
 	src/apply.cpp \
-	src/color.cpp \
 	src/context.cpp \
 	src/dateTime.cpp \
 	src/dump.cpp \

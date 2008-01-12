@@ -83,15 +83,15 @@ static Monitor* getMonitor(pthread_mutex_t* mutex)
     {
         return 0;
     }
-    if (mutex->monitor == 0)
+    if (*mutex == PTHREAD_MUTEX_INITIALIZER)
     {
         Lock::Synchronized method(monitorFactory);
-        if (mutex->monitor == 0)
+        if (*mutex == PTHREAD_MUTEX_INITIALIZER)
         {
             pthread_mutex_init(mutex, 0);
         }
     }
-    return reinterpret_cast<Monitor*>(mutex->monitor);
+    return reinterpret_cast<Monitor*>(*mutex);
 }
 
 int pthread_mutex_lock(pthread_mutex_t* mutex)
@@ -151,18 +151,18 @@ int pthread_mutex_init(pthread_mutex_t* mutex, const pthread_mutexattr_t* attr)
     Thread* current = Thread::getCurrentThread();
     if (!current)
     {
-        mutex->monitor = 0;
+        *mutex = PTHREAD_MUTEX_INITIALIZER;
         return 0;
     }
-    mutex->monitor = (void*) new Monitor;
+    *mutex = (pthread_mutex_t) new Monitor;
     return 0;
 }
 
 int pthread_mutex_destroy(pthread_mutex_t* mutex)
 {
-    if (mutex->monitor)
+    if (*mutex && *mutex != PTHREAD_MUTEX_INITIALIZER)
     {
-        reinterpret_cast<Monitor*>(mutex->monitor)->release();
+        reinterpret_cast<Monitor*>(*mutex)->release();
     }
     return 0;
 }

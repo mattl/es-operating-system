@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -382,7 +382,6 @@ Cache::
 Cache(CacheFactory* cacheFactory, IStream* backingStore, PageSet* pageSet) :
     cacheFactory(cacheFactory),
     backingStore(backingStore),
-    file(static_cast<IFile*>(backingStore->queryInterface(IFile::iid()))),
     pageSet(pageSet),
     pageCount(0),
     sectorSize(Page::SIZE)
@@ -398,10 +397,6 @@ Cache::
 {
     ASSERT(ref == 0);
     ASSERT(pageCount == 0);
-    if (file)
-    {
-        file->release();
-    }
     backingStore->release();
     cacheFactory->remove(this);
     pageSet->release();
