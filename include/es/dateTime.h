@@ -18,9 +18,6 @@
 #include <es/types.h>
 #include <es/timeSpan.h>
 
-/**
- * Days of a week.
- */
 enum DayOfWeek
 {
     Sunday,
@@ -32,16 +29,8 @@ enum DayOfWeek
     Saturday
 };
 
-
-/**
- * This class represetns date and time.
- * The epoch is 00:00:00 UTC 1 Jan 1.
- */
 class DateTime
 {
-    /**
-     * A number of 100-nanosecond ticks.
-     */
     s64 ticks;
 
     static const s64 TICKS_PER_MICROSECOND = 10;
@@ -135,17 +124,11 @@ class DateTime
     }
 
 public:
-    /**
-     * Creates a date time object which represents the epoch.
-     */
     DateTime() :
         ticks(0)
     {
     }
-    /**
-     * Creates a date time object which represents the specified ticks from the epoch.
-     * @param ticks the number of 100-nanosecond ticks that have elased since the epoch.
-     */
+
     DateTime(s64 ticks) :
         ticks(ticks)
     {
@@ -155,28 +138,11 @@ public:
         }
     }
 
-    /**
-     * Creates a date time object which represents the specified date.
-     * @param year the year.
-     * @param month the month.
-     * @param day the day.
-     */
     DateTime(int year, int month, int day) :
         ticks(dateToTicks(year, month, day))
     {
     }
 
-    /**
-     * Creates a date time object which represents the specified date and time.
-     * @param year the year.
-     * @param month the month.
-     * @param day the day.
-     * @param hour the hour.
-     * @param minute the minute.
-     * @param second the second.
-     * @param millisecond the millisecond.
-     * @param microsecond the microsecond.
-     */
     DateTime(int year, int month, int day,
              int hour, int minute, int second,
              int millisecond = 0, int microsecond = 0) :
@@ -195,64 +161,36 @@ public:
         }
     }
 
-    /**
-     * Gets the ticks of this object.
-     * @retrun the number of 100-nanosecond ticks from the epoch.
-     */
     s64 getTicks() const
     {
         return ticks;
     }
 
-    /**
-     * Gets the hour of this object.
-     * @retrun the hour.
-     */
     int getHour() const
     {
         return static_cast<int>((ticks / TICKS_PER_HOUR) % 24);
     }
 
-    /**
-     * Gets the minutes of this object.
-     * @retrun the minutes.
-     */
     int getMinute() const
     {
         return static_cast<int>((ticks / TICKS_PER_MINUTE) % 60);
     }
 
-    /**
-     * Gets the seconds of this object.
-     * @retrun the seconds.
-     */
     int getSecond() const
     {
         return static_cast<int>((ticks / TICKS_PER_SECOND) % 60);
     }
 
-    /**
-     * Gets the milliseconds of this object.
-     * @retrun the milliseconds.
-     */
     int getMillisecond() const
     {
         return static_cast<int>((ticks / TICKS_PER_MILLISECOND) % 1000);
     }
 
-    /**
-     * Gets the microseconds of this object.
-     * @retrun the microseconds.
-     */
     int getMicrosecond() const
     {
         return static_cast<int>((ticks / TICKS_PER_MICROSECOND) % 1000);
     }
 
-    /**
-     * Gets the year of this object.
-     * @retrun the year.
-     */
     int getYear() const
     {
         int year, month, day, yday;
@@ -260,11 +198,6 @@ public:
         return year;
     }
 
-    /**
-     * Gets the day of the year of this object.
-     * @retrun the day of the year.
-     * @see DayOfWeek
-     */
     int getDayOfYear() const
     {
         int year, month, day, yday;
@@ -272,10 +205,6 @@ public:
         return yday;
     }
 
-    /**
-     * Gets the month of this object.
-     * @retrun the month.
-     */
     int getMonth() const
     {
         int year, month, day, yday;
@@ -283,10 +212,6 @@ public:
         return month;
     }
 
-    /**
-     * Gets the day of this object.
-     * @retrun the number of the day.
-     */
     int getDay() const
     {
         int year, month, day, yday;
@@ -294,18 +219,11 @@ public:
         return day;
     }
 
-    /**
-     * Gets the day of the week of this object.
-     * @retrun the number of the day of the week.
-     */
     DayOfWeek getDayOfWeek() const
     {
         return static_cast<DayOfWeek>((ticks / TICKS_PER_DAY + 1) % 7);
     }
 
-    /**
-     * Adds the specified time span to this object.
-     */
     DateTime& operator+=(TimeSpan d)
     {
         ticks += d.getTicks();
@@ -316,9 +234,6 @@ public:
         return *this;
     }
 
-    /**
-     * Subtracts the specified time span from this object.
-     */
     DateTime& operator-=(TimeSpan d)
     {
         ticks -= d.getTicks();
@@ -358,81 +273,42 @@ public:
     {
         return d1.ticks >= d2.ticks;
     }
-    /**
-     * Adds the specified number of ticks to this object.
-     * @param value the number of 100-nanosecond ticks.
-     * @return a date time object created as the result of the addition.
-     */
+
     DateTime addTicks(s64 value) const
     {
         return DateTime(ticks + value);
     }
 
-    /**
-     * Adds the specified number of hours to this object.
-     * @param value the number of hours.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addHours(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_HOUR);
     }
 
-    /**
-     * Adds the specified number of minutes to this object.
-     * @param value the number of minutes.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addMinutes(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_MINUTE);
     }
 
-    /**
-     * Adds the specified number of seconds to this object.
-     * @param value the number of seconds.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addSeconds(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_SECOND);
     }
 
-    /**
-     * Adds the specified number of milliseconds to this object.
-     * @param value the number of milliseconds.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addMilliseconds(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_MILLISECOND);
     }
 
-    /**
-     * Adds the specified number of microseconds to this object.
-     * @param value the number of microseconds.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addMicroseconds(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_MICROSECOND);
     }
 
-    /**
-     * Adds the specified number of years to this object.
-     * @param value the number of years.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addYears(int value) const
     {
         return addMonths(value * 12);
     }
 
-    /**
-     * Adds the specified number of months to this object.
-     * @param value the number of months.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addMonths(int months) const
     {
         if (months < -120000 || 120000 < months)
@@ -462,32 +338,16 @@ public:
         return DateTime(year, month, day).addTicks(ticks % TICKS_PER_DAY);
     }
 
-    /**
-     * Adds the specified number of days to this object.
-     * @param value the number of days.
-     * @return a date time object created as the result of the addition.
-     */
     DateTime addDays(int value) const
     {
         return DateTime(ticks + value * TICKS_PER_DAY);
     }
 
-    /**
-     * Checks if is the year of this object is a leap year.
-     * @param year the year.
-     * @return the boolean whether the specified year is a leap year.
-     */
     static bool isLeapYear(int year)
     {
         return (year % 4) == 0 && ((year % 100) != 0 || (year % 400) == 0);
     }
 
-    /**
-     * Gets the number of days in the specified month and year.
-     * @param year the year.
-     * @param month the month.
-     * @return the number of days in the month.
-     */
     static int daysInMonth(int year, int month)
     {
         if (month < 1 || 12 < month)
@@ -498,25 +358,16 @@ public:
         return days[month] - days[month - 1];
     }
 
-    /**
-     *  Gets the maximum value of ticks.
-     */
     static DateTime getMaxValue()
     {
         return DateTime(MAX_TICKS);
     }
 
-    /**
-     *  Gets the minimum value of ticks.
-     */
     static DateTime getMinValue()
     {
         return DateTime(MIN_TICKS);
     }
 
-    /**
-     *  Gets a date time object which represents the current date and time.
-     */
     static DateTime getNow();
 };
 

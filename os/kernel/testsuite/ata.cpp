@@ -16,7 +16,7 @@
 #include <es/dateTime.h>
 #include <es/base/IInterface.h>
 #include "ataController.h"
-#include "core.h"
+#include "uart.h"
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \

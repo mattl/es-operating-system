@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -43,8 +43,6 @@
 //
 
 #include "fat.h"
-
-// #define USE_CHS         // Do not use LBA mode
 
 #if !defined(FAT12) && !defined(FAT16)
 #define FAT12
@@ -121,7 +119,7 @@ _start:                                 // at location 0000:7C00
         .ascii          "NO NAME    "   // BS_VolLab
         .ascii          "FAT16   "      // BS_FilSysType
 #endif
-#if 0
+#if 1
         // Parameters for 64MB HDD
         .ascii          "NINTENDO"      // BS_OEMName
         .word           512             // BPB_BytsPerSec
@@ -143,41 +141,19 @@ _start:                                 // at location 0000:7C00
         .ascii          "NO NAME    "   // BS_VolLab
         .ascii          "FAT16   "      // BS_FilSysType
 #endif
-#if 1
-        // Parameters for 256MB CompactFlash without MBR (CHS=695/15/48)
-        .ascii          "NINTENDO"      // BS_OEMName
-        .word           512             // BPB_BytsPerSec
-        .byte           8               // BPB_SecPerClus
-        .word           1               // BPB_RsvdSecCnt
-        .byte           2               // BPB_NumFATs
-        .word           512             // BPB_RootEntCnt
-        .word           0               // BPB_TotSec16
-        .byte           0xf8            // BPB_Media
-        .word           245             // BPB_FATSz16
-        .word           48              // BPB_SecPerTrk
-        .word           15              // BPB_NumHeads
-        .long           0               // BPB_HiddSec
-        .long           500400          // BPB_TotSec32
-        .byte           0x0             // BS_DrvNum
-        .byte           0               // BS_Reserved1
-        .byte           0x29            // BS_BootSig
-        .long           0               // BS_VolID
-        .ascii          "NO NAME    "   // BS_VolLab
-        .ascii          "FAT16   "      // BS_FilSysType
-#endif
 #if 0
-        // Parameters for 256MB CompactFlash (CHS=695/15/48)
+        // Parameters for 256MB CompactFlash
         .ascii          "NINTENDO"      // BS_OEMName
         .word           512             // BPB_BytsPerSec
         .byte           8               // BPB_SecPerClus
-        .word           1               // BPB_RsvdSecCnt
+        .word           6               // BPB_RsvdSecCnt
         .byte           2               // BPB_NumFATs
         .word           512             // BPB_RootEntCnt
         .word           0               // BPB_TotSec16
         .byte           0xf8            // BPB_Media
         .word           245             // BPB_FATSz16
-        .word           48              // BPB_SecPerTrk
-        .word           15              // BPB_NumHeads
+        .word           63              // BPB_SecPerTrk
+        .word           255             // BPB_NumHeads
         .long           48              // BPB_HiddSec
         .long           500352          // BPB_TotSec32
         .byte           0x0             // BS_DrvNum
@@ -346,7 +322,6 @@ read:   pushw   %si
         movb    (DeviceNum), %dl
 
 #ifdef FAT16
-#ifndef USE_CHS
         // Check LBA support
         movb    $0x41, %ah
         movw    $0x55aa, %bx
@@ -362,9 +337,7 @@ read:   pushw   %si
         movw    %es, (PacketSeg)
         movb    $0x42, %ah              // extended read
         movw    $Packet, %si
-        int     $0x13
-        jnc     2f
-#endif
+        jmp     2f
 
         // Use CHS
 1:      movw    (PacketLBA0), %ax
@@ -384,10 +357,10 @@ read:   pushw   %si
         movb    $1, %al                 // number of sectors to read
         movw    %di, %bx
         movb    (DeviceNum), %dl
-        int     $0x13
+
+2:      int     $0x13
         jc      hang
 
-2:
         addw    (BPB_BytsPerSec), %di
         jnc     3f
         movw    %es, %ax

@@ -16,8 +16,8 @@
 #include <es/handle.h>
 #include <es/naming/IContext.h>
 #include "8237a.h"
-#include "core.h"
 #include "fdc.h"
+#include "io.h"
 
 u8 sec[512];
 
@@ -49,11 +49,9 @@ int main()
              geo.bytesPerSector,
              geo.diskSize);
 
-    esReport("---------------------------------------------------------\n"
-             "This program reads floppy every 1 sec, and shows results.\n"
-             "Try inserting and removing a floppy disk and check if \n"
-             "the disk change is recognized.\n"
-             "---------------------------------------------------------\n");
+    // This program reads floppy every 1 sec, and shows results.
+    // Try inserting and removing a floppy disk and
+    // check if the disk change is recognized.
     int count = 20;
     while (count--)
     {

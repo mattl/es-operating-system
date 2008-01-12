@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,29 +11,22 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <errno.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <unwind.h>
 #include <es.h>
 #include <es/broker.h>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/exception.h>
 #include <es/formatter.h>
-#include <es/handle.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
-#include <es/base/IRuntime.h>
-
-using namespace es;
 
 static __thread void* stopCfa;
 static __thread jmp_buf stopBuf;
 static __thread struct _Unwind_Exception exc;
-static __thread void* rval;
+static __thread const void* rval;
 
 long long _syscall(void* self, void* base, int m, va_list ap)
 {
@@ -71,7 +64,7 @@ class System : public ICurrentProcess
         void exit(const void* val)
         {
             // Call destructors before terminating the current thread.
-            rval = const_cast<void*>(val);
+            rval = val;
             exc.exception_class = 0;
             exc.exception_cleanup = System::cleanup;
             _Unwind_ForcedUnwind(&exc, System::stop, stopBuf);
@@ -97,9 +90,9 @@ class System : public ICurrentProcess
             currentThread->testCancel();
         }
 
-        void* queryInterface(const Guid& riid)
+        bool queryInterface(const Guid& riid, void** objectPtr)
         {
-            return currentThread->queryInterface(riid);
+            return currentThread->queryInterface(riid, objectPtr);
         }
 
         unsigned int addRef(void)
@@ -121,14 +114,7 @@ public:
         currentProcess(reinterpret_cast<ICurrentProcess*>(&(broker.getInterfaceTable()[0]))),
         current(currentProcess->currentThread())
     {
-        IRuntime* runtime;
-        runtime = reinterpret_cast<IRuntime*>(currentProcess->queryInterface(IRuntime::iid()));
-        if (runtime)
-        {
-            runtime->setStartup(reinterpret_cast<void*>(start)); // [check] cast.
-            runtime->setFocus(reinterpret_cast<void*>(focus)); // [check] cast.
-            runtime->release();
-        }
+        setStartup(start);
     }
 
     void exit(int status)
@@ -152,8 +138,7 @@ public:
         return &current;
     }
 
-    // IThread* createThread(void* (*start)(void* param), void* param) // [check] function pointer.
-    IThread* createThread(const void* start, const void* param)
+    IThread* createThread(void* (*start)(void* param), void* param)
     {
         return currentProcess->createThread(start, param);
     }
@@ -173,14 +158,14 @@ public:
         return currentProcess->getRoot();
     }
 
-    IStream* getInput()
+    IStream* getIn()
     {
-        return currentProcess->getInput();
+        return currentProcess->getIn();
     }
 
-    IStream* getOutput()
+    IStream* getOut()
     {
-        return currentProcess->getOutput();
+        return currentProcess->getOut();
     }
 
     IStream* getError()
@@ -198,24 +183,14 @@ public:
         return currentProcess->getNow();
     }
 
-    bool trace(bool on)
+    void setStartup(void (*startup)(void* (*start)(void* param), void* param))
     {
-        return currentProcess->trace(on);
+        currentProcess->setStartup(startup);
     }
 
-    void setCurrent(IContext* context)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        return currentProcess->setCurrent(context);
-    }
-
-    IContext* getCurrent()
-    {
-        return currentProcess->getCurrent();
-    }
-
-    void* queryInterface(const Guid& riid)
-    {
-        return currentProcess->queryInterface(riid);
+        return currentProcess->queryInterface(riid, objectPtr);
     }
 
     unsigned int addRef(void)
@@ -229,8 +204,6 @@ public:
     }
 
     static void start(void* (*func)(void*), void* param);
-
-    static void* focus(void* param);
 
     static _Unwind_Reason_Code stop(int version,
                                     _Unwind_Action actions,
@@ -251,15 +224,13 @@ ICurrentProcess* System()
     return &current;
 }
 
-extern "C" void esDeallocateSpecific(void);
-
 void System::
 start(void* (*func)(void*), void* param)
 {
     stopCfa = &func;
     if (setjmp(stopBuf) == 0)
     {
-        rval = func(param);
+        func(param);
     }
     esDeallocateSpecific(); // Deallocate TSD.
     ::current.current.currentThread->exit(rval);
@@ -286,42 +257,43 @@ cleanup(_Unwind_Reason_Code reason, struct _Unwind_Exception* exc)
     abort();
 }
 
-long long esHall()
-{
-    typedef long long (*Method)(...);
-    Method** object;
-    int      method;
+int esReport(const char* spec, ...) __attribute__((weak));
+int esReportv(const char* spec, va_list list) __attribute__((weak));
+void esPanic(const char* file, int line, const char* msg, ...) __attribute__((weak));
 
-    __asm__ __volatile__ (
-        "int    $66\n"
-        : "=a"(object), "=d"(method));
-    (*object)[method]();
+int esReport(const char* spec, ...)
+{
+    va_list list;
+    int count;
+
+    va_start(list, spec);
+    count = esReportv(spec, list);
+    va_end(list);
+    return count;
 }
 
-void* System::
-focus(void* param)
+int esReportv(const char* spec, va_list list)
 {
-    int errorCode(0);
+    IStream* output(System()->getOut());
+    Formatter textOutput(output);
+    int count = textOutput.format(spec, list);
+    output->release();
+    return count;
+}
 
-    try
-    {
-        for (;;)
-        {
-            esHall();
-        }
-    }
-    catch (Exception& error)
-    {
-        errorCode = error.getResult();
-    }
-    catch (std::bad_alloc)
-    {
-        errorCode = ENOMEM;
-    }
-    catch (...)
-    {
-        // Unexpected exception
-        errorCode = EINVAL;
-    }
-    return reinterpret_cast<void*>(errorCode);
+void esPanic(const char* file, int line, const char* msg, ...)
+{
+    va_list marker;
+
+    va_start(marker, msg);
+    esReportv(msg, marker);
+    va_end(marker);
+    esReport(" in \"%s\" on line %d.\n", file, line);
+
+    System()->exit(1);
+}
+
+DateTime DateTime::getNow()
+{
+    return DateTime(System()->getNow());
 }

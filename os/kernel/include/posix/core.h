@@ -21,8 +21,6 @@
 #include <es/base/IProcess.h>
 #include <es/base/IThread.h>
 
-using namespace es;
-
 class Core;
 class Thread;
 class Monitor;
@@ -42,8 +40,8 @@ public:
     void yield();
     IMonitor* createMonitor();
     IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
+    IStream* getIn();
+    IStream* getOut();
     IStream* getError();
     void* setBreak(long long increment);
     long long getNow();
@@ -57,7 +55,7 @@ public:
     void testCancel();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };
@@ -82,7 +80,7 @@ public:
     void notifyAll();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -141,7 +139,7 @@ public:
     void cancel();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -158,16 +156,6 @@ public:
     friend void esSleep(s64 timeout);
 };
 
-class Lock : public Monitor
-{
-    using Monitor::wait;
-    using Monitor::notify;
-    using Monitor::notifyAll;
-    using Monitor::queryInterface;
-    using Monitor::addRef;
-    using Monitor::release;
-};
-
 class SpinLock : public Monitor
 {
     using Monitor::wait;
@@ -177,11 +165,6 @@ class SpinLock : public Monitor
     using Monitor::addRef;
     using Monitor::release;
 };
-
-#include "cache.h"
-
-int esInit(IInterface** nameSpace);
-IThread* esCreateThread(void* (*start)(void* param), void* param);
 
 #ifdef __cplusplus
 extern "C" {

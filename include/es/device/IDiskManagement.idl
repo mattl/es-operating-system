@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,53 +11,38 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IDISKMANAGEMENT_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IDISKMANAGEMENT_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+[object, uuid(83a44e14-25dc-11db-9c02-0009bf000001)]
+interface IDiskManagement : IInterface
 {
-    /**
-     * This interface provides methods for managing disk partitions.
-     */
-    interface IDiskManagement : IInterface
+    struct Geometry
     {
-        #pragma ID IDiskManagement = "DCE:83a44e14-25dc-11db-9c02-0009bf000001";
-        struct Geometry
-        {
-            unsigned long heads;
-            unsigned long cylinders;
-            unsigned long sectorsPerTrack;
-            unsigned long bytesPerSector;
-            long long diskSize;
-        };
-
-        struct Partition
-        {
-            long long startingOffset;
-            long long partitionLength;
-            unsigned long hiddenSectors;
-            octet partitionType;
-            octet bootIndicator;
-        };
-
-        /**
-         * Initializes the disk partition table.
-         */
-        long initialize();
-
-        /**
-         * Information about the physical disk's geometry.
-         */
-        readonly attribute Geometry geometry;
-
-        /**
-         * Information about the partition on a disk.
-         */
-        attribute Partition layout;
+        unsigned int heads;
+        unsigned int cylinders;
+        unsigned int sectorsPerTrack;
+        unsigned int bytesPerSector;
+        long diskSize;
     };
-};
 
-#endif // NINTENDO_ES_DEVICE_IDISKMANAGEMENT_IDL_INCLUDED
+    struct Partition
+    {
+        long startingOffset;
+        long partitionLength;
+        unsigned int hiddenSectors;
+        unsigned byte partitionType;
+        unsigned byte bootIndicator;
+    };
 
+    /** Initializes the disk partition table */
+    int initialize();
+
+    /** Gets information about the physical disk's geometry */
+    int getGeometry([out] Geometry* geometry);
+
+    /** Reads information about the partition on a disk */
+    int getLayout([out] Partition* partition);
+
+    /** Writes information about the partition on a disk */
+    int setLayout([in, out] Partition* partition);
+}

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,26 +11,10 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IPAGESET_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IPAGESET_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+[object, uuid(032b1ff2-25db-11db-9c02-0009bf000001)]
+interface IPageSet : IInterface
 {
-    /**
-     * This interface provides a method to manage page sets.
-     */
-    interface IPageSet : IInterface
-    {
-        #pragma ID IPageSet = "DCE:032b1ff2-25db-11db-9c02-0009bf000001";
-        /**
-         * Reserves the specified number of pages for this page set.
-         * @param reserveCount the number of pages to be reserved.
-         */
-        void reserve(in unsigned long long reserveCount);
-    };
+    void reserve(unsigned long reserveCount);
 };
-
-#endif // NINTENDO_ES_BASE_IPAGESET_IDL_INCLUDED
-

@@ -21,47 +21,42 @@
 #include <es/ref.h>
 #include <es/base/IClassFactory.h>
 
-/**
- * This class implements the <code>IClassFactory</code> interface.
- * @param C the class of objects to be constructed from the <code>ClassFactory</code> class.
- *        C must have a default constructor.
- */
 template<class C>
-class ClassFactory : public es::IClassFactory
+class ClassFactory : public IClassFactory
 {
     Ref ref;
 
 public:
-    void* createInstance(const Guid& riid)
+    bool createInstance(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr = 0;
-        C* instance = new(std::nothrow) C;
+        *objectPtr = 0;
+        C* instance = new C;
         if (!instance)
         {
             throw SystemException<ENOMEM>();
         }
-        objectPtr = instance->queryInterface(riid);
+        bool rc = instance->queryInterface(riid, objectPtr);
         instance->release();
-        return objectPtr;
+        return rc;
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == es::IClassFactory::iid())
+        if (riid == IID_IClassFactory)
         {
-            objectPtr = static_cast<es::IClassFactory*>(this);
+            *objectPtr = static_cast<IClassFactory*>(this);
         }
-        else if (riid == es::IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<es::IClassFactory*>(this);
+            *objectPtr = static_cast<IClassFactory*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<es::IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)

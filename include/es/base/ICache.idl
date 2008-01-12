@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,72 +11,47 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
+import "es/base/IStream.idl", "es/base/IPageSet.idl";
 
-#include "es/base/IStream.idl"
-#include "es/base/IPageSet.idl"
-
-module es
+[object, uuid(03212600-25db-11db-9c02-0009bf000001)]
+interface ICache : IInterface
 {
-    /**
-     * This interface provides methods for handling a cache
-     * that is a block of memory for temporary storage.
+    /** Creates a new stream for this cache.
+     * @return  IStream interface pointer
      */
-    interface ICache : IInterface
-    {
-        #pragma ID ICache = "DCE:03212600-25db-11db-9c02-0009bf000001";
+    IStream* getStream();
+    IStream* getInputStream();
+    IStream* getOutputStream();
 
-        /** Creates a new stream for this cache.
-         */
-        readonly attribute IStream stream;
-        /** Creates a new input stream for this cache.
-         */
-        readonly attribute IStream inputStream;
-        /** Creates a new output stream for this cache.
-         */
-        readonly attribute IStream outputStream;
+    long getSize();
 
-        /** The size of this cache.
-         */
-        attribute long long size;
+    void setSize(long size);
 
-        /** Gets the size of a sector in this cache.
-         */
-        attribute long sectorSize;
+    void getSectorSize([out] int& size);
 
-        /**
-         * Forces all pending data to be written out.
-         */
-        void flush();
+    void setSectorSize(int size);
 
-        /** Releases all the changed pages associated with this cache
-         * without flushing them.
-         */
-        void invalidate();
+    void flush();
 
-        /** Gets the number of pages associated to this cache.
-         * @return  page count
-         */
-        unsigned long long getPageCount();
-    };
-
-    /**
-     *  This interface provides methods to create caches and associate them with page sets.
+    /** Releases all the changed pages associated with this cache
+     * without flushing them.
      */
-    interface ICacheFactory : IInterface
-    {
-        #pragma ID ICacheFactory = "DCE:03220a48-25db-11db-9c02-0009bf000001";
+    void invalidate();
 
-        /** Creates a new cache.
-         */
-        ICache create(in IStream backingStore);
+    /** Gets the number of pages associated to this cache.
+     * @return  page count
+     */
+    unsigned long getPageCount();
+}
 
-        /** Creates a new cache associated with the specified pageSet.
-         */
-        ICache create(in IStream backingStore, in IPageSet pageSet);
-    };
-};
+[object, uuid(03220a48-25db-11db-9c02-0009bf000001)]
+interface ICacheFactory : IInterface
+{
+    /** Creates a new cache.
+     */
+    ICache* create(IStream* backingStore);
 
-#endif // NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
-
+    /** Creates a new cache associated with the specified pageSet.
+     */
+    ICache* create(IStream* backingStore, IPageSet* pageSet);
+}

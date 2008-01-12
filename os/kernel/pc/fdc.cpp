@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -20,12 +20,12 @@
 
 FloppyController::
 FloppyController(IDmac* dmac, u16 base, u8 irq) :
-    base(base),
-    current(0),
-    dmac(dmac)
+    dmac(dmac),
+    base(base)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     // motor off
     for (int i = 3; 0 <= i; --i)
@@ -36,7 +36,7 @@ FloppyController(IDmac* dmac, u16 base, u8 irq) :
 
     outpb(base + DSR, 0);
 
-    Core::registerInterruptHandler(irq, this);
+    Core::registerExceptionHandler(32 + irq, this);
 }
 
 FloppyController::
@@ -122,11 +122,6 @@ issue(FloppyDrive* drive, u8 cmd, void* param)
 int FloppyController::
 invoke(int param)
 {
-    if (!current)
-    {
-        return -1;
-    }
-
     switch (command[0])
     {
       case READ:
@@ -145,7 +140,6 @@ invoke(int param)
 
     if (done)
     {
-        current = 0;
         monitor->notify();  // XXX Fix timing issue
     }
 }
@@ -171,24 +165,24 @@ result(void)
     return statusLength;
 }
 
-void* FloppyController::
-queryInterface(const Guid& riid)
+bool FloppyController::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int FloppyController::

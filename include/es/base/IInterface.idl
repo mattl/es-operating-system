@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,33 +11,24 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IINTERFACE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IINTERFACE_IDL_INCLUDED
-
-module es
+/** This interface is the root of the component interface hierarchy.
+ */
+[object, uuid(d73c48f0-37e9-11db-9c02-0009bf000001)]
+interface IInterface
 {
-    /** This interface is the root of the component interface hierarchy.
+    /** Determines if an interface can be used with this object.
+     * @param riid          UUID of the interface to be queried.
+     * @param objectPtr     pointer to a buffer that receives a pointer
+     *                      to the object.
      */
-    interface IInterface
-    {
-        #pragma ID IInterface = "DCE:D73C48F0-37E9-11DB-9C02-0009BF000001";
+    boolean queryInterface([in] uuid& riid, [out, iid_is(riid)] void** objectPtr);
 
-        /** Determines if an interface can be used with this object.
-         * @param riid          UUID of the interface to be queried.
-         * @return              a pointer to the object.
-         */
-        Object queryInterface(in uuid riid);
+    /** Increments the reference count of this object.
+     */
+    unsigned int addRef();
 
-        /** Increments the reference count of this object.
-         */
-        unsigned long addRef();
-
-        /** Decrements the reference count of this object.
-         * @return              Zero if this object is no longer available.
-         */
-        unsigned long release();
-    };
-};
-
-#endif // NINTENDO_ES_BASE_IINTERFACE_IDL_INCLUDED
-
+    /** Decrements the reference count of this object.
+     * @return              Zero if this object is no longer available.
+     */
+    unsigned int release();
+}

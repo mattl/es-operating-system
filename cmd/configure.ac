@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script
-AC_INIT([es-cmd], [0.1.1])
+AC_INIT(es-cmd, 0.0.1)
 AC_CONFIG_AUX_DIR(.)
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
@@ -40,6 +40,6 @@ AM_CONDITIONAL(ES, test x$os_type = xes)
 AM_CONDITIONAL(WIN32, test x$os_type = xwin32)
 AM_CONDITIONAL(POSIX, test x$os_type = xposix)
 
-AC_CONFIG_FILES(Makefile testsuite/Makefile)
+AC_CONFIG_FILES(Makefile)
 
 AC_OUTPUT

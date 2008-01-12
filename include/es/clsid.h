@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -76,9 +76,8 @@ const Guid CLSID_IsoFileSystem =
     0x397e8e00, 0x2e86, 0x11db, { 0x9c, 0x02, 0x00, 0x09, 0xbf, 0x00, 0x00, 0x01 }
 };
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid);
-void esRegisterFatFileSystemClass(es::IClassStore* classStore);
-void esRegisterIsoFileSystemClass(es::IClassStore* classStore);
+void esRegisterFatFileSystemClass(IClassStore* classStore);
+void esRegisterIsoFileSystemClass(IClassStore* classStore);
 
 #ifdef __cplusplus
 }

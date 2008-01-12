@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -44,16 +44,7 @@ void* calloc(size_t count, size_t size)
 
 void* malloc(size_t size)
 {
-#ifdef NDEBUG
     return heap->alloc(size);
-#else
-    void* ptr = heap->alloc(size);
-    if (ptr)
-    {
-        memset(ptr, 0xf5, size);
-    }
-    return ptr;
-#endif
 }
 
 void free(void* ptr)

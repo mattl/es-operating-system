@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,13 +16,9 @@
 
 #ifdef __es__
 
-#include <errno.h>
-#include <es/broker.h>
-#include <es/exception.h>
 #include <es/ref.h>
 #include <es/list.h>
 #include <es/base/IProcess.h>
-#include <es/base/IRuntime.h>
 #include "cache.h"
 #include "thread.h"
 #include "zero.h"
@@ -31,82 +27,51 @@ class InterfaceDescriptor;
 class Map;
 class Process;
 
-class SyscallProxy : public IInterface
+class InterfaceStub
 {
     Ref         ref;
-    Interlocked use;
-    void*       object;
-    Guid        iid;
+    void*       interface;
+    const Guid* iid;
 
 public:
-    SyscallProxy() :
+    InterfaceStub() :
         ref(0),
-        object(0),
-        iid(GUID_NULL)
+        interface(0),
+        iid(0)
     {
     }
 
-    bool set(void* object, const Guid& iid, bool used = false);
-
-    void* getObject() const
+    int set(void* interface, const Guid* iid)
     {
-        return object;
+        if (this->interface != 0)
+        {
+            return -1;
+        }
+
+        ASSERT(this->iid == 0);
+        this->interface = interface;
+        this->iid = iid;
+        addRef();
+        return 0;
     }
 
-    const Guid& getIID() const
+    unsigned int addRef()
     {
-        return iid;
+        return ref.addRef();
     }
 
-    bool isValid() const
+    unsigned int release()
     {
-        return (0 < ref && 0 <= use) ? true : false;
+        unsigned int count = ref.release();
+        if (count == 0)
+        {
+            static_cast<IInterface*>(interface)->release();
+            interface = 0;
+            iid = 0;
+            return 0;
+        }
+        return count;
     }
-
-    long addUser();
-    long releaseUser();
-
-    // IInterface
-    void* queryInterface(const Guid& riid)
-    {
-        ASSERT(false);
-        return NULL;
-    }
-    unsigned int addRef();
-    unsigned int release();
-
-    friend class Process;
-};
-
-class UpcallProxy : public IInterface
-{
-    Ref         ref;
-    Interlocked use;
-    void*       object;
-    Guid        iid;
-    Process*    process;
-
-public:
-    UpcallProxy() :
-        ref(0),
-        object(0),
-        iid(GUID_NULL),
-        process(0)
-    {
-    }
-
-    bool set(Process* process, void* object, const Guid& iid, bool used);
-
-    bool isUsed();
-
-    // IInterface
-    void* queryInterface(const Guid& riid)
-    {
-        ASSERT(false);
-        return NULL;
-    }
-    unsigned int addRef();
-    unsigned int release();
 
     friend class Process;
 };
@@ -203,7 +168,7 @@ class Map
     long long getPosition(const void* addr);
 };
 
-class Process : public IProcess, public IRuntime
+class Process : public IProcess
 {
 public:
     static void* const USER_MIN;
@@ -212,7 +177,7 @@ public:
     static const unsigned INTERFACE_POINTER_MAX = 100;
 
 private:
-    static ICacheFactory*   cacheFactory;
+    static CacheFactory*    cacheFactory;
     static Zero*            zero;
     static Swap*            swap;
 
@@ -224,7 +189,7 @@ private:
     void*           end;    // break value
 
     void**          ipt;    // XXX rename this field
-    SyscallProxy    syscallTable[INTERFACE_POINTER_MAX];
+    InterfaceStub   interfaceTable[INTERFACE_POINTER_MAX];
 
     int             exitValue;
     Rendezvous      waitPoint;
@@ -240,21 +205,9 @@ private:
                     threadList;
 
     IContext*       root;
-    IContext*       current;
     IStream*        in;
     IStream*        out;
     IStream*        error;
-
-    bool            log;
-
-    // Upcall related fields:
-    Lock            spinLock;
-    void*           (*focus)(void* param);
-    Interlocked     upcallCount;    // Number of UpcallRecords allocated to this process
-    List<UpcallRecord, &UpcallRecord::link>
-                    upcallList;     // List of free upcall records
-    List<UpcallRecord, &UpcallRecord::link>
-                    activatedList;  // List of upcall records in use
 
     int condWait(int);
 
@@ -265,26 +218,14 @@ public:
     void load();
 
     Map* lookup(const void* addr);
-    bool isValid(const void* start, long long length)
-    {
-        const void* end(static_cast<const u8*>(start) + length);
-        if (start < USER_MIN || USER_MAX < end || end < start)
-        {
-            return false;
-        }
-        return true;
-    }
     bool isValid(const void* start, long long length, bool write);
     void dump();
 
     int validityFault(const void* addr, u32 error);
     int protectionFault(const void* addr, u32 error);
 
-    int read(void* dst, int count, long long offset);
-    int write(const void* src, int count, long long offset);
-
-    long long systemCall(void** self, unsigned methodNumber, va_list param, void** base);
-    int set(SyscallProxy* table, void* object, const Guid& iid, bool used = false);
+    long long systemCall(void** self, unsigned methodNumber, void* stackPointer, void** base);
+    int set(void* interface, const Guid* iid);
 
     Thread* createThread(const unsigned stackSize);
     void detach(Thread* thread);
@@ -300,21 +241,11 @@ public:
     void unmap(const void* start, long long length);
     IThread* createThread(void* (*start)(void* param), void* param);
     IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
+    IStream* getIn();
+    IStream* getOut();
     IStream* getError();
     void* setBreak(long long increment);
-    bool trace(bool on);
-    void setCurrent(IContext* context);
-    IContext* getCurrent();
-
-    // IRuntime
-    /* [check] function pointer.
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
-    void setFocus(void* (*focus)(void* param));
-    */
-    void setStartup(const void* startup);
-    void setFocus(const void* focus);
 
     // IProcess
     void kill();
@@ -325,12 +256,12 @@ public:
     int getExitValue();
     bool hasExited();
     void setRoot(IContext* root);
-    void setInput(IStream* in);
-    void setOutput(IStream* out);
+    void setIn(IStream* in);
+    void setOut(IStream* out);
     void setError(IStream* error);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -339,33 +270,46 @@ public:
     static void* ast(void* param);
     static Process* getCurrentProcess();
 
-    friend class Core;
     friend class Mmu;
     friend class Swap;
-
-    static long long upcall(void* self, void* base, int m, va_list ap);
-    static Broker<upcall, INTERFACE_POINTER_MAX> broker;
-    static UpcallProxy upcallTable[INTERFACE_POINTER_MAX];
-    static int set(Process* process, void* object, const Guid& iid, bool used);
-
-    UpcallRecord* createUpcallRecord(const unsigned stackSize);
-    UpcallRecord* getUpcallRecord();
-    void putUpcallRecord(UpcallRecord* record);
-    void returnFromUpcall(Ureg* ureg);
-
-    /** Copies the parameters to the user stack of the server process.
-     * The space for the input parameters must also be reserved in the
-     * server user stack so that they can be copied back later.
-     * @return  error number
-     */
-    int copyIn(UpcallRecord* record);
-
-    /** Copies back the input parameters from the server user stack.
-     * @return  error number
-     */
-    int copyOut(UpcallRecord* record, Guid& iid);
 };
 
 #endif // __es__
+
+//
+// Reflection data of the default interface set
+//
+
+extern unsigned char IAlarmInfo[];
+extern unsigned char ICacheInfo[];
+extern unsigned char ICallbackInfo[];
+extern unsigned char IClassFactoryInfo[];
+extern unsigned char IClassStoreInfo[];
+extern unsigned char IFileInfo[];
+extern unsigned char IInterfaceInfo[];
+extern unsigned char IMonitorInfo[];
+extern unsigned char IPageableInfo[];
+extern unsigned char IPageSetInfo[];
+extern unsigned char IProcessInfo[];
+extern unsigned char IStreamInfo[];
+extern unsigned char IThreadInfo[];
+
+extern unsigned char IAudioFormatInfo[];
+extern unsigned char IBeepInfo[];
+extern unsigned char ICursorInfo[];
+extern unsigned char IDeviceInfo[];
+extern unsigned char IDiskManagementInfo[];
+extern unsigned char IDmacInfo[];
+extern unsigned char IFileSystemInfo[];
+extern unsigned char IPicInfo[];
+extern unsigned char IRemovableMediaInfo[];
+extern unsigned char IRtcInfo[];
+extern unsigned char IPartitionInfo[];
+
+extern unsigned char IBindingInfo[];
+extern unsigned char IContextInfo[];
+
+extern unsigned char IIteratorInfo[];
+extern unsigned char ISetInfo[];
 
 #endif // NINTENDO_ES_KERNEL_PROCESS_H_INCLUDED

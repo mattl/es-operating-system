@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -21,7 +21,7 @@
 void* const Process::USER_MIN = (void*) 0x1000;
 void* const Process::USER_MAX = (void*) (0x80000000 - 0x200000);
 
-u32* Mmu::kernelDirectory = (u32*) 0x80010000;
+u32* Mmu::kernelDirectory = (u32*) 0x10000;
 
 Mmu::
 Mmu(Cache* pageTable) :
@@ -91,15 +91,12 @@ set(const void* addr, Page* page, unsigned long pte)
 {
     unsigned long offset(reinterpret_cast<unsigned long>(addr));
 
-    long long tableOffset = 4096 * (1 + offset / 0x400000);
-    Page* table = pageTable->lookupPage(tableOffset);
+    Page* table(pageTable->getPage(4096 * (1 + offset / 0x400000)));
+    ASSERT(table);
     if (!table)
     {
-        table = pageTable->getPage(tableOffset);
-        ASSERT(table);
-        memset(table->getPointer(), 0, 4096);
+        return; // XXX
     }
-
     int i = (offset % 0x400000) / 4096;
     u32* pt = static_cast<u32*>(table->getPointer());
     u32 prev = pt[i];

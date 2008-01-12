@@ -1,9 +1,0 @@
-This directory contains the esjs ECMAScript interpreter for the es 
-operating system.
-
-The esjs ECMAScript interpreter and the es operating system are open 
-source software.  See the file COPYING for copying permission.  The 
-manuals, and some of the software programs, are under different terms; 
-see the individual source files for details.
-
-See http://sourceforge.jp/projects/nes/ for how to report bugs usefully.

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -65,9 +65,9 @@
 
 class Heap
 {
-    Lock    spinLock;
-    Arena&  arena;
-    size_t  thresh;
+    SpinLock    spinLock;
+    Arena&      arena;
+    size_t      thresh;
 
 public:
     Heap(Arena& arena);
@@ -119,7 +119,7 @@ private:
 
     struct Bucket
     {
-        Lock        spinLock;
+        SpinLock    spinLock;
         size_t      size;       // Cell size
         Arena*      arena;
         Mass::List  listMass;

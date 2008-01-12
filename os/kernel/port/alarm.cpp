@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -19,7 +19,7 @@
 #define LLONG_MAX 9223372036854775807LLu
 #endif
 
-Lock            Alarm::spinLock;
+SpinLock        Alarm::spinLock;
 Alarm::Queue    Alarm::queues[2];
 
 Alarm::
@@ -29,8 +29,7 @@ Alarm() :
     flags(Enabled),
     interval(0),
     start(0),
-    nextTick(0),
-    current(0)
+    nextTick(0)
 {
 }
 
@@ -39,7 +38,7 @@ Alarm::
 {
     if (current)
     {
-        Lock::Synchronized method(spinLock);
+        SpinLock::Synchronized method(spinLock);
 
         cancel();
     }
@@ -78,7 +77,7 @@ setCallback(ICallback* callback)
         callback->addRef();
     }
     {
-        Lock::Synchronized method(spinLock);
+        SpinLock::Synchronized method(spinLock);
 
         prev = this->callback;
         this->callback = callback;
@@ -92,7 +91,7 @@ setCallback(ICallback* callback)
 void Alarm::
 setPeriodic(bool periodic)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     periodic ? setFlag(Periodic) : clearFlag(Periodic);
 }
@@ -100,7 +99,7 @@ setPeriodic(bool periodic)
 void Alarm::
 setEnabled(bool enabled)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     if (enabled)
     {
@@ -115,10 +114,10 @@ setEnabled(bool enabled)
     }
 }
 
-long long Alarm::
-getInterval()
+void Alarm::
+getInterval(long long& interval)
 {
-    return this->interval;
+    interval = this->interval;
 }
 
 void Alarm::
@@ -126,7 +125,7 @@ setInterval(long long interval)
 {
     if (0 <= interval)
     {
-        Lock::Synchronized method(spinLock);
+        SpinLock::Synchronized method(spinLock);
 
         cancel();
         this->interval = interval;
@@ -134,16 +133,16 @@ setInterval(long long interval)
     }
 }
 
-long long Alarm::
-getStartTime()
+void Alarm::
+getStartTime(long long& time)
 {
-    return this->start;
+    time = this->start;
 }
 
 void Alarm::
 setStartTime(long long time)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     cancel();
     this->start = time;
@@ -161,20 +160,20 @@ cancel()
     nextTick = 0;
 }
 
-void* Alarm::
-queryInterface(const Guid& riid)
+bool Alarm::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IAlarm::iid())
+    if (riid == IID_IAlarm)
     {
-        objectPtr = static_cast<IAlarm*>(this);
+        *objectPtr = static_cast<IAlarm*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Alarm::
@@ -200,7 +199,7 @@ set(Alarm* alarm)
 {
     long long start;
 
-    start = alarm->getStartTime();
+    alarm->getStartTime(start);
     if (0 < start)
     {
         queues[0].add(alarm);
@@ -250,7 +249,7 @@ Queue::process(long long ticks)
     do
     {
         {
-            Lock::Synchronized method(spinLock);
+            SpinLock::Synchronized method(spinLock);
             if ((alarm = queue.getFirst()))
             {
                 if (!alarm->isExpired(ticks))
@@ -279,7 +278,7 @@ Queue::process(long long ticks)
     } while (alarm);
 
     {
-        Lock::Synchronized method(spinLock);
+        SpinLock::Synchronized method(spinLock);
         if (!queue.isEmpty())
         {
             update();
@@ -363,7 +362,7 @@ Queue::getDelta(long long now)
 bool Alarm::
 Queue::check()
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     Alarm* next;
     List<Alarm, &Alarm::link>::Iterator iter = queue.begin();

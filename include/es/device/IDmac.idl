@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,54 +11,21 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+[object, uuid(83a550e8-25dc-11db-9c02-0009bf000001)]
+interface IDmac : IInterface
 {
-    /**
-     * This interface provides methods for managing a DMA controller.
-     */
-    interface IDmac : IInterface
+    enum Mode
     {
-        #pragma ID IDmac = "DCE:83a550e8-25dc-11db-9c02-0009bf000001";
-
-        typedef sequence<octet> Buf;
-
-        /**
-         * DMA transfer mode.
-         */
-        const long READ = 0x04;
-        const long WRITE = 0x08;
-        const long AUTO_INITIALIZE = 0x10;
-
-        /**
-         * Sets up this DMA controller.
-         * @param addr the address of the memory accessed by this DMA controller.
-         * @param addrLength the DMA transfer counter.
-         * @param mode <code>READ</code>, <code>WRITE</code> or <code>AUTO_INITIALIZE</code>.
-         */
-        void setup(inout Buf addr, in octet mode);
-        /**
-         * Starts the DMA transfer.
-         */
-        void start();
-        /**
-         * Terminates the DMA transfer.
-         */
-        void stop();
-        /**
-         * Boolean whether the DMA transfer is complete.
-         */
-        readonly attribute boolean done;
-        /**
-         * The current DMA transfer counter of this DMA controller.
-         */
-        readonly attribute long count;
+        READ = 0x04,
+        WRITE = 0x08,
+        AUTO_INITIALIZE = 0x10
     };
-};
 
-#endif // NINTENDO_ES_DEVICE_IDMAC_IDL_INCLUDED
-
+    void setup([in, out, size_is(count)] void* addr, int count, unsigned byte mode);
+    void start();
+    void stop();
+    boolean isDone();
+    int getCount();
+}

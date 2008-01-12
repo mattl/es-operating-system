@@ -11,10 +11,6 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <es/base/IInterface.h>
-using namespace es;
-int esInit(IInterface** nameSpace);
-
 #ifdef __unix__
 
 #include <errno.h>
@@ -204,44 +200,47 @@ public:
         return -1;
     }
 
-    void getGeometry(Geometry* geometry)
+    int getGeometry(Geometry* geometry)
     {
         memmove(geometry, &this->geometry, sizeof(Geometry));
+        return 0;
     }
 
-    void getLayout(Partition* partition)
+    int getLayout(Partition* partition)
     {
+        return -1;
     }
 
-    void setLayout(const Partition* partition)
+    int setLayout(Partition* partition)
     {
+        return -1;
     }
 
     //
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IStream::iid())
+        if (riid == IID_IStream)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IDiskManagement::iid())
+        else if (riid == IID_IDiskManagement)
         {
-            objectPtr = static_cast<IDiskManagement*>(this);
+            *objectPtr = static_cast<IDiskManagement*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)

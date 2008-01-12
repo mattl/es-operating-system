@@ -245,32 +245,32 @@ unlock()
     return preventAllowMediumRemoval(false);
 }
 
-void* AtaPacketDevice::
-queryInterface(const Guid& riid)
+bool AtaPacketDevice::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IRemovableMedia::iid() && removal)
+    else if (riid == IID_IRemovableMedia && removal)
     {
-        objectPtr = static_cast<IRemovableMedia*>(this);
+        *objectPtr = static_cast<IRemovableMedia*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaPacketDevice::
@@ -295,9 +295,6 @@ detect()
         return true;
     }
 
-#ifdef VERBOSE
-    esReport("AtaPacketDevice::detect()\n");
-#endif
     u8 status = testUnitReady();
 #ifdef VERBOSE
     esReport("status: %02x\n", status);
@@ -328,3 +325,178 @@ detect()
         return true;
     }
 }
+
+#if 0
+
+xxx()
+{
+    u8 list[120];
+    int cdrom = modeSense(0x00, PAGE_CDROM, list, sizeof(list));
+    if (cdrom < 0)
+    {
+        esReport("Device %d supports neither CD-ROM nor DVD-ROM.\n", (Dev1 == this->device));
+        return false;
+    }
+
+    u16 capabilities;
+    int ret = getCDVDCapabilities(&capabilities);
+    if (ret < 0)
+    {
+        esReport("C/DVD capabiliities unavaialble\n");
+        return false;
+    }
+
+    if (testUnitReady())
+    {
+        u32 blockLength;
+        u32 lba;
+        int ret = readCapacity(&lba, &blockLength);
+        if (ret < 0)
+        {
+            esReport("read capacity command: failed\n");
+            // set temporary parameters
+            blockLength = 2048;
+            lba = 640 * 1024 * 1024 / blockLength;
+        }
+        sectorSize = blockLength;
+        sectors = lba;
+        mediaType = getMediaType();
+    }
+    else
+    {
+        // no media
+        mediaType = PF_NO_MEDIA;
+        // set temporary parameters
+        sectorSize = 2048;
+        sectors = 640 * 1024 * 1024 / 2048;
+    }
+
+    dumpCapabilities(cdrom, capabilities); // debug
+}
+
+void AtaPacketDevice::
+dumpCapabilities(int cdrom, u16 capa)
+{
+    esReport("    capabilities: ");
+
+    if (cdrom == 0)
+    {
+        esReport("CD-ROM");
+    }
+
+    if (capa & CD_RW_WRITE || capa & CD_RW_READ)
+    {
+        esReport("  CD-RW(%s%s)", capa & CD_RW_WRITE ? "W" : "",
+                                capa & CD_RW_READ  ? "R" : "");
+    }
+
+    if (capa & CD_R_WRITE || capa & CD_R_READ)
+    {
+        esReport("  CD-R(%s%s)", capa & CD_R_WRITE ? "W" : "",
+                               capa & CD_R_READ  ? "R" : "");
+    }
+
+    if (capa & DVD_ROM_READ)
+    {
+        esReport("  DVD-ROM");
+    }
+
+    if (capa & DVD_RAM_WRITE || capa & DVD_RAM_READ)
+    {
+        esReport("  DVD-RAM(%s%s)", capa & DVD_RAM_WRITE ? "W" : "",
+                                  capa & DVD_RAM_READ  ? "R" : "");
+    }
+
+    if (capa & DVD_R_WRITE || capa & DVD_R_READ)
+    {
+        esReport("  DVD-R(%s%s)", capa & DVD_R_WRITE ? "W" : "",
+                                capa & DVD_R_READ  ? "R" : "");
+    }
+    esReport("\n");
+
+    esReport("    media: %s (%x)\n",
+        mediaType == PF_NON_REMOVABLE ? "Non-removable disk" :
+        mediaType == PF_REMOVABLE ? "Removable disk" :
+        mediaType == PF_MO ? "MO Erasable" :
+        mediaType == PF_AS_MO ? "AS-MO" :
+        mediaType == PF_CD_ROM ? "CD-ROM" :
+        mediaType == PF_CD_R ? "CD-R" :
+        mediaType == PF_CD_RW ? "CD-RW" :
+        mediaType == PF_DVD_ROM ? "DVD-ROM" :
+        mediaType == PF_DVD_R ? "DVD-R" :
+        mediaType == PF_DVD_RAM ? "DVD-RAM" :
+        mediaType == PF_DVD_RW_RO ? "DVD-RW Restricted Overwrite" :
+        mediaType == PF_DVD_RW_SR ? "DVD-RW Sequential recording" :
+        mediaType == PF_DVD_R_DUAL_SR ? "DVD-R Dual Layer Sequential recording" :
+        mediaType == PF_DVD_R_DUAL_LJ ? "DVD-R Dual Layer Jump recording" :
+        mediaType == PF_DVD_PLUS_RW ? "DVD+RW" :
+        mediaType == PF_DVD_PLUS_R  ? "DVD+R" :
+        mediaType == PF_UNKNOWN ? "unknown media" : "No media",
+        mediaType);
+}
+
+int AtaPacketDevice::
+getConfig(void* response, int len)
+{
+    status = 0;
+    error = 0;
+
+    data = static_cast<u8*>(response);
+    dlen = len;
+
+    u8 packet[12];
+    memset(packet, 0, sizeof(packet));
+    packet[0] = PCgetConfig;
+    // Allocation Length
+    packet[7] = 0xff & len;
+    packet[8] = 0xff & (len >> 8);
+
+    int ret = ctlr->issue(this, packet, sizeof(packet));
+
+    return ret;
+}
+
+int AtaPacketDevice::
+getCDVDCapabilities(u16* capabilities)
+{
+    u8 list[120];
+    int ret = modeSense(0x00, PAGE_CDROM_CAPABILITIES, list, sizeof(list));
+
+    if (ret == 0)
+    {
+        u8* ptr = &list[8];
+        if (*ptr == PAGE_CDROM_CAPABILITIES)
+        {
+            *capabilities = (u16) (ptr[3] << 8 | ptr[2]);
+        }
+        else
+        {
+            // unknown data format
+            ret = -1;
+        }
+    }
+
+    return ret;
+}
+
+int AtaPacketDevice::
+getMediaType()
+{
+    if (!testUnitReady())
+    {
+        return -1;
+    }
+
+    u8 response[96];
+    int ret = getConfig(response, sizeof(response));
+
+    if (ret == 0)
+    {
+        mediaType = (response[6] << 8| response[7]);
+        return mediaType; // defined in Profile List.
+    }
+
+    return ret;
+}
+
+#endif

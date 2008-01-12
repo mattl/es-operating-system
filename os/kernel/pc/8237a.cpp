@@ -62,7 +62,7 @@ setup(u8 chan, u32 buffer, int len, u8 mode)
 void Dmac::
 Chan::setup(void* buffer, int len, u8 mode)
 {
-    Lock::Synchronized method(dmac->spinLock);
+    SpinLock::Synchronized method(dmac->spinLock);
 
     mode &= IDmac::READ | IDmac::WRITE | IDmac::AUTO_INITIALIZE;
     dmac->setup(chan, ((u32) buffer) & ~0xc0000000, len, mode | 0x40);  // single mode
@@ -71,7 +71,7 @@ Chan::setup(void* buffer, int len, u8 mode)
 void Dmac::
 Chan::start()
 {
-    Lock::Synchronized method(dmac->spinLock);
+    SpinLock::Synchronized method(dmac->spinLock);
 
     outpb(dmac->base + (SINGLE_MASK << dmac->shift), chan);
 }
@@ -79,7 +79,7 @@ Chan::start()
 void Dmac::
 Chan::stop()
 {
-    Lock::Synchronized method(dmac->spinLock);
+    SpinLock::Synchronized method(dmac->spinLock);
 
     outpb(dmac->base + (SINGLE_MASK << dmac->shift), 0x04 | chan);
 }
@@ -87,7 +87,7 @@ Chan::stop()
 bool Dmac::
 Chan::isDone()
 {
-    Lock::Synchronized method(dmac->spinLock);
+    SpinLock::Synchronized method(dmac->spinLock);
 
     return inpb(dmac->base + (COMMAND << dmac->shift)) & (1 << chan);
 }
@@ -95,7 +95,7 @@ Chan::isDone()
 int Dmac::
 Chan::getCount()
 {
-    Lock::Synchronized method(dmac->spinLock);
+    SpinLock::Synchronized method(dmac->spinLock);
 
     outpb(dmac->base + (CLEAR_BYTE_POINTER << dmac->shift), 0);
     int count = inpb(dmac->base + (((chan << 1) + COUNT) << dmac->shift));
@@ -103,24 +103,24 @@ Chan::getCount()
     return (count << dmac->shift) + 1;
 }
 
-void* Dmac::
-Chan::queryInterface(const Guid& riid)
+bool Dmac::
+Chan::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IDmac::iid())
+    if (riid == IID_IDmac)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        *objectPtr = static_cast<IDmac*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        *objectPtr = static_cast<IDmac*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Dmac::

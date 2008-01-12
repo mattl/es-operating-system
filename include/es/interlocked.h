@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -14,34 +14,21 @@
 #ifndef NINTENDO_ES_INTERLOCKED_H_INCLUDED
 #define NINTENDO_ES_INTERLOCKED_H_INCLUDED
 
-/**
- * This class provides atomic operations for variables.
- */
 class Interlocked
 {
     volatile long count;
 
 public:
-    /**
-     * Creates a new object which has the specified count.
-     */
     Interlocked(long initial = 0) : count(initial)
     {
     }
 
-    /**
-     * Conversion operator to long.
-     */
     operator long() const
     {
         return count;
     }
 
 #ifdef __i386__
-    /**
-     * Increments the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long increment(void)
     {
         register long eax = 1;
@@ -55,10 +42,6 @@ public:
         return eax;
     }
 
-    /**
-     * Decrements the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long decrement(void)
     {
         register long eax = -1;
@@ -72,11 +55,6 @@ public:
         return eax;
     }
 
-    /**
-     * Sets the specified value to the count of this object as an atomic operation.
-     * @param value the value to be set..
-     * @return the count before the operation.
-     */
     long exchange(register long value)
     {
         __asm__ __volatile__ (
@@ -86,13 +64,6 @@ public:
         return value;
     }
 
-    /**
-     * Compares the count of this object and the specified value for equality,
-     * and if they are equal, sets the specified value to the count.
-     * @param value the value to be set to the count.
-     * @param comparand the value to be compared with the count.
-     * @return the count before the operation.
-     */
     long compareExchange(register long value, register long comparand)
     {
         __asm__ __volatile__ (
@@ -105,10 +76,6 @@ public:
     }
 
 #elif __x86_64__
-    /**
-     * Increments the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long increment(void)
     {
         register long rax = 1;
@@ -122,10 +89,6 @@ public:
         return rax;
     }
 
-    /**
-     * Decrements the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long decrement(void)
     {
         register long rax = -1;
@@ -139,11 +102,6 @@ public:
         return rax;
     }
 
-    /**
-     * Sets the specified value to the count of this object as an atomic operation.
-     * @param value the value to be set..
-     * @return the count before the operation.
-     */
     long exchange(register long value)
     {
         __asm__ __volatile__ (
@@ -153,13 +111,6 @@ public:
         return value;
     }
 
-    /**
-     * Compares the count of this object and the specified value for equality,
-     * and if they are equal, sets the specified value to the count.
-     * @param value the value to be set to the count.
-     * @param comparand the value to be compared with the count.
-     * @return the count before the operation.
-     */
     long compareExchange(register long value, register long comparand)
     {
         __asm__ __volatile__ (
@@ -171,29 +122,9 @@ public:
         return value;
     }
 #else   // __x86_64__
-    /**
-     * Increments the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long increment(void);
-    /**
-     * Decrements the count of this object as an atomic operation.
-     * @return the count after the operation.
-     */
     long decrement(void);
-    /**
-     * Sets the specified value to the count of this object as an atomic operation.
-     * @param value the value to be set..
-     * @return the count before the operation.
-     */
     long exchange(register long value)
-    /**
-     * Compares the count of this object and the specified value for equality,
-     * and if they are equal, sets the specified value to the count.
-     * @param value the value to be set to the count.
-     * @param comparand the value to be compared with the count.
-     * @return the count before the operation.
-     */
     long compareExchange(register long value, register long comparand)
 #endif  // __i386__
 };

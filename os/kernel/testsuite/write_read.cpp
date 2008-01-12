@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -18,7 +18,6 @@
 #include <es/clsid.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
-#include "core.h"
 #include "memoryStream.h"
 
 #define PAGE_SIZE        (4 * 1024)
@@ -115,8 +114,9 @@ int main()
     esReport("Check read() and write().\n");
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     MemoryStream* backingStore = new MemoryStream(0);
     if (!backingStore)
