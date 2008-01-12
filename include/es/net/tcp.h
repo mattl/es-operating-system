@@ -162,11 +162,6 @@ struct TCPOptMss
         mss(htons(mss))
     {
     }
-
-    int getMSS()
-    {
-        return ntohs(mss);
-    }
 };
 
 struct TCPOptSackPermitted

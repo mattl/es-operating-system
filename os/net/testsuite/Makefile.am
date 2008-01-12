@@ -4,7 +4,9 @@ SUFFIXES = .img
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% :: %.elf
+	$(srcdir)/makeScript "`pwd`" $@
 
 AM_CPPFLAGS = \
 	-I $(srcdir)/../include \
@@ -14,8 +16,7 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
-	udpEchoClient udpEchoServer
+TESTS = conduit inet4 tcp config
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -25,15 +26,13 @@ endif POSIX
 
 if ES
 
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
-
-TESTS = config dhcp
+TESTS = config
 
 noinst_SCRIPTS = $(TESTS)
 
 noinst_PROGRAMS = $(TESTS)
 
-noinst_DATA = config.img dhcp.img
+noinst_DATA = config.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 
@@ -44,32 +43,12 @@ AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map
 
 endif ES
 
-anon_SOURCES = anon.cpp
-
-frag_SOURCES = frag.cpp
+conduit_SOURCES = conduit.cpp
 
 inet4_SOURCES = inet4.cpp
 
-mcast_SOURCES = mcast.cpp
-
 tcp_SOURCES = tcp.cpp
-
-tcp1_SOURCES = tcp1.cpp
-
-tcp2_SOURCES = tcp2.cpp
-
-timeout_SOURCES = timeout.cpp
 
 config_SOURCES = config.cpp
 
-dhcp_SOURCES = dhcp.cpp
-
-dns_SOURCES = dns.cpp
-
-unreach_SOURCES = unreach.cpp
-
-udpEchoClient_SOURCES = udpEchoClient.cpp
-
-udpEchoServer_SOURCES = udpEchoServer.cpp
-
-EXTRA_DIST = makeScript testLoader
+EXTRA_DIST = makeScript

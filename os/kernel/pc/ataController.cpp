@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -24,12 +24,6 @@
 
 using namespace ATAttachment;
 using namespace Register;
-
-bool AtaController::
-isAtaDevice(const u8* signature)
-{
-    return (signature[2] == 0x00 && signature[3] == 0x00) ? true : false;
-}
 
 bool AtaController::
 isAtapiDevice(const u8* signature)
@@ -82,33 +76,19 @@ select(u8 device)
 {
     using namespace Status;
 
-    long timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & (DRQ | BSY))
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
 #endif
-        if (1000000L < ++timeout)
-        {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
-            break;
-        }
     }
     outpb(cmdPort + DEVICE, device);
     esSleep(4);
-    timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & (DRQ | BSY))
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
 #endif
-        if (1000000L < ++timeout)
-        {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
-            break;
-        }
     }
 }
 
@@ -117,44 +97,14 @@ sync(u8 status)
 {
     using namespace Status;
 
-    long timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & BSY)
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
-        // Reading or writing a byte from/to port 0x80 take almost
-        // exactly 1 microsecond independent of the processor type
-        // and speed.
-        __asm__ __volatile__ ("outb %%al, $0x80" ::: "%eax");
 #endif
-        if (1000000L < ++timeout)
-        {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)\n",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
-            break;
-        }
     }
-    inpb(ctlPort + ALTERNATE_STATUS);
+    // It seems ALTERNATE_STATUS is not properly emulated under QEMU except the BSY bit.
     return inpb(cmdPort + STATUS);
-}
-
-int AtaController::
-condDone(int)
-{
-    return done ? true : false;
-}
-
-void AtaController::
-wait()
-{
-    DelegateTemplate<AtaController> cond(this, &AtaController::condDone);
-    rendezvous.sleep(&cond);
-}
-
-void AtaController::
-notify()
-{
-    rendezvous.wakeup();
 }
 
 int AtaController::
@@ -167,10 +117,6 @@ issue(AtaDevice* device, u8 cmd, void* buffer, int count, long long lba)
     using namespace DeviceIdentification;
     using namespace Command;
     using namespace Status;
-
-#ifdef VERBOSE
-    esReport("AtaController::%s(%02x, %p, %d, %lld)\n", __func__, cmd, buffer, count, lba);
-#endif
 
     Lock::Synchronized io(lock);
 
@@ -279,7 +225,10 @@ issue(AtaDevice* device, u8 cmd, void* buffer, int count, long long lba)
     }
 
     lock.unlock();
-    wait();
+    while (!done)
+    {
+        monitor->wait(10000000);
+    }
     lock.lock();
 
     outpb(ctlPort + DEVICE_CONTROL, NIEN);
@@ -329,8 +278,11 @@ issue(AtaDevice* device, u8* packet, int packetSize,
         return -1;
     }
 
-    wait();
-
+    outpb(ctlPort + DEVICE_CONTROL, 0);
+    while (!done)
+    {
+        monitor->wait(10000000);
+    }
     outpb(ctlPort + DEVICE_CONTROL, NIEN);
     return count;
 }
@@ -363,7 +315,7 @@ invoke(int param)
 #ifdef VERBOSE
     if (param)
     {
-        esReport("AtaController::%s(%d) : %02xh : %02xh\n", __func__, param, cmd, status);
+        esReport("AtaController::%s(%d) : %02x : %02x\n", __func__, param, this->cmd, status);
     }
 #endif
 
@@ -386,9 +338,6 @@ invoke(int param)
                 {
                     done = true;
                 }
-#ifdef VERBOSE
-                esReport("AtaController::%s : %p, %p, %d\n", __func__, data, limit, done);
-#endif
             }
             else
             {
@@ -410,9 +359,6 @@ invoke(int param)
                 {
                     done = true;
                 }
-#ifdef VERBOSE
-                esReport("AtaController::%s : %d, %p, %p, %d\n", __func__, len, data, limit, done);
-#endif
             }
             else
             {
@@ -459,7 +405,6 @@ invoke(int param)
             break;
         case PACKET:
             int len;
-            outpb(ctlPort + DEVICE_CONTROL, 0);
             switch (inpb(cmdPort + INTERRUPT_REASON) & (/*Rel|*/ IO | CD))
             {
               case CD:      // transfer the packet
@@ -520,7 +465,7 @@ invoke(int param)
     if (done)
     {
         current = 0;
-        notify();
+        monitor->notify();  // XXX Fix timing issue
     }
 
     return 0;
@@ -534,10 +479,9 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
     dma(dma),
     thread(run, this, IThread::Highest - (irq - 14))
 {
-    device[0] = device[1] = 0;
-
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     if (!softwareReset())
     {
@@ -551,11 +495,11 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
         esReport("device0: signature %02x %02x %02x %02x %02x\n",
                  signature[0], signature[1], signature[2], signature[3], signature[4]);
 #endif
-        if (isAtaDevice(signature))
+        if (!isAtapiDevice(signature))
         {
             device[0] = new AtaDevice(this, Device::MASTER, signature);
         }
-        else if (isAtapiDevice(signature))
+        else
         {
             device[0] = new AtaPacketDevice(this, Device::MASTER, signature);
         }
@@ -567,22 +511,17 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
         esReport("device1: signature %02x %02x %02x %02x %02x\n",
                  signature[0], signature[1], signature[2], signature[3], signature[4]);
 #endif
-        if (isAtaDevice(signature))
+        if (!isAtapiDevice(signature))
         {
             device[1] = new AtaDevice(this, Device::SLAVE, signature);
         }
-        else if (isAtapiDevice(signature))
+        else
         {
             device[1] = new AtaPacketDevice(this, Device::SLAVE, signature);
         }
     }
 
-    if (device[0] == 0 && device[1] == 0)
-    {
-        return;
-    }
-
-    Core::registerInterruptHandler(irq, this);
+    Core::registerExceptionHandler(32 + irq, this);
 
     for (int i = 0; i < 10; ++i)
     {
@@ -620,24 +559,24 @@ AtaController::
     monitor->release();
 }
 
-void* AtaController::
-queryInterface(const Guid& riid)
+bool AtaController::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaController::

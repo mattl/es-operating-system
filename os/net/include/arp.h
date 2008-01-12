@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -31,7 +31,7 @@ public:
     {
     }
 
-    bool input(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
 };
 
 class ARPFamily : public AddressFamily
@@ -90,13 +90,16 @@ public:
         ASSERT(address);
         if (address)
         {
-            Adapter* adapter = dynamic_cast<Adapter*>(address->getAdapter());
+            InetMessenger m;
+            m.setLocal(address);
+            Uninstaller uninstaller(&m);
+            arpMux.accept(&uninstaller, &arpProtocol);
+
+            Adapter* adapter = dynamic_cast<Adapter*>(uninstaller.getConduit());
             if (adapter)
             {
-                InetMessenger m;
-                m.setLocal(address);
-                Uninstaller uninstaller(&m);
-                adapter->accept(&uninstaller);
+                delete adapter;
+                address->release();
             }
         }
     }

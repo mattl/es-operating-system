@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -17,8 +17,6 @@
 #include <es/device/IPic.h>
 #include <es/ref.h>
 
-using namespace es;
-
 class Pic : public IPic
 {
     Ref ref;
@@ -30,18 +28,18 @@ public:
     Pic();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
     // IPic
-    int startup(unsigned bus, unsigned irq);
-    int shutdown(unsigned bus, unsigned irq);
-    int enable(unsigned bus, unsigned irq);
-    int disable(unsigned bus, unsigned irq);
-    bool ack(int vec);
-    bool end(int vec);
-    int setAffinity(unsigned bus, unsigned irq, unsigned int cpuMask);
+    void startup(unsigned irq);
+    void shutdown(unsigned irq);
+    void enable(unsigned irq);
+    void disable(unsigned irq);
+    bool ack(unsigned irq);
+    void end(unsigned irq);
+    void setAffinity(unsigned irq, unsigned int cpuMask);
     unsigned int splIdle();
     unsigned int splLo();
     unsigned int splHi();

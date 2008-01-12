@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -24,22 +24,14 @@ class UDPReceiver : public InetReceiver
     s16 checksum(InetMessenger* m);
 
 public:
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-    bool error(InetMessenger* m, Conduit* c);
-};
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
+    bool error(InetMessenger* m);
 
-class UDPUnreachReceiver : public InetReceiver
-{
-    Protocol*   unreachProtocol;
-
-public:
-    UDPUnreachReceiver(Protocol* unreachProtocol) :
-        unreachProtocol(unreachProtocol)
+    UDPReceiver* clone(Conduit* conduit, void* key)
     {
+        return new UDPReceiver;
     }
-
-    bool input(InetMessenger* m, Conduit* c);
 };
 
 #endif  // UDP_H_INCLUDED

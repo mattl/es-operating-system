@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -26,23 +26,20 @@ void esRegisterInternetProtocol(IContext* context)
     // Setup internet protocol family
     InFamily* inFamily = new InFamily;
 
-    // Create "network/interface" context
-    Socket::interface = context->createSubcontext("network/interface");
-
-    // Register resolver interface
-    Socket::resolver = new Resolver;
-    Handle<IBinding>(context->bind("network/resolver", Socket::resolver));
-
-    // Register config interface
-    Socket::config = new InternetConfig;
-    Handle<IBinding>(context->bind("network/config", Socket::config));
-
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
-    int scopeID = Socket::config->addInterface(loopbackInterface);
+    Handle<IStream> loopbackStream = context->lookup("device/loopback");
+    int scopeID = Socket::addInterface(loopbackStream, ARPHdr::HRD_LOOPBACK);
 
     // Register localhost address
     Handle<Inet4Address> localhost = new Inet4Address(InAddrLoopback, Inet4Address::statePreferred, scopeID, 8);
     inFamily->addAddress(localhost);
     localhost->start();
+
+    // Register resolver interface
+    Resolver* resolver = new Resolver;
+    context->bind("network/resolver", static_cast<IResolver*>(resolver));
+
+    // Register config interface
+    InternetConfig* config = new InternetConfig;
+    context->bind("network/config", static_cast<InternetConfig*>(config));
 }

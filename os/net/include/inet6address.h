@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -165,15 +165,15 @@ public:
         this->state = state;
     }
 
-    bool input(InetMessenger* m, Conduit* c)
+    bool input(InetMessenger* m)
     {
         return state.input(m, this);
     }
-    bool output(InetMessenger* m, Conduit* c)
+    bool output(InetMessenger* m)
     {
         return state.output(m, this);
     }
-    bool error(InetMessenger* m, Conduit* c)
+    bool error(InetMessenger* m)
     {
         return state.error(m, this);
     }
@@ -181,11 +181,11 @@ public:
     Address* getNextHop();
 
     // IInternetAddress
-    int getAddress(void* address, int len);
+    int getAddress(void* address, unsigned int len);
     int getAddressFamily();
-    int getCanonicalHostName(char* hostName, int len);
-    int getHostAddress(char* hostAddress, int len);
-    int getHostName(char* hostName, int len);
+    int getCanonicalHostName(char* hostName, unsigned int len);
+    int getHostAddress(char* hostAddress, unsigned int len);
+    int getHostName(char* hostName, unsigned int len);
     int getScopeID();
     bool isUnspecified();
     bool isLinkLocal();
@@ -196,7 +196,7 @@ public:
     IInterface* socket(int type, int protocol);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 

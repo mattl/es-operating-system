@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,6 +16,7 @@
 
 #include <string.h>
 #include <es.h>
+#include <es/list.h>
 #include <es/ref.h>
 #include <es/types.h>
 #include <es/net/IInternetConfig.h>
@@ -24,8 +25,7 @@
 
 class InternetConfig : public IInternetConfig
 {
-    Ref                             ref;
-    AddressSet<IInternetAddress>    nameServers;
+    Ref     ref;
 
 public:
     //
@@ -39,19 +39,14 @@ public:
     IInternetAddress* getRouter();
     void removeRouter(IInternetAddress* router);
 
-    int addInterface(INetworkInterface* networkInterface);
+    int addInterface(IStream* stream, int hrd);
     IInterface* getInterface(int scopeID);
-    int getScopeID(INetworkInterface* networkInterface);
-    void removeInterface(INetworkInterface* networkInterface);
-
-    void addNameServer(IInternetAddress* address);
-    IInternetAddress* getNameServer();
-    void removeNameServer(IInternetAddress* address);
+    void removeInterface(IStream* stream);
 
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 };

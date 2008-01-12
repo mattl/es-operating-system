@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -21,27 +21,25 @@
 #include "address.h"
 #include "conduit.h"
 
-using namespace es;
-
 class InetMessenger;
 
 class InetReceiver : public virtual Receiver
 {
 public:
-    virtual bool input(InetMessenger* m, Conduit* c)
+    virtual bool input(InetMessenger* m)
     {
         return true;
     }
-    virtual bool output(InetMessenger* m, Conduit* c)
+    virtual bool output(InetMessenger* m)
     {
         return true;
     }
-    virtual bool error(InetMessenger* m, Conduit* c)
+    virtual bool error(InetMessenger* m)
     {
         return true;
     }
 
-    typedef bool (InetReceiver::*Command)(InetMessenger* m, Conduit* c);
+    typedef bool (InetReceiver::*Command)(InetMessenger* m);
 };
 
 class InetMessenger : public Messenger
@@ -50,30 +48,23 @@ protected:
     InetReceiver::Command   op;
 
 private:
-    int         scopeID;
-    Address*    remoteAddress;
-    Address*    localAddress;
-    u16         remotePort;
-    u16         localPort;
-    int         code;
-    int         flag;
+    int                     scopeID;
+    Address*                remoteAddress;
+    Address*                localAddress;
+    u16                     remotePort;
+    u16                     localPort;
+    int                     code;
 
 public:
-    static const int Unicast = 1;
-    static const int Multicast = 2;
-    static const int Broadcast = 3;
-
     InetMessenger(InetReceiver::Command op = 0,
-                  long len = 0, long pos = 0, void* chunk = 0) :
-        Messenger(len, pos, chunk),
+                  void* chunk = 0, long len = 0, long pos = 0) :
+        Messenger(chunk, len, pos),
         op(op),
-        scopeID(0),
         remoteAddress(0),
         localAddress(0),
         remotePort(0),
         localPort(0),
-        code(0),
-        flag(0)
+        code(0)
     {
     }
     ~InetMessenger()
@@ -89,7 +80,7 @@ public:
             InetReceiver* receiver = dynamic_cast<InetReceiver*>(c->getReceiver());
             if (receiver)
             {
-                return (receiver->*op)(this, c);
+                return (receiver->*op)(this);
             }
         }
         return Messenger::apply(c);
@@ -170,23 +161,6 @@ public:
     {
         this->code = code;
     }
-
-    int getFlag() const
-    {
-        return flag;
-    }
-    void setFlag(int flag)
-    {
-        this->flag = flag;
-    }
-
-    void setCommand(InetReceiver::Command command)
-    {
-        op = command;
-    }
-
-    friend class InetLocalAddressAccessor;
-    friend class InetRemoteAddressAccessor;
 };
 
 class InetLocalPortAccessor : public Accessor
@@ -218,7 +192,7 @@ public:
     {
         InetMessenger* im = dynamic_cast<InetMessenger*>(m);
         ASSERT(im);
-        return im->localAddress;    // Just need the address as the key
+        return im->getLocal();
     }
 };
 
@@ -229,7 +203,7 @@ public:
     {
         InetMessenger* im = dynamic_cast<InetMessenger*>(m);
         ASSERT(im);
-        return im->remoteAddress;   // Just need the address as the key
+        return im->getRemote();
     }
 };
 

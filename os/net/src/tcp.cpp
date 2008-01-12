@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -25,7 +25,7 @@ checksum(InetMessenger* m)
     sum += addr->sumUp();
     addr = m->getLocal();
     sum += addr->sumUp();
-    sum += htons(len);
+    sum += len;
     sum += ntohs(IPPROTO_TCP);
     while (sum >> 16)
     {
@@ -34,26 +34,17 @@ checksum(InetMessenger* m)
     return ~sum;
 }
 
-bool TCPReceiver::input(InetMessenger* m, Conduit* c)
+bool TCPReceiver::input(InetMessenger* m)
 {
     TCPHdr* tcphdr = static_cast<TCPHdr*>(m->fix(sizeof(TCPHdr)));
     if (!tcphdr)
     {
-        return false;
+        return false;   // XXX
     }
     int hlen = tcphdr->getHdrSize();
     if (hlen < sizeof(TCPHdr) || m->getLength() < hlen)
     {
-        return false;
-    }
-
-    // Drop broadcast or multicast
-    Handle<Address> src = m->getRemote();
-    Handle<Address> dst = m->getLocal();
-    if (src->isUnspecified() || src->isMulticast() ||
-        dst->isUnspecified() || dst->isMulticast()) // XXX check for bcast
-    {
-        return false;
+        return false;   // XXX
     }
 
     // Verify the sum
@@ -68,7 +59,7 @@ bool TCPReceiver::input(InetMessenger* m, Conduit* c)
     return true;
 }
 
-bool TCPReceiver::output(InetMessenger* m, Conduit* c)
+bool TCPReceiver::output(InetMessenger* m)
 {
     // Update TCPHdr
     TCPHdr* tcphdr = static_cast<TCPHdr*>(m->fix(sizeof(TCPHdr)));
@@ -81,7 +72,7 @@ bool TCPReceiver::output(InetMessenger* m, Conduit* c)
     return true;
 }
 
-bool TCPReceiver::error(InetMessenger* m, Conduit* c)
+bool TCPReceiver::error(InetMessenger* m)
 {
     TCPHdr* tcphdr = static_cast<TCPHdr*>(m->fix(sizeof(TCPHdr)));
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -23,7 +23,7 @@
 #include <es/base/IMonitor.h>
 #include <es/base/IThread.h>
 
-es::IThread* esCreateThread(void* (*start)(void* param), void* param);
+IThread* esCreateThread(void* (*start)(void* param), void* param);
 
 class Timer;
 
@@ -80,8 +80,8 @@ class Timer
     };
 
     Tree<DateTime, Value>   queue;
-    es::IThread*            thread;
-    es::IMonitor*           monitor;
+    IThread*                thread;
+    IMonitor*               monitor;
     bool                    canceled;
 
     static void* run(void* param)
@@ -92,45 +92,38 @@ class Timer
 
     void* start()
     {
+        Synchronized<IMonitor*> method(monitor);
+
         while (!canceled)
         {
-            TimerTask* task;
-            while (!canceled)
+            Tree<DateTime, Value>::Node* node(queue.getFirst());
+            if (node)
             {
-                Synchronized<es::IMonitor*> method(monitor);
-                Tree<DateTime, Value>::Node* node(queue.getFirst());
-                if (node)
+                TimeSpan diff = node->getKey() - DateTime::getNow();
+                TimerTask* task = node->getValue().timerTask;
+                if (0 < diff)
                 {
-                    TimeSpan diff = node->getKey() - DateTime::getNow();
-                    task = node->getValue().timerTask;
-                    if (0 < diff)
-                    {
-                        monitor->wait(diff);
-                    }
-                    else
-                    {
-                        queue.remove(node->getKey());
-                        break;
-                    }
+                    monitor->wait(diff);
                 }
                 else
                 {
-                    monitor->wait(10000000);
+                    queue.remove(node->getKey());
+                    if (task->period == 0)
+                    {
+                        task->executionTime = 0;
+                    }
+                    task->run();
+                    if (0 < task->period)
+                    {
+                        schedule(task,
+                                 task->scheduledExecutionTime() + task->period,
+                                 task->period);
+                    }
                 }
             }
-            if (!canceled)
+            else
             {
-                if (task->period == 0)
-                {
-                    task->executionTime = 0;
-                }
-                task->run();
-                if (0 < task->period)
-                {
-                    schedule(task,
-                             task->scheduledExecutionTime() + task->period,
-                             task->period);
-                }
+                monitor->wait(10000000);
             }
         }
         thread = 0;
@@ -142,10 +135,11 @@ public:
         thread(0),
         canceled(false)
     {
-        monitor = reinterpret_cast<es::IMonitor*>(
-                    esCreateInstance(CLSID_Monitor, es::IMonitor::iid()));
+        esCreateInstance(CLSID_Monitor,
+                         IID_IMonitor,
+                         reinterpret_cast<void**>(&monitor));
         thread = esCreateThread(run, this);
-        thread->setPriority(es::IThread::Highest);
+        thread->setPriority(IThread::Highest);
         thread->start();
         thread->release();
     }
@@ -155,7 +149,7 @@ public:
         canceled = true;
         monitor->notifyAll();
         {
-            Synchronized<es::IMonitor*> method(monitor);
+            Synchronized<IMonitor*> method(monitor);
 
             while (thread)
             {
@@ -167,7 +161,7 @@ public:
 
     void schedule(TimerTask* timerTask, DateTime time)
     {
-        Synchronized<es::IMonitor*> method(monitor);
+        Synchronized<IMonitor*> method(monitor);
 
         Value v(timerTask, 0);
         timerTask->period = 0;
@@ -192,7 +186,7 @@ public:
 
     void schedule(TimerTask* timerTask, DateTime firstTime, TimeSpan period)
     {
-        Synchronized<es::IMonitor*> method(monitor);
+        Synchronized<IMonitor*> method(monitor);
 
         Value v(timerTask, period);
         timerTask->period = period;
@@ -227,7 +221,7 @@ public:
 
     void cancel(TimerTask* timerTask)
     {
-        Synchronized<es::IMonitor*> method(monitor);
+        Synchronized<IMonitor*> method(monitor);
         if (timerTask->isEnabled())
         {
             queue.remove(timerTask->executionTime);

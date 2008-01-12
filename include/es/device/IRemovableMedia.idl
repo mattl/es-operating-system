@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,38 +11,28 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IREMOVABLEMEDIA_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IREMOVABLEMEDIA_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface represents a removable media.
+ */
+[object, uuid(83a9a800-25dc-11db-9c02-0009bf000001)]
+interface IRemovableMedia : IInterface
 {
     /**
-     * This interface represents a removable media.
+     * Ejects this removable media.
      */
-    interface IRemovableMedia : IInterface
-    {
-        #pragma ID IRemovableMedia = "DCE:83a9a800-25dc-11db-9c02-0009bf000001";
-
-        /**
-         * Ejects this removable media.
-         */
-        long eject();
-        /**
-         * Loads this removable media.
-         */
-        long load();
-        /**
-         * Locks this removable media.
-         */
-        long lock();
-        /**
-         * Unlocks this removable media.
-         */
-        long unlock();
-    };
-};
-
-#endif // NINTENDO_ES_DEVICE_IREMOVABLEMEDIA_IDL_INCLUDED
-
+    int eject();
+    /**
+     * Loads this removable media.
+     */
+    int load();
+    /**
+     * Locks this removable media.
+     */
+    int lock();
+    /**
+     * Unlocks this removable media.
+     */
+    int unlock();
+}

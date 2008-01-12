@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -28,6 +28,7 @@
 #include "inetConfig.h"
 #include "loopback.h"
 #include "resolver.h"
+#include "scope.h"
 #include "tcp.h"
 #include "udp.h"
 #include "visualizer.h"
@@ -52,7 +53,7 @@ int main()
 
     esDump(&InAddrAny, 4);
     esDump(&InAddrLoopback, 4);
-    esDump(&InAddrBroadcast, 4);
+    esDump(&InBroadcast, 4);
 
     u32 test = INADDR_LOOPBACK;
     esDump(&test, 4);
@@ -72,13 +73,13 @@ int main()
     InFamily* inFamily = new InFamily;
     esReport("AF: %d\n", inFamily->getAddressFamily());
 
-    Socket raw(AF_INET, ISocket::Raw);
+    Socket raw(AF_INET, ISocket::RAW);
     inProtocol = inFamily->getProtocol(&raw);
     visualize();
 
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
-    int scopeID = Socket::addInterface(loopbackInterface);
+    Handle<IStream> loopbackStream = context->lookup("device/loopback");
+    int scopeID = Socket::addInterface(loopbackStream, ARPHdr::HRD_LOOPBACK);
 
     // Register localhost address
     Handle<Inet4Address> localhost = new Inet4Address(InAddrLoopback, Inet4Address::statePreferred, scopeID, 8);
@@ -93,7 +94,7 @@ int main()
     InternetConfig ipconfig;
 
     // Test bind and connect operations
-    Socket socket(AF_INET, ISocket::Datagram);
+    Socket socket(AF_INET, ISocket::DGRAM);
     socket.bind(localhost, 53);
     visualize();
     socket.connect(localhost, 53);
@@ -114,9 +115,10 @@ int main()
     localhost->isReachable(10000000);
 
     // Setup DIX interface
-    Handle<INetworkInterface> ethernetInterface = context->lookup("device/ethernet");
-    ethernetInterface->start();
-    int dixID = Socket::addInterface(ethernetInterface);
+    Handle<IStream> ethernetStream = context->lookup("device/ethernet");
+    Handle<IEthernet> nic(ethernetStream);
+    nic->start();
+    int dixID = Socket::addInterface(ethernetStream, ARPHdr::HRD_ETHERNET);
     esReport("dixID: %d\n", dixID);
 
     // Register host address (192.168.2.40)
@@ -166,7 +168,7 @@ int main()
     remote->isReachable(10000000);
 
     esSleep(100000000);
-    ethernetInterface->stop();
+    nic->stop();
 
     esReport("done.\n");
 }

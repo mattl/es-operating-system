@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -26,135 +26,63 @@ class DatagramReceiver :
     public SocketReceiver
 {
     IMonitor*   monitor;
-    u8*         recvBuf;
+    u8          recvBuf[128 * 1024];
     Ring        recvRing;
-    u8*         sendBuf;
+    u8          sendBuf[128 * 1024];
     Ring        sendRing;
     Conduit*    conduit;
-    int         errorCode;
-    Socket*     socket;
 
     struct RingHdr
     {
-        long        len;
-        Address*    addr;
-        int         port;
+        long    len;
 
-        RingHdr(long len = 0, Address* addr = 0, int port = 0) :
-            len(len),
-            addr(addr),
-            port(port)
+        RingHdr(long len = 0) :
+            len(len)
         {
         }
     };
 
-    bool isAcceptable()
+    Socket* getSocket()
     {
-        return false;
-    }
-    bool isConnectable()
-    {
-        return true;
-    }
-    bool isReadable()
-    {
-        return 0 < 0 < recvRing.getUsed() || errorCode;
-    }
-    bool isWritable()
-    {
-        return true;
+        Conduit* adapter = conduit->getB();
+        if (!adapter)
+        {
+            return 0;
+        }
+        return dynamic_cast<Socket*>(adapter->getReceiver());
     }
 
 public:
     DatagramReceiver(Conduit* conduit = 0) :
         monitor(0),
-        recvBuf(0),
-        sendBuf(0),
-        conduit(conduit),
-        errorCode(0),
-        socket(0)
+        recvRing(recvBuf, sizeof recvBuf),
+        sendRing(sendBuf, sizeof sendBuf),
+        conduit(conduit)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        esCreateInstance(CLSID_Monitor,
+                         IID_IMonitor,
+                         reinterpret_cast<void**>(&monitor));
     }
 
     ~DatagramReceiver()
     {
-        if (recvBuf)
-        {
-            delete[] recvBuf;
-        }
-        if (sendBuf)
-        {
-            delete[] sendBuf;
-        }
         if (monitor)
         {
             monitor->release();
         }
     }
 
-    bool initialize(Socket* socket)
-    {
-        this->socket = socket;
-        recvBuf = new u8[socket->getReceiveBufferSize()];
-        recvRing.initialize(recvBuf, socket->getReceiveBufferSize());
-        sendBuf = new u8[socket->getSendBufferSize()];
-        sendRing.initialize(sendBuf, socket->getSendBufferSize());
-        return true;
-    }
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
+    bool error(InetMessenger* m);
 
-    void notify()
-    {
-        monitor->notifyAll();
-        if (socket->selector)
-        {
-            socket->selector->notifyAll();
-        }
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-    bool error(InetMessenger* m, Conduit* c);
-
-    bool read(SocketMessenger* m, Conduit* c);
-    bool write(SocketMessenger* m, Conduit* c);
-    bool close(SocketMessenger* m, Conduit* c);
-    bool notify(SocketMessenger* m, Conduit* c);
-
-    bool isAcceptable(SocketMessenger* m, Conduit* c)
-    {
-        m->setErrorCode(isAcceptable());
-        return false;
-    }
-
-    bool isConnectable(SocketMessenger* m, Conduit* c)
-    {
-        m->setErrorCode(isConnectable());
-        return false;
-    }
-
-    bool isReadable(SocketMessenger* m, Conduit* c)
-    {
-        m->setErrorCode(isReadable());
-        return false;
-    }
-
-    bool isWritable(SocketMessenger* m, Conduit* c)
-    {
-        m->setErrorCode(isWritable());
-        return false;
-    }
+    bool read(SocketMessenger* m);
+    bool write(SocketMessenger* m);
+    bool close(SocketMessenger* m);
 
     DatagramReceiver* clone(Conduit* conduit, void* key)
     {
         return new DatagramReceiver(conduit);
-    }
-
-    unsigned int release()
-    {
-        delete this;
-        return 0;
     }
 };
 

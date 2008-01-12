@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -19,29 +19,6 @@
 
 class Visualizer : public BroadcastVisitor
 {
-    void edge(Conduit* c, Conduit* p)
-    {
-        Mux* m = dynamic_cast<Mux*>(c);
-        if (!m)
-        {
-            esReport("    %s_%p -> %s_%p;\n", c->getName(), c, p->getName(), p);
-        }
-        else
-        {
-            long key = (long) m->getKey(p);
-            if (0 <= key && key < 65536)
-            {
-                esReport("    %s_%p -> %s_%p [label=\"%ld\"];\n",
-                         c->getName(), c, p->getName(), p, key);
-            }
-            else
-            {
-                esReport("    %s_%p -> %s_%p [label=\"0x%p\"];\n",
-                         c->getName(), c, p->getName(), p, key);
-            }
-        }
-    }
-
 public:
     Visualizer() :
         BroadcastVisitor(0)
@@ -61,7 +38,7 @@ public:
         esReport("    %s_%p [shape=ellipse]\n", a->getName(), a);
         if (c)
         {
-            edge(c, a);
+            esReport("    %s_%p -> %s_%p;\n", c->getName(), c, a->getName(), a);
             return false;
         }
         return true;
@@ -79,7 +56,7 @@ public:
         }
         if (c)
         {
-            edge(c, m);
+            esReport("    %s_%p -> %s_%p;\n", c->getName(), c, m->getName(), m);
         }
         return true;
     }
@@ -88,7 +65,7 @@ public:
         esReport("    %s_%p [shape=box]\n", p->getName(), p);
         if (c)
         {
-            edge(c, p);
+            esReport("    %s_%p -> %s_%p;\n", c->getName(), c, p->getName(), p);
             if (c == p->getA())
             {
                 if (!p->getB())
@@ -96,14 +73,7 @@ public:
                     return false;
                 }
             }
-            else if (c == p->getB())
-            {
-                if (!p->getA())
-                {
-                    return false;
-                }
-            }
-            else
+            else if (!p->getA())
             {
                 return false;
             }

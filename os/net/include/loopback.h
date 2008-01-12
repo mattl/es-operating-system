@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -39,16 +39,27 @@ public:
 class LoopbackReceiver :
     public InetReceiver
 {
-    Handle<IStream> stream;
+    IStream* stream;
 
 public:
-    LoopbackReceiver(INetworkInterface* loopbackInterface) :
-        stream(loopbackInterface, true)
+    LoopbackReceiver(IStream* stream) :
+        stream(stream)
     {
         ASSERT(stream);
+        if (stream)
+        {
+            stream->addRef();
+        }
+    }
+    ~LoopbackReceiver()
+    {
+        if (stream)
+        {
+            stream->release();
+        }
     }
 
-    bool output(InetMessenger* m, Conduit* c)
+    bool output(InetMessenger* m)
     {
         int af = m->getType();
         m->movePosition(-sizeof(int));
@@ -56,10 +67,8 @@ public:
 
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# output\n");
         esDump(packet, len);
-#endif
         stream->write(packet, len);
         return true;
     }
@@ -72,9 +81,9 @@ class LoopbackInterface : public Interface
     LoopbackReceiver        loopbackReceiver;
 
 public:
-    LoopbackInterface(INetworkInterface* loopbackInterface) :
-        loopbackReceiver(loopbackInterface),
-        Interface(loopbackInterface, &loopbackAccessor, &loopbackReceiver)
+    LoopbackInterface(IStream* stream) :
+        loopbackReceiver(stream),
+        Interface(stream, &loopbackAccessor, &loopbackReceiver)
     {
     }
     ~LoopbackInterface()

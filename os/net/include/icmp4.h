@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -39,16 +39,18 @@ class ICMPReceiver : public InetReceiver
 {
     s16 checksum(InetMessenger* m);
 public:
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
 };
 
 class ICMPEchoRequestReceiver : public InetReceiver
 {
+    Conduit*        adapter;
     Inet4Address*   addr;
 
 public:
-    ICMPEchoRequestReceiver(Inet4Address* addr) :
+    ICMPEchoRequestReceiver(Conduit* adapter, Inet4Address* addr) :
+        adapter(adapter),
         addr(addr)
     {
         if (addr)
@@ -65,7 +67,7 @@ public:
         }
     }
 
-    bool input(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
 
     Inet4Address* getAddress()
     {
@@ -78,13 +80,7 @@ public:
 
     ICMPEchoRequestReceiver* clone(Conduit* conduit, void* key)
     {
-        return new ICMPEchoRequestReceiver(static_cast<Inet4Address*>(key));
-    }
-
-    unsigned int release()
-    {
-        delete this;
-        return 0;
+        return new ICMPEchoRequestReceiver(conduit, static_cast<Inet4Address*>(key));
     }
 };
 
@@ -100,8 +96,9 @@ public:
         addr(addr),
         replied(false)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        esCreateInstance(CLSID_Monitor,
+                         IID_IMonitor,
+                         reinterpret_cast<void**>(&monitor));
     }
     ~ICMPEchoReplyReceiver()
     {
@@ -111,7 +108,7 @@ public:
         }
     }
 
-    bool input(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
 
     bool wait(s64 timeout)
     {
@@ -130,66 +127,6 @@ public:
     {
         return replied;
     }
-};
-
-class ICMPUnreachReceiver : public InetReceiver
-{
-public:
-    ICMPUnreachReceiver()
-    {
-    }
-
-    ~ICMPUnreachReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-};
-
-class ICMPSourceQuenchReceiver : public InetReceiver
-{
-public:
-    ICMPSourceQuenchReceiver()
-    {
-    }
-
-    ~ICMPSourceQuenchReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-};
-
-class ICMPTimeExceededReceiver : public InetReceiver
-{
-public:
-    ICMPTimeExceededReceiver()
-    {
-    }
-
-    ~ICMPTimeExceededReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-};
-
-class ICMPParamProbReceiver : public InetReceiver
-{
-public:
-    ICMPParamProbReceiver()
-    {
-    }
-
-    ~ICMPParamProbReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
 };
 
 #endif  // ICMP4_H_INCLUDED

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -90,6 +90,7 @@ expired()
 {
     esReport("expired\n");
 
+    Socket* socket = getSocket();
     if (!socket)
     {
         return;
@@ -197,14 +198,15 @@ expired()
 
     // Retransmit a packet
     int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-    Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, size, size);
+    u8 chunk[size];
+    InetMessenger m(&InetReceiver::output, chunk, size, size);
     Handle<Address> addr;
-    m->setLocal(addr = socket->getLocal());
-    m->setRemote(addr = socket->getRemote());
-    m->setLocalPort(socket->getLocalPort());
-    m->setRemotePort(socket->getRemotePort());
-    m->setType(IPPROTO_TCP);
-    Visitor v(m);
+    m.setLocal(addr = socket->getLocal());
+    m.setRemote(addr = socket->getRemote());
+    m.setLocalPort(socket->getLocalPort());
+    m.setRemotePort(socket->getRemotePort());
+    m.setType(IPPROTO_TCP);
+    Visitor v(&m);
     conduit->accept(&v, conduit->getB());
 }
 
@@ -228,6 +230,7 @@ stopAckTimer()
 void StreamReceiver::
 delayedAck()
 {
+    Socket* socket = getSocket();
     if (!socket)
     {
         return;
@@ -238,14 +241,15 @@ delayedAck()
         // Send ACK
         ackNow = true;
         int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, size, size);
+        u8 chunk[size];
+        InetMessenger m(&InetReceiver::output, chunk, size, size);
         Handle<Address> addr;
-        m->setLocal(addr = socket->getLocal());
-        m->setRemote(addr = socket->getRemote());
-        m->setLocalPort(socket->getLocalPort());
-        m->setRemotePort(socket->getRemotePort());
-        m->setType(IPPROTO_TCP);
-        Visitor v(m);
+        m.setLocal(addr = socket->getLocal());
+        m.setRemote(addr = socket->getRemote());
+        m.setLocalPort(socket->getLocalPort());
+        m.setRemotePort(socket->getRemotePort());
+        m.setType(IPPROTO_TCP);
+        Visitor v(&m);
         conduit->accept(&v, conduit->getB());
     }
 }

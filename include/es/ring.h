@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -14,7 +14,6 @@
 #ifndef NINTENDO_ES_RING_H_INCLUDED
 #define NINTENDO_ES_RING_H_INCLUDED
 
-#include <es.h>
 #include <es/types.h>
 
 /**
@@ -35,6 +34,16 @@ class Ring
      */
     long    used;
 
+    long min(long a, long b)
+    {
+        return (a < b) ? a : b;
+    }
+
+    long max(long a, long b)
+    {
+        return (b < a) ? a : b;
+    }
+
     long pos(u8* org, u8* ptr)
     {
         return (org <= ptr) ? (ptr - org) : (ptr + size - org);
@@ -51,36 +60,14 @@ public:
         }
     };
 
-    Ring() :
-        buf(0),
-        size(0),
-        head(0),
-        used(0)
-    {
-    }
-
     /**
      * Constructs a ring buffer object managing the specified ring buffer.
      * @param buf the ring buffer.
      * @param size the size of the ring buffer.
      */
     Ring(void* buf, long size) :
-        buf(static_cast<u8*>(buf)),
-        size(size),
-        head(static_cast<u8*>(buf)),
-        used(0)
+        buf(static_cast<u8*>(buf)), size(size), head(static_cast<u8*>(buf)), used(0)
     {
-    }
-
-    void initialize(void* buf, long size)
-    {
-        ASSERT(this->buf == 0);
-        ASSERT(this->size == 0);
-
-        this->buf = static_cast<u8*>(buf);
-        this->size = size;
-        this->head = static_cast<u8*>(buf);
-        this->used = 0;
     }
 
     /** Peeks data from this ring buffer.
@@ -99,10 +86,10 @@ public:
     long read(void* dst, long count);
 
     /** Discards data from this ring buffer.
-     * @param count     the number bytes to be discarded.
-     * @return          the number bytes discarded
+     * @param count     the length of the data in bytes.
+     * @return          the length of the data discarded
      */
-    long skip(long count);
+    long discard(long count);
 
     /** Writes data to this ring buffer.
      * @param src       the data to be written.

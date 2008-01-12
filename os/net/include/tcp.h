@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -23,9 +23,14 @@ class TCPReceiver : public InetReceiver
     s16 checksum(InetMessenger* m);
 
 public:
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-    bool error(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
+    bool error(InetMessenger* m);
+
+    TCPReceiver* clone(Conduit* conduit, void* key)
+    {
+        return new TCPReceiver;
+    }
 };
 
 #endif  // TCP_H_INCLUDED

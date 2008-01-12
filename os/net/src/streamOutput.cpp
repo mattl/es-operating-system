@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -54,7 +54,7 @@ fillOptions(u8* opt, u16 flag)
         ptr += sizeof(TCPOptMss);
 #ifdef TCP_SACK
         new(ptr) TCPOptSackPermitted();
-        ptr += sizeof(TCPOptSackPermitted);
+        ptr += sizeof(TCPOptMss);
 #endif
     }
 #ifdef TCP_SACK

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -23,7 +23,7 @@
 #include "icmp4.h"
 #include "igmp.h"
 #include "inet4address.h"
-#include "inet4reass.h"
+#include "scope.h"
 #include "socket.h"
 #include "stream.h"
 #include "tcp.h"
@@ -32,6 +32,21 @@
 class ARPFamily;
 class InFamily;
 
+class InAccessor : public Accessor
+{
+public:
+    /** @return the protocol field of IPHdr as the key.
+     */
+    void* getKey(Messenger* m)
+    {
+        ASSERT(m);
+
+        IPHdr* iphdr = static_cast<IPHdr*>(m->fix(sizeof(IPHdr)));
+        m->movePosition(iphdr->getHdrSize());
+        return reinterpret_cast<void*>(iphdr->proto);
+    }
+};
+
 class InReceiver : public InetReceiver
 {
     static u16  identification;
@@ -39,29 +54,28 @@ class InReceiver : public InetReceiver
     InFamily*   inFamily;
 
     s16 checksum(const InetMessenger* m, int hlen);
-    void fragment(const InetMessenger* m, int mtu, Address* nextHop);
 
 public:
     InReceiver(InFamily* inFamily) : inFamily(inFamily)
     {
     }
 
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-    bool error(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
+    bool error(InetMessenger* m);
 };
 
 class InFamily : public AddressFamily
 {
     // Scope demultiplexer
-    InetScopeAccessor           scopeAccessor;
+    ScopeAccessor               scopeAccessor;
     ConduitFactory              scopeFactory;
     Mux                         scopeMux;
 
     // In protocol
     InReceiver                  inReceiver;
     Protocol                    inProtocol;
-    TypeAccessor                inAccessor;
+    InAccessor                  inAccessor;
     ConduitFactory              inFactory;
     Mux                         inMux;
 
@@ -85,29 +99,13 @@ class InFamily : public AddressFamily
     Mux                         echoRequestMux;
 
     // ICMP Unreach
-    ICMPUnreachReceiver         unreachReceiver;
-    Protocol                    unreachProtocol;
-
-    // ICMP Source Quench
-    ICMPSourceQuenchReceiver    sourceQuenchReceiver;
-    Protocol                    sourceQuenchProtocol;
-
-    // ICMP Time Exceeded
-    ICMPTimeExceededReceiver    timeExceededReceiver;
-    Protocol                    timeExceededProtocol;
-
-    // ICMP ParamProb
-    ICMPParamProbReceiver       paramProbReceiver;
-    Protocol                    paramProbProtocol;
-
     // ICMP Redirect
     // ...
 
     // IGMP
     IGMPReceiver                igmpReceiver;
     Protocol                    igmpProtocol;
-    InetLocalAddressAccessor    igmpAccessor;
-    Adapter                     igmpAdapter;            // prototype
+    IGMPAccessor                igmpAccessor;
     ConduitFactory              igmpFactory;
     Mux                         igmpMux;
 
@@ -128,8 +126,6 @@ class InFamily : public AddressFamily
     Mux                         udpLocalPortMux;
     UDPReceiver                 udpReceiver;
     Protocol                    udpProtocol;
-    int                         udpLast;
-    UDPUnreachReceiver          udpUnreachReceiver;
 
     // TCP
     StreamReceiver              streamReceiver;
@@ -148,22 +144,6 @@ class InFamily : public AddressFamily
     Mux                         tcpLocalPortMux;
     TCPReceiver                 tcpReceiver;
     Protocol                    tcpProtocol;
-    int                         tcpLast;
-
-    // Fragment Reassemble
-    ReassReceiver               reassReceiver;
-    Adapter                     reassAdapter;
-    InetRemotePortAccessor      reassIdAccessor;
-    ConduitFactory              reassIdFactory;
-    Mux                         reassIdMux;
-    InetRemoteAddressAccessor   reassRemoteAddressAccessor;
-    ConduitFactory              reassRemoteAddressFactory;
-    Mux                         reassRemoteAddressMux;
-    InetLocalAddressAccessor    reassLocalAddressAccessor;
-    ConduitFactory              reassLocalAddressFactory;
-    Mux                         reassLocalAddressMux;
-    Protocol                    reassProtocol;
-    ReassFactoryReceiver        reassFactoryReceiver;
 
     // Inet4Address tree
     Tree<InAddr, Inet4Address*> addressTable[Socket::INTERFACE_MAX];
@@ -172,7 +152,7 @@ class InFamily : public AddressFamily
     ARPFamily                   arpFamily;
 
     // Default Router List
-    AddressSet<Inet4Address>    routerList;
+    RouterList<Inet4Address>    routerList;
 
 public:
     InFamily();
@@ -188,13 +168,13 @@ public:
         {
             switch (socket->getSocketType())
             {
-            case ISocket::Stream:
+            case ISocket::STREAM:
                 return &tcpProtocol;
                 break;
-            case ISocket::Datagram:
+            case ISocket::DGRAM:
                 return &udpProtocol;
                 break;
-            case ISocket::Raw:
+            case ISocket::RAW:
                 return &inProtocol;
                 break;
             default:
@@ -204,64 +184,30 @@ public:
         return 0;
     }
 
-    int selectEphemeralPort(Socket* socket)
+    void addInterface(Interface* interface)
     {
-        int* port;
-        Mux* mux;
-        if (socket->getAddressFamily() == AF_INET)
-        {
-            switch (socket->getSocketType())
-            {
-            case ISocket::Stream:
-                port = &tcpLast;
-                mux = &tcpLocalPortMux;
-                break;
-            case ISocket::Datagram:
-                port = &udpLast;
-                mux = &udpLocalPortMux;
-                break;
-            default:
-                return 0;
-                break;
-            }
-        }
-        // cf. http://www.iana.org/assignments/port-numbers
-        int anon = *port;
-        for (int i = 0; i <= 65535 - 49152; ++i)
-        {
-            if (65535 < anon)
-            {
-                anon = 49152;
-            }
-            if (!mux->contains(reinterpret_cast<void*>(anon)))
-            {
-                *port = anon + 1;
-                return anon;
-            }
-            ++anon;
-        }
-        return 0;
+        scopeMux.addB(reinterpret_cast<void*>(interface->getScopeID()),
+                      interface->addAddressFamily(this, &scopeMux));
     }
-
-    IInternetAddress* selectSourceAddress(IInternetAddress* dst)
-    {
-        return selectSourceAddress(dynamic_cast<Inet4Address*>(dst));
-    }
-
-    void addInterface(Interface* interface);
 
     Inet4Address* getAddress(InAddr addr, int scopeID = 0);
     void addAddress(Inet4Address* address);
     void removeAddress(Inet4Address* address);
 
-    Inet4Address* getRouter();
-    void addRouter(Inet4Address* addr);
-    void removeRouter(Inet4Address* addr);
+    void addRouter(Inet4Address* addr)
+    {
+        Handle<Inet4Address> local;
+        local = onLink(addr->getAddress(), addr->getScopeID());
+        if (local)
+        {
+            routerList.addRouter(addr);
+        }
+    }
 
-    void joinGroup(Inet4Address* addr);
-    void leaveGroup(Inet4Address* addr);
-
-    Inet4Address* getHostAddress(int scopeID = 0);
+    void removeRouter(Inet4Address* addr)
+    {
+        routerList.removeRouter(addr);
+    }
 
     Inet4Address* onLink(InAddr addr, int scopeID = 0);
 
@@ -271,16 +217,12 @@ public:
     bool isReachable(Inet4Address* address, long long timeout);
 
     // Inet4Address
-    Inet4Address                addressAny;         // InAddrAny
-    Inet4Address                addressAllRouters;  // InAddrAny
+    Inet4Address                addressAny;     // InAddrAny
 
     friend class Inet4Address;
     friend class Inet4Address::StateInit;
     friend class Inet4Address::StateTentative;
     friend class Inet4Address::StatePreferred;
-    friend class Inet4Address::StateReachable;
-    friend class Inet4Address::StateDestination;
-    friend class InReceiver;
 };
 
 #endif  // INET4_H_INCLUDED

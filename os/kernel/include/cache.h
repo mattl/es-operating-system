@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -20,7 +20,6 @@
 #include <es/dateTime.h>
 #include <es/base/ICache.h>
 #include <es/base/IClassFactory.h>
-#include <es/base/IFile.h>
 #include <es/base/IPageable.h>
 #include <es/base/IPageSet.h>
 #include <es/base/IStream.h>
@@ -320,10 +319,10 @@ public:
     void reserve(unsigned long long reserveCount);
 
     // IClassFactory
-    void* createInstance(const Guid& riid);
+    bool createInstance(const Guid& riid, void** objectPtr);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -345,7 +344,6 @@ class Cache : public ICache, public IPageable
     CacheFactory*       cacheFactory;
     Link<Cache>         link;
     IStream*            backingStore;
-    IFile*              file;
     PageSet*            pageSet;
     long long           size;
     PageList            changedList;
@@ -430,7 +428,7 @@ public:
 
     void setSize(long long size);
 
-    int getSectorSize();
+    void getSectorSize(int& size);
 
     void setSectorSize(int size);
 
@@ -445,7 +443,7 @@ public:
     unsigned long long getPageCount();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -491,7 +489,7 @@ public:
     ICache* create(IStream* backingStore, IPageSet* pageSet);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -502,7 +500,7 @@ public:
     friend class Stream;
 };
 
-class Stream : public IStream, public IFile
+class Stream : public IStream
 {
     Ref         ref;
     Cache*      cache;
@@ -522,25 +520,7 @@ public:
     int write(const void* src, int count);
     int write(const void* src, int count, long long offset);
     void flush();
-
-    unsigned int getAttributes();
-    void setAttributes(unsigned int attributes);
-    long long getCreationTime();
-    void setCreationTime(long long creationTime);
-    long long getLastAccessTime();
-    void setLastAccessTime(long long lastAccessTime);
-    long long getLastWriteTime();
-    void setLastWriteTime(long long lastWriteTime);
-    bool canRead();
-    bool canWrite();
-    bool isDirectory();
-    bool isFile();
-    bool isHidden();
-    int getName(char* name, int nameLength);
-    IPageable* getPageable();
-    IStream* getStream();
-
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 

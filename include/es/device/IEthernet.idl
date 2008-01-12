@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2006
+ * Nintendo Co., Ltd.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Nintendo makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+import "es/base/IInterface.idl";
+
+/**
+ * This interface represents an ethernet adapter.
+ */
+[object, uuid(6498dfe6-4ed4-11db-9c02-0009bf000001)]
+interface IEthernet : IInterface
+{
+    struct InterfaceStatistics
+    {
+        unsigned long  inOctets;        // The total number of octets received.
+        unsigned int   inUcastPkts;     // The number of unicast packets delivered.
+        unsigned int   inNUcastPkts;    // The number of non-unicast delivered.
+        unsigned int   inDiscards;      // The number of inbound packets discarded.
+        unsigned int   inErrors;        // The number of inbound packets that contained errors.
+        unsigned int   inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
+        unsigned long  outOctets;       // The total number of octets transmitted.
+        unsigned int   outUcastPkts;    // The total number of packets transmitted to a unicast address.
+        unsigned int   outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
+        unsigned int   outDiscards;     // The number of outbound packets discarded.
+        unsigned int   outErrors;       // The number of outbound packets that could not be transmitted because of errors.
+
+        unsigned int   outCollisions;   // Collisions on CSMA
+    };
+
+    // generic mode
+    enum mode
+    {
+        MODE_AUTO = 0,
+        MODE_10FULL,
+        MODE_10HALF,
+        MODE_100FULL,
+        MODE_100HALF,
+        MODE_1000FULL,
+        MODE_1000HALF,
+        MODE_UNKNOWN
+    };
+
+    /** Tests whether this ethernet adapter is available.
+     * @return zero, if available.
+     */
+    int probe();
+
+    /** Starts this ethernet adapter.
+     */
+    int start();
+
+    /** Stops this ethernet adapter.
+     */
+    int stop();
+
+    /** Enables or disables the promiscuous mode of this ethernet adapter.
+     * @param on the boolean if the promiscuous mode is to be enabled or not.
+     */
+    void setPromiscuousMode(boolean on);
+
+    /** Checks if the promiscuous mode of this ethernet adapter is enabled or not.
+     */
+    boolean getPromiscuousMode();
+
+    /** Allows this ethernet adapter to receive ethernet frames sent to the specified multicast MAC address.
+     * @param macaddr the MAC address.
+     */
+    int addMulticastAddress([in] unsigned byte macaddr[6]);
+
+    /** Forbids this ethernet adapter to receive ethernet frames sent to the specified multicast MAC address.
+     * @param macaddr the MAC address.
+     */
+    int removeMulticastAddress([in] unsigned byte macaddr[6]);
+
+    /** Gets the MAC address of this ethernet adapter.
+     * @param macaddr the MAC address.
+     */
+    void getMacAddress([out] unsigned byte macaddr[6]);
+
+    /** Gets the current link state of this ethernet adapter.
+     */
+    boolean getLinkState();
+
+    /** Gets the speed and duplex mode of this ethernet adapter.
+     * @return the number of the speed and duplex mode (IEthernet::MODE_*).
+     */
+    int getMode();
+
+    /** Gets the statistics of this ethernet adapter.
+     * @param statistics the interface statistics.
+     */
+    void getStatistics([out] InterfaceStatistics* statistics);
+}

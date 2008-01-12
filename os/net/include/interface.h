@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -14,10 +14,8 @@
 #ifndef INTERFACE_H_INCLUDED
 #define INTERFACE_H_INCLUDED
 
-#include <es/handle.h>
 #include <es/base/IStream.h>
 #include <es/base/IThread.h>
-#include <es/device/INetworkInterface.h>
 #include "inet.h"
 #include "interface.h"
 #include "address.h"
@@ -31,14 +29,12 @@ IThread* esCreateThread(void* (*start)(void* param), void* param);
  */
 class Interface
 {
-    static const int MRU = 1518;
-
-    Handle<INetworkInterface>   networkInterface;
-
     IThread*        thread;
+    u8              chunk[1500];
 
-    u8              mac[6];             // MAC address
+    u8              mac[6];     // MAC address
 
+    IStream*        stream;     // Raw stream
     Accessor*       accessor;
     Receiver*       receiver;
 
@@ -48,26 +44,17 @@ class Interface
 
     void* vent()
     {
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::input, MRU);
-        Handle<IStream> stream = networkInterface;
-        for (;;)
+        while (stream)
         {
-            int len = stream->read(m->fix(MRU), MRU);
+            int len = stream->read(chunk, sizeof(chunk));
             if (0 < len)
             {
-#ifdef VERBOSE
                 esReport("# input\n");
-                esDump(m->fix(len), len);
-#endif
-                m->setSize(len);
-                m->setScopeID(scopeID);
-                Transporter v(m);
+                esDump(chunk, len);
+                InetMessenger m(&InetReceiver::input, chunk, len);
+                m.setScopeID(scopeID);
+                Transporter v(&m);
                 adapter.accept(&v);
-                m->setSize(MRU);    // Restore the size
-                m->setPosition(0);
-
-                m->setLocal(0);
-                m->setRemote(0);
             }
         }
         return 0;
@@ -83,23 +70,40 @@ protected:
     Mux             mux;
 
 public:
-    Interface(INetworkInterface* networkInterface, Accessor* accessor, Receiver* receiver) :
-        networkInterface(networkInterface, true),
-        thread(0),
+    Interface(IStream* stream, Accessor* accessor, Receiver* receiver) :
+        stream(stream),
         accessor(accessor),
         receiver(receiver),
         mux(accessor, &factory),
-        scopeID(0)
+        scopeID(0),
+        thread(0)
     {
         memset(mac, 0, sizeof mac);
 
         adapter.setReceiver(receiver);
         Conduit::connectAA(&adapter, &mux);
+
+        if (stream)
+        {
+            stream->addRef();
+        }
+    }
+    ~Interface()
+    {
+        if (stream)
+        {
+            stream->release();
+            stream = 0;
+        }
     }
 
-    INetworkInterface* getNetworkInterface()
+    IStream* getStream()
     {
-        return networkInterface;    // XXX Check reference count
+        if (stream)
+        {
+            stream->addRef();
+        }
+        return stream;
     }
 
     Adapter* getAdapter()
@@ -126,23 +130,12 @@ public:
         memmove(this->mac, mac, sizeof this->mac);
     }
 
-    void addMulticastAddress(u8 mac[6])
-    {
-        networkInterface->addMulticastAddress(mac);
-    }
-
-    void removeMulticastAddress(u8 mac[6])
-    {
-        networkInterface->removeMulticastAddress(mac);
-    }
-
     /** Run a thread that reads from the stream and creates an input
      * messenger to be accepted by the interface adapter.
      */
     void start()
     {
         thread = esCreateThread(run, this);
-        thread->setPriority(IThread::Highest);
         thread->start();
     }
 

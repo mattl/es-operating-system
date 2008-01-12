@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -14,8 +14,6 @@
 #ifndef INET4ADDRESS_H_INCLUDED
 #define INET4ADDRESS_H_INCLUDED
 
-#include <algorithm>
-#include <es/collection.h>
 #include <es/endian.h>
 #include <es/list.h>
 #include <es/ref.h>
@@ -26,7 +24,6 @@
 #include "inet.h"
 
 class InFamily;
-class Socket;
 
 class Inet4Address :
     public Address,
@@ -44,16 +41,8 @@ class Inet4Address :
         {
             return false;
         }
-        virtual bool isDeprecated()
-        {
-            return false;
-        }
 
         virtual void start(Inet4Address* a)
-        {
-        }
-
-        virtual void stop(Inet4Address* a)
         {
         }
 
@@ -144,11 +133,6 @@ class Inet4Address :
         {
             return true;
         }
-        bool isDeprecated()
-        {
-            return true;
-        }
-        void start(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -158,7 +142,6 @@ class Inet4Address :
     class StateNonMember : public State
     {
     public:
-        void start(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -167,8 +150,6 @@ class Inet4Address :
     class StateDelayingMember : public State
     {
     public:
-        void stop(Inet4Address* a);
-        void expired(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -177,7 +158,6 @@ class Inet4Address :
     class StateIdleMember : public State
     {
     public:
-        void stop(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -187,7 +167,6 @@ class Inet4Address :
     class StateDestination : public State
     {
     public:
-        void start(Inet4Address* a);
         bool input(InetMessenger* m, Inet4Address* a);
         bool output(InetMessenger* m, Inet4Address* a);
         bool error(InetMessenger* m, Inet4Address* a);
@@ -210,18 +189,34 @@ class Inet4Address :
     InFamily*   inFamily;
     Conduit*    adapter;
     int         timeoutCount;
-    int         pathMTU;
 
 public:
-    Inet4Address(InAddr addr, State& state, int scopeID = 0, int prefix = 0);
-    virtual ~Inet4Address();
+    Inet4Address(InAddr addr, State& state, int scopeID = 0, int prefix = 0) :
+        state(&state),
+        addr(addr),
+        scopeID(scopeID),
+        prefix(prefix),
+        inFamily(0),
+        adapter(0),
+        timeoutCount(0)
+    {
+        ASSERT(0 <= prefix && prefix < 32);
+    }
+
+    virtual ~Inet4Address()
+    {
+    }
 
     State* getState()
     {
         return state;
     }
 
-    void setState(State& state);
+    void setState(State& state)
+    {
+        timeoutCount = 0;   // Reset timeout count
+        this->state = &state;
+    }
 
     s32 sumUp()
     {
@@ -262,32 +257,22 @@ public:
         return address;
     }
 
-    Conduit* getAdapter() const
-    {
-        return adapter;
-    }
-
     void start()
     {
         return state->start(this);
     }
 
-    void stop()
-    {
-        return state->stop(this);
-    }
-
-    bool input(InetMessenger* m, Conduit* c)
+    bool input(InetMessenger* m)
     {
         return state->input(m, this);
     }
 
-    bool output(InetMessenger* m, Conduit* c)
+    bool output(InetMessenger* m)
     {
         return state->output(m, this);
     }
 
-    bool error(InetMessenger* m, Conduit* c)
+    bool error(InetMessenger* m)
     {
         return state->error(m, this);
     }
@@ -301,18 +286,16 @@ public:
     void cancel();
 
     // IInternetAddress
-    int getAddress(void* address, int len);
+    int getAddress(void* address, unsigned int len);
     int getAddressFamily();
-    int getCanonicalHostName(char* hostName, int len);
-    int getHostAddress(char* hostAddress, int len);
-    int getHostName(char* hostName, int len);
+    int getCanonicalHostName(char* hostName, unsigned int len);
+    int getHostAddress(char* hostAddress, unsigned int len);
+    int getHostName(char* hostName, unsigned int len);
 
     int getScopeID()
     {
         return scopeID;
     }
-    void setScopeID(int id);
-
     bool isUnspecified()
     {
         return IN_IS_ADDR_UNSPECIFIED(addr);
@@ -340,27 +323,13 @@ public:
     {
         return state->isPreferred();
     }
-    bool isDeprecated()
-    {
-        return state->isDeprecated();
-    }
-
-    int getPathMTU()
-    {
-        return pathMTU;
-    }
-
-    void setPathMTU(int mtu)
-    {
-        pathMTU = std::max(68, mtu);
-    }
 
     IInternetAddress* getNext();
 
     IInterface* socket(int type, int protocol, int port);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 

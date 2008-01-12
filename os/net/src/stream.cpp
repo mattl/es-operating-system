@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -74,9 +74,10 @@ isn(InetMessenger* m)
     return TCPSeq(isn);
 }
 
-int StreamReceiver::
+s32 StreamReceiver::
 getDefaultMSS()
 {
+    Socket* socket = getSocket();
     if (socket)
     {
         switch (socket->getAddressFamily())
@@ -90,66 +91,40 @@ getDefaultMSS()
     return 0;
 }
 
-int StreamReceiver::
-getDefaultMSS(int mtu)
-{
-    if (socket)
-    {
-        switch (socket->getAddressFamily())
-        {
-          case AF_INET:
-            return mtu - sizeof(IPHdr) - sizeof(TCPHdr);
-          case AF_INET6:
-            return mtu - sizeof(IP6Hdr) - sizeof(TCPHdr);
-        }
-    }
-    return 0;
-}
-
 bool StreamReceiver::
-input(InetMessenger* m, Conduit* c)
+input(InetMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
     esReport("StreamReceiver::input %s\n", state->getName());
     if (state->input(m, this))
     {
         int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-        Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
+        u8 chunk[size];
+        InetMessenger seg(&InetReceiver::output, chunk, size, size);
         Handle<Address> addr;
-        seg->setLocal(addr = m->getLocal());
-        seg->setRemote(addr = m->getRemote());
-        seg->setLocalPort(m->getLocalPort());
-        seg->setRemotePort(m->getRemotePort());
-        seg->setType(IPPROTO_TCP);
-        Visitor v(seg);
+        seg.setLocal(addr = m->getLocal());
+        seg.setRemote(addr = m->getRemote());
+        seg.setLocalPort(m->getLocalPort());
+        seg.setRemotePort(m->getRemotePort());
+        seg.setType(IPPROTO_TCP);
+        Visitor v(&seg);
         conduit->accept(&v, conduit->getB());
     }
     return true;
 }
 
 bool StreamReceiver::
-output(InetMessenger* m, Conduit* c)
+output(InetMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
     hole = 0;
     onxt = sendNext;
     return state->output(m, this);
 }
 
 bool StreamReceiver::
-error(InetMessenger* m, Conduit* c)
+error(InetMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
-    int code = m->getErrorCode();
-    if (code != ENETUNREACH)
-    {
-        err = code;
-        abort();
-    }
-    return true;
+    // monitor->notifyAll();
+    return state->error(m, this);
 }
 
 void StreamReceiver::
@@ -161,29 +136,31 @@ abort()
 
     // XXX process listen and completed, etc.
 
-    notify();
+    monitor->notifyAll();
+
+    Socket* socket = getSocket();
+    SocketUninstaller uninstaller(socket);
+    Adapter* adapter = socket->getAdapter();
+    if (adapter)
+    {
+        socket->setAdapter(0);
+        adapter->accept(&uninstaller);
+    }
 }
 
 // Copy data out of recvRing
 bool StreamReceiver::
-read(SocketMessenger* m, Conduit* c)
+read(SocketMessenger* m)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    while (!isReadable())
+    long len;
+    while ((len = recvRing.getUsed()) == 0 && !isShutdownInput())
     {
-        if (!socket->isBlocking())
-        {
-            m->setErrorCode(EAGAIN);
-            return false;
-        }
         monitor->wait();
     }
-
-    long len = recvRing.getUsed();
     if (len < 0)
     {
-        // XXX m->setErrorCode(XXX);
         return false;
     }
 
@@ -191,18 +168,19 @@ read(SocketMessenger* m, Conduit* c)
     {
         len = m->getSize();
     }
-    m->setSize(len);
+    m->movePosition(-len);
     recvRing.read(m->fix(len), len);
 
     int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-    Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
+    u8 chunk[size];
+    InetMessenger seg(&InetReceiver::output, chunk, size, size);
     Handle<Address> addr;
-    seg->setLocal(addr = m->getLocal());
-    seg->setRemote(addr = m->getRemote());
-    seg->setLocalPort(m->getLocalPort());
-    seg->setRemotePort(m->getRemotePort());
-    seg->setType(IPPROTO_TCP);
-    Visitor v(seg);
+    seg.setLocal(addr = m->getLocal());
+    seg.setRemote(addr = m->getRemote());
+    seg.setLocalPort(m->getLocalPort());
+    seg.setRemotePort(m->getRemotePort());
+    seg.setType(IPPROTO_TCP);
+    Visitor v(&seg);
     conduit->accept(&v, conduit->getB());
 
     return false;
@@ -210,23 +188,16 @@ read(SocketMessenger* m, Conduit* c)
 
 // Copy data into sendRing
 bool StreamReceiver::
-write(SocketMessenger* m, Conduit* c)
+write(SocketMessenger* m)
 {
     Synchronized<IMonitor*> method(monitor);
-    while (!isWritable())
+    long len;
+    while ((len = sizeof sendBuf - sendRing.getUsed()) == 0 && !isShutdownOutput())
     {
-        if (!socket->isBlocking())
-        {
-            m->setErrorCode(EAGAIN);
-            return false;
-        }
         monitor->wait();
     }
-
-    long len = socket->getSendBufferSize() - sendRing.getUsed();
     if (len < 0)
     {
-        // XXX m->setErrorCode(XXX);
         return false;
     }
 
@@ -238,117 +209,75 @@ write(SocketMessenger* m, Conduit* c)
     m->setPosition(m->getSize() - len);
 
     int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-    Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
+    u8 chunk[size];
+    InetMessenger seg(&InetReceiver::output, chunk, size, size);
     Handle<Address> addr;
-    seg->setLocal(addr = m->getLocal());
-    seg->setRemote(addr = m->getRemote());
-    seg->setLocalPort(m->getLocalPort());
-    seg->setRemotePort(m->getRemotePort());
-    seg->setType(IPPROTO_TCP);
-    Visitor v(seg);
+    seg.setLocal(addr = m->getLocal());
+    seg.setRemote(addr = m->getRemote());
+    seg.setLocalPort(m->getLocalPort());
+    seg.setRemotePort(m->getRemotePort());
+    seg.setType(IPPROTO_TCP);
+    Visitor v(&seg);
     conduit->accept(&v, conduit->getB());
 
     return false;
 }
 
 bool StreamReceiver::
-accept(SocketMessenger* m, Conduit* c)
+accept(SocketMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
     return state->accept(m, this);
 }
 
 bool StreamReceiver::
-listen(SocketMessenger* m, Conduit* c)
+listen(SocketMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
     return false;
 }
 
 bool StreamReceiver::
-connect(SocketMessenger* m, Conduit* c)
+connect(SocketMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
     return state->connect(m, this);
 }
 
 bool StreamReceiver::
-close(SocketMessenger* m, Conduit* c)
+close(SocketMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
-    if (socket->getTimeout() == 0 && !socket->isBlocking())
-    {
-        state->abort(this);
-        return false;
-    }
-
-    shutrd = shutwr = true;
     if (state->close(m, this))
     {
         int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-        Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
+        u8 chunk[size];
+        InetMessenger seg(&InetReceiver::output, chunk, size, size);
         Handle<Address> addr;
-        seg->setLocal(addr = m->getLocal());
-        seg->setRemote(addr = m->getRemote());
-        seg->setLocalPort(m->getLocalPort());
-        seg->setRemotePort(m->getRemotePort());
-        seg->setType(IPPROTO_TCP);
-        Visitor v(seg);
+        seg.setLocal(addr = m->getLocal());
+        seg.setRemote(addr = m->getRemote());
+        seg.setLocalPort(m->getLocalPort());
+        seg.setRemotePort(m->getRemotePort());
+        seg.setType(IPPROTO_TCP);
+        Visitor v(&seg);
         conduit->accept(&v, conduit->getB());
     }
+    return true;
+}
 
-    while (!isClosable())
-    {
-        ASSERT(socket);
-        if (!socket->isBlocking())
-        {
-            m->setErrorCode(EAGAIN);
-            return false;
-        }
-        monitor->wait();
-    }
+bool StreamReceiver::
+shutdownOutput(SocketMessenger* m)
+{
     return false;
 }
 
 bool StreamReceiver::
-shutdownOutput(SocketMessenger* m, Conduit* c)
+shutdownInput(SocketMessenger* m)
 {
-    Synchronized<IMonitor*> method(monitor);
-
-    shutwr = true;
-    if (state->close(m, this))
-    {
-        int size = 14 + 60 + 60 + mss;  // XXX Assume MAC, IPv4, TCP
-        Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
-        Handle<Address> addr;
-        seg->setLocal(addr = m->getLocal());
-        seg->setRemote(addr = m->getRemote());
-        seg->setLocalPort(m->getLocalPort());
-        seg->setRemotePort(m->getRemotePort());
-        seg->setType(IPPROTO_TCP);
-        Visitor v(seg);
-        conduit->accept(&v, conduit->getB());
-    }
-    return false;
-}
-
-bool StreamReceiver::
-shutdownInput(SocketMessenger* m, Conduit* c)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    shutrd = true;
-    notify();
     return false;
 }
 
 bool StreamReceiver::
 StateClosed::connect(SocketMessenger* m, StreamReceiver* s)
 {
+    Synchronized<IMonitor*> method(s->monitor);
+
     // Initialize tcp
     s->initRto();
 
@@ -367,29 +296,25 @@ StateClosed::connect(SocketMessenger* m, StreamReceiver* s)
     s->lastSack = s->sendUna;
 #endif  // TCP_SACK
 
-    Handle<Address> local = m->getLocal();
-    s->mss = s->getDefaultMSS(local->getPathMTU());
+    // ++interface->tcpStat.activeOpens;
 
     s->setState(stateSynSent);
 
     // Send SYN
     int size = 14 + 60 + 60;      // XXX Assume MAC, IPv4, TCP
-    Handle<InetMessenger> seg = new InetMessenger(&InetReceiver::output, size, size);
-    seg->setLocal(local);
-    seg->setRemote(Handle<Address>(m->getRemote()));
-    seg->setLocalPort(m->getLocalPort());
-    seg->setRemotePort(m->getRemotePort());
-    seg->setType(IPPROTO_TCP);
-    Visitor v(seg);
+    u8 chunk[size];
+    InetMessenger syn(&InetReceiver::output, chunk, size, size);
+    Handle<Address> addr;
+    syn.setLocal(addr = m->getLocal());
+    syn.setRemote(addr = m->getRemote());
+    syn.setLocalPort(m->getLocalPort());
+    syn.setRemotePort(m->getRemotePort());
+    syn.setType(IPPROTO_TCP);
+    Visitor v(&syn);
     s->conduit->accept(&v, s->conduit->getB());
 
-    while (!s->isConnectable())
+    while (s->state == &stateSynSent)
     {
-        if (!s->socket->isBlocking())
-        {
-            m->setErrorCode(EINPROGRESS);
-            return false;
-        }
         s->monitor->wait();
     }
 
@@ -399,21 +324,14 @@ StateClosed::connect(SocketMessenger* m, StreamReceiver* s)
 bool StreamReceiver::
 StateListen::accept(SocketMessenger* m, StreamReceiver* s)
 {
-    while (!s->isAcceptable())
+    Synchronized<IMonitor*> method(s->monitor);
+
+    while (s->accepted.isEmpty())
     {
-        if (!s->socket->isBlocking())
-        {
-            m->setErrorCode(EAGAIN);
-            return false;
-        }
         s->monitor->wait();
     }
-    if (s->state == &stateListen && !s->accepted.isEmpty())
-    {
-        StreamReceiver* accepted = s->accepted.removeFirst();
-        ASSERT(accepted);
-        ASSERT(accepted->socket);
-        m->setSocket(accepted->socket);
-    }
+    StreamReceiver* accepted = s->accepted.removeFirst();
+    ASSERT(accepted);
+    m->setSocket(accepted->getSocket());
     return false;
 }

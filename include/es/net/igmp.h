@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,28 +16,31 @@
 
 #include <es/net/inet4.h>
 
-// RFC 1112 (IGMPv1)
-// RFC 2236 (IGMPv2)
+#define IGMP_VERSION            2   // Default IGMP version to be used
+
+//
 // RFC 3376 (IGMPv3)
+// RFC 2236 (IGMPv2)
+// RFC 1112 (IGMPv1)
+//
+
+#define IGMP_V1_ROUTER_PRESENT_TIMEOUT      400     // [sec]
+#define IGMP_QUERY_RESPONSE_INTERVAL        100     // 10 seconds
+#define IGMP_UNSOLICITED_REPORT_INTERVAL    10      // 10 seconds
+
+// IGMP types
+#define IGMP_TYPE_QUERY         0x11
+#define IGMP_TYPE_REPORT_V1     0x12
+#define IGMP_TYPE_REPORT_V2     0x16
+#define IGMP_TYPE_REPORT_V3     0x22
+#define IGMP_TYPE_LEAVE         0x17
 
 struct IGMPHdr
 {
     u8      type;           // Type
-    u8      maxRespTime;    // Max response time in units of 1/10 second
+    u8      maxRespTime;    // Max Response Time
     u16     sum;            // Checksum
-    InAddr  addr;           // Group address
-
-    // IGMP types
-    static const u8 Query = 0x11;
-    static const u8 ReportVer1 = 0x12;
-    static const u8 ReportVer2 = 0x16;
-    static const u8 ReportVer3 = 0x22;
-    static const u8 Leave = 0x17;
-
-    // Defaults
-    static const int QueryResponseInterval = 100;       // [in 1/10 second]
-    static const int UnsolicitedReportInterval = 10;    // [second]
-    static const int Ver1RouterPresentTimeout = 400;    // [sec]
+    InAddr  addr;           // Group Address
 };
 
 #endif  // NINTENDO_ES_NET_IGMP_H_INCLUDED

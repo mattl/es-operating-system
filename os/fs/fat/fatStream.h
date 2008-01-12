@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -42,7 +42,6 @@
 #include <es/clsid.h>
 #include "fat.h"
 
-using namespace es;
 using namespace LittleEndian;
 
 class FatStream;
@@ -97,14 +96,14 @@ public:
     int hashCode() const;
 
     // IFile
-    unsigned int getAttributes();
-    long long getCreationTime();
-    long long getLastAccessTime();
-    long long getLastWriteTime();
-    void setAttributes(unsigned int attributes);
-    void setCreationTime(long long time);
-    void setLastAccessTime(long long time);
-    void setLastWriteTime(long long time);
+    int getAttributes(unsigned int& attributes);
+    int getCreationTime(long long& time);
+    int getLastAccessTime(long long& time);
+    int getLastWriteTime(long long& time);
+    int setAttributes(unsigned int attributes);
+    int setCreationTime(long long time);
+    int setLastAccessTime(long long time);
+    int setLastWriteTime(long long time);
     bool canRead();
     bool canWrite();
     bool isDirectory();
@@ -126,8 +125,8 @@ public:
 
     // IBinding
     IInterface* getObject();
-    void setObject(IInterface* object);
-    int getName(char* name, int len);
+    int setObject(IInterface* object);
+    int getName(char* name, unsigned int len);
 
     // IContext
     IBinding* bind(const char* name, IInterface* object);
@@ -139,7 +138,7 @@ public:
     IIterator* list(const char* name);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -148,6 +147,9 @@ private:
     bool check(u8* clusRefs);
 
     // fatTime.cpp
+    DateTime getCreationTime();
+    DateTime getLastAccessTime();
+    DateTime getLastWriteTime();
     void setCreationTime(DateTime);
     void setLastAccessTime(DateTime);
     void setLastWriteTime(DateTime);
@@ -229,8 +231,7 @@ public:
     FatStream* lookup(u32 dirClus, u32 offset);
     void add(FatStream* stream);
     void remove(FatStream* stream);
-    void activate(FatStream* stream);
-    void standBy(FatStream* stream);
+    unsigned int standBy(FatStream* stream);
     bool isClean();
     void setClean(bool clean);
 
@@ -282,14 +283,14 @@ public:
     void mount(IStream* disk);
     void dismount(void);
     void getRoot(IContext** root);
-    long long getFreeSpace();
-    long long getTotalSpace();
+    void getFreeSpace(long long& freeBytes);
+    void getTotalSpace(long long& bytes);
     int checkDisk(bool fixError);
     void format();
     int defrag();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };
@@ -309,7 +310,7 @@ public:
     IInterface* next();
     int remove(void);
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

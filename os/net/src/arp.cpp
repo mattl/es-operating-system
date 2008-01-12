@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -14,7 +14,6 @@
 #include <string.h>
 #include <new>
 #include <es/handle.h>
-#include <es/net/dix.h>
 #include "inet4.h"
 
 ARPFamily::ARPFamily(InFamily* inFamily) :
@@ -82,11 +81,11 @@ StateIncomplete::expired(Inet4Address* a)
             return;
         }
 
-        int len = sizeof(DIXHdr) + sizeof(ARPHdr);
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, len, sizeof(DIXHdr));
-        m->setScopeID(a->getScopeID());
+        u8 chunk[sizeof(DIXHdr) + sizeof(ARPHdr)];
+        InetMessenger m(&InetReceiver::output, chunk, sizeof chunk, sizeof(DIXHdr));
+        m.setScopeID(a->getScopeID());
 
-        ARPHdr* arphdr = static_cast<ARPHdr*>(m->fix(sizeof(ARPHdr)));
+        ARPHdr* arphdr = static_cast<ARPHdr*>(m.fix(sizeof(ARPHdr)));
         memset(arphdr, 0, sizeof(ARPHdr));
         arphdr->tpa = a->getAddress();
 
@@ -95,9 +94,9 @@ StateIncomplete::expired(Inet4Address* a)
 
         arphdr->op = htons(ARPHdr::OP_REQUEST);
 
-        Visitor v(m);
+        Visitor v(&m);
         a->adapter->accept(&v);
-        a->alarm(5000000LL << a->timeoutCount);
+        a->alarm(5000000 << a->timeoutCount);
     }
     else
     {
@@ -130,14 +129,6 @@ void Inet4Address::
 StateReachable::start(Inet4Address* a)
 {
     a->alarm(20 * 60 * 10000000LL);
-
-    // Send kept packets
-    while (Handle<InetMessenger> m = a->retrieve())
-    {
-        Visitor v(m);
-        Conduit* conduit = &a->inFamily->scopeMux;
-        conduit->accept(&v, conduit->getA());
-    }
 }
 
 void Inet4Address::
@@ -181,11 +172,11 @@ StateProbe::expired(Inet4Address* a)
             return;
         }
 
-        int len = sizeof(DIXHdr) + sizeof(ARPHdr);
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, len, sizeof(DIXHdr));
-        m->setScopeID(a->getScopeID());
+        u8 chunk[sizeof(DIXHdr) + sizeof(ARPHdr)];
+        InetMessenger m(&InetReceiver::output, chunk, sizeof chunk, sizeof(DIXHdr));
+        m.setScopeID(a->getScopeID());
 
-        ARPHdr* arphdr = static_cast<ARPHdr*>(m->fix(sizeof(ARPHdr)));
+        ARPHdr* arphdr = static_cast<ARPHdr*>(m.fix(sizeof(ARPHdr)));
         memset(arphdr, 0, sizeof(ARPHdr));
         arphdr->tpa = a->getAddress();
         a->getMacAddress(arphdr->tha);  // Send directly to tha
@@ -195,16 +186,14 @@ StateProbe::expired(Inet4Address* a)
 
         arphdr->op = htons(ARPHdr::OP_REQUEST);
 
-        Visitor v(m);
+        Visitor v(&m);
         a->adapter->accept(&v);
-        a->alarm(5000000LL << a->timeoutCount);
+        a->alarm(5000000 << a->timeoutCount);
     }
     else
     {
         // Not found:
         a->setState(stateInit);
-        // Uninstall ARP cache for this address.
-        a->inFamily->arpFamily.removeAddress(a);
     }
 }
 
@@ -241,7 +230,7 @@ StateTentative::start(Inet4Address* a)
     // Install ARP cache for this address.
     a->inFamily->arpFamily.addAddress(a);
 
-    a->alarm(rand48() % (ARPHdr::PROBE_WAIT * 10000000LL));
+    a->alarm(10000000);   // PROBE_WAIT
 }
 
 void Inet4Address::
@@ -253,27 +242,20 @@ StateTentative::expired(Inet4Address* a)
         esReport("StateTentative::timeoutCount: %d\n", a->timeoutCount);
 
         // Send probe
-        int len = sizeof(DIXHdr) + sizeof(ARPHdr);
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, len, sizeof(DIXHdr));
-        m->setScopeID(a->getScopeID());
+        u8 chunk[sizeof(DIXHdr) + sizeof(ARPHdr)];
+        InetMessenger m(&InetReceiver::output, chunk, sizeof chunk, sizeof(DIXHdr));
+        m.setScopeID(a->getScopeID());
 
-        ARPHdr* arphdr = static_cast<ARPHdr*>(m->fix(sizeof(ARPHdr)));
+        ARPHdr* arphdr = static_cast<ARPHdr*>(m.fix(sizeof(ARPHdr)));
         memset(arphdr, 0, sizeof(ARPHdr));
         arphdr->tpa = a->getAddress();
         arphdr->spa = InAddrAny;
         a->getMacAddress(arphdr->sha);
         arphdr->op = htons(ARPHdr::OP_REQUEST);
 
-        Visitor v(m);
+        Visitor v(&m);
         a->adapter->accept(&v);
-        if (a->timeoutCount < ARPHdr::PROBE_NUM)
-        {
-            a->alarm(ARPHdr::PROBE_MIN * 10000000LL + rand48() % (ARPHdr::PROBE_MAX * 10000000LL));
-        }
-        else
-        {
-            a->alarm(ARPHdr::ANNOUNCE_WAIT * 10000000LL);
-        }
+        a->alarm(10000000);     // XXX PROBE_MIN to PROBE_MAX, ANNOUNCE_WAIT
     }
     else
     {
@@ -322,11 +304,11 @@ StatePreferred::expired(Inet4Address* a)
         esReport("StatePreferred::timeoutCount: %d\n", a->timeoutCount);
 
         // Send announcement
-        int len = sizeof(DIXHdr) + sizeof(ARPHdr);
-        Handle<InetMessenger> m = new InetMessenger(&InetReceiver::output, len, sizeof(DIXHdr));
-        m->setScopeID(a->getScopeID());
+        u8 chunk[sizeof(DIXHdr) + sizeof(ARPHdr)];
+        InetMessenger m(&InetReceiver::output, chunk, sizeof chunk, sizeof(DIXHdr));
+        m.setScopeID(a->getScopeID());
 
-        ARPHdr* arphdr = static_cast<ARPHdr*>(m->fix(sizeof(ARPHdr)));
+        ARPHdr* arphdr = static_cast<ARPHdr*>(m.fix(sizeof(ARPHdr)));
         memset(arphdr, 0, sizeof(ARPHdr));
         arphdr->tpa = a->getAddress();
         a->getMacAddress(arphdr->tha);
@@ -334,9 +316,9 @@ StatePreferred::expired(Inet4Address* a)
         a->getMacAddress(arphdr->sha);
         arphdr->op = htons(ARPHdr::OP_REQUEST);
 
-        Visitor v(m);
+        Visitor v(&m);
         a->adapter->accept(&v);
-        a->alarm(ARPHdr::ANNOUNCE_INTERVAL * 10000000LL);
+        a->alarm(20000000);     // XXX ANNOUNCE_INTERVAL
     }
 }
 
@@ -351,11 +333,11 @@ StatePreferred::input(InetMessenger* m, Inet4Address* a)
                  arphdr->tha[3], arphdr->tha[4], arphdr->tha[5]);
 
         // Send reply
-        int len = sizeof(DIXHdr) + sizeof(ARPHdr);
-        Handle<InetMessenger> r = new InetMessenger(&InetReceiver::output, len, sizeof(DIXHdr));
-        r->setScopeID(a->getScopeID());
+        u8 chunk[sizeof(DIXHdr) + sizeof(ARPHdr)];
+        InetMessenger r(&InetReceiver::output, chunk, sizeof chunk, sizeof(DIXHdr));
+        r.setScopeID(a->getScopeID());
 
-        ARPHdr* rephdr = static_cast<ARPHdr*>(r->fix(sizeof(ARPHdr)));
+        ARPHdr* rephdr = static_cast<ARPHdr*>(r.fix(sizeof(ARPHdr)));
         memset(rephdr, 0, sizeof(ARPHdr));
 
         rephdr->tpa = arphdr->spa;
@@ -365,7 +347,7 @@ StatePreferred::input(InetMessenger* m, Inet4Address* a)
         a->getMacAddress(rephdr->sha);
         rephdr->op = htons(ARPHdr::OP_REPLY);
 
-        Visitor v(r);
+        Visitor v(&r);
         a->adapter->accept(&v);
     }
     return true;
@@ -384,24 +366,6 @@ StatePreferred::error(InetMessenger* m, Inet4Address* a)
 }
 
 // StateDeprecated
-
-void Inet4Address::
-StateDeprecated::start(Inet4Address* a)
-{
-    // Uninstall ARP cache for this address.
-    a->inFamily->arpFamily.removeAddress(a);
-
-    // Install an ICMP echo request adapter for this address if necessary.
-    InetMessenger m;
-    m.setLocal(a);
-    void* key = a->inFamily->echoRequestMux.getKey(&m);
-    Adapter* adapter = dynamic_cast<Adapter*>(a->inFamily->echoRequestMux.getB(key));
-    if (adapter)
-    {
-        Uninstaller uninstaller(&m);
-        adapter->accept(&uninstaller);
-    }
-}
 
 bool Inet4Address::
 StateDeprecated::input(InetMessenger* m, Inet4Address* a)
@@ -424,7 +388,7 @@ StateDeprecated::error(InetMessenger* m, Inet4Address* a)
 // ARPReceiver
 
 bool ARPReceiver::
-input(InetMessenger* m, Conduit* c)
+input(InetMessenger* m)
 {
     ASSERT(m);
 
@@ -447,14 +411,7 @@ input(InetMessenger* m, Conduit* c)
     {
         addr->setMacAddress(arphdr->sha);
         addr->cancel();
-        if (addr->isLocalAddress())
-        {
-            addr->setState(Inet4Address::stateDeprecated);
-        }
-        else
-        {
-            addr->setState(Inet4Address::stateReachable);
-        }
+        addr->setState(Inet4Address::stateReachable);
         addr->start();  // To send waiting packets.
     }
 

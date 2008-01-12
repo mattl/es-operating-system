@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -44,7 +44,7 @@ Inet6Address::
 
 // IInternetAddress
 int Inet6Address::
-getAddress(void* address, int len)
+getAddress(void* address, unsigned int len)
 {
     if (sizeof(addr) <= len)
     {
@@ -61,17 +61,17 @@ getAddressFamily()
 }
 
 int Inet6Address::
-getCanonicalHostName(char* hostName, int len)
+getCanonicalHostName(char* hostName, unsigned int len)
 {
 }
 
 int Inet6Address::
-getHostAddress(char* hostAddress, int len)
+getHostAddress(char* hostAddress, unsigned int len)
 {
 }
 
 int Inet6Address::
-getHostName(char* hostName, int len)
+getHostName(char* hostName, unsigned int len)
 {
 }
 
@@ -119,8 +119,8 @@ socket(int type, int protocol)
 }
 
 // IInterface
-void* Inet6Address::
-queryInterface(const Guid& riid)
+bool Inet6Address::
+queryInterface(const Guid& riid, void** objectPtr)
 {
 }
 

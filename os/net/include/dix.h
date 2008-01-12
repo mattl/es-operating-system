@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -19,7 +19,7 @@
 #include <es/endian.h>
 #include <es/handle.h>
 #include <es/base/IStream.h>
-#include <es/device/INetworkInterface.h>
+#include <es/device/IEthernet.h>
 #include <es/net/dix.h>
 #include <es/net/inet4.h>
 #include <es/net/inet6.h>
@@ -52,8 +52,8 @@ public:
     {
     }
 
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
 };
 
 class DIXInReceiver : public InetReceiver
@@ -66,7 +66,7 @@ public:
     {
     }
 
-    bool output(InetMessenger* m, Conduit* c);
+    bool output(InetMessenger* m);
 };
 
 class DIXARPReceiver : public InetReceiver
@@ -79,13 +79,12 @@ public:
     {
     }
 
-    bool output(InetMessenger* m, Conduit* c);
+    bool output(InetMessenger* m);
 };
 
 class DIXInterface : public Interface
 {
-    Handle<INetworkInterface>   networkInterface;
-    Handle<IStream>             stream;
+    IStream*            stream;
 
     DIXAccessor         dixAccessor;
     DIXReceiver         dixReceiver;
@@ -96,18 +95,21 @@ class DIXInterface : public Interface
     Protocol            arpProtocol;    // DIX_ARP
     Protocol            in6Protocol;    // DIX_IPv6
 
-    static const u8 macAllHost[6];
-
 public:
-    DIXInterface(INetworkInterface* networkInterface);
+    DIXInterface(IStream* stream);
+    ~DIXInterface()
+    {
+        if (stream)
+        {
+            stream->release();
+        }
+    }
 
     Conduit* addAddressFamily(AddressFamily* af, Conduit* c)
     {
         switch (af->getAddressFamily())
         {
         case AF_INET:
-            // Join all hosts group by default
-            networkInterface->addMulticastAddress(macAllHost);
             inProtocol.setB(c);
             return &inProtocol;
             break;

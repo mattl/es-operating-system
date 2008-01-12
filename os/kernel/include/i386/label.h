@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -18,12 +18,6 @@
 
 class Label
 {
-    struct Frame
-    {
-        Frame* prev;
-        void*  pc;
-    };
-
 public:
     unsigned esp;       // 0
     unsigned eip;       // 4
@@ -59,9 +53,9 @@ public:
         ASSERT(stackSize % sizeof(unsigned) == 0);
 
         unsigned* frame = static_cast<unsigned*>(stack);
-        eip = (unsigned) start;
-        esp = (unsigned) &frame[stackSize / sizeof(unsigned) - 1];
-        ebx = (unsigned) startUp;
+        eip = (unsigned) startUp;
+        esp = (unsigned) &frame[stackSize / sizeof(unsigned) - 2];
+        frame[stackSize / sizeof(unsigned) - 2] = (unsigned) 0;
         frame[stackSize / sizeof(unsigned) - 1] = (unsigned) param;
     }
 
@@ -74,18 +68,6 @@ public:
     {
         return (ebp == 0 || *reinterpret_cast<void**>(ebp) == reinterpret_cast<void*>(link)) ? true : false;
     }
-
-    void where()
-    {
-        Frame* frame = (Frame*) ebp;
-        while (frame)
-        {
-            esReport("%p %p\n", frame->pc, frame->prev);
-            frame = frame->prev;
-        }
-    }
-
-    static void start();
 };
 
 #endif  // NINTENDO_ES_KERNEL_I386_LABEL_H_INCLUDED

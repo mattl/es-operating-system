@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,67 +11,66 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ISTREAM_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ISTREAM_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/** This interface provides methods for accessing a sequence of bytes.
+ */
+[object, uuid(032c16c8-25db-11db-9c02-0009bf000001)]
+interface IStream : IInterface
 {
-    /** This interface provides methods for accessing a sequence of bytes.
+    /** Gets the current position in this stream.
+     * @return the current position.
      */
-    interface IStream : IInterface
-    {
-        #pragma ID IStream = "DCE:032c16c8-25db-11db-9c02-0009bf000001";
+    long getPosition();
 
-        typedef sequence<octet> Buf;
+    /** Changes the position in this stream.
+     * @param pos       the new position in this stream.
+     */
+    void setPosition(long pos);
 
-        /** The current position in this stream.
-         */
-        attribute long long position;
+    /** Gets the current size of this stream in bytes.
+     * @return the current size.
+     */
+    long getSize();
 
-        /** The current size of this stream in bytes.
-         * @return the current size.
-         */
-        attribute long long size;
+    /** Resizes this stream.
+     * @param size      the number of bytes specifying the new size of this stream.
+     */
+    void setSize(long size);
 
-        /** Reads a sequence of bytes from this stream to <code>buf</code>.
-         * @param buf       the buffer into which the bytes is read.
-         * @param bufLength the maximum number of bytes to be read.
-         * @return the number of bytes read.
-         */
-        Buf read();
+    /** Reads a sequence of bytes from this stream to <code>dst</code>.
+     * @param dst       the buffer into which the bytes is read.
+     * @param count     the maximum number of bytes to be read.
+     * @return the number of bytes read.
+     */
+    int read([out, size_is(count)] void* dst, int count);
 
-        /** Reads a sequence of bytes from <code>offset</code> in this stream
-         * to <code>buf</code>.
-         * @param buf       the buffer into which the bytes is read.
-         * @param bufLength the maximum number of bytes to be read.
-         * @param offset    the position in this stream from which the bytes is read.
-         * @return the number of bytes read.
-         */
-        Buf read(in long long offset);
+    /** Reads a sequence of bytes from <code>offset</code> in this stream
+     * to <code>dst</code>.
+     * @param dst       the buffer into which the bytes is read.
+     * @param count     the maximum number of bytes to be read.
+     * @param offset    the position in this stream from which the bytes is read.
+     * @return the number of bytes read.
+     */
+    int read([out, size_is(count)] void* dst, int count, long offset);
 
-        /** Writes a sequence of bytes from <code>src</code> to this stream.
-         * @param src       the buffer from which bytes are copied.
-         * @param srcLength the maximum number of bytes to be written.
-         * @return the number of bytes written.
-         */
-        long write(in Buf src);
+    /** Writes a sequence of bytes from <code>src</code> to this stream.
+     * @param src       the buffer from which bytes are copied.
+     * @param count     the maximum number of bytes to be written.
+     * @return the number of bytes written.
+     */
+    int write([in, size_is(count)] void* src, int count);
 
-        /** Writes a sequence of bytes from <code>src</code> to <code>offset</code>
-         * in this stream.
-         * @param src       the buffer from which bytes are copied.
-         * @param srcLength the maximum number of bytes to be written.
-         * @param offset    the position in this stream from which the bytes is written.
-         * @return the number of bytes written.
-         */
-        long write(in Buf src, in long long offset);
+    /** Writes a sequence of bytes from <code>src</code> to <code>offset</code>
+     * in this stream.
+     * @param src       the buffer from which bytes are copied.
+     * @param count     the maximum number of bytes to be written.
+     * @param offset    the position in this stream from which the bytes is written.
+     * @return the number of bytes written.
+     */
+    int write([in, size_is(count)] void* src, int count, long offset);
 
-        /** Forces any buffered output data for this stream to be written out.
-         */
-        void flush();
-    };
-};
-
-#endif // NINTENDO_ES_BASE_ISTREAM_IDL_INCLUDED
-
+    /** Forces any buffered output data for this stream to be written out.
+     */
+    void flush();
+}

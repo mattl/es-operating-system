@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -25,13 +25,10 @@
 //
 
 #include <ctype.h>
-#include <errno.h>
 #include <string.h>
 #include <es.h>
 #include <es/handle.h>
 #include "fatStream.h"
-
-using namespace es;
 
 IInterface* FatStream::
 getObject()
@@ -40,14 +37,14 @@ getObject()
     return static_cast<IContext*>(this);
 }
 
-void FatStream::
+int FatStream::
 setObject(IInterface* object)
 {
-    esThrow(EACCES); // [check]
+    return -1;
 }
 
 int FatStream::
-getName(char* name, int len)
+getName(char* name, unsigned int len)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -128,7 +125,6 @@ getName(char* name, int len)
                         }
                     }
                     FatFileSystem::utf16toutf8(l, name);    // XXX error check
-                    return strlen(name);                    // XXX for esjs
                     break;
                 }
                 ord = -1;

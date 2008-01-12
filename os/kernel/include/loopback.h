@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -18,10 +18,9 @@
 #include <es/ref.h>
 #include <es/ring.h>
 #include <es/base/IStream.h>
-#include <es/device/INetworkInterface.h>
 #include "thread.h"
 
-class Loopback : public INetworkInterface, public IStream
+class Loopback : public IStream
 {
     Ref     ref;
     Monitor monitor;
@@ -37,49 +36,6 @@ public:
     {
     }
 
-    // INetworkInterface
-    int addMulticastAddress(const unsigned char mac[6])
-    {
-        return 0;
-    }
-    void getMacAddress(unsigned char mac[6])
-    {
-        memset(mac, 0, 6);
-    }
-    int getMTU()
-    {
-        return 1500;
-    }
-    bool getLinkState()
-    {
-        return true;
-    }
-    bool isPromiscuousMode()
-    {
-        return true;
-    }
-    void getStatistics(INetworkInterface::Statistics* statistics)
-    {
-        memset(statistics, 0, sizeof(INetworkInterface::Statistics));
-    }
-    int getType()
-    {
-        return INetworkInterface::Loopback;
-    }
-    int removeMulticastAddress(const unsigned char mac[6])
-    {
-        return 0;
-    }
-    void setPromiscuousMode(bool on)
-    {
-    }
-    int start()
-    {
-    }
-    int stop()
-    {
-    }
-
     // IStream
     long long getPosition();
     void setPosition(long long pos);
@@ -92,7 +48,7 @@ public:
     void flush();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 };

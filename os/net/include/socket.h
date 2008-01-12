@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -15,15 +15,10 @@
 #define SOCKET_H_INCLUDED
 
 #include <errno.h>
-#include <es/collection.h>
 #include <es/endian.h>
 #include <es/ref.h>
 #include <es/timer.h>
-#include <es/base/ISelectable.h>
 #include <es/base/IStream.h>
-#include <es/naming/IContext.h>
-#include <es/net/IInternetConfig.h>
-#include <es/net/IResolver.h>
 #include <es/net/ISocket.h>
 #include <es/net/udp.h>
 #include "inet.h"
@@ -40,32 +35,19 @@ class AddressFamily
 public:
     virtual int getAddressFamily() = 0;
     virtual Conduit* getProtocol(Socket* socket) = 0;
-    virtual int selectEphemeralPort(Socket* socket)
-    {
-        return 0;
-    };
     virtual void addInterface(Interface* interface) = 0;
-    virtual IInternetAddress* selectSourceAddress(IInternetAddress* dst)
-    {
-        return 0;
-    }
 
     friend class Socket;
     typedef List<AddressFamily, &AddressFamily::link> List;
 };
 
 class Socket :
-    public IMulticastSocket,
-    public ISelectable,
+    public ISocket,
     public InetReceiver,
     public InetMessenger
 {
 public:
     static const int INTERFACE_MAX = 8;
-
-    static IResolver*       resolver;
-    static IInternetConfig* config;
-    static IContext*        interface;
 
 private:
     static AddressFamily::List  addressFamilyList;
@@ -78,18 +60,12 @@ private:
     int             protocol;
     Adapter*        adapter;
     AddressFamily*  af;
-    int             recvBufferSize;
-    int             sendBufferSize;
-    int             errorCode;
-    TimeSpan        timeout;
-    Collection<Address*>    addresses;
-
-    // Asynchronous I/O
-    IMonitor*       selector;
-    bool            blocking;
 
 public:
-    static void initialize();
+    static void initialize()
+    {
+        timer = new Timer;
+    }
 
     static void addAddressFamily(AddressFamily* af)
     {
@@ -120,26 +96,15 @@ public:
         return af->getProtocol(this);
     }
 
-    static int addInterface(INetworkInterface* networkInterface);
-    static void removeInterface(INetworkInterface* networkInterface);
+    static int addInterface(IStream* stream, int hrd);
+    static void removeInterface(IStream* stream);
     static Interface* getInterface(int scopeID)
     {
-        if (scopeID < 1 || INTERFACE_MAX <= scopeID)
+        if (scopeID < 0 || INTERFACE_MAX <= scopeID)
         {
             return 0;
         }
         return interfaces[scopeID];
-    }
-    static int getScopeID(INetworkInterface* networkInterface)
-    {
-        for (int id = 1; id < INTERFACE_MAX; ++id)
-        {
-            if (networkInterface == interfaces[id]->networkInterface)
-            {
-                return id;
-            }
-        }
-        return 0;
     }
 
     static void alarm(TimerTask* timerTask, TimeSpan delay)
@@ -156,9 +121,9 @@ public:
     Socket(int family, int type, int protocol = 0);
     ~Socket();
 
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-    bool error(InetMessenger* m, Conduit* c);
+    bool input(InetMessenger* m);
+    bool output(InetMessenger* m);
+    bool error(InetMessenger* m);
 
     Adapter* getAdapter() const
     {
@@ -215,29 +180,6 @@ public:
     {
         return type;
     }
-    int getLastError()
-    {
-        return errorCode;
-    }
-
-    bool isBound();
-    bool isClosed();
-    bool isConnected();
-
-    int getHops();
-    void setHops(int limit);
-
-    int getReceiveBufferSize();
-    void setReceiveBufferSize(int size);
-
-    int getSendBufferSize();
-    void setSendBufferSize(int size);
-
-    bool isReuseAddress();
-    void setReuseAddress(bool on);
-
-    long long getTimeout();
-    void setTimeout(long long timeSpan);
 
     ISocket* accept();
     void bind(IInternetAddress* addr, int port);
@@ -251,183 +193,12 @@ public:
     void shutdownOutput();
     int write(const void* src, int count);
 
-    void notify();
-
-    bool isBlocking()
-    {
-        return blocking;
-    }
-    void setBlocking(bool on)
-    {
-        blocking = on;
-    }
-
-    bool isAcceptable();
-    bool isConnectable();
-    bool isReadable();
-    bool isWritable();
-
-    // ISelectable
-    int add(IMonitor* selector);
-    int remove(IMonitor* selector);
-
-    // IMulticastSocket
-    bool isLoopbackMode();
-    void setLoopbackMode(bool disable);
-    void joinGroup(IInternetAddress* addr);
-    void leaveGroup(IInternetAddress* addr);
-
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
-
-    friend class StreamReceiver;
-    friend class DatagramReceiver;
-};
-
-class SocketMessenger;
-class SocketReceiver : public InetReceiver
-{
-public:
-    virtual bool initialize(Socket* socket)
-    {
-        return true;
-    }
-
-    virtual bool read(SocketMessenger* m, Conduit* c)
-    {
-        return true;
-    }
-
-    virtual bool write(SocketMessenger* m, Conduit* c)
-    {
-        return true;
-    }
-
-    virtual bool accept(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool connect(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool close(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool shutdownOutput(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool shutdownInput(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isAcceptable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isConnectable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isReadable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isWritable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool notify(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    typedef bool (SocketReceiver::*Command)(SocketMessenger*, Conduit*);
-};
-
-class SocketMessenger : public InetMessenger
-{
-    Socket* socket;
-    SocketReceiver::Command op;
-
-public:
-    SocketMessenger(Socket* socket, SocketReceiver::Command op,
-                    void* chunk = 0, long len = 0, long pos = 0) :
-        InetMessenger(0, len, pos, chunk),
-        socket(socket),
-        op(op)
-    {
-        if (socket)
-        {
-            socket->addRef();
-            setLocal(socket->getLocal());
-            setRemote(socket->getRemote());
-            setLocalPort(socket->getLocalPort());
-            setRemotePort(socket->getRemotePort());
-        }
-    }
-
-    ~SocketMessenger()
-    {
-        if (socket)
-        {
-            socket->release();
-        }
-    }
-
-    virtual bool apply(Conduit* c)
-    {
-        if (op)
-        {
-            if (SocketReceiver* receiver = dynamic_cast<SocketReceiver*>(c->getReceiver()))
-            {
-                return (receiver->*op)(this, c);
-            }
-        }
-        return InetMessenger::apply(c);
-    }
-
-    void setCommand(InetReceiver::Command op)
-    {
-        InetMessenger::op = op;
-        op = 0;
-    }
-
-    Socket* getSocket()
-    {
-        if (socket)
-        {
-            socket->addRef();
-        }
-        return socket;
-    }
-    void setSocket(Socket* socket)
-    {
-        if (socket)
-        {
-            socket->addRef();
-        }
-        if (this->socket)
-        {
-            this->socket->release();
-        }
-        this->socket = socket;
-    }
 };
 
 class SocketInstaller : public Visitor
@@ -450,15 +221,9 @@ public:
             return true;
         }
         Adapter* adapter = new Adapter;
-        socket->addRef();
         adapter->setReceiver(socket);
         socket->setAdapter(adapter);
         Conduit::connectAB(adapter, p);
-
-        SocketReceiver* receiver = dynamic_cast<SocketReceiver*>(p->getReceiver());
-        ASSERT(receiver);
-        receiver->initialize(socket);
-
         return true;
     }
     bool at(ConduitFactory* f, Conduit* c)
@@ -467,7 +232,7 @@ public:
         if (mux)
         {
             ASSERT(mux->getFactory() == f);
-            void* key = mux->getKey(socket);
+            void* key = mux->getKey(getMessenger());
             Conduit* e = f->create(key);
             if (e)
             {
@@ -496,6 +261,7 @@ public:
 
     bool at(Adapter* a, Conduit* c)
     {
+        a->setReceiver(0);
         return true;
     }
 
@@ -506,9 +272,15 @@ public:
             return false;   // To stop this visitor
         }
 
+        Receiver* receiver = p->getReceiver();
+        if (receiver)
+        {
+            p->setReceiver(0);
+            delete receiver;
+        }
         c->setA(0);
         p->setB(0);
-        c->release();
+        delete c;
         return true;
     }
 
@@ -517,8 +289,8 @@ public:
         if (c->isEmpty())
         {
             c->setA(0);
-            mux->removeB(mux->getKey(socket));
-            c->release();
+            mux->removeB(mux->getKey(getMessenger()));
+            delete c;
             return true;
         }
         return false;       // To stop this visitor
@@ -555,10 +327,10 @@ public:
         if (c->isEmpty() || c == protocol)
         {
             c->setA(0);
-            mux->removeB(mux->getKey(socket));
+            mux->removeB(mux->getKey(getMessenger()));
             if (c != protocol)
             {
-                c->release();
+                delete c;
             }
             return true;
         }
@@ -599,7 +371,7 @@ public:
         if (mux)
         {
             ASSERT(mux->getFactory() == f);
-            void* key = mux->getKey(socket);
+            void* key = mux->getKey(getMessenger());
             if (dynamic_cast<InetRemoteAddressAccessor*>(mux->getAccessor()))
             {
                 Conduit::connectAB(protocol, mux, key);
@@ -620,6 +392,97 @@ public:
     int getErrorCode() const
     {
         return code;
+    }
+};
+
+class SocketMessenger;
+class SocketReceiver : public InetReceiver
+{
+public:
+    virtual bool read(SocketMessenger* m)
+    {
+        return true;
+    }
+
+    virtual bool write(SocketMessenger* m)
+    {
+        return true;
+    }
+
+    virtual bool accept(SocketMessenger* m)
+    {
+        return false;
+    }
+
+    virtual bool connect(SocketMessenger* m)
+    {
+        return false;
+    }
+
+    virtual bool close(SocketMessenger* m)
+    {
+        return false;
+    }
+
+    virtual bool shutdownOutput(SocketMessenger* m)
+    {
+        return false;
+    }
+
+    virtual bool shutdownInput(SocketMessenger* m)
+    {
+        return false;
+    }
+
+    typedef bool (SocketReceiver::*Command)(SocketMessenger*);
+};
+
+class SocketMessenger : public InetMessenger
+{
+    SocketReceiver::Command op;
+    Socket* socket;
+
+public:
+    SocketMessenger(SocketReceiver::Command op,
+                    void* chunk = 0, long len = 0, long pos = 0) :
+        InetMessenger(0, chunk, len, pos),
+        op(op),
+        socket(0)
+    {
+    }
+
+    virtual bool apply(Conduit* c)
+    {
+        if (op)
+        {
+            if (SocketReceiver* receiver = dynamic_cast<SocketReceiver*>(c->getReceiver()))
+            {
+                return (receiver->*op)(this);
+            }
+        }
+        if (InetMessenger::op)
+        {
+            if (InetReceiver* receiver = dynamic_cast<InetReceiver*>(c->getReceiver()))
+            {
+                return (receiver->*InetMessenger::op)(this);
+            }
+        }
+        return Messenger::apply(c);
+    }
+
+    void setCommand(InetReceiver::Command op)
+    {
+        InetMessenger::op = op;
+        op = 0;
+    }
+
+    Socket* getSocket()
+    {
+        return socket;
+    }
+    void setSocket(Socket* socket)
+    {
+        this->socket = socket;
     }
 };
 
