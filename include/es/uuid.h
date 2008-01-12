@@ -70,8 +70,6 @@ typedef struct _GUID Guid;
 // Guid helper functions
 #ifdef __cplusplus
 
-#include <functional>   // equal_to<>
-
 const Guid GUID_NULL =
 {
    0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }
@@ -88,18 +86,6 @@ inline int operator==(const Guid& g1, const Guid& g2)
 inline int operator!=(const Guid& g1, const Guid& g2)
 {
     return !(g1 == g2);
-}
-
-namespace std
-{
-    template<>
-    struct equal_to<const Guid&>
-    {
-        bool operator()(const Guid& x, const Guid& y) const
-        {
-            return (x == y);
-        }
-    };
 }
 
 #endif  // #ifdef __cplusplus

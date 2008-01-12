@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -29,7 +29,6 @@ typedef   signed char       s8;
 typedef float               f32;
 typedef double              f64;
 typedef long double         f96;
-typedef long double         f128;
 
 #ifdef __cplusplus
 }

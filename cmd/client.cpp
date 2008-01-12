@@ -17,8 +17,6 @@
 #include <es/exception.h>
 #include <es/base/IProcess.h>
 
-using namespace es;
-
 ICurrentProcess* System();
 
 class Test : public IInterface
@@ -26,19 +24,19 @@ class Test : public IInterface
     Ref ref;
 
 public:
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IInterface*>(this);
+            *objectPtr = static_cast<IInterface*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -62,8 +60,6 @@ Test test;
 
 int main(int argc, char* argv[])
 {
-    System()->trace(false);
-
     try
     {
         esReport("Hello, server.\n");
@@ -74,7 +70,7 @@ int main(int argc, char* argv[])
         esReport("errorCode: %d\n", errorCode);
     }
 
-    Handle<IStream> output(System()->getOutput());
+    Handle<IStream> output(System()->getOut());
     Handle<IBinding> binding(output);
     binding->setObject(&test);
     binding->setObject(0);

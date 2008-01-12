@@ -91,8 +91,9 @@ int main()
     TEST(backingStore);
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     // Write data to the memory stream.
     InitMemoryStream(cacheFactory, backingStore, PAGE_SIZE, 0);

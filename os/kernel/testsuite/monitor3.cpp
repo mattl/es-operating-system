@@ -17,7 +17,7 @@
 #include "core.h"
 #include <es/dateTime.h>
 
-static volatile int SharedResource;
+static int SharedResource;
 static Monitor SynchroMonitor;
 
 #define TEST(exp)                           \
@@ -27,7 +27,7 @@ static Monitor SynchroMonitor;
 void* test3(void*)
 {
     int i;
-    for (i = 0; i < 20000 ; ++i)
+    for (i = 0; i < 90000 ; ++i)
     {
         Monitor::Synchronized method(SynchroMonitor);
         ++SharedResource;
@@ -63,7 +63,7 @@ int main()
     TEST(count == 0);
     count = thread4->release();
     TEST(count == 0);
-    TEST(SharedResource == 20000 * 2);
+    TEST(SharedResource == 90000 * 2);
 
     esReport("done.\n");
 }

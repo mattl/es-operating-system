@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,12 +11,12 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <string.h>
+#include <stdlib.h>
 #include <es.h>
-#include <es/hashtable.h>
-#include "interfaceStore.h"
+#include <es/reflect.h>
+#include "process.h"
 
-unsigned char* InterfaceStore::defaultInterfaceInfo[] =
+static unsigned char* DefaultInterfaceInfo[] =
 {
     IAlarmInfo,
     ICacheInfo,
@@ -25,14 +25,11 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IClassStoreInfo,
     IFileInfo,
     IInterfaceInfo,
-    IInterfaceStoreInfo,
     IMonitorInfo,
     IPageableInfo,
     IPageSetInfo,
     IProcessInfo,
     IRuntimeInfo,
-    ISelectableInfo,
-    IServiceInfo,
     IStreamInfo,
     IThreadInfo,
 
@@ -51,107 +48,89 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IBindingInfo,
     IContextInfo,
 
-    IInternetAddressInfo,
-    IInternetConfigInfo,
-    IResolverInfo,
-    ISocketInfo,
-
     IIteratorInfo,
     ISetInfo,
-
-    ICanvasRenderingContext2DInfo,
 };
 
-void InterfaceStore::
-registerInterface(Reflect::Module& module)
+static Reflect::Interface DefulatInterfaceTable[256];
+
+// for qsort()
+static int compareInterface(const void* a, const void* b)
 {
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface(module.getInterface(i));
+    const Guid* g1 = static_cast<const Reflect::Interface*>(a)->getIid();
+    const Guid* g2 = static_cast<const Reflect::Interface*>(b)->getIid();
 
-        SpinLock::Synchronized method(spinLock);
-        hashtable.add(interface.getIid(), interface);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
+    for (int i = 0; i < 4; ++i)
     {
-        Reflect::Module m(module.getModule(i));
-        registerInterface(m);
+        u32 e1 = ((u32*) g1)[i];
+        u32 e2 = ((u32*) g2)[i];
+        if (e1 < e2)
+        {
+            return -1;
+        }
+        if (e2 < e1)
+        {
+            return 1;
+        }
     }
+    return 0;
 }
 
-InterfaceStore::
-InterfaceStore(int capacity) :
-    hashtable(capacity)
+// for bsearch()
+static int compareIid(const void* a, const void* b)
 {
-    for (int i = 0;
-         i < sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];
-         ++i)
+    const Guid* g1 = static_cast<const Guid*>(a);
+    const Guid* g2 = static_cast<const Reflect::Interface*>(b)->getIid();
+
+    for (int i = 0; i < 4; ++i)
     {
-        Reflect r(defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        registerInterface(global);
+        u32 e1 = ((u32*) g1)[i];
+        u32 e2 = ((u32*) g2)[i];
+        if (e1 < e2)
+        {
+            return -1;
+        }
+        if (e2 < e1)
+        {
+            return 1;
+        }
     }
+    return 0;
 }
 
-InterfaceStore::
-~InterfaceStore()
-{
-}
+static int interfaceCount(0);
 
-void InterfaceStore::
-add(const void* data, int length)
+void initInterfaceInfo()
 {
-    void* buffer = new u8[length];
-    memmove(buffer, data, length);
-    Reflect r(buffer);
-    Reflect::Module global(r.getGlobalModule());
-    registerInterface(global);
-}
-
-void InterfaceStore::
-remove(const Guid& riid)
-{
-    SpinLock::Synchronized method(spinLock);
-
-    hashtable.remove(riid);
-    // XXX release buffer
-}
-
-void* InterfaceStore::
-queryInterface(const Guid& riid)
-{
-    void* objectPtr;
-    if (riid == IInterfaceStore::iid())
+    for (int i = 0; i < sizeof DefaultInterfaceInfo / sizeof DefaultInterfaceInfo[0]; ++i)
     {
-        objectPtr = static_cast<IInterfaceStore*>(this);
+        Reflect r(DefaultInterfaceInfo[i]);
+        for (int j = 0; j < r.getInterfaceCount(); ++j)
+        {
+            if (r.getInterface(j).getType().isImported())
+            {
+                continue;
+            }
+            DefulatInterfaceTable[interfaceCount] = r.getInterface(j);
+            ++interfaceCount;
+        }
     }
-    else if (riid == IInterface::iid())
+
+    qsort(DefulatInterfaceTable, interfaceCount, sizeof(Reflect::Interface), compareInterface);
+#ifdef VERBOSE
+    for (int i = 0; i < interfaceCount; ++i)
     {
-        objectPtr = static_cast<IInterfaceStore*>(this);
+        esReport("interface %s\n", DefulatInterfaceTable[i].getName());
     }
-    else
-    {
-        return NULL;
-    }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+#endif
 }
 
-unsigned int InterfaceStore::
-addRef(void)
+Reflect::Interface* getInterface(const Guid* iid)
 {
-    return ref.addRef();
-}
-
-unsigned int InterfaceStore::
-release(void)
-{
-    unsigned int count = ref.release();
-    if (count == 0)
-    {
-        delete this;
-        return 0;
-    }
-    return count;
+    return static_cast<Reflect::Interface*>(
+        bsearch(static_cast<const void*>(iid),
+                static_cast<const void*>(DefulatInterfaceTable),
+                interfaceCount,
+                sizeof(Reflect::Interface),
+                compareIid));
 }

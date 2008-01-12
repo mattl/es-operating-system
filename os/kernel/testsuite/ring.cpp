@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -73,6 +73,9 @@ int main(void)
                         for (n = 0; n < 5; ++n)
                         {
                             Ring ring(buf, 5);
+                            TEST(ring.write("01234", n) == n);
+                            TEST(ring.read(data, n) == n);
+                            TEST(memcmp(data, "01234", n) == 0);
 
                             for (o = 0; o < 5; ++o)
                             {
@@ -100,30 +103,16 @@ int main(void)
     memset(buf, '-', 5);
     Ring ring(buf, 5);
 
-    long count = 2;
-    ring.write((u8*) "34", count, 3, blocks, 5);
+    long offset = 2;
+    ring.write((u8*) "34", offset, 3, blocks, 5);
+
+    offset = 3;
+    ring.write((u8*) "012", offset, 0, blocks, 5);
+
     long used = ring.getUsed();
-    TEST(used == 0);
-
-    count = 3;
-    ring.write((u8*) "012", count, 0, blocks, 5);
-
-    used = ring.getUsed();
     TEST(used == 5);
     ring.read(data, used);
     TEST(memcmp(data, "01234", used) == 0);
-
-    ring.write("abc", 3);
-    used = ring.getUsed();
-    TEST(used == 3);
-    ring.read(data, used);
-    TEST(memcmp(data, "abc", used) == 0);
-
-    ring.write("defgh", 5);
-    used = ring.getUsed();
-    TEST(used == 5);
-    ring.read(data, used);
-    TEST(memcmp(data, "defgh", used) == 0);
 
     esReport("done.\n");
 }

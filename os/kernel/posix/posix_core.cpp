@@ -73,13 +73,13 @@ getRoot()
 }
 
 IStream* Core::
-getInput()
+getIn()
 {
     return 0;
 }
 
 IStream* Core::
-getOutput()
+getOut()
 {
     return 0;
 }
@@ -201,28 +201,28 @@ testCancel()
     pthread_testcancel();
 }
 
-void* Core::
-queryInterface(const Guid& riid)
+bool Core::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICurrentThread::iid())
+    if (riid == IID_ICurrentThread)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        *objectPtr = static_cast<ICurrentThread*>(this);
     }
-    else if (riid == ICurrentProcess::iid())
+    else if (riid == IID_ICurrentProcess)
     {
-        objectPtr = static_cast<ICurrentProcess*>(this);
+        *objectPtr = static_cast<ICurrentProcess*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        *objectPtr = static_cast<ICurrentThread*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Core::

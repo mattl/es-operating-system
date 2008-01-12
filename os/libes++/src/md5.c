@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -121,27 +121,26 @@ void MD5Init(MD5Context* context)
 // MD5 block update operation. Continues an MD5 message-digest
 // operation, processing another message block, and updating the
 // context.
-void MD5Update(MD5Context* context, const void* data, size_t len)
+void MD5Update(MD5Context* context, u8* input, u32 inputLen)
 {
-    const u8* input = data;
     u32 i, index, partLen;
 
     // Compute number of bytes mod 64
     index = (u32)((context->count[0] >> 3) & 0x3F);
 
     // Update number of bits
-    if ((context->count[0] += ((u32)len << 3)) < ((u32)len << 3))
+    if ((context->count[0] += ((u32)inputLen << 3)) < ((u32)inputLen << 3))
         context->count[1]++;
-    context->count[1] += ((u32)len >> 29);
+    context->count[1] += ((u32)inputLen >> 29);
 
     partLen = 64 - index;
 
     // Transform as many times as possible.
-    if (len >= partLen) {
+    if (inputLen >= partLen) {
         memcpy(&context->buffer[index], input, partLen);
         MD5Transform (context->state, context->buffer);
 
-        for (i = partLen; i + 63 < len; i += 64)
+        for (i = partLen; i + 63 < inputLen; i += 64)
             MD5Transform (context->state, &input[i]);
 
         index = 0;
@@ -150,7 +149,7 @@ void MD5Update(MD5Context* context, const void* data, size_t len)
         i = 0;
 
     // Buffer remaining input
-    memcpy(&context->buffer[index], &input[i], len-i);
+    memcpy(&context->buffer[index], &input[i], inputLen-i);
 }
 
 // MD5 finalization. Ends an MD5 message-digest operation, writing the

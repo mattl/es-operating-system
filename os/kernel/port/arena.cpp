@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -18,7 +18,7 @@
 void* Arena::
 alloc(size_t size, size_t align) throw()
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     Cell*  cell;
     size_t padding;
@@ -66,7 +66,7 @@ alloc(size_t size, size_t align) throw()
 void* Arena::
 allocLast(size_t size, size_t align) throw()
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     Cell*  cell;
     size_t padding;
@@ -115,7 +115,7 @@ allocLast(size_t size, size_t align) throw()
 void Arena::
 free(void* place, size_t size) throw()
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     ASSERT(reinterpret_cast<size_t>(place) % ALIGN == 0);
     ASSERT(0 < size && size % ALIGN == 0);
@@ -152,7 +152,7 @@ free(void* place, size_t size) throw()
 size_t Arena::
 size() throw()
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     Cell* cell;
     size_t size = 0;

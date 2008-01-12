@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -25,6 +25,8 @@
 
 class Keyboard : public ICallback
 {
+    friend int main();
+
     typedef int (Keyboard::*Reader)(void* dst, int count);
 
     class Stream : public IStream
@@ -44,7 +46,7 @@ class Keyboard : public ICallback
         int write(const void* src, int count, long long offset);
         void flush();
 
-        void* queryInterface(const Guid& riid);
+        bool queryInterface(const Guid& riid, void** objectPtr);
         unsigned int addRef(void);
         unsigned int release(void);
     };
@@ -98,7 +100,7 @@ class Keyboard : public ICallback
     static const u8 IRQ_AUXILIARY_DEVICE = 12;
 
     Ref         ref;
-    Lock        spinLock;
+    SpinLock    spinLock;
     u8          cmd;
 
     // Keyboard
@@ -120,7 +122,7 @@ class Keyboard : public ICallback
 
     u8 sendControllerCommand(u8 cmd);
     void sendData(u8 data);
-    u8 receiveData(int retry = 10000);
+    u8 receiveData();
     void reset(void);
 
     u8 writeAuxDevice(u8 byte);
@@ -141,7 +143,7 @@ public:
     int invoke(int param);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

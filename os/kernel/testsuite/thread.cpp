@@ -35,7 +35,7 @@ void* test0(void*)
     TEST(thread->getState() == IThread::NEW);
 
     thread->start();
-    //TEST(thread->getState() == IThread::RUNNABLE);
+    TEST(thread->getState() == IThread::RUNNABLE);
     void* val;
     thread->join(&val);
     TEST(val == 0);

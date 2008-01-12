@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,10 +16,15 @@
 
 #include <stdarg.h>
 #include <es/types.h>
+#include <es/uuid.h>
 
 #ifdef __cplusplus
+
 extern "C" {
-#endif // __cplusplus
+
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr);
+
+#endif  // __cplusplus
 
 void esPanic(const char* file, int line, const char* msg, ...);
 int  esReport(const char* spec, ...) __attribute__ ((format (printf, 1, 2)));
@@ -27,6 +32,32 @@ int  esReportv(const char* spec, va_list list) __attribute__ ((format (printf, 1
 void esDump(const void* ptr, s32 len);
 void esSleep(s64 timeout);
 void esThrow(int result);
+
+typedef struct esOnceControl
+{
+    int  done;
+    long started;
+} esOnceControl;
+
+#define ES_ONCE_INIT {0, -1}
+
+int   esOnce(esOnceControl* control, void (*func)(void));
+
+int   esCreateThreadKey(unsigned int* key, void (*dtor)(void*));
+int   esDeleteThreadKey(unsigned int key);
+void* esGetThreadSpecific(unsigned int key);
+int   esSetThreadSpecific(unsigned int key, const void* ptr);
+void  esDeallocateSpecific(void);
+
+typedef struct esMonitor
+{
+    void* monitor;
+} esMonitor;
+
+void esCreateMonitor(esMonitor* monitor);
+void esLockMonitor(esMonitor* monitor);
+int  esTryLockMonitor(esMonitor* monitor);
+void esUnlockMonitor(esMonitor* monitor);
 
 #ifdef __es__
 
@@ -62,9 +93,6 @@ void esThrow(int result);
 #define ASSERT  assert
 
 #endif  // !__es__
-
-// Misc.
-long long rand48(void);
 
 #ifdef __cplusplus
 }

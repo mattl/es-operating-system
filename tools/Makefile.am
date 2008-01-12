@@ -1,16 +1,12 @@
-LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lrt
+LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lrt
 
-bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen vget vdel
+bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen
 
 trunc_SOURCES = trunc.c
 
 bm_SOURCES = bm.c
 
 vformat_SOURCES = vformat.cpp vdisk.h
-
-vdel_SOURCES = vdel.cpp vdisk.h
-
-vget_SOURCES = vget.cpp vdisk.h
 
 vcopy_SOURCES = vcopy.cpp vdisk.h
 

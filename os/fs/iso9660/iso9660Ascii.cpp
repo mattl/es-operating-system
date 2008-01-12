@@ -117,7 +117,7 @@ lookupPathName(const char*& name)
 }
 
 int Iso9660Stream::
-getName(char* name, int len)
+getName(char* name, unsigned int len)
 {
     u8 record[255];
 
