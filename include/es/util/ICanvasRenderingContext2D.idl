@@ -11,105 +11,55 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
-#define NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-#include "es/base/IFile.idl"
-
-module es
+/**
+ */
+[object, uuid(8661833f-25d8-4d4c-999c-ede0fcbbbf32)]
+interface ICanvasRenderingContext2D : IInterface
 {
-    /**
-     */
-    interface ICanvasPattern : IInterface
-    {
-        #pragma ID ICanvasPattern = "DCE:02c5e50b-d29f-4e4b-bd6c-4b74597b9776";
-        void apply(in any cr); // [check] how to pass the context?
-    };
+    // State Methods
+    void restore();
+    void save();
+    void rotate(float angle);
+    void scale(float scaleW, float scaleH);
+    void translate(float tx, float ty);
 
-    /**
-     */
-    interface ICanvasGradient : IInterface
-    {
-        #pragma ID ICanvasGradient = "DCE:fdcbb39f-de6b-4812-9c33-7d1856bea6ec";
-        void addColorStop(in float offset, in string color);
-        void apply(in any cr); // [check] how to pass the context?
-    };
+    // Working With Paths
+    void arc(float x, float y, float radius, float startAngle, float endAngle, boolean anticlockwise);
+    void arcTo(float x1, float y1, float x2, float y2, float radius); // [check]
+    void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
 
-    /**
-     * This interface provides methods for handling
-     * a script rendering bitmap images.
-     */
-    interface ICanvasRenderingContext2D : IInterface
-    {
-        #pragma ID ICanvasRenderingContext2D = "DCE:8661833f-25d8-4d4c-999c-ede0fcbbbf32";
+    void beginPath();
+    void clip();
+    void closePath();
+    void lineTo(float x, float y);
+    void moveTo(float x, float y);
+    void quadraticCurveTo(float cpx, float cpy, float x, float y);
+    void rect(float x, float y, float width, float height);
 
-        // state
-        void restore();
-        void save();
+    // Stroking a Path
+    void stroke();
+    void strokeRect(float x, float y, float width, float height);
 
-        // transformation
-        void scale(in float scaleW, in float scaleH);
-        void rotate(in float angle);
-        void translate(in float tx, in float ty);
+    // Filling an Area
+    void clearRect(float x, float y, float width, float height);
+    void fill();
+    void fillRect(float x, float y, float width, float height);
 
-        // rects
-        void clearRect(in float x, in float y, in float width, in float height);
-        void fillRect(in float x, in float y, in float width, in float height);
-        void strokeRect(in float x, in float y, in float width, in float height);
+    int getFillStyle([out, size_is(len)] char* color, unsigned int len);
+    int getStrokeStyle([out, size_is(len)] char* operation, unsigned int len);
+    float getGlobalAlpha();
+    float getMiterLimit();
+    int getLineCap([out, size_is(len)] char* capStyle, unsigned int len);
+    int getLineJoin([out, size_is(len)] char* joinStyle, unsigned int len);
+    float getLineWidth();
 
-        // path API
-        void beginPath();
-        void closePath();
-        void moveTo(in float x, in float y);
-        void lineTo(in float x, in float y);
-        void quadraticCurveTo(in float cpx, in float cpy, in float x, in float y);
-        void bezierCurveTo(in float cp1x, in float cp1y, in float cp2x, in float cp2y, in float x, in float y);
-        void arcTo(in float x1, in float y1, in float x2, in float y2, in float radius); // [check]
-        void rect(in float x, in float y, in float width, in float height);
-        void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean anticlockwise);
-        void fill();
-        void stroke();
-        void clip();
-
-        // drawing images
-        void drawImage(in IFile image, in float dx, in float dy, in float dw, in float dh);
-
-        // creating gradient and pattern styles
-        ICanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
-        ICanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
-        ICanvasPattern createPattern(in IFile image, in string repeat);
-
-        // compositing
-        attribute float globalAlpha;
-        attribute string globalCompositeOperation;
-
-        // colors and styles
-        attribute string strokeStyle;
-        attribute string fillStyle;
-        attribute ICanvasGradient fillGradient;
-        attribute ICanvasPattern fillPattern;
-
-        // line caps/joins
-        attribute float lineWidth;
-        attribute string lineCap;
-        attribute string lineJoin;
-        attribute float miterLimit;
-
-        // Shadow
-        attribute float shadowOffsetX;
-        attribute float shadowOffsetY;
-        attribute float shadowBlur;
-        attribute string shadowColor;
-
-        // Text (drawString enhancement as in mozilla1.9 M7)
-        attribute string textStyle;
-        void drawText(in string textToDraw);
-        float measureText(in string textToMeasure);
-        void pathText(in string textToPath);
-        void textAlongPath(in string textToDraw, in boolean stroke);
-    };
-};
-
-#endif // NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
-
+    void setFillStyle([in] char* color);
+    void setStrokeStyle([in] char* color);
+    void setGlobalAlpha(float alpha);
+    void setLineCap([in] char* capStyle);
+    void setMiterLimit(float limit);
+    void setLineJoin([in] char* joinStyle);
+    void setLineWidth(float width);
+}

@@ -57,15 +57,15 @@ ARFLAGS = cru
 libes___a_AR = $(AR) $(ARFLAGS)
 libes___a_LIBADD =
 am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
-	src/utf.c src/apply.cpp src/color.cpp src/context.cpp \
-	src/dateTime.cpp src/dump.cpp src/inet.cpp src/throw.cpp \
-	src/formatter.cpp src/ring.cpp include/core.h src/report.cpp \
-	src/system.cpp src/posix_system.cpp
+	src/utf.c src/context.cpp src/dateTime.cpp src/dump.cpp \
+	src/inet.cpp src/throw.cpp src/formatter.cpp src/reflect.cpp \
+	src/ring.cpp include/core.h src/report.cpp src/system.cpp \
+	src/posix_system.cpp
 am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
 	utf.$(OBJEXT)
-am__objects_2 = apply.$(OBJEXT) color.$(OBJEXT) context.$(OBJEXT) \
-	dateTime.$(OBJEXT) dump.$(OBJEXT) inet.$(OBJEXT) \
-	throw.$(OBJEXT) formatter.$(OBJEXT) ring.$(OBJEXT)
+am__objects_2 = context.$(OBJEXT) dateTime.$(OBJEXT) dump.$(OBJEXT) \
+	inet.$(OBJEXT) throw.$(OBJEXT) formatter.$(OBJEXT) \
+	reflect.$(OBJEXT) ring.$(OBJEXT)
 am__objects_3 =
 am__objects_4 = $(am__objects_1) $(am__objects_2) $(am__objects_3)
 @ES_TRUE@am__objects_5 = system.$(OBJEXT)
@@ -221,14 +221,13 @@ c_source_files = \
 	src/utf.c
 
 cpp_source_files = \
-	src/apply.cpp \
-	src/color.cpp \
 	src/context.cpp \
 	src/dateTime.cpp \
 	src/dump.cpp \
 	src/inet.cpp \
 	src/throw.cpp \
 	src/formatter.cpp \
+	src/reflect.cpp \
 	src/ring.cpp
 
 header_files = \
@@ -314,8 +313,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apply.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/context.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dateTime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dump.Po@am__quote@
@@ -324,6 +321,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rand48.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reflect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
@@ -415,34 +413,6 @@ utf.obj: src/utf.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-apply.o: src/apply.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT apply.o -MD -MP -MF $(DEPDIR)/apply.Tpo -c -o apply.o `test -f 'src/apply.cpp' || echo '$(srcdir)/'`src/apply.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/apply.Tpo $(DEPDIR)/apply.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/apply.cpp' object='apply.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o apply.o `test -f 'src/apply.cpp' || echo '$(srcdir)/'`src/apply.cpp
-
-apply.obj: src/apply.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT apply.obj -MD -MP -MF $(DEPDIR)/apply.Tpo -c -o apply.obj `if test -f 'src/apply.cpp'; then $(CYGPATH_W) 'src/apply.cpp'; else $(CYGPATH_W) '$(srcdir)/src/apply.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/apply.Tpo $(DEPDIR)/apply.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/apply.cpp' object='apply.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o apply.obj `if test -f 'src/apply.cpp'; then $(CYGPATH_W) 'src/apply.cpp'; else $(CYGPATH_W) '$(srcdir)/src/apply.cpp'; fi`
-
-color.o: src/color.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT color.o -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.o `test -f 'src/color.cpp' || echo '$(srcdir)/'`src/color.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/color.cpp' object='color.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o color.o `test -f 'src/color.cpp' || echo '$(srcdir)/'`src/color.cpp
-
-color.obj: src/color.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT color.obj -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.obj `if test -f 'src/color.cpp'; then $(CYGPATH_W) 'src/color.cpp'; else $(CYGPATH_W) '$(srcdir)/src/color.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/color.cpp' object='color.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o color.obj `if test -f 'src/color.cpp'; then $(CYGPATH_W) 'src/color.cpp'; else $(CYGPATH_W) '$(srcdir)/src/color.cpp'; fi`
-
 context.o: src/context.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT context.o -MD -MP -MF $(DEPDIR)/context.Tpo -c -o context.o `test -f 'src/context.cpp' || echo '$(srcdir)/'`src/context.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/context.Tpo $(DEPDIR)/context.Po
@@ -526,6 +496,20 @@ formatter.obj: src/formatter.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/formatter.cpp' object='formatter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o formatter.obj `if test -f 'src/formatter.cpp'; then $(CYGPATH_W) 'src/formatter.cpp'; else $(CYGPATH_W) '$(srcdir)/src/formatter.cpp'; fi`
+
+reflect.o: src/reflect.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT reflect.o -MD -MP -MF $(DEPDIR)/reflect.Tpo -c -o reflect.o `test -f 'src/reflect.cpp' || echo '$(srcdir)/'`src/reflect.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/reflect.Tpo $(DEPDIR)/reflect.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/reflect.cpp' object='reflect.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o reflect.o `test -f 'src/reflect.cpp' || echo '$(srcdir)/'`src/reflect.cpp
+
+reflect.obj: src/reflect.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT reflect.obj -MD -MP -MF $(DEPDIR)/reflect.Tpo -c -o reflect.obj `if test -f 'src/reflect.cpp'; then $(CYGPATH_W) 'src/reflect.cpp'; else $(CYGPATH_W) '$(srcdir)/src/reflect.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/reflect.Tpo $(DEPDIR)/reflect.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/reflect.cpp' object='reflect.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o reflect.obj `if test -f 'src/reflect.cpp'; then $(CYGPATH_W) 'src/reflect.cpp'; else $(CYGPATH_W) '$(srcdir)/src/reflect.cpp'; fi`
 
 ring.o: src/ring.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ring.o -MD -MP -MF $(DEPDIR)/ring.Tpo -c -o ring.o `test -f 'src/ring.cpp' || echo '$(srcdir)/'`src/ring.cpp

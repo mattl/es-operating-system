@@ -29,8 +29,6 @@
 #include "IEventQueue.h"
 #include "canvas.h"
 
-using namespace es;
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -498,27 +496,27 @@ public:
         return true;
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IStream::iid())
+        if (riid == IID_IStream)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IService::iid())
+        else if (riid == IID_IService)
         {
-            objectPtr = static_cast<IService*>(this);
+            *objectPtr = static_cast<IService*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IStream*>(this);
+            *objectPtr = static_cast<IStream*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef(void)
@@ -1194,7 +1192,7 @@ int main(int argc, char* argv[])
     // create console.
     int bufSize = 4096;
     u8* keyBuffer = new u8[bufSize];
-    Handle<IFile> font = nameSpace->lookup("file/fonts/sazanami-mincho.ttf");
+    Handle<IFile> font = nameSpace->lookup("file/sazanami-mincho.ttf");
     Console* console = new Console(font, 12, keyBuffer, bufSize); // font size is set to 12 pt.
 
     // check if the event queue is ready.

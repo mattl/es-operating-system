@@ -73,7 +73,7 @@ public:
 
     int invoke(int);
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 };

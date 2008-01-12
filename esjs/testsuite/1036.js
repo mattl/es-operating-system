@@ -2,7 +2,7 @@
 
 function check(result)
 {
-    stdout = System.output;
+    stdout = System.getOut();
     if (result)
     {
         stdout.write("OK\n", 3);

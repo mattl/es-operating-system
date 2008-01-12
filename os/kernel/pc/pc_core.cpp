@@ -66,23 +66,23 @@ namespace
         unsigned int splLo() { return 0; }
         unsigned int splHi() { return 0; }
         void splX(unsigned int x) {}
-        void* queryInterface(const Guid& riid)
+        bool queryInterface(const Guid& riid, void** objectPtr)
         {
-            void* objectPtr;
-            if (riid == IPic::iid())
+            if (riid == IID_IPic)
             {
-                objectPtr = static_cast<IPic*>(this);
+                *objectPtr = static_cast<IPic*>(this);
             }
-            else if (riid == IInterface::iid())
+            else if (riid == IID_IInterface)
             {
-                objectPtr = static_cast<IPic*>(this);
+                *objectPtr = static_cast<IPic*>(this);
             }
             else
             {
-                return NULL;
+                *objectPtr = NULL;
+                return false;
             }
-            static_cast<IInterface*>(objectPtr)->addRef();
-            return objectPtr;
+            static_cast<IInterface*>(*objectPtr)->addRef();
+            return true;
         }
         unsigned int addRef(void)
         {
@@ -889,7 +889,7 @@ dispatchException(Ureg* ureg)
         esPanic(__FILE__, __LINE__, "Failed Core::dispatchException: %u @ %x", ureg->trap, ureg->eip);
         break;
       case 66:  // upcall interface
-        if (process)
+        if (core->currentProc)
         {
             splLo();
 

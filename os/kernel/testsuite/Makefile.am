@@ -40,23 +40,21 @@ if I386
 AM_CPPFLAGS += -iquote $(srcdir)/../include/i386
 endif I386
 
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
-
 TESTS = handle interlocked exception utf ring fpu \
 	context datetime thread thread_cancel thread_smp \
 	monitor0 monitor1 monitor2 monitor3 \
 	bpi bpi2 bpi3 \
-	ata beep 8042 vesa fdc sb16 es1370 cdrom \
+	ata beep 8042 vesa fdc fdc_diskChange sb16 es1370 cdrom \
 	page cache replace \
 	position size write_read write_read2 \
 	write read create_release getPageCount \
 	invalidate \
-	pageSet \
+	pageSet process \
 	loopback ethernet
 
 noinst_SCRIPTS = $(TESTS)
 
-noinst_PROGRAMS = $(TESTS) fdc_diskChange
+noinst_PROGRAMS = $(TESTS)
 
 noinst_DATA = fat16.img isotest.iso \
 	handle.img interlocked.img exception.img utf.img ring.img fpu.img \
@@ -69,7 +67,7 @@ noinst_DATA = fat16.img isotest.iso \
 	position.img size.img write_read.img write_read2.img \
 	write.img read.img create_release.img getPageCount.img \
 	invalidate.img \
-	pageSet.img \
+	pageSet.img process.img \
 	ethernet.img loopback.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
@@ -118,6 +116,8 @@ es1370_SOURCES = es1370.cpp wave.cpp
 cdrom_SOURCES = cdrom.cpp
 
 pageSet_SOURCES = pageSet.cpp  memoryStream.h
+
+process_SOURCES = process.cpp
 
 position_SOURCES = position.cpp memoryStream.h
 
@@ -194,4 +194,4 @@ fat16.img: fat16.img.gz
 isotest.iso: isotest.iso.gz
 	gunzip -c $< > $@
 
-EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript testLoader
+EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript

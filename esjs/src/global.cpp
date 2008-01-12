@@ -225,10 +225,6 @@ class GlobalMethod : public Code
         ParseFloat,
         IsNaN,
         IsFinite,
-        DecodeURI,
-        EncodeURI,
-        EncodeURIComponent,
-        DecodeURIComponent,
         MethodCount
     };
 
@@ -236,148 +232,6 @@ class GlobalMethod : public Code
     enum Method             method;
 
     static const char*      names[MethodCount];
-    static const std::string reservedURISet;
-    static const std::string unescapedURIComponentSet;
-
-    bool isUnescaped(char c, const std::string& unescapedSet)
-    {
-        if ('0' <= c && c <= '9' ||
-            'a' <= c && c <= 'z' ||
-            'A' <= c && c <= 'Z' ||
-            unescapedSet.find(c) != std::string::npos)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    std::string encode(std::string& uri, const std::string& unescapedSet)
-    {
-        int k;
-        std::string result = "";
-        for (k = 0; k < uri.length(); ++k)
-        {
-            char c = uri[k];
-            if (unescapedSet.find(c) == std::string::npos)
-            {
-                int seq = 0;
-                while ((c & 1 << (7-seq)))
-                {
-                    if (4 < ++seq)
-                    {
-                        throw getErrorInstance("URIError");
-                    }
-                }
-                if (seq == 0 && isUnescaped(c, unescapedSet))
-                {
-                    result += c;
-                    continue;
-                }
-
-                char escaped[4];
-                while (k < uri.length())
-                {
-                    sprintf(escaped, "%%%02X", static_cast<u8>(uri[k]));
-                    result += escaped;
-                    if (--seq <= 0)
-                    {
-                        break;
-                    }
-                    ++k;
-                }
-                if (0 < seq)
-                {
-                    throw getErrorInstance("URIError");
-                }
-            }
-            else
-            {
-                result += c;
-            }
-        }
-
-        return result;
-    }
-
-    int getInt(char hex)
-    {
-        if (!isxdigit(hex))
-        {
-            return -1;
-        }
-        if ('0' <= hex && hex <= '9')
-        {
-            return hex - '0';
-        }
-        if ('a' <= hex && hex <= 'f')
-        {
-            return hex - 'a' + 0x0A;
-        }
-        if ('A' <= hex && hex <= 'F')
-        {
-            return hex - 'A' + 0x0A;
-        }
-
-        throw getErrorInstance("URIError");
-    }
-
-    char getCode(std::string& uri, int k)
-    {
-        int h = getInt(uri[k+1]);
-        int l = getInt(uri[k+2]);
-        ASSERT(0 <= h && h < 16 && 0 <= l && l < 16);
-        return static_cast<char>(h * 16 + l);
-    }
-
-    std::string decode(std::string& uri, const std::string& reserved)
-    {
-        std::string result = "";
-        int seq = 0;
-        int k;
-        for (k = 0; k < uri.length(); ++k)
-        {
-            char c = uri[k];
-            if (c == '%')
-            {
-                if (uri.length() < k + 2)
-                {
-                    throw getErrorInstance("URIError");
-                }
-
-                c = getCode(uri, k);
-                k += 2;
-                if (seq == 0)
-                {
-                    while ((c & 1 << (7-seq)) && seq < 8)
-                    {
-                        ++seq;
-                    }
-                    if (0 < seq)
-                    {
-                        --seq;
-                    }
-                }
-                else if (0 < seq)
-                {
-                    --seq;
-                }
-
-                if (reserved.find(c) != std::string::npos)
-                {
-                    result += uri[k-2];
-                    result += uri[k-1];
-                    result += uri[k];
-                    continue;
-                }
-            }
-            else if (seq)
-            {
-                throw getErrorInstance("URIError");
-            }
-            result += c;
-        }
-        return result;
-    }
 
 public:
     GlobalMethod(ObjectValue* function, int method) :
@@ -402,18 +256,6 @@ public:
         case IsNaN:
         case IsFinite:
             arguments->add(new Identifier("number"));
-            break;
-        case DecodeURI:
-            arguments->add(new Identifier("encodedURI"));
-            break;
-        case EncodeURI:
-            arguments->add(new Identifier("uri"));
-            break;
-        case DecodeURIComponent:
-            arguments->add(new Identifier("encodedURIComponent"));
-            break;
-        case EncodeURIComponent:
-            arguments->add(new Identifier("uriComponent"));
             break;
         }
 
@@ -545,22 +387,6 @@ public:
             number = getScopeChain()->get("number")->toNumber();
             value = BoolValue::getInstance(isfinite(number) ? true : false);
             break;
-        case DecodeURI:
-            s = getScopeChain()->get("encodedURI")->toString();
-            value = new StringValue(decode(s, "#" + reservedURISet));
-            break;
-        case EncodeURI:
-            s = getScopeChain()->get("uri")->toString();
-            value = new StringValue(encode(s, reservedURISet + unescapedURIComponentSet + "#"));
-            break;
-        case DecodeURIComponent:
-            s = getScopeChain()->get("encodedURIComponent")->toString();
-            value = new StringValue(decode(s, ""));
-            break;
-        case EncodeURIComponent:
-            s = getScopeChain()->get("uriComponent")->toString();
-            value = new StringValue(encode(s, unescapedURIComponentSet));
-            break;
         }
         return CompletionType(CompletionType::Return, value, "");
     }
@@ -582,15 +408,8 @@ const char* GlobalMethod::names[] =
     "parseInt",
     "parseFloat",
     "isNaN",
-    "isFinite",
-    "decodeURI",
-    "encodeURI",
-    "encodeURIComponent",
-    "decodeURIComponent"
+    "isFinite"
 };
-
-const std::string GlobalMethod::reservedURISet(";/?:@&=+$,");
-const std::string GlobalMethod::unescapedURIComponentSet("-_.!~*'()");
 
 void constructGlobalObject()
 {

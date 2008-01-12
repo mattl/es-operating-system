@@ -19,8 +19,6 @@
 #include <es/usage.h>
 #include "eventManager.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -49,7 +47,7 @@ int main(int argc, char* argv[])
     int y0;
     int x;
     int y;
-    eventQueue->getMousePoint(&x0, &y0);
+    eventQueue->getMousePoint(x0, y0);
     for (;;)
     {
         int stroke;
@@ -57,7 +55,7 @@ int main(int argc, char* argv[])
         {
             esReport("0x%x\n", stroke);
         }
-        eventQueue->getMousePoint(&x, &y);
+        eventQueue->getMousePoint(x, y);
         if (x != x0 || y != y0)
         {
             x0 = x;

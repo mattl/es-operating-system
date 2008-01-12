@@ -65,9 +65,6 @@ class Interface
                 adapter.accept(&v);
                 m->setSize(MRU);    // Restore the size
                 m->setPosition(0);
-
-                m->setLocal(0);
-                m->setRemote(0);
             }
         }
         return 0;

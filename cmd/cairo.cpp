@@ -18,8 +18,6 @@
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
 
-using namespace es;
-
 ICurrentProcess* System();
 
 #define WIDTH   1024

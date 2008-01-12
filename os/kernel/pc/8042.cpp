@@ -612,24 +612,24 @@ Keyboard::
 {
 }
 
-void* Keyboard::
-queryInterface(const Guid& riid)
+bool Keyboard::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Keyboard::
@@ -825,24 +825,24 @@ Stream::flush()
 {
 }
 
-void* Keyboard::
-Stream::queryInterface(const Guid& riid)
+bool Keyboard::
+Stream::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Keyboard::

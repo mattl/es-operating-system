@@ -2,10 +2,10 @@ SUBDIRS = . testsuite
 
 lib_LIBRARIES = libeskernel.a
 
-SUFFIXES = .ent .c .bin
-vpath %.ent = ../../include/es
+SUFFIXES = .ird .c .bin
+vpath %.ird = ../../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;
@@ -219,6 +219,17 @@ header_files += \
 #	pc/pci.h
 
 endif ES
+
+#
+# windows
+#
+
+if WIN32
+
+cpp_source_files += \
+	windows/ref.cpp
+
+endif WIN32
 
 #
 # posix

@@ -456,24 +456,24 @@ invoke(int irq)
     return 0;
 }
 
-void* Es1370::
-queryInterface(const Guid& riid)
+bool Es1370::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Es1370::

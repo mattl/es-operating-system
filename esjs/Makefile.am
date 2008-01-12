@@ -2,11 +2,11 @@ if POSIX
 SUBDIRS = . testsuite
 endif POSIX
 
-SUFFIXES = .ent
+SUFFIXES = .ird
 
-vpath %.ent = ../include/es
+vpath %.ird = ../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;
@@ -57,7 +57,7 @@ nodist_esjs_SOURCES = \
 BUILT_SOURCES = lexer.cc parser.cc parser.h
 
 esjs_SOURCES = \
-	src/lexer.ll src/parser.yy src/esjs.cpp src/value.cpp \
+	src/apply.S src/lexer.ll src/parser.yy src/esjs.cpp src/value.cpp \
 	src/array.cpp \
 	src/boolean.cpp \
 	src/date.cpp \
@@ -98,7 +98,6 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/src \
 	-I- \
 	-I$(srcdir)/../include \
-	-I../include \
 	-I$(prefix)/include
 
 clean-local:
@@ -110,14 +109,10 @@ dist-hook:
 EXTRA_DIST = \
 	scripts/cat.js		\
 	scripts/cd.js		\
-	scripts/clear.js	\
-	scripts/date.js		\
 	scripts/echo.js		\
 	scripts/edit.js		\
-	scripts/figure.js	\
-	scripts/gradient.js	\
-	scripts/kanji.js	\
 	scripts/ls.js		\
-	scripts/pi.js		\
-	scripts/rm.js		\
-	scripts/shell.js
+	scripts/shell.js	\
+	scripts/date.js		\
+	scripts/clear.js	\
+	scripts/figure.js

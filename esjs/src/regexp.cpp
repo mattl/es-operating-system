@@ -609,7 +609,7 @@ Value* stringReplace()
         }
 
         t.replace(pmatch[0].rm_so + diff, pmatch[0].rm_eo - pmatch[0].rm_so, n);
-        diff += n.length() - (pmatch[0].rm_eo - pmatch[0].rm_so);
+        diff = n.length() - (pmatch[0].rm_eo - pmatch[0].rm_so);
 
     } while (regexp && regexp->isGlobal());
 

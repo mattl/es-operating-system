@@ -1,4 +1,4 @@
-stream = System.output;
+stream = System.getOut();
 r = new RegExp("^ab", "g");
 for (;;)
 {

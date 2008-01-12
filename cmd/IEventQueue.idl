@@ -11,96 +11,98 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_IEVENTQUEUE_IDL_INCLUDED
-#define NINTENDO_IEVENTQUEUE_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ */
+[object, uuid(c466c947-602b-49c1-8d67-05d292fa65c4)]
+interface IEventQueue : IInterface
 {
-    /**
-     */
-    interface IEventQueue : IInterface
+    /* User input recording II:
+       The following functions and definition can be used on
+       platform supporting events directly.
+    */
+    /* types of events */
+    enum EventType
     {
-        #pragma ID IEventQueue = "DCE:c466c947-602b-49c1-8d67-05d292fa65c4";
-        typedef sequence<octet> Buf;
-
-        /* User input recording II:
-           The following functions and definition can be used on
-           platform supporting events directly.
-        */
-        /* types of events */
-        const long EventTypeNone = 0;
-        const long EventTypeMouse = 1;
-        const long EventTypeKeyboard = 2;
-        const long EventTypeDragDropFiles = 3;
-
-        /* keypress state for keyboard events */
-        const long EventKeyChar = 0;
-        const long EventKeyDown = 1;
-        const long EventKeyUp = 2;
-
-        /* button definitions */
-        const long RedButtonBit = 4;
-        const long YellowButtonBit = 2;
-        const long BlueButtonBit = 1;
-
-        /* modifier definitions */
-        const long ShiftKeyBit = 1;
-        const long CtrlKeyBit = 2;
-        const long OptionKeyBit = 4;
-        const long CommandKeyBit = 8;
-
-        /* generic input event definition */
-        struct InputEvent
-        {
-            long type; /* type of event; either one of EventTypeXXX */
-            unsigned long timeStamp; /* time stamp */
-             /* the interpretation of the following fields depend on the type of the event */
-            long unused1;
-            long unused2;
-            long unused3;
-            long unused4;
-            long unused5;
-            long unused6;
-        };
-
-        /* mouse input event definition */
-        struct MouseEvent
-        {
-            long type; /* EventTypeMouse */
-            unsigned long timeStamp; /* time stamp */
-            long x; /* mouse position x */
-            long y; /* mouse position y */
-            long buttons; /* combination of xxxButtonBit */
-            long modifiers; /* combination of xxxKeyBit */
-            long reserved1; /* reserved for future use */
-            long reserved2; /* reserved for future use */
-        };
-
-        /* keyboard input event definition */
-        struct KeyboardEvent
-        {
-            long type; /* EventTypeKeyboard */
-            unsigned long timeStamp; /* time stamp */
-            long charCode; /* character code in Mac Roman encoding */
-            long pressCode; /* press code; any of EventKeyXXX */
-            long modifiers; /* combination of xxxKeyBit */
-            long reserved1; /* reserved for future use */
-            long reserved2; /* reserved for future use */
-            long reserved3; /* reserved for future use */
-        };
-
-        boolean getEvent(out InputEvent event);
-        boolean getKeystroke(out long stroke);
-        boolean peekKeystroke(out long stroke);
-        unsigned long getButtonState();
-        void getMousePoint(out long x, out long y);
-        boolean keyEvent(in Buf data);
-        boolean mouseEvent(in Buf data);
-        boolean wait(in long long timeout);
-        void notify();
+        EventTypeNone = 0,
+        EventTypeMouse = 1,
+        EventTypeKeyboard = 2,
+        EventTypeDragDropFiles = 3
     };
-};
 
-#endif // NINTENDO_IEVENTQUEUE_IDL_INCLUDED
+    /* keypress state for keyboard events */
+    enum KeypressState
+    {
+        EventKeyChar = 0,
+        EventKeyDown = 1,
+        EventKeyUp = 2
+    };
+
+    /* button definitions */
+    enum ButtonDefinition
+    {
+        RedButtonBit = 4,
+        YellowButtonBit = 2,
+        BlueButtonBit = 1
+    };
+
+    /* modifier definitions */
+    enum ModifierDefinition
+    {
+        ShiftKeyBit = 1,
+        CtrlKeyBit = 2,
+        OptionKeyBit = 4,
+        CommandKeyBit = 8
+    };
+
+    /* generic input event definition */
+    struct InputEvent
+    {
+        int type; /* type of event; either one of EventTypeXXX */
+        unsigned int timeStamp; /* time stamp */
+         /* the interpretation of the following fields depend on the type of the event */
+        int unused1;
+        int unused2;
+        int unused3;
+        int unused4;
+        int unused5;
+        int unused6;
+    };
+
+    /* mouse input event definition */
+    struct MouseEvent
+    {
+        int type; /* EventTypeMouse */
+        unsigned int timeStamp; /* time stamp */
+        int x; /* mouse position x */
+        int y; /* mouse position y */
+        int buttons; /* combination of xxxButtonBit */
+        int modifiers; /* combination of xxxKeyBit */
+        int reserved1; /* reserved for future use */
+        int reserved2; /* reserved for future use */
+    };
+
+    /* keyboard input event definition */
+    struct KeyboardEvent
+    {
+        int type; /* EventTypeKeyboard */
+        unsigned int timeStamp; /* time stamp */
+        int charCode; /* character code in Mac Roman encoding */
+        int pressCode; /* press code; any of EventKeyXXX */
+        int modifiers; /* combination of xxxKeyBit */
+        int reserved1; /* reserved for future use */
+        int reserved2; /* reserved for future use */
+        int reserved3; /* reserved for future use */
+    };
+
+    boolean getEvent([out] InputEvent* event);
+    boolean getKeystroke([out] int* stroke);
+    boolean peekKeystroke([out] int* stroke);
+    unsigned int getButtonState();
+    void getMousePoint([out] int& x, [out] int &y);
+    boolean keyEvent([in, size_is(size)] void* data, int size);
+    boolean mouseEvent([in, size_is(size)] void* data, int size);
+    boolean wait(long timeout);
+    void notify();
+}

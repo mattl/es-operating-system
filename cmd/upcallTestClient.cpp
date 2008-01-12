@@ -20,8 +20,6 @@
 #include <es/base/IProcess.h>
 #include <es/usage.h>
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))

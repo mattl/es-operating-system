@@ -698,7 +698,7 @@ void ArrayValue::put(const std::string& name, Value* value, int attributes)
                 remove(name);
             }
         }
-        property->putValue(value);
+        property->setValue(value);
     }
     catch (Exception& e)
     {

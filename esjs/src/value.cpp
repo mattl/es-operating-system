@@ -31,7 +31,7 @@ Value::List Value::newSet;
 Value::List Value::oldSet;
 Value::List Value::rememberedSet;
 
-Value* Value::get(const std::string& name)
+Value* Value::get(const std::string& name) const
 {
     return &undefinedValue;
 }

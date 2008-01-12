@@ -16,9 +16,7 @@
 
 #ifdef __es__
 
-#include <errno.h>
 #include <es/broker.h>
-#include <es/exception.h>
 #include <es/ref.h>
 #include <es/list.h>
 #include <es/base/IProcess.h>
@@ -46,7 +44,7 @@ public:
     {
     }
 
-    bool set(void* object, const Guid& iid, bool used = false);
+    bool set(void* object, const Guid& iid);
 
     void* getObject() const
     {
@@ -60,17 +58,17 @@ public:
 
     bool isValid() const
     {
-        return (0 < ref && 0 <= use) ? true : false;
+        return (0 < ref && 0 < use) ? true : false;
     }
 
     long addUser();
     long releaseUser();
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
         ASSERT(false);
-        return NULL;
+        return false;
     }
     unsigned int addRef();
     unsigned int release();
@@ -100,10 +98,10 @@ public:
     bool isUsed();
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
         ASSERT(false);
-        return NULL;
+        return false;
     }
     unsigned int addRef();
     unsigned int release();
@@ -212,7 +210,7 @@ public:
     static const unsigned INTERFACE_POINTER_MAX = 100;
 
 private:
-    static ICacheFactory*   cacheFactory;
+    static CacheFactory*    cacheFactory;
     static Zero*            zero;
     static Swap*            swap;
 
@@ -284,7 +282,7 @@ public:
     int write(const void* src, int count, long long offset);
 
     long long systemCall(void** self, unsigned methodNumber, va_list param, void** base);
-    int set(SyscallProxy* table, void* object, const Guid& iid, bool used = false);
+    int set(SyscallProxy* table, void* object, const Guid& iid);
 
     Thread* createThread(const unsigned stackSize);
     void detach(Thread* thread);
@@ -300,8 +298,8 @@ public:
     void unmap(const void* start, long long length);
     IThread* createThread(void* (*start)(void* param), void* param);
     IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
+    IStream* getIn();
+    IStream* getOut();
     IStream* getError();
     void* setBreak(long long increment);
     bool trace(bool on);
@@ -309,12 +307,8 @@ public:
     IContext* getCurrent();
 
     // IRuntime
-    /* [check] function pointer.
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
     void setFocus(void* (*focus)(void* param));
-    */
-    void setStartup(const void* startup);
-    void setFocus(const void* focus);
 
     // IProcess
     void kill();
@@ -325,12 +319,12 @@ public:
     int getExitValue();
     bool hasExited();
     void setRoot(IContext* root);
-    void setInput(IStream* in);
-    void setOutput(IStream* out);
+    void setIn(IStream* in);
+    void setOut(IStream* out);
     void setError(IStream* error);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
@@ -363,7 +357,7 @@ public:
     /** Copies back the input parameters from the server user stack.
      * @return  error number
      */
-    int copyOut(UpcallRecord* record, Guid& iid);
+    int copyOut(UpcallRecord* record);
 };
 
 #endif // __es__

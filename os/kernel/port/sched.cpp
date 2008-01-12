@@ -110,10 +110,10 @@ selectThread()
 //
 
 void Sched::
-exit(const void* val)
+exit(void* val)
 {
     Thread* current(Thread::getCurrentThread());
-    current->exit(const_cast<void*>(val));
+    current->exit(val);
 }
 
 void Sched::
@@ -185,13 +185,10 @@ currentThread()
 }
 
 IThread* Sched::
-// createThread(void* (*start)(void* param), void* param) // [check]
-createThread(const void* start, const void* param)
+createThread(void* (*start)(void* param), void* param)
 {
-    typedef void* (*Start)(void* param); // [check]
-
     Process* current(Process::getCurrentProcess());
-    return current->createThread(reinterpret_cast<Start>(start), const_cast<void*>(param)); // [check]
+    return current->createThread(start, param);
 }
 
 void Sched::
@@ -214,17 +211,17 @@ getRoot()
 }
 
 IStream* Sched::
-getInput()
+getIn()
 {
     Process* current(Process::getCurrentProcess());
-    return current->getInput();
+    return current->getIn();
 }
 
 IStream* Sched::
-getOutput()
+getOut()
 {
     Process* current(Process::getCurrentProcess());
-    return current->getOutput();
+    return current->getOut();
 }
 
 IStream* Sched::
@@ -269,18 +266,17 @@ getCurrent()
 }
 
 void Sched::
-setStartup(const void* startup) // [check] setStartup(void (*startup)(void* (*start)(void* param), void* param))
+setStartup(void (*startup)(void* (*start)(void* param), void* param))
 {
     Process* current(Process::getCurrentProcess());
     return current->setStartup(startup);
 }
 
 void Sched::
-
-setFocus(const void* focus) // [check] setFocus(void* (*focus)(void* param))
+setFocus(void* (*focus)(void* param))
 {
     Process* current(Process::getCurrentProcess());
-    return current->setFocus(focus); // [check]
+    return current->setFocus(focus);
 }
 
 //
@@ -298,36 +294,36 @@ invoke(int result)
 // IInterface
 //
 
-void* Sched::
-queryInterface(const Guid& riid)
+bool Sched::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICurrentThread::iid())
+    if (riid == IID_ICurrentThread)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        *objectPtr = static_cast<ICurrentThread*>(this);
     }
-    else if (riid == ICurrentProcess::iid())
+    else if (riid == IID_ICurrentProcess)
     {
-        objectPtr = static_cast<ICurrentProcess*>(this);
+        *objectPtr = static_cast<ICurrentProcess*>(this);
     }
-    else if (riid == IRuntime::iid())
+    else if (riid == IID_IRuntime)
     {
-        objectPtr = static_cast<IRuntime*>(this);
+        *objectPtr = static_cast<IRuntime*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        *objectPtr = static_cast<ICurrentThread*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Sched::

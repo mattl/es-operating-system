@@ -1,6 +1,6 @@
 // test getYear() and setYear().
 
-stdout = System.output;
+stdout = System.getOut();
 function print(s)
 {
     stdout.write(s + '\n', s.length + 1);

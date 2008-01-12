@@ -27,8 +27,6 @@
 #define INFINITY    __builtin_inf()
 #endif
 
-using namespace es;
-
 int print(const char* spec, ...)
 {
     va_list list;

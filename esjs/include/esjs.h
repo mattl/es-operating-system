@@ -1458,7 +1458,7 @@ class RegularExpressionLiteral : public Expression
     std::string value;
 
 public:
-    RegularExpressionLiteral(std::string s) :
+    RegularExpressionLiteral(char* s) :
         value(s)
     {
     }
@@ -3334,6 +3334,6 @@ SourceElements* getProgram();
 void setProgram(SourceElements* elements);
 
 void setSource(const std::string& s);
-void setSource(es::IStream* stream);
+void setSource(IStream* stream);
 
 #endif  // NINTENDO_ESJS_H_INCLUDED

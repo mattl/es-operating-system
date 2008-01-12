@@ -70,13 +70,13 @@ public:
     // IResolver
     //
     IInternetAddress* getHostByName(const char* hostName, int addressFamily);
-    IInternetAddress* getHostByAddress(const void* address, int len, unsigned int scopeID);
-    int getHostName(char* hostName, int len, IInternetAddress* address);
+    IInternetAddress* getHostByAddress(const void* address, unsigned int len, unsigned int scopeID);
+    bool getHostName(IInternetAddress* address, char* hostName, unsigned int len);
 
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 };

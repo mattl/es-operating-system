@@ -1,6 +1,6 @@
 // test setMonth().
 
-stdout = System.output;
+stdout = System.getOut();
 function check(result)
 {
     if (result)

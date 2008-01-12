@@ -1,0 +1,162 @@
+2007-07-26 06:54  okasaka
+
+	* configure, configure.ac: Set version to 0.0.12.
+
+2007-07-26 06:20  ueno9
+
+	* Makefile.am, Makefile.in, include/value.h, scripts/date.js,
+	  src/date.cpp, src/esjs.cpp, src/number.cpp, testsuite/1000.js,
+	  testsuite/1001.js, testsuite/1002.js, testsuite/1003.js,
+	  testsuite/1004.js, testsuite/1005.js, testsuite/1006.js,
+	  testsuite/1007.js, testsuite/1008.js, testsuite/1009.js,
+	  testsuite/1010.js, testsuite/1011.js, testsuite/1012.js,
+	  testsuite/1013.js, testsuite/1014.js, testsuite/1015.js,
+	  testsuite/1016.js, testsuite/1017.js, testsuite/1018.js,
+	  testsuite/1019.js, testsuite/1020.js, testsuite/1021.js,
+	  testsuite/1022.js, testsuite/1023.js, testsuite/1024.js,
+	  testsuite/1025.js, testsuite/1026.js, testsuite/1027.js,
+	  testsuite/1028.js, testsuite/1029.js, testsuite/1030.js,
+	  testsuite/1031.js, testsuite/1032.js, testsuite/1033.js,
+	  testsuite/1034.js, testsuite/1035.js, testsuite/1036.js,
+	  testsuite/1037.js, testsuite/1038.js, testsuite/1039.js,
+	  testsuite/1040.js, testsuite/1041.js, testsuite/1042.js,
+	  testsuite/1043.js, testsuite/1044.js, testsuite/1045.js,
+	  testsuite/1046.js, testsuite/73.js, testsuite/74.js,
+	  testsuite/75.js, testsuite/Makefile.am, testsuite/Makefile.in:
+	  (esjs) : Support Date and Number objects.
+
+2007-07-26 04:12  okasaka
+
+	* Makefile.am, Makefile.in, include/esjs.h, include/value.h,
+	  src/boolean.cpp, src/esjs.cpp, src/interface.cpp, src/value.cpp,
+	  testsuite/72.js, testsuite/Makefile.am, testsuite/Makefile.in:
+	  (constructBooleanObject) : New to support Boolean Objects.
+	  (ObjectValue::toNumber) : New.
+	  (Formatter) : Use ECMAScript mode.
+
+2007-07-26 02:34  okasaka
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	  depcomp, install-sh, missing, testsuite/Makefile.in: Switch to
+	  aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
+
+2007-07-19 01:08  okasaka
+
+	* scripts/edit.js: (dowrite) : Fix a bug.
+
+2007-07-18 09:30  okasaka
+
+	* Makefile.am, Makefile.in, scripts/cat.js, scripts/cd.js,
+	  scripts/echo.js, scripts/edit.js, scripts/ls.js,
+	  scripts/shell.js: (cd.js) : New to support the current working
+	  directory concept.
+
+2007-07-18 08:49  okasaka
+
+	* scripts/shell.js: Add exit built-in command.
+	  (elem) : Remove \v which is not a valid non-printing characters
+	  in PCRE.
+
+2007-07-18 08:48  okasaka
+
+	* scripts/ls.js: Use IBinding instead of IFile.
+
+2007-07-12 02:23  okasaka
+
+	* scripts/cat.js: Clean up.
+
+2007-07-11 06:03  okasaka
+
+	* src/interface.cpp: (InterfaceMethodCode::evaluate) : Fix a bug.
+
+2007-07-09 09:54  okasaka
+
+	* scripts/edit.js: (doread) : Add line buffer for better
+	  performance.
+	  (dowrite) : Fix to be able to save files on real machines.
+
+2007-07-09 09:50  okasaka
+
+	* include/esjs.h, src/esjs.cpp, testsuite/71.js,
+	  testsuite/Makefile.am, testsuite/Makefile.in:
+	  (SourceElements::evaluate) : Process function declarations before
+	  evaluating statements.
+
+2007-07-09 04:34  okasaka
+
+	* src/esjs.cpp: (GlobalMethod::evaluate) : Fix a GC related bug in
+	  eval method.
+
+2007-06-29 03:31  okasaka
+
+	* src/interface.cpp: (InterfaceMethodCode::evaluate) : Arrow a non
+	  interface pointer object to be passed for an interface pointer as
+	  zero for such as the bind method.
+
+2007-06-29 03:29  okasaka
+
+	* src/string.cpp: (StringMethod::charAt) : New.
+
+2007-06-29 03:29  okasaka
+
+	* src/regexp.cpp: (RegExpValue::match) : Fix not to match ^ if
+	  offset is not zero.
+
+2007-06-29 03:00  okasaka
+
+	* include/esjs.h, include/value.h, src/value.cpp:
+	  (ObjectValue::setParameterList) : Support length property of the
+	  function.
+
+2007-06-29 02:56  okasaka
+
+	* src/esjs.cpp: (main) : Adjust GC thresh for better performance.
+
+2007-06-29 02:54  okasaka
+
+	* Makefile.am, Makefile.in, scripts/edit.js, testsuite/68.js,
+	  testsuite/69.js, testsuite/70.js, testsuite/Makefile.am,
+	  testsuite/Makefile.in: (edit.js) : New.
+
+2007-06-22 07:58  okasaka
+
+	* COPYING, ChangeLog, Makefile.in, README: New.
+
+2007-06-22 07:29  okasaka
+
+	* configure, configure.ac: Set version to 0.0.11.
+
+2007-06-22 02:09  okasaka
+
+	* ., Makefile.am, Makefile.in, aclocal.m4, config.guess,
+	  config.sub, configure, configure.ac, depcomp, include,
+	  include/esjs.h, include/interface.h, include/smartptr.h,
+	  include/value.h, install-sh, missing, scripts, scripts/cat.js,
+	  scripts/echo.js, scripts/ls.js, scripts/shell.js, src,
+	  src/apply.S, src/array.cpp, src/esjs.cpp, src/interface.cpp,
+	  src/lexer.ll, src/math.cpp, src/parser.yy, src/regexp.cpp,
+	  src/string.cpp, src/value.cpp, src/valueptr.cpp, testsuite,
+	  testsuite/1.js, testsuite/10.js, testsuite/11.js,
+	  testsuite/12.js, testsuite/13.js, testsuite/14.js,
+	  testsuite/15.js, testsuite/16.js, testsuite/17.js,
+	  testsuite/18.js, testsuite/19.js, testsuite/2.js,
+	  testsuite/20.js, testsuite/21.js, testsuite/22.js,
+	  testsuite/23.js, testsuite/24.js, testsuite/25.js,
+	  testsuite/26.js, testsuite/27.js, testsuite/28.js,
+	  testsuite/29.js, testsuite/3.js, testsuite/30.js,
+	  testsuite/31.js, testsuite/32.js, testsuite/33.js,
+	  testsuite/34.js, testsuite/35.js, testsuite/36.js,
+	  testsuite/37.js, testsuite/38.js, testsuite/39.js,
+	  testsuite/4.js, testsuite/40.js, testsuite/41.js,
+	  testsuite/42.js, testsuite/43.js, testsuite/44.js,
+	  testsuite/45.js, testsuite/46.js, testsuite/47.js,
+	  testsuite/48.js, testsuite/49.js, testsuite/5.js,
+	  testsuite/50.js, testsuite/51.js, testsuite/52.js,
+	  testsuite/53.js, testsuite/54.js, testsuite/55.js,
+	  testsuite/56.js, testsuite/57.js, testsuite/58.js,
+	  testsuite/59.js, testsuite/6.js, testsuite/60.js,
+	  testsuite/61.js, testsuite/62.js, testsuite/63.js,
+	  testsuite/64.js, testsuite/65.js, testsuite/66.js,
+	  testsuite/67.js, testsuite/7.js, testsuite/8.js, testsuite/9.js,
+	  testsuite/Makefile.am, testsuite/Makefile.in: Initial check-in.
+

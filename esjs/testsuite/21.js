@@ -1,3 +1,3 @@
 message = 'Hello, world.\n';
-stream = System.output;
+stream = System.getOut();
 stream.write(message, 14);

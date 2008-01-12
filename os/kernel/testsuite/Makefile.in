@@ -66,15 +66,16 @@ target_triplet = @target@
 @ES_TRUE@	monitor1$(EXEEXT) monitor2$(EXEEXT) monitor3$(EXEEXT) \
 @ES_TRUE@	bpi$(EXEEXT) bpi2$(EXEEXT) bpi3$(EXEEXT) ata$(EXEEXT) \
 @ES_TRUE@	beep$(EXEEXT) 8042$(EXEEXT) vesa$(EXEEXT) \
-@ES_TRUE@	fdc$(EXEEXT) sb16$(EXEEXT) es1370$(EXEEXT) \
-@ES_TRUE@	cdrom$(EXEEXT) page$(EXEEXT) cache$(EXEEXT) \
-@ES_TRUE@	replace$(EXEEXT) position$(EXEEXT) size$(EXEEXT) \
-@ES_TRUE@	write_read$(EXEEXT) write_read2$(EXEEXT) \
-@ES_TRUE@	write$(EXEEXT) read$(EXEEXT) create_release$(EXEEXT) \
-@ES_TRUE@	getPageCount$(EXEEXT) invalidate$(EXEEXT) \
-@ES_TRUE@	pageSet$(EXEEXT) loopback$(EXEEXT) ethernet$(EXEEXT)
+@ES_TRUE@	fdc$(EXEEXT) fdc_diskChange$(EXEEXT) sb16$(EXEEXT) \
+@ES_TRUE@	es1370$(EXEEXT) cdrom$(EXEEXT) page$(EXEEXT) \
+@ES_TRUE@	cache$(EXEEXT) replace$(EXEEXT) position$(EXEEXT) \
+@ES_TRUE@	size$(EXEEXT) write_read$(EXEEXT) \
+@ES_TRUE@	write_read2$(EXEEXT) write$(EXEEXT) read$(EXEEXT) \
+@ES_TRUE@	create_release$(EXEEXT) getPageCount$(EXEEXT) \
+@ES_TRUE@	invalidate$(EXEEXT) pageSet$(EXEEXT) process$(EXEEXT) \
+@ES_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
-@ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1) fdc_diskChange$(EXEEXT)
+@ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @POSIX_TRUE@am__append_2 = -lpthread -lrt -lstdc++
 @ES_TRUE@@I386_TRUE@am__append_3 = -iquote $(srcdir)/../include/i386
 subdir = kernel/testsuite
@@ -115,13 +116,14 @@ CONFIG_CLEAN_FILES =
 @ES_TRUE@	monitor1$(EXEEXT) monitor2$(EXEEXT) monitor3$(EXEEXT) \
 @ES_TRUE@	bpi$(EXEEXT) bpi2$(EXEEXT) bpi3$(EXEEXT) ata$(EXEEXT) \
 @ES_TRUE@	beep$(EXEEXT) 8042$(EXEEXT) vesa$(EXEEXT) \
-@ES_TRUE@	fdc$(EXEEXT) sb16$(EXEEXT) es1370$(EXEEXT) \
-@ES_TRUE@	cdrom$(EXEEXT) page$(EXEEXT) cache$(EXEEXT) \
-@ES_TRUE@	replace$(EXEEXT) position$(EXEEXT) size$(EXEEXT) \
-@ES_TRUE@	write_read$(EXEEXT) write_read2$(EXEEXT) \
-@ES_TRUE@	write$(EXEEXT) read$(EXEEXT) create_release$(EXEEXT) \
-@ES_TRUE@	getPageCount$(EXEEXT) invalidate$(EXEEXT) \
-@ES_TRUE@	pageSet$(EXEEXT) loopback$(EXEEXT) ethernet$(EXEEXT)
+@ES_TRUE@	fdc$(EXEEXT) fdc_diskChange$(EXEEXT) sb16$(EXEEXT) \
+@ES_TRUE@	es1370$(EXEEXT) cdrom$(EXEEXT) page$(EXEEXT) \
+@ES_TRUE@	cache$(EXEEXT) replace$(EXEEXT) position$(EXEEXT) \
+@ES_TRUE@	size$(EXEEXT) write_read$(EXEEXT) \
+@ES_TRUE@	write_read2$(EXEEXT) write$(EXEEXT) read$(EXEEXT) \
+@ES_TRUE@	create_release$(EXEEXT) getPageCount$(EXEEXT) \
+@ES_TRUE@	invalidate$(EXEEXT) pageSet$(EXEEXT) process$(EXEEXT) \
+@ES_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_8042_OBJECTS = 8042.$(OBJEXT)
 8042_OBJECTS = $(am_8042_OBJECTS)
@@ -304,6 +306,11 @@ position_OBJECTS = $(am_position_OBJECTS)
 position_LDADD = $(LDADD)
 position_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
 	$(am__DEPENDENCIES_1)
+am_process_OBJECTS = process.$(OBJEXT)
+process_OBJECTS = $(am_process_OBJECTS)
+process_LDADD = $(LDADD)
+process_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
+	$(am__DEPENDENCIES_1)
 am_read_OBJECTS = read.$(OBJEXT)
 read_OBJECTS = $(am_read_OBJECTS)
 read_LDADD = $(LDADD)
@@ -401,9 +408,10 @@ SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(pageSet_SOURCES) $(partition_SOURCES) \
 	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
 	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
-	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
-	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
+	$(partition_print_SOURCES) $(position_SOURCES) \
+	$(process_SOURCES) $(read_SOURCES) $(replace_SOURCES) \
+	$(ring_SOURCES) $(sb16_SOURCES) $(size_SOURCES) \
+	$(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(timer_SOURCES) $(utf_SOURCES) \
 	$(vesa_SOURCES) $(write_SOURCES) $(write_read_SOURCES) \
 	$(write_read2_SOURCES)
@@ -420,9 +428,10 @@ DIST_SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(pageSet_SOURCES) $(partition_SOURCES) \
 	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
 	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
-	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
-	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
+	$(partition_print_SOURCES) $(position_SOURCES) \
+	$(process_SOURCES) $(read_SOURCES) $(replace_SOURCES) \
+	$(ring_SOURCES) $(sb16_SOURCES) $(size_SOURCES) \
+	$(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(am__timer_SOURCES_DIST) $(utf_SOURCES) \
 	$(vesa_SOURCES) $(write_SOURCES) $(write_read_SOURCES) \
 	$(write_read2_SOURCES)
@@ -546,11 +555,10 @@ AM_CPPFLAGS = -I $(srcdir)/../include -I- -I ../../../include -I \
 @ES_TRUE@	position.img size.img write_read.img write_read2.img \
 @ES_TRUE@	write.img read.img create_release.img getPageCount.img \
 @ES_TRUE@	invalidate.img \
-@ES_TRUE@	pageSet.img \
+@ES_TRUE@	pageSet.img process.img \
 @ES_TRUE@	ethernet.img loopback.img
 
 @POSIX_TRUE@noinst_DATA = fat16_32MB.img fat16.img
-@ES_TRUE@TESTS_ENVIRONMENT = $(srcdir)/testLoader
 @ES_TRUE@noinst_SCRIPTS = $(TESTS)
 @ES_TRUE@CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 @ES_TRUE@AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map
@@ -573,6 +581,7 @@ sb16_SOURCES = sb16.cpp wave.cpp
 es1370_SOURCES = es1370.cpp wave.cpp
 cdrom_SOURCES = cdrom.cpp
 pageSet_SOURCES = pageSet.cpp  memoryStream.h
+process_SOURCES = process.cpp
 position_SOURCES = position.cpp memoryStream.h
 size_SOURCES = size.cpp
 write_read_SOURCES = write_read.cpp memoryStream.h
@@ -604,7 +613,7 @@ partition_print_SOURCES = partition_print.cpp vdisk.h
 ethernet_SOURCES = ethernet.cpp
 loopback_SOURCES = loopback.cpp
 @POSIX_TRUE@timer_SOURCES = timer.cpp
-EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript testLoader
+EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript
 all: all-am
 
 .SUFFIXES:
@@ -749,6 +758,9 @@ partition_print$(EXEEXT): $(partition_print_OBJECTS) $(partition_print_DEPENDENC
 position$(EXEEXT): $(position_OBJECTS) $(position_DEPENDENCIES) 
 	@rm -f position$(EXEEXT)
 	$(CXXLINK) $(position_OBJECTS) $(position_LDADD) $(LIBS)
+process$(EXEEXT): $(process_OBJECTS) $(process_DEPENDENCIES) 
+	@rm -f process$(EXEEXT)
+	$(CXXLINK) $(process_OBJECTS) $(process_LDADD) $(LIBS)
 read$(EXEEXT): $(read_OBJECTS) $(read_DEPENDENCIES) 
 	@rm -f read$(EXEEXT)
 	$(CXXLINK) $(read_OBJECTS) $(read_LDADD) $(LIBS)
@@ -834,6 +846,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_iterator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/position.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/replace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ring.Po@am__quote@

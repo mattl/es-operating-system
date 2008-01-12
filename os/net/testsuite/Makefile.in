@@ -40,9 +40,7 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	config$(EXEEXT) anon$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	unreach$(EXEEXT) mcast$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	frag$(EXEEXT) timeout$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoClient$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT)
 @ES_TRUE@TESTS = config$(EXEEXT) dhcp$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
@@ -60,9 +58,7 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	config$(EXEEXT) anon$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	unreach$(EXEEXT) mcast$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	frag$(EXEEXT) timeout$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoClient$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT)
 @ES_TRUE@am__EXEEXT_1 = config$(EXEEXT) dhcp$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_anon_OBJECTS = anon.$(OBJEXT)
@@ -121,16 +117,6 @@ timeout_OBJECTS = $(am_timeout_OBJECTS)
 timeout_LDADD = $(LDADD)
 timeout_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
 	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
-am_udpEchoClient_OBJECTS = udpEchoClient.$(OBJEXT)
-udpEchoClient_OBJECTS = $(am_udpEchoClient_OBJECTS)
-udpEchoClient_LDADD = $(LDADD)
-udpEchoClient_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
-am_udpEchoServer_OBJECTS = udpEchoServer.$(OBJEXT)
-udpEchoServer_OBJECTS = $(am_udpEchoServer_OBJECTS)
-udpEchoServer_LDADD = $(LDADD)
-udpEchoServer_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
 am_unreach_OBJECTS = unreach.$(OBJEXT)
 unreach_OBJECTS = $(am_unreach_OBJECTS)
 unreach_LDADD = $(LDADD)
@@ -148,13 +134,11 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
-	$(tcp2_SOURCES) $(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(tcp2_SOURCES) $(timeout_SOURCES) $(unreach_SOURCES)
 DIST_SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
-	$(tcp2_SOURCES) $(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(tcp2_SOURCES) $(timeout_SOURCES) $(unreach_SOURCES)
 DATA = $(noinst_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -269,7 +253,6 @@ AM_CPPFLAGS = \
 	-I ../../../include \
 	-I $(srcdir)/../../../include
 
-@ES_TRUE@TESTS_ENVIRONMENT = $(srcdir)/testLoader
 @ES_TRUE@noinst_SCRIPTS = $(TESTS)
 @ES_TRUE@noinst_DATA = config.img dhcp.img
 @ES_TRUE@CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
@@ -286,9 +269,7 @@ config_SOURCES = config.cpp
 dhcp_SOURCES = dhcp.cpp
 dns_SOURCES = dns.cpp
 unreach_SOURCES = unreach.cpp
-udpEchoClient_SOURCES = udpEchoClient.cpp
-udpEchoServer_SOURCES = udpEchoServer.cpp
-EXTRA_DIST = makeScript testLoader
+EXTRA_DIST = makeScript
 all: all-am
 
 .SUFFIXES:
@@ -358,12 +339,6 @@ tcp2$(EXEEXT): $(tcp2_OBJECTS) $(tcp2_DEPENDENCIES)
 timeout$(EXEEXT): $(timeout_OBJECTS) $(timeout_DEPENDENCIES) 
 	@rm -f timeout$(EXEEXT)
 	$(CXXLINK) $(timeout_OBJECTS) $(timeout_LDADD) $(LIBS)
-udpEchoClient$(EXEEXT): $(udpEchoClient_OBJECTS) $(udpEchoClient_DEPENDENCIES) 
-	@rm -f udpEchoClient$(EXEEXT)
-	$(CXXLINK) $(udpEchoClient_OBJECTS) $(udpEchoClient_LDADD) $(LIBS)
-udpEchoServer$(EXEEXT): $(udpEchoServer_OBJECTS) $(udpEchoServer_DEPENDENCIES) 
-	@rm -f udpEchoServer$(EXEEXT)
-	$(CXXLINK) $(udpEchoServer_OBJECTS) $(udpEchoServer_LDADD) $(LIBS)
 unreach$(EXEEXT): $(unreach_OBJECTS) $(unreach_DEPENDENCIES) 
 	@rm -f unreach$(EXEEXT)
 	$(CXXLINK) $(unreach_OBJECTS) $(unreach_LDADD) $(LIBS)
@@ -385,8 +360,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpEchoClient.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpEchoServer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unreach.Po@am__quote@
 
 .cpp.o:
@@ -657,7 +630,9 @@ uninstall-am:
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% :: %.elf
+	$(srcdir)/makeScript "`pwd`" $@
 
 @ES_TRUE@clean-local:
 @ES_TRUE@	-rm -f *.map *.log 2hd.img es.img

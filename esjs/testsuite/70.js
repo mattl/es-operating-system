@@ -1,4 +1,4 @@
-var stdout = System.output;
+var stdout = System.getOut();
 var s = "こんにちは, 世界.";
 var pos = 0;
 var c;

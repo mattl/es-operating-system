@@ -114,12 +114,13 @@ addInterface(INetworkInterface* networkInterface)
 void Socket::
 removeInterface(INetworkInterface* networkInterface)
 {
-    for (int n = 1; n < Socket::INTERFACE_MAX; ++n)
+    int n;
+    for (n = 1; n < Socket::INTERFACE_MAX; ++n)
     {
         Interface* i = interfaces[n];
         if (i && i->networkInterface == networkInterface)
         {
-            interfaces[n] = 0;
+            interfaces[0] = 0;
             delete i;
             break;
         }
@@ -606,8 +607,8 @@ isWritable()
 // IMulticastSocket
 //
 
-bool Socket::
-isLoopbackMode()
+int Socket::
+getLoopbackMode()
 {
 }
 
@@ -683,32 +684,32 @@ remove(IMonitor* selector)
 // IInterface
 //
 
-void* Socket::
-queryInterface(const Guid& riid)
+bool Socket::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ISocket::iid())
+    if (riid == IID_ISocket)
     {
-        objectPtr = static_cast<ISocket*>(this);
+        *objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == ISelectable::iid())
+    else if (riid == IID_ISelectable)
     {
-        objectPtr = static_cast<ISelectable*>(this);
+        *objectPtr = static_cast<ISelectable*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ISocket*>(this);
+        *objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == IMulticastSocket::iid() && type == ISocket::Datagram)
+    else if (riid == IID_IMulticastSocket && type == ISocket::Datagram)
     {
-        objectPtr = static_cast<Socket*>(this);
+        *objectPtr = static_cast<Socket*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Socket::

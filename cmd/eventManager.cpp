@@ -33,8 +33,6 @@
 
 #include "eventManager.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -541,14 +539,14 @@ public:
                ((button & 4) ? YellowButtonBit : 0);
     }
 
-    void getMousePoint(int* x, int *y)
+    void getMousePoint(int& x, int &y)
     {
         if (registered)
         {
             Synchronized<IMonitor*> method(monitor);
 
-            *x = this->x;
-            *y = this->y;
+            x = this->x;
+            y = this->y;
         }
     }
 
@@ -723,23 +721,23 @@ public:
         }
     }
 
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        void* objectPtr;
-        if (riid == IInterface::iid())
+        if (riid == IID_IInterface)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            *objectPtr = static_cast<IEventQueue*>(this);
         }
-        else if (riid == IEventQueue::iid())
+        else if (riid == IID_IEventQueue)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            *objectPtr = static_cast<IEventQueue*>(this);
         }
         else
         {
-            return NULL;
+            *objectPtr = NULL;
+            return false;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
-        return objectPtr;
+        static_cast<IInterface*>(*objectPtr)->addRef();
+        return true;
     }
 
     unsigned int addRef()
@@ -837,7 +835,7 @@ int main(int argc, char* argv[])
     classStore->remove(CLSID_EventManager);
 
     // Unregister IEventQueue interface.
-    interfaceStore->remove(IEventQueue::iid());
+    interfaceStore->remove(IID_IEventQueue);
 
     esReport("Event manager is terminated.\n");
     // System()->trace(false);
