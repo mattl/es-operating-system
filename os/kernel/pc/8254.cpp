@@ -26,14 +26,11 @@ Pit::
 Pit(unsigned hz) : hz(hz), beeper(0)
 {
     // Set up counter 0
-    if (0 < hz)
-    {
-        u16 count = (143181800 / hz / 12 + 5) / 10;
-        outpb(PORT_CONTROL, COUNTER_0 | COUNTER_HI | COUNTER_LO | MODE_SQUARE);
-        outpb(PORT_COUNTER_0, count);
-        outpb(PORT_COUNTER_0, count >> 8);
-        Core::registerInterruptHandler(0, this);
-    }
+    u16 count = (143181800 / hz / 12 + 5) / 10;
+    outpb(PORT_CONTROL, COUNTER_0 | COUNTER_HI | COUNTER_LO | MODE_SQUARE);
+    outpb(PORT_COUNTER_0, count);
+    outpb(PORT_COUNTER_0, count >> 8);
+    Core::registerInterruptHandler(0, this);
 
     // Set up counter 2 (beep)
     setFrequency(750);
@@ -47,18 +44,17 @@ Pit(unsigned hz) : hz(hz), beeper(0)
 int Pit::
 invoke(int)
 {
-    if (hz)
-    {
-        tick += 10000000LL / hz;
-        Alarm::invoke();
-    }
+    tick += 10000000LL / hz;
+    Alarm::invoke();
 
-    if (beeper &&  (0 < tick - beeper || !hz))
+    if (0 < beeper)
     {
-        Lock::Synchronized method(spinLock);
-
-        beeper = 0;
-        outpb(SYSTEM_PORT, inpb(SYSTEM_PORT) & ~0x03);
+        beeper -= 10000000LL / hz;
+        if (beeper <= 0)
+        {
+            beeper = 0;
+            outpb(SYSTEM_PORT, inpb(SYSTEM_PORT) & ~0x03);
+        }
     }
 
     return 0;
@@ -77,13 +73,14 @@ setDuration(unsigned msec)
 void Pit::
 setFrequency(unsigned hz)
 {
-    Lock::Synchronized method(spinLock);
-
     freq = hz;
     unsigned count = (143181800 / hz / 12 + 5) / 10;
+
+    unsigned x = Core::splHi();
     outpb(PORT_CONTROL, COUNTER_2 | COUNTER_HI | COUNTER_LO | MODE_SQUARE);
     outpb(PORT_COUNTER_2, count);
     outpb(PORT_COUNTER_2, count >> 8);
+    Core::splX(x);
 }
 
 unsigned Pit::
@@ -101,52 +98,48 @@ getFrequency()
 void Pit::
 beep()
 {
-    Lock::Synchronized method(spinLock);
-
-    alarm.setInterval(duration * 10000LL);
-    alarm.setCallback(this);
-    alarm.setEnabled(true);
-
-    beeper = tick + duration * 10000LL;
+    unsigned x = Core::splHi();
+    beeper = duration * 10000LL;
     outpb(SYSTEM_PORT, inpb(SYSTEM_PORT) | 0x03);
+    Core::splX(x);
 }
 
 //
 // IInterface
 //
 
-void* Pit::
-queryInterface(const Guid& riid)
+bool Pit::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IBeep::iid())
+    else if (riid == IID_IBeep)
     {
-        objectPtr = static_cast<IBeep*>(this);
+        *objectPtr = static_cast<IBeep*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Pit::
-addRef()
+addRef(void)
 {
     return ref.addRef();
 }
 
 unsigned int Pit::
-release()
+release(void)
 {
     unsigned int count = ref.release();
     if (count == 0)

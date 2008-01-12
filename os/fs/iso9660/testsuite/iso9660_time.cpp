@@ -31,9 +31,9 @@ static long IsTimeModified(IFile* file, long long& creationTime, long long& last
     long long lastAccessTime2;
     long long lastWriteTime2;
 
-    creationTime2 = file->getCreationTime();
-    lastAccessTime2 = file->getLastAccessTime();
-    lastWriteTime2 = file->getLastWriteTime();
+    file->getCreationTime(creationTime2);
+    file->getLastAccessTime(lastAccessTime2);
+    file->getLastWriteTime(lastWriteTime2);
 
     DateTime dc(creationTime2);
     DateTime da(lastAccessTime2);
@@ -75,16 +75,12 @@ void test(Handle<IContext> root)
     Handle<IFile>       file = root->lookup("NOTICE");
 
     // check creation, last access and last write times.
-    try
-    {
-        creationTime = file->getCreationTime();
-        lastAccessTime = file->getLastAccessTime();
-        lastWriteTime = file->getLastWriteTime();
-    }
-    catch (...)
-    {
-        TEST(false); // error.
-    }
+    ret = file->getCreationTime(creationTime);
+    TEST(ret == 0);
+    ret = file->getLastAccessTime(lastAccessTime);
+    TEST(ret == 0);
+    ret = file->getLastWriteTime(lastWriteTime);
+    TEST(ret == 0);
 
     TEST(creationTime <= lastAccessTime);
     TEST(creationTime <= lastWriteTime);
@@ -136,39 +132,15 @@ void test(Handle<IContext> root)
     TEST(!IsTimeModified(file, creationTime, lastAccessTime, lastWriteTime));
 
     // confirm methods to set times return errors.
-    try
-    {
-        file->setCreationTime(now.getTicks());
-        ret = 0;
-    }
-    catch (...)
-    {
-        ret = -1;
-    }
+    ret = file->setCreationTime(now.getTicks());
     TEST(ret < 0);
     TEST(!IsTimeModified(file, creationTime, lastAccessTime, lastWriteTime));
 
-    try
-    {
-        file->setLastAccessTime(now.getTicks());
-        ret = 0;
-    }
-    catch (...)
-    {
-        ret = -1;
-    }
+    ret = file->setLastAccessTime(now.getTicks());
     TEST(ret < 0);
     TEST(!IsTimeModified(file, creationTime, lastAccessTime, lastWriteTime));
 
-    try
-    {
-        file->setLastWriteTime(now.getTicks());
-        ret = 0;
-    }
-    catch (...)
-    {
-        ret = -1;
-    }
+    ret = file->setLastWriteTime(now.getTicks());
     TEST(ret < 0);
     TEST(!IsTimeModified(file, creationTime, lastAccessTime, lastWriteTime));
 }
@@ -187,21 +159,19 @@ int main(int argc, char* argv[])
 #else
     IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
-    TEST(disk);
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
-    TEST(0 < diskSize);
 
     Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_IsoFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_IsoFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&isoFileSystem));
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
         Handle<IContext> root;
 
-        root = isoFileSystem->getRoot();
+        isoFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         TEST(root);
         test(root);
     }

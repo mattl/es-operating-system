@@ -19,8 +19,6 @@
 #include <es/base/IAlarm.h>
 #include "spinlock.h"
 
-using namespace es;
-
 class Alarm : public IAlarm
 {
     enum
@@ -83,8 +81,8 @@ public:
     static bool check();
 
     // IAlarm
-    long long getInterval();
-    long long getStartTime();
+    void getInterval(long long& interval);
+    void getStartTime(long long& time);
     bool isEnabled();
     bool isPeriodic();
     void setCallback(ICallback* callback);
@@ -94,7 +92,7 @@ public:
     void setStartTime(long long time);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

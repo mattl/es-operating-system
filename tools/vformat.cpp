@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
         disk = new VDisk(static_cast<char*>(argv[1]), cylinders, heads, sectorsPerTrack);
     }
     Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     try
     {
         fatFileSystem->mount(disk);

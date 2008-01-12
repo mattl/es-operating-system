@@ -16,7 +16,7 @@
 #include "io.h"
 #include "rtc.h"
 
-extern Interlocked esShutdownCount;
+extern long hzBus;
 
 u8 Apic::idBSP = 0;             // boot-strap processor's local APIC id
 volatile u32* Apic::localApic;  // memory-mapped address of local APIC
@@ -67,8 +67,7 @@ setImcr(u8 value)
 
 Apic::
 Apic(Mps* mps) :
-    mps(mps),
-    hz(0)
+    mps(mps)
 {
     if (!mps)
     {
@@ -107,72 +106,79 @@ Apic::
 {
 }
 
-int Apic::
-startup(unsigned int bus, unsigned irq)
+void Apic::
+startup(unsigned irq)
 {
-    return setAffinity(bus, irq, 0xff);
+    setAffinity(irq, 0xff);
+    enable(irq);
 }
 
-int Apic::
-shutdown(unsigned int bus, unsigned irq)
+void Apic::
+shutdown(unsigned irq)
 {
-    return disable(bus, irq);
+    disable(irq);
 }
 
-int Apic::
-enable(unsigned int bus, unsigned int irq)
+void Apic::
+enable(unsigned int irq)
 {
+    enable(irq, 32 + irq);
+}
+
+void Apic::
+enable(unsigned int irq, u8 vec)
+{
+    if (vec < 0x10 || 0xfe < vec)
+    {
+        return;
+    }
+
     Mps::InterruptAssignment assignment;
-    volatile u32* addr = mps->getInterruptAssignment(bus, irq, assignment);
-    u8 intin;
+    volatile u32* addr = mps->getInterruptAssignment(irq, assignment);
     if (!addr || 23 < assignment.apicINTINn)
     {
-        return -1;
+        return;
     }
-    else
-    {
-        u32 mode = (1 << 11) | (1 << 8) | (32 + assignment.apicINTINn);     // logical, lowest priority
-        if (assignment.getTriggerMode() == 3)
-        {
-            mode |= (1 << 15);      // Level sensitive
-        }
-        if (assignment.getPolarity() == 3)
-        {
-            mode |= (1 << 13);      // Low active
-        }
-        addr[IOREGSEL] = IOREDTBL + 2 * assignment.apicINTINn;
-        addr[IOWIN] = mode;
-    }
-    return 32 + assignment.apicINTINn;
+
+    addr[IOREGSEL] = IOREDTBL + 2 * assignment.apicINTINn;
+    addr[IOWIN] = (1 << 11) | (1 << 8) | vec;   // logical, lowest priority
 }
 
-int Apic::
-disable(unsigned int bus, unsigned int irq)
+void Apic::
+disable(unsigned int irq)
 {
+    disable(irq, 32 + irq);
+}
+
+void Apic::
+disable(unsigned int irq, u8 vec)
+{
+    if (vec < 0x10 || 0xfe < vec)
+    {
+        return;
+    }
+
     Mps::InterruptAssignment assignment;
-    volatile u32* addr = mps->getInterruptAssignment(bus, irq, assignment);
-    u8 intin;
+    volatile u32* addr = mps->getInterruptAssignment(irq, assignment);
     if (!addr || 23 < assignment.apicINTINn)
     {
-        return -1;
+        return;
     }
-    else
-    {
-        intin = assignment.apicINTINn;
-    }
-    addr[IOREGSEL] = IOREDTBL + 2 * intin;
+    addr[IOREGSEL] = IOREDTBL + 2 * assignment.apicINTINn;
+
     addr[IOWIN] = 1 << 16;  // mask
-    return 32 + assignment.apicINTINn;
 }
 
 bool Apic::
-ack(int vec)
+ack(unsigned int irq)
 {
-    ASSERT(32 <= vec && vec < 32 + 24);
+    u8 vec = 32 + irq;
+    if (vec < 0x10 || 0xfe < vec)
+    {
+        return false;
+    }
 
-    // Note IOAPIC ignores edge-sensitive interrupts (ISA) signaled on a
-    // masked interrupt pin (i.e. does not deliver or hold pending). So we
-    // do not mask irq here to keep the source code simple.
+    // XXX disable(irq, vec);
 
     // Note it appears qemu does not emulate ISR and we don't check ISR here.
     localApic[EOI] = 0;
@@ -180,28 +186,24 @@ ack(int vec)
     return true;
 }
 
-bool Apic::
-end(int vec)
+void Apic::
+end(unsigned int irq)
 {
-    return true;
+    // XXX enable(irq);
 }
 
-int Apic::
-setAffinity(unsigned int bus, unsigned int irq, unsigned int mask)
+void Apic::
+setAffinity(unsigned int irq, unsigned int mask)
 {
     Mps::InterruptAssignment assignment;
-    volatile u32* addr = mps->getInterruptAssignment(bus, irq, assignment);
-    u8 intin;
+    volatile u32* addr = mps->getInterruptAssignment(irq, assignment);
     if (!addr || 23 < assignment.apicINTINn)
     {
-        return -1;
+        return;
     }
-    else
-    {
-        addr[IOREGSEL] = IOREDTBL + 2 * assignment.apicINTINn + 1;
-        addr[IOWIN] = (mask << 24);
-    }
-    return 32 + assignment.apicINTINn;
+
+    addr[IOREGSEL] = IOREDTBL + 2 * assignment.apicINTINn + 1;
+    addr[IOWIN] = (mask << 24);
 }
 
 // cf. HLT opcode is 0xf4
@@ -331,69 +333,70 @@ shutdownAp(u8 id, u32 hltAP)
 unsigned Apic::
 splIdle()
 {
-    unsigned x = exchange(localApic + TPR, 0 << 4);
-    __asm__ __volatile__ ("sti\n");
-    return x;
+    register unsigned eax;
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl    %0\n"
+        "sti"
+        : "=a" (eax));
+    return eax;
 }
 
 unsigned Apic::
 splLo()
 {
-    unsigned x = exchange(localApic + TPR, 1 << 4);
-    __asm__ __volatile__ ("sti\n");
-    return x;
+    register unsigned eax;
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl   %0\n"
+        "sti"
+        : "=a" (eax));
+    return eax;
 }
 
 unsigned Apic::
 splHi()
 {
-    unsigned x = exchange(localApic + TPR, 15 << 4);
-    __asm__ __volatile__ ("cli\n");
-    return x;
+    register unsigned eax;
+    __asm__ __volatile__ (
+        "pushfl\n"
+        "popl   %0\n"
+        "cli"
+        : "=a" (eax));
+    return eax;
 }
 
 void Apic::
 splX(unsigned x)
 {
-    switch (x)
-    {
-    case 0 << 4:
-        splIdle();
-        break;
-    case 1 << 4:
-        splLo();
-        break;
-    case 15 << 4:
-        splHi();
-        break;
-    default:
-        esPanic(__FILE__, __LINE__, "inv. spl %d", x);
-        break;
-    }
+    __asm__ __volatile__ (
+        "pushl   %0\n"
+        "popfl"
+        :: "r" (x));
 }
 
 //
 // IInterface
 //
 
-void* Apic::
-queryInterface(const Guid& riid)
+bool Apic::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IPic::iid())
+    if (riid == IID_IPic)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Apic::
@@ -470,86 +473,13 @@ setTimer(int vec, long hz)
     ASSERT(vec < 256);
     ASSERT(0 < busClock);
     localApic[LVT_TR] |= 0x10000;   // mask
-    localApic[LVT_TR] &= ~0x200ff;  // one-shot
+    localApic[LVT_TR] &= ~0x20000;  // one-shot
     if (0 < hz)
     {
-        this->hz = hz;
         localApic[DCR] &= ~0x0b;
         localApic[DCR] |= 0x0b;                 // divide by 1
         localApic[ICR] = busClock / hz;
         localApic[LVT_TR] |= 0x20000 | vec;     // periodic
         localApic[LVT_TR] &= ~0x10000;          // unmask
     }
-}
-
-void Apic::
-enableWatchdog()
-{
-    localApic[LVT_PCR] |= 0x10000;          // mask
-    localApic[LVT_PCR] &= ~0x7ff;
-    localApic[LVT_PCR] |= 0x400 | NO_NMI;   // NMI
-    localApic[LVT_PCR] &= ~0x10000;         // unmask
-
-    // wrmsr and rdpmc
-    // ESCR: USR on, OS on, tag diable,
-    // CCCR
-
-    //
-    // Architectural Performance Monitoring Version 1 Facilities
-    //
-
-    // IA32_PERFEVTSELx
-    //
-
-    // IA32_PERFEVTSELx MSRs
-    //
-    // Event Select 3CH, Umask 01H - Unhalted reference cycles
-    // USR on, OS on, edge off, PC clear, INT set, EN set, INV clear
-    // Counter mask 1
-
-    // 186H 390 IA32_PERFEVTSEL0 Unique
-    // 187H 391 IA32_PERFEVTSEL1 Unique
-    // C1H 193 IA32_PMC0 Unique Performance counter register.
-    // C2H 194 IA32_PMC1 Unique Performance counter register.
-
-    // XXX Add overflow check. cf. Core 2 Duo/945G @ 266MHz
-    wrmsr(IA32_PMC0, 0xffffffffu - 5 * busClock, 0xffffffffu);
-    //  1 0101 0011b
-    wrmsr(IA32_PERFEVTSEL0, 0x0153013c, 0x00000000);
-}
-
-//
-// ICallback
-//
-
-#include "8254.h"
-
-int Apic::
-invoke(int)
-{
-    if (getLocalApicID() == 0)      // is bsp?
-    {
-        Pit::tick += 10000000 / hz;
-        Alarm::invoke();
-    }
-
-    if (0 < esShutdownCount)
-    {
-        setTimer(0, 0);             // Stop local timer
-        esShutdownCount.decrement();
-        if (getLocalApicID() == 0)  // is bsp?
-        {
-            while (0 < esShutdownCount)
-            {
-                __asm__ __volatile__ ("pause\n");
-            }
-            Core::shutdown();
-        }
-        for (;;)
-        {
-            __asm__ __volatile__ ("hlt\n");
-        }
-    }
-
-    return 0;
 }

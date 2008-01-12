@@ -19,8 +19,6 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFileSystem.h>
 
-using namespace es;
-
 int esInit(IInterface** nameSpace);
 IStream* esReportStream();
 
@@ -40,12 +38,12 @@ void test(Handle<IContext> nameSpace)
     esReport("server size: %lld\n", size);
 
     Handle<IProcess> process;
-    process = reinterpret_cast<IProcess*>(
-        esCreateInstance(CLSID_Process, IProcess::iid()));
+    esCreateInstance(CLSID_Process, IID_IProcess,
+                     reinterpret_cast<void**>(&process));
     TEST(process);
     process->setRoot(nameSpace);
-    process->setInput(esReportStream());
-    process->setOutput(esReportStream());
+    process->setIn(esReportStream());
+    process->setOut(esReportStream());
     process->setError(esReportStream());
     process->start(file, "ab cd ef");
     process->wait();
@@ -70,18 +68,19 @@ int main(int argc, char* argv[])
     Handle<IFileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
     {
         Handle<IContext> root;
 
-        root = fatFileSystem->getRoot();
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         nameSpace->bind("file", root);
         test(nameSpace);
 
-        freeSpace = fatFileSystem->getFreeSpace();
-        totalSpace = fatFileSystem->getTotalSpace();
+        fatFileSystem->getFreeSpace(freeSpace);
+        fatFileSystem->getTotalSpace(totalSpace);
         esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
         nameSpace->unbind("file");

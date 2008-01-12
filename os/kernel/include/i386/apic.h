@@ -14,15 +14,12 @@
 #ifndef NINTENDO_ES_KERNEL_I386_APIC_H_INCLUDED
 #define NINTENDO_ES_KERNEL_I386_APIC_H_INCLUDED
 
-#include <es/base/ICallback.h>
 #include <es/device/IPic.h>
 #include <es/ref.h>
 #include <es.h>
 #include "mps.h"
 
-using namespace es;
-
-class Apic : public IPic, public ICallback
+class Apic : public IPic
 {
     // Memory mapped registers for accessing IOAPIC registers
     static const int IOREGSEL  = 0x00 / sizeof(u32);
@@ -65,9 +62,8 @@ class Apic : public IPic, public ICallback
     static volatile bool    online;
     static unsigned         busClock;
 
-    Ref         ref;
-    Mps*        mps;
-    unsigned    hz;         // for counter 0
+    Ref     ref;
+    Mps*    mps;
 
     static void setIoApicID(volatile u32* addr, u8 id);
     /** Get local APIC version.
@@ -75,6 +71,9 @@ class Apic : public IPic, public ICallback
      */
     static u8 getLocalApicVersion();
     void setImcr(u8 value);
+
+    void enable(unsigned int irq, u8 vec);
+    void disable(unsigned int irq, u8 vec);
 
     void sendInit(u8 id, u32 addr);
     void sendStartup(u8 id, u32 addr);
@@ -153,11 +152,9 @@ public:
 
     static int readRtcCounter(int addr);
     static void busFreq();
+    static void setTimer(int vec, long hz);
 
-    void setTimer(int vec, long hz);
-    void enableWatchdog();
-
-    void startupAllAP(u32 hltAP, u32 startAP)
+    void startup(u32 hltAP, u32 startAP)
     {
         Mps::ConfigurationTableHeader* cth = mps->getConfigurationTableHeader();
         if (!cth)
@@ -174,25 +171,22 @@ public:
     static void broadcastIPI(u8 vec);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 
     // IPic
-    int startup(unsigned int bus, unsigned int irq);
-    int shutdown(unsigned int bus, unsigned int irq);
-    int enable(unsigned int bus, unsigned int irq);
-    int disable(unsigned int bus, unsigned int irq);
-    bool ack(int vec);
-    bool end(int vec);
-    int setAffinity(unsigned int bus, unsigned int irq, unsigned int mask);
+    void startup(unsigned int irq);
+    void shutdown(unsigned int irq);
+    void enable(unsigned int irq);
+    void disable(unsigned int irq);
+    bool ack(unsigned int irq);
+    void end(unsigned int irq);
+    void setAffinity(unsigned int irq, unsigned int mask);
     unsigned int splIdle();
     unsigned int splLo();
     unsigned int splHi();
     void splX(unsigned int x);
-
-    // ICallback
-    int invoke(int);
 
     static u8 getLocalApicID()
     {

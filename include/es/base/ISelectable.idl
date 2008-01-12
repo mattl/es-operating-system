@@ -11,32 +11,11 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ISELECTABLE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ISELECTABLE_IDL_INCLUDED
+import "es/base/IMonitor.idl";
 
-#include "es/base/IMonitor.idl"
-
-module es
+[object, uuid(4714271e-d101-11db-9c02-0009bf000001)]
+interface ISelectable : IInterface
 {
-    /** A selectable object notifies the registered monitor objects
-     * when its state is changed.
-     */
-    interface ISelectable : IInterface
-    {
-        #pragma ID ISelectable = "DCE:4714271e-d101-11db-9c02-0009bf000001";
-
-        /**
-         * Registers a monitor object to this selectable object.
-         * @param selector a monitor object.
-         */
-        long add(in IMonitor selector);
-        /**
-         * Unregisters a monitor object from this selectable object.
-         * @param selector a monitor object.
-         */
-        long remove(in IMonitor selector);
-    };
-};
-
-#endif // NINTENDO_ES_BASE_ISELECTABLE_IDL_INCLUDED
-
+    int add(IMonitor* selector);
+    int remove(IMonitor* selector);
+}

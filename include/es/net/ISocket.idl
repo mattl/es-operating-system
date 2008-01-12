@@ -11,224 +11,201 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_NET_ISOCKET_IDL_INCLUDED
-#define NINTENDO_ES_NET_ISOCKET_IDL_INCLUDED
+import "es/net/IInternetAddress.idl";
 
-#include "es/net/IInternetAddress.idl"
-
-module es
+/**
+ * This interface represents a socket.
+ */
+[object, uuid(2f2ea026-d137-11db-9c02-0009bf000001)]
+interface ISocket : IInterface
 {
-    /**
-     * This interface represents a socket.
+    // socket type
+    const int Stream = 1;
+    const int Datagram = 2;
+    const int Raw = 3;
+
+    /** Extracts the first connection on the queue of pending connections,
+     * creates a new socket with the same socket type,
+     * protocol and address family as the specified socket.
+     * The original socket remains open for further connection requests.
+     * @return a new socket.
      */
-    interface ISocket : IInterface
-    {
-        #pragma ID ISocket = "DCE:2f2ea026-d137-11db-9c02-0009bf000001";
+    ISocket* accept();
 
-        typedef sequence<octet> Buf;
-
-        // socket type
-        const long Stream = 1;
-        const long Datagram = 2;
-        const long Raw = 3;
-
-        /** Extracts the first connection on the queue of pending connections,
-         * creates a new socket with the same socket type,
-         * protocol and address family as the specified socket.
-         * The original socket remains open for further connection requests.
-         * @return a new socket.
-         */
-        ISocket accept();
-
-        /** Assigns the specified local internet address and the specified port to this socket that
-         *  has no local socket address assigned.
-         * @param addr the internet address to be assigned.
-         * @param port the port number.
-         */
-        void bind(in IInternetAddress addr, in long port);
-
-        /** Closes this socket.
-         */
-        void close();
-
-        /** Attempts to make a connection to the specified server on this socket.
-         * If this socket has not already been bound to a local address,
-         * <code>connect</code> binds it to an address which is unused and local.
-         * @param addr the internet address of the server
-         * @param port the port number of the server.
-         */
-        void connect(in IInternetAddress addr, in long port);
-
-        /** Enables the connection-mode socket to accept connections.
-         * @param backlog The maximum number of pending connections in the socket's listen backlog queue.
-         * If <code>backlog</code> is less than or equal to zero, backlog is set to one.
-         */
-        void listen(in long backlog);
-
-        /** Wakes up threads that are waiting on this socket.
-         */
-        void notify();
-
-        /** Attempt to read the specified bytes of data from the other end of this socket.
-         * @param buf   the receive buffer.
-         * @param bufLength the number of bytes of the receive buffer.
-         * @return the number of bytes received in the buffer.
-         */
-        Buf read();
-
-        /** Attempt to read the specified bytes of data from the other end of this socket and stores the internet address and port of the source.
-         * @param dst   the receive buffer.
-         * @param count the number of bytes of the receive buffer.
-         * @param flag  the flag which specifies the type of message reception.
-         * @param addr  the internet address of the peer.
-         * @param port  the port number of the peer.
-         * @return the number of bytes received in the buffer.
-         */
-        Buf recvFrom(in long flags, out IInternetAddress addr, out long port);
-
-        /** Sends a message to the specified destination through this socket.
-         * @param src   the buffer containing the message to send.
-         * @param srcLength the length of the message to be sent in bytes.
-         * @param flags the type of message transmission.
-         * @param addr  the internet address of the destination.
-         * @param port  the port number of the destination.
-         * @return      the number of bytes sent.
-         */
-        long sendTo(in Buf src, in long flags, in IInternetAddress addr, in long port);
-
-        /** Disables read-half of this socket connection.
-         * Any data sent to the input side of this socket is discarded
-         */
-        void shutdownInput();
-
-        /** Disables write-half of this socket connection.
-         */
-        void shutdownOutput();
-
-        /** Sends a message through this socket.
-         * @param src   the buffer containing the message to send.
-         * @param count the length of the message to be sent in bytes.
-         * @return      the number of bytes sent.
-         */
-        long write(in Buf src);
-
-        /** Boolean whether this socket is ready to accept a new connection.
-         */
-        readonly attribute boolean acceptable;
-
-        /** The address family of this socket.
-         */
-        readonly attribute long addressFamily;
-
-        /** Boolean whether this socket bound to an internet address.
-         */
-        readonly attribute boolean bound;
-
-        /** Boolean whether this socket has been closed.
-         */
-        readonly attribute boolean closed;
-
-        /** Boolean whether this socket has completed the connect operation, either finished or failed.
-         */
-        readonly attribute boolean connectable;
-
-        /** Boolean whether this socket has been connected.
-         */
-        readonly attribute boolean connected;
-
-        /** The last error code of this socket.
-         */
-        readonly attribute long lastError;
-
-        /** The local address to which this socket is bound.
-         */
-        readonly attribute IInternetAddress localAddress;
-
-        /** The local port to which this socket is bound.
-         */
-        readonly attribute long localPort;
-
-        /** The protocol of this socket.
-         */
-        readonly attribute long protocolType;
-
-        /** Boolean whether this socket is ready for reading
-         */
-        readonly attribute boolean readable;
-
-        /** The remote internet address to which this socket is connected.
-         */
-        readonly attribute IInternetAddress remoteAddress;
-
-        /** The remote port to which this socket is connected.
-         */
-        readonly attribute long remotePort;
-
-        /** The type of this socket.
-         */
-        readonly attribute long socketType;
-
-        /** Boolean whether this socket is ready for writing
-         */
-        readonly attribute boolean writable;
-
-        /** The blocking option of this socket.
-         * By default, this option is enabled.
-         */
-        attribute boolean blocking;
-
-        /** Maximum number of hops allowed for packets to be sent from this socket.
-         */
-        attribute long hops;
-
-        /** The receive buffer size of this socket.
-         */
-        attribute long receiveBufferSize;
-
-        /** The reuse address option of this socket.
-         * By default, this option is disabled.
-         */
-        attribute boolean reuseAddress;
-
-        /** The send buffer size of this socket.
-         */
-        attribute long sendBufferSize;
-
-        /** The timeout setting of this socket.
-         * A timeout of zero implies an infinite timeout.
-         */
-        attribute long long timeout;
-    };
-
-    /**
-     * This interface represents a stream socket.
+    /** Assigns the specified local internet address and the specified port to this socket that
+     *  has no local socket address assigned.
+     * @param addr the internet address to be assigned.
+     * @param port the port number.
      */
-    interface IStreamSocket : ISocket
-    {
-        #pragma ID IStreamSocket = "DCE:bed398d0-9fa5-11db-8100-0009bf000001";
+    void bind(IInternetAddress* addr, int port);
 
-        void sendUrgentData(in octet data);
-
-        attribute long linger;
-        attribute long maxSegmentSize;
-        attribute boolean noDelay;
-        attribute boolean oOBInline;
-        attribute boolean standardURG;
-    };
-
-    /**
-     * This interface represents a multicast socket.
+    /** Closes this socket.
      */
-    interface IMulticastSocket : ISocket
-    {
-        #pragma ID IMulticastSocket = "DCE:bf5985a8-9fa5-11db-8100-0009bf000001";
+    void close();
 
-        void joinGroup(in IInternetAddress addr);
-        void leaveGroup(in IInternetAddress addr);
+    /** Attempts to make a connection to the specified server on this socket.
+     * If this socket has not already been bound to a local address,
+     * <code>connect</code> binds it to an address which is unused and local.
+     * @param addr the internet address of the server
+     * @param port the port number of the server.
+     */
+    void connect(IInternetAddress* addr, int port);
 
-        attribute boolean loopbackMode;
-    };
-};
+    /** Gets the address family of this socket.
+     * @retern the address family.
+     */
+    int getAddressFamily();
 
-#endif // NINTENDO_ES_NET_ISOCKET_IDL_INCLUDED
+    int getHops();
 
+    /** Gets the local address to which this socket is bound.
+     * @return the local internet address.
+     */
+    IInternetAddress* getLocalAddress();
+
+    int getLastError();
+
+    /** Gets the local port to which this socket is bound.
+     * @return the local port number.
+     */
+    int getLocalPort();
+
+    /** Gets the protocol of this socket.
+     * @return the protocol value.
+     */
+    int getProtocolType();
+
+    int getReceiveBufferSize();
+
+    /** Gets the remote internet address to which this socket is connected.
+     * @return the remote internet address.
+     */
+    IInternetAddress* getRemoteAddress();
+
+    /** Gets the remote port to which this socket is connected.
+     * @return the port number.
+     */
+    int getRemotePort();
+
+    int getSendBufferSize();
+
+    /** Gets the type of this socket.
+     * @return the remote socket type.
+     */
+    int getSocketType();
+
+    long getTimeout();
+
+    boolean isAcceptable();
+
+    boolean isBlocking();
+
+    boolean isBound();
+
+    boolean isClosed();
+
+    boolean isConnectable();
+
+    boolean isConnected();
+
+    boolean isReadable();
+
+    boolean isReuseAddress();
+
+    boolean isWritable();
+
+    /** Enables the connection-mode socket to accept connections.
+     * @param backlog The maximum number of pending connections in the socket's listen backlog queue.
+     * If <code>backlog</code> is less than or equal to zero, backlog is set to one.
+     */
+    void listen(int backlog);
+
+    void notify();
+
+    /** Attempt to read the specified bytes of data from the other end of this socket.
+     * @param dst   the receive buffer.
+     * @param count the number of bytes of the receive buffer.
+     * @return the number of bytes received in the buffer.
+     */
+    int read([out, size_is(count)] void* dst, int count);
+
+    /** Attempt to read the specified bytes of data from the other end of this socket and stores the internet address and port of the source.
+     * @param dst   the receive buffer.
+     * @param count the number of bytes of the receive buffer.
+     * @param flag  the flag which specifies the type of message reception.
+     * @param addr  the internet address of the peer.
+     * @param port  the port number of the peer.
+     * @return the number of bytes received in the buffer.
+     */
+    int recvFrom([out, size_is(count)] void* dst, int count, int flags, [out] IInternetAddress** addr, [out] int* port);
+
+    /** Sends a message to the specified destination through this socket.
+     * @param src   the buffer containing the message to send.
+     * @param count the length of the message to be sent in bytes.
+     * @param flags the type of message transmission.
+     * @param addr  the internet address of the the destination.
+     * @param port  the port number of the destination.
+     * @return      the number of bytes sent.
+     */
+    int sendTo([in, size_is(count)] void* src, int count, int flags, IInternetAddress* addr, int port);
+
+    void setBlocking(boolean on);
+
+    void setHops(int limit);
+
+    void setReceiveBufferSize(int size);
+
+    void setReuseAddress(boolean on);
+
+    void setSendBufferSize(int size);
+
+    void setTimeout(long timeSpan);
+
+    /** Disables read-half of this socket connection.
+     * Any data sent to the input side of this socket is discarded
+     */
+    void shutdownInput();
+
+    /** Disables write-half of this socket connection.
+     */
+    void shutdownOutput();
+
+    /** Sends a message through this socket.
+     * @param src   the buffer containing the message to send.
+     * @param count the length of the message to be sent in bytes.
+     * @return      the number of bytes sent.
+     */
+    int write([in, size_is(count)] void* src, int count);
+}
+
+/**
+ * This interface represents a stream socket.
+ */
+[object, uuid(bed398d0-9fa5-11db-8100-0009bf000001)]
+interface IStreamSocket : ISocket
+{
+    int getLinger();
+    int getMaxSegmentSize();
+    boolean isNoDelay();
+    boolean isOOBInline();
+    boolean isStandardURG();
+    void sendUrgentData(byte data);
+    void setLinger(int linger);
+    void setMaxSegmentSize(int size);
+    void setNoDelay(boolean on);
+    void setOOBInline(boolean on);
+    void setStandardURG(boolean on);
+}
+
+/**
+ * This interface represents a multicast socket.
+ */
+[object, uuid(bf5985a8-9fa5-11db-8100-0009bf000001)]
+interface IMulticastSocket : ISocket
+{
+    int getLoopbackMode();
+    void setLoopbackMode(boolean disable);
+
+    void joinGroup(IInternetAddress* addr);
+    void leaveGroup(IInternetAddress* addr);
+}

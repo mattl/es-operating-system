@@ -17,8 +17,8 @@
 
 Thread::Monitor::
 Monitor() :
-    lockCount(0),
-    owner(0)
+    owner(0),
+    lockCount(0)
 {
     return;
 }
@@ -46,17 +46,11 @@ update()
 {
     unsigned x = Core::splHi();         // Cling to the current core
     spinLock();
-    Thread* thread = owner;
-    if (thread)
+    if (owner)
     {
-        thread->addRef();
+        owner->updatePriority();
     }
     spinUnlock();
-    if (thread)
-    {
-        thread->updatePriority();
-        thread->release();
-    }
     Core::splX(x);
 }
 
@@ -99,7 +93,6 @@ Retry:
         effective = current->priority;
     }
 
-    ASSERT(owner);
     if (owner->tryLock())
     {
         if (owner->priority < effective)
@@ -183,43 +176,26 @@ tryLock()
 int Thread::Monitor::
 condUnlock(int)
 {
-    if (!owner)
+    Thread* current = getCurrentThread();
+
+    ASSERT(0 < lockCount);
+    ASSERT(current == owner);
+    --lockCount;
+    if (0 < lockCount)
     {
         return false;
     }
-    ASSERT(0 < lockCount);
 
-    // owner is locked and is being terminated.
-    if (owner->state == TERMINATED)
-    {
-        lockCount = 0;
-        owner->monitorList.remove(this);
-        owner = 0;
-        release();
-        return true;
-    }
+    // Recalculate the effective scheduling priority after
+    // removing the monitor from the queue.
+    current->lock();
+    current->monitorList.remove(this);
+    current->unlock();
+    owner = 0;
+    release();
 
-    Thread* current = getCurrentThread();
-    if (current == owner)
-    {
-        --lockCount;
-        if (0 < lockCount)
-        {
-            return false;
-        }
-
-        // Recalculate the effective scheduling priority after
-        // removing the monitor from the queue.
-        current->lock();
-        current->monitorList.remove(this);
-        current->unlock();
-        owner = 0;
-        release();
-        current->updatePriority();
-        return true;
-    }
-
-    return false;
+    current->updatePriority();
+    return true;
 }
 
 void Thread::Monitor::
@@ -228,10 +204,7 @@ unlock()
     unsigned x = Core::splHi();
     DelegateTemplate<Monitor> d(this, &Thread::Monitor::condUnlock);
     rendezvous.wakeup(&d);
-    if (getCurrentThread()->state != TERMINATED)
-    {
-        reschedule();
-    }
+    reschedule();
     Core::splX(x);
 }
 
@@ -242,11 +215,8 @@ condWait(int)
     Thread* current = getCurrentThread();
     if (current == owner)
     {
-        rendezvous.lock();
         lockCount = 0;
         owner = 0;
-        rendezvous.unlock();
-
         current->lock();
         current->monitorList.remove(this);
         current->resetPriority();
@@ -336,28 +306,28 @@ notifyAll()
     notify();
 }
 
-void* Thread::Monitor::
-queryInterface(const Guid& riid)
+bool Thread::Monitor::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IMonitor::iid())
+    if (riid == IID_IMonitor)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::Monitor::

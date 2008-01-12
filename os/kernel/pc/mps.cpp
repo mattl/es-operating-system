@@ -168,7 +168,7 @@ Mps() :
 }
 
 volatile u32* Mps::
-getInterruptAssignment(unsigned int bus, unsigned int irq, InterruptAssignment& assignment)
+getInterruptAssignment(unsigned int irq, InterruptAssignment& assignment)
 {
     if (cth == 0)
     {
@@ -186,7 +186,7 @@ getInterruptAssignment(unsigned int bus, unsigned int irq, InterruptAssignment& 
         return reinterpret_cast<u32*>(0xfec00000);
     }
 
-    LookupAssignment entry(bus, irq);
+    LookupAssignment entry(irq);
     cth->accept(entry);
     if (!entry)
     {

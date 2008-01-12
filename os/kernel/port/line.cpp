@@ -16,8 +16,6 @@
 #include <es/clsid.h>
 #include <es/exception.h>
 #include <es/synchronized.h>
-
-using namespace es;
 #include "line.h"
 
 Line::
@@ -28,8 +26,9 @@ Line(ICallback* callback, u8 bits, u8 channels, u8 rate) :
     rate(rate),
     ring(buffer, sizeof buffer)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 }
 
 Line::
@@ -123,32 +122,32 @@ write(const void* src, int count, long long offset)
     esThrow(EACCES);
 }
 
-void* Line::
-queryInterface(const Guid& riid)
+bool Line::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IAudioFormat::iid())
+    else if (riid == IID_IAudioFormat)
     {
-        objectPtr = static_cast<IAudioFormat*>(this);
+        *objectPtr = static_cast<IAudioFormat*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Line::

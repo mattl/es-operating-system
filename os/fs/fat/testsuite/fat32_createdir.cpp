@@ -242,21 +242,21 @@ int main(void)
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
     fatFileSystem->format();
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
+    fatFileSystem->getFreeSpace(freeSpace);
+    fatFileSystem->getTotalSpace(totalSpace);
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
         Handle<IContext> root;
 
-        root = fatFileSystem->getRoot();
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
         long ret = TestFileSystem(root);
         TEST (ret == 0);
-        freeSpace = fatFileSystem->getFreeSpace();
-        totalSpace = fatFileSystem->getTotalSpace();
+        fatFileSystem->getFreeSpace(freeSpace);
+        fatFileSystem->getTotalSpace(totalSpace);
         esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
         esReport("\nChecking the file system...\n");
         TEST(fatFileSystem->checkDisk(false));
@@ -264,11 +264,11 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
+    fatFileSystem->getFreeSpace(freeSpace);
+    fatFileSystem->getTotalSpace(totalSpace);
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     esReport("\nChecking the file system...\n");
     TEST(fatFileSystem->checkDisk(false));

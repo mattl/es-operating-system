@@ -26,9 +26,9 @@ Handle<IClassStore> classStore;
 class Impl : public IInterface
 {
 public:
-    void* queryInterface(const Guid& riid)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        return NULL;
+        return false;
     }
     unsigned int addRef()
     {

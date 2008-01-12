@@ -394,8 +394,8 @@ getHostByName(const char* hostName, int addressFamily)
     return control->getHostByName(hostName, addressFamily);
 }
 
-int Resolver::
-getHostName(char* hostName, int len, IInternetAddress* address)
+bool Resolver::
+getHostName(IInternetAddress* address, char* hostName, unsigned int len)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -409,7 +409,7 @@ getHostName(char* hostName, int len, IInternetAddress* address)
 
 // Note DNS is not queried.
 IInternetAddress* Resolver::
-getHostByAddress(const void* address, int len, unsigned int scopeID)
+getHostByAddress(const void* address, unsigned int len, unsigned int scopeID)
 {
     if (len == sizeof(InAddr))  // AF_INET
     {
@@ -463,24 +463,24 @@ getHostByAddress(const void* address, int len, unsigned int scopeID)
     return 0;
 }
 
-void* Resolver::
-queryInterface(const Guid& riid)
+bool Resolver::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IResolver::iid())
+    if (riid == IID_IResolver)
     {
-        objectPtr = static_cast<IResolver*>(this);
+        *objectPtr = static_cast<IResolver*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IResolver*>(this);
+        *objectPtr = static_cast<IResolver*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Resolver::
@@ -505,8 +505,9 @@ Resolver::
 Resolver() :
     control(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 }
 
 Resolver::

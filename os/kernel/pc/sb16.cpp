@@ -11,12 +11,10 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
 #include <es/clsid.h>
-#include <es/exception.h>
 #include <es/handle.h>
 #include "8237a.h"
 #include "core.h"
@@ -67,7 +65,7 @@ writeMixer(u8 addr, u8 val)
 }
 
 SoundBlaster16::
-SoundBlaster16(u8 bus, Dmac* master, Dmac* slave,
+SoundBlaster16(Dmac* master, Dmac* slave,
                u16 base, u8 irq, u8 chan8, u8 chan16, u16 mpu401) :
     base(base),
     mpu401(mpu401),
@@ -93,7 +91,8 @@ SoundBlaster16(u8 bus, Dmac* master, Dmac* slave,
     u8 data = readData();
     if (data != 0xaa)
     {
-        throw SystemException<ENODEV>();
+        esReport("no response (%02x)\n", data);
+        return;
     }
 
     writeData(GET_VERSION);
@@ -104,7 +103,7 @@ SoundBlaster16(u8 bus, Dmac* master, Dmac* slave,
     {
         esReport("No SoundBlaster16 compatible sound card found. (DSP version %d.%d)\n",
                  major, minor);
-        throw SystemException<ENODEV>();
+        return;
     }
 
     //
@@ -201,10 +200,10 @@ SoundBlaster16(u8 bus, Dmac* master, Dmac* slave,
         irq = 10;
         break;
     default:
-        throw SystemException<ENODEV>();
+        return;
         break;
     }
-    Core::registerInterruptHandler(bus, irq, this);
+    Core::registerInterruptHandler(irq, this);
 
     writeData(SPEAKER_ON);
     esSleep(1120000);
@@ -426,24 +425,24 @@ stop(Line* line)
     }
 }
 
-void* SoundBlaster16::
-queryInterface(const Guid& riid)
+bool SoundBlaster16::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int SoundBlaster16::

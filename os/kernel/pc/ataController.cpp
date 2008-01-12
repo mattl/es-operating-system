@@ -82,33 +82,19 @@ select(u8 device)
 {
     using namespace Status;
 
-    long timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & (DRQ | BSY))
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
 #endif
-        if (1000000L < ++timeout)
-        {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
-            break;
-        }
     }
     outpb(cmdPort + DEVICE, device);
     esSleep(4);
-    timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & (DRQ | BSY))
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
 #endif
-        if (1000000L < ++timeout)
-        {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
-            break;
-        }
     }
 }
 
@@ -117,7 +103,7 @@ sync(u8 status)
 {
     using namespace Status;
 
-    long timeout = 0;
+    int timeout = 0;
     while (inpb(ctlPort + ALTERNATE_STATUS) & BSY)
     {
 #if defined(__i386__) || defined(__x86_64__)
@@ -129,32 +115,12 @@ sync(u8 status)
 #endif
         if (1000000L < ++timeout)
         {
-            esPanic(__FILE__, __LINE__, "AtaController::%s -- timeout (%02x)\n",
-                    __func__, inpb(ctlPort + ALTERNATE_STATUS));
+            esReport("AtaController::sync() -- timeout\n");
             break;
         }
     }
     inpb(ctlPort + ALTERNATE_STATUS);
     return inpb(cmdPort + STATUS);
-}
-
-int AtaController::
-condDone(int)
-{
-    return done ? true : false;
-}
-
-void AtaController::
-wait()
-{
-    DelegateTemplate<AtaController> cond(this, &AtaController::condDone);
-    rendezvous.sleep(&cond);
-}
-
-void AtaController::
-notify()
-{
-    rendezvous.wakeup();
 }
 
 int AtaController::
@@ -279,7 +245,10 @@ issue(AtaDevice* device, u8 cmd, void* buffer, int count, long long lba)
     }
 
     lock.unlock();
-    wait();
+    while (!done)
+    {
+        monitor->wait(10000000);
+    }
     lock.lock();
 
     outpb(ctlPort + DEVICE_CONTROL, NIEN);
@@ -329,8 +298,11 @@ issue(AtaDevice* device, u8* packet, int packetSize,
         return -1;
     }
 
-    wait();
-
+    outpb(ctlPort + DEVICE_CONTROL, 0);
+    while (!done)
+    {
+        monitor->wait(10000000);
+    }
     outpb(ctlPort + DEVICE_CONTROL, NIEN);
     return count;
 }
@@ -459,7 +431,6 @@ invoke(int param)
             break;
         case PACKET:
             int len;
-            outpb(ctlPort + DEVICE_CONTROL, 0);
             switch (inpb(cmdPort + INTERRUPT_REASON) & (/*Rel|*/ IO | CD))
             {
               case CD:      // transfer the packet
@@ -520,7 +491,7 @@ invoke(int param)
     if (done)
     {
         current = 0;
-        notify();
+        monitor->notify();  // XXX Fix timing issue
     }
 
     return 0;
@@ -536,8 +507,9 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
 {
     device[0] = device[1] = 0;
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     if (!softwareReset())
     {
@@ -620,24 +592,24 @@ AtaController::
     monitor->release();
 }
 
-void* AtaController::
-queryInterface(const Guid& riid)
+bool AtaController::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaController::

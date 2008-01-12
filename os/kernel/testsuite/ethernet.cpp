@@ -52,7 +52,6 @@ int main()
              mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
     nic->start();
-    nic->setPromiscuousMode(false);
 
     InAddr addr = { htonl(169 << 24 | 254 << 16 | 0 << 8 | 1) };
 
@@ -71,26 +70,17 @@ int main()
     probe.arp.tpa = addr;
 
     // Send probes
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 2; ++i)
     {
-        esReport("link: %d\n", nic->getLinkState());
         int len = stream->write(&probe, sizeof probe);
         TEST(len == sizeof probe);
         esReport("Sent %d bytes.\n", len);
-
-        esSleep(10000000);
     }
-
-    INetworkInterface::Statistics stat;
-    nic->getStatistics(&stat);
-    esReport("outOctets: %llu\n", stat.outOctets);
-    esReport("outUcastPkts: %u\n", stat.outUcastPkts);
-    esReport("outNUcastPkts: %u\n", stat.outNUcastPkts);
 
     esReport("done.\n");
 
     // Receive packets
-    for (int i = 0; i < 4; ++i)
+    for (;;)
     {
         int len = stream->read(buf, sizeof(buf));
         if (0 < len)
@@ -99,12 +89,6 @@ int main()
             esDump(buf, len);
         }
     }
-
-    nic->getStatistics(&stat);
-    esReport("inOctets: %llu\n", stat.inOctets);
-    esReport("inUcastPkts: %u\n", stat.inUcastPkts);
-    esReport("inNUcastPkts: %u\n", stat.inNUcastPkts);
-    esReport("inErrors: %u\n", stat.inErrors);
 
     nic->stop();
 
