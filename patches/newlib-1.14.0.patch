@@ -3515,10 +3515,10 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es.ld newlib-1.14.0/libgloss/i386-
 + }
 diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-salib.c newlib-1.14.0/libgloss/i386-es/es-salib.c
 *** newlib-1.14.0.org/libgloss/i386-es/es-salib.c	1970-01-01 09:00:00.000000000 +0900
---- newlib-1.14.0/libgloss/i386-es/es-salib.c	2007-07-24 13:43:43.000000000 +0900
+--- newlib-1.14.0/libgloss/i386-es/es-salib.c	2006-08-17 09:16:53.000000000 +0900
 ***************
 *** 0 ****
---- 1,203 ----
+--- 1,191 ----
 + /*
 +  * Standard x86 syscalls for user programs running under es
 +  *
@@ -3537,12 +3537,11 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-salib.c newlib-1.14.0/libgloss/
 + 
 + #include <errno.h>
 + #include <fcntl.h>
-+ #include <stdarg.h>
 + #include <string.h>
 + #include <stdlib.h>
 + #include "es-syscall.h"
 + #include <sys/time.h>
-+ #include <sys/lock.h>
++ #include <es.h>
 + 
 + static long long _syscall(void* self, void* base, int m, va_list ap)
 + {
@@ -3684,26 +3683,18 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-salib.c newlib-1.14.0/libgloss/
 + void
 + esCreateMonitor(esMonitor* monitor)
 + {
-+     monitor->monitor = (void*) _syscall(0, 0, CREATE_MONITOR, 0);
++     monitor->monitor = (void*) _syscall(0, 0, CREATE_MONITOR, (va_list) &monitor);
 + }
 + 
 + void
 + esLockMonitor(esMonitor* monitor)
 + {
-+     if (monitor->monitor)
-+     {
-+         _syscall(monitor->monitor, 0, LOCK, 0);
-+     }
++     _syscall(monitor->monitor, 0, LOCK, 0);
 + }
 + 
 + int
 + esTryLockMonitor(esMonitor* monitor)
 + {
-+     if (!monitor->monitor)
-+     {
-+         return 0;
-+     }
-+ 
 +     if ((int) _syscall(monitor->monitor, 0, TRY_LOCK, 0))
 +     {
 +         return 0;
@@ -3717,14 +3708,11 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-salib.c newlib-1.14.0/libgloss/
 + void
 + esUnlockMonitor(esMonitor* monitor)
 + {
-+     if (monitor->monitor)
-+     {
-+         _syscall(monitor->monitor, 0, UNLOCK, 0);
-+     }
++     _syscall(monitor->monitor, 0, UNLOCK, 0);
 + }
 diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-syscall.h newlib-1.14.0/libgloss/i386-es/es-syscall.h
 *** newlib-1.14.0.org/libgloss/i386-es/es-syscall.h	1970-01-01 09:00:00.000000000 +0900
---- newlib-1.14.0/libgloss/i386-es/es-syscall.h	2007-07-24 13:43:32.000000000 +0900
+--- newlib-1.14.0/libgloss/i386-es/es-syscall.h	2006-08-17 09:16:53.000000000 +0900
 ***************
 *** 0 ****
 --- 1,37 ----
@@ -3767,7 +3755,7 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-syscall.h newlib-1.14.0/libglos
 + #endif /* SYSCALL_H */
 diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-tsd.c newlib-1.14.0/libgloss/i386-es/es-tsd.c
 *** newlib-1.14.0.org/libgloss/i386-es/es-tsd.c	1970-01-01 09:00:00.000000000 +0900
---- newlib-1.14.0/libgloss/i386-es/es-tsd.c	2007-07-24 13:46:14.000000000 +0900
+--- newlib-1.14.0/libgloss/i386-es/es-tsd.c	2006-08-17 09:16:53.000000000 +0900
 ***************
 *** 0 ****
 --- 1,133 ----
@@ -3779,7 +3767,7 @@ diff -bcrN newlib-1.14.0.org/libgloss/i386-es/es-tsd.c newlib-1.14.0/libgloss/i3
 + // use Thread Local Storate (TLS) instead.
 + 
 + #include <errno.h>
-+ #include <sys/lock.h>
++ #include <es.h>
 + 
 + #define KEYS_MAX 64
 + 
@@ -7243,46 +7231,14 @@ diff -bcrN newlib-1.14.0.org/newlib/libc/sys/es/Makefile.in newlib-1.14.0/newlib
 + .NOEXPORT:
 diff -bcrN newlib-1.14.0.org/newlib/libc/sys/es/sys/lock.h newlib-1.14.0/newlib/libc/sys/es/sys/lock.h
 *** newlib-1.14.0.org/newlib/libc/sys/es/sys/lock.h	1970-01-01 09:00:00.000000000 +0900
---- newlib-1.14.0/newlib/libc/sys/es/sys/lock.h	2007-07-24 13:51:33.000000000 +0900
+--- newlib-1.14.0/newlib/libc/sys/es/sys/lock.h	2006-08-17 09:16:53.000000000 +0900
 ***************
 *** 0 ****
---- 1,66 ----
+--- 1,30 ----
 + #ifndef __SYS_LOCK_H__
 + #define __SYS_LOCK_H__
 + 
-+ #ifdef __cplusplus
-+ extern "C" {
-+ #endif // __cplusplus
-+ 
-+ #ifndef ES_ONCE_INIT
-+ 
-+ typedef struct esOnceControl
-+ {
-+     int  done;
-+     long started;
-+ } esOnceControl;
-+ 
-+ #define ES_ONCE_INIT {0, -1}
-+ 
-+ int   esOnce(esOnceControl* control, void (*func)(void));
-+ 
-+ int   esCreateThreadKey(unsigned int* key, void (*dtor)(void*));
-+ int   esDeleteThreadKey(unsigned int key);
-+ void* esGetThreadSpecific(unsigned int key);
-+ int   esSetThreadSpecific(unsigned int key, const void* ptr);
-+ void  esDeallocateSpecific(void);
-+ 
-+ typedef struct esMonitor
-+ {
-+     void* monitor;
-+ } esMonitor;
-+ 
-+ void esCreateMonitor(esMonitor* monitor);
-+ void esLockMonitor(esMonitor* monitor);
-+ int  esTryLockMonitor(esMonitor* monitor);
-+ void esUnlockMonitor(esMonitor* monitor);
-+ 
-+ #endif  // ES_ONCE_INIT
++ #include <es.h>
 + 
 + typedef esMonitor   _LOCK_T;
 + typedef esMonitor   _LOCK_RECURSIVE_T;
@@ -7307,9 +7263,5 @@ diff -bcrN newlib-1.14.0.org/newlib/libc/sys/es/sys/lock.h newlib-1.14.0/newlib/
 + #define __lock_try_acquire_recursive(lock) (lock.monitor ? esTryLockMonitor(&lock) : 0)
 + #define __lock_release(lock) (lock.monitor ? esUnlockMonitor(&lock) : 0)
 + #define __lock_release_recursive(lock) (lock.monitor ? esUnlockMonitor(&lock) : 0)
-+ 
-+ #ifdef __cplusplus
-+ }
-+ #endif
 + 
 + #endif /* __SYS_LOCK_H__ */

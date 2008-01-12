@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -90,11 +90,11 @@ entry(unsigned long start)
 void* Thread::
 tls(unsigned size, unsigned align)
 {
-    unsigned x = (size + sizeof(void*) + align - 1) & ~(align -1);
+    size = (size + sizeof(void*) + align - 1) & ~(align -1);
 
     Ureg* ureg(static_cast<Ureg*>(param));
-    ureg->esp -= x;
-    tcb = reinterpret_cast<void*>(ureg->esp + size);
+    ureg->esp -= size;
+    tcb = reinterpret_cast<void*>(ureg->esp + size - sizeof(void*));
     *(void**) tcb = tcb;
     return reinterpret_cast<void*>(ureg->esp);
 }
@@ -131,7 +131,7 @@ setArguments(char* arguments)
     char** argv = (char**) frame;
     char* a = (char*) frame;
     *--a = '\0';
-    argv[n] = 0;
+    argv[n] = a;
     --p;
     while (*p)
     {

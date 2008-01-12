@@ -70,10 +70,8 @@ bool DIXReceiver::output(InetMessenger* m, Conduit* c)
     {
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# dix output\n");
         esDump(packet, len);
-#endif
         dix->write(packet, len);
     }
     // else discard the packet

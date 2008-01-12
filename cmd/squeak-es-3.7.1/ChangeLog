@@ -1,0 +1,9 @@
+2007-03-26  Okasaka  <okasaka@users.sourceforge.jp>
+
+	* squeak-es-3.7.1-0.0.8 released.
+	* Add Socket Plug-in. Requires es-0.0.8 or higher.
+	* es/vm/sqEsInput.cpp (translateNormal) : Fix to translate keyboard digit keys.
+
+2006-08-30  Okasaka  <okasaka@users.sourceforge.jp>
+
+	* squeak-es-3.7.1-alpha released.

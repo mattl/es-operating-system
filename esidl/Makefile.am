@@ -1,31 +1,21 @@
-SUBDIRS = . testsuite
-
 BUILT_SOURCES = lexer.cc parser.cc parser.h
 
-bin_PROGRAMS = esidl esidl2 entdump reflect
+bin_PROGRAMS = esidl reflect
 
-esidl_SOURCES = src/driver.cpp
+esidl_SOURCES = src/lexer.ll src/parser.yy src/esidl.cpp src/guid.c \
+                include/esidl.h \
+                src/header.cpp include/header.h \
+		src/ird.cpp include/binaryStream.h
 
-esidl2_SOURCES = src/lexer.ll src/parser.yy src/esidl.cpp include/esidl.h \
-		 src/guid.cpp include/guid.h include/utf.h \
-		 src/print.cpp src/cxx.cpp \
-		 src/ent.cpp \
-		 include/expr.h include/string.h
-
-esidl2-cxx.$(OBJEXT) : Makefile
-
-esidl2_CXXFLAGS = -D YYERROR_VERBOSE
-
-entdump_SOURCES = src/entdump.cpp
+esidl_CXXFLAGS = -D YYERROR_VERBOSE
 
 reflect_SOURCES = src/reflect.cpp
 
 AM_YFLAGS = -d -v -t
 
 AM_CPPFLAGS = \
-	-I$(srcdir)/include \
-	-I$(srcdir)/src \
-	-I- \
+	-iquote $(srcdir)/include \
+	-iquote $(srcdir)/src \
 	-I$(srcdir)/../include
 
 clean-local:

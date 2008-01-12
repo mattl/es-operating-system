@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -19,8 +19,6 @@
 #include <es/base/IAlarm.h>
 #include "spinlock.h"
 
-using namespace es;
-
 class Alarm : public IAlarm
 {
     enum
@@ -30,6 +28,16 @@ class Alarm : public IAlarm
     };
 
     Link<Alarm>     link;
+    Ref             ref;
+
+    ICallback*      callback;
+
+    unsigned        flags;
+    long long       interval;
+    long long       start;
+
+    long long       nextTick;
+
     class Queue
     {
         List<Alarm, &Alarm::link> queue;
@@ -41,12 +49,6 @@ class Alarm : public IAlarm
         bool check();
     };
 
-    Ref             ref;
-    ICallback*      callback;
-    unsigned        flags;
-    long long       interval;
-    long long       start;
-    long long       nextTick;
     Queue*          current;
 
     static Lock     spinLock;
@@ -83,8 +85,8 @@ public:
     static bool check();
 
     // IAlarm
-    long long getInterval();
-    long long getStartTime();
+    void getInterval(long long& interval);
+    void getStartTime(long long& time);
     bool isEnabled();
     bool isPeriodic();
     void setCallback(ICallback* callback);
@@ -94,7 +96,7 @@ public:
     void setStartTime(long long time);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

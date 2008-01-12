@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -29,8 +29,7 @@ Alarm() :
     flags(Enabled),
     interval(0),
     start(0),
-    nextTick(0),
-    current(0)
+    nextTick(0)
 {
 }
 
@@ -115,10 +114,10 @@ setEnabled(bool enabled)
     }
 }
 
-long long Alarm::
-getInterval()
+void Alarm::
+getInterval(long long& interval)
 {
-    return this->interval;
+    interval = this->interval;
 }
 
 void Alarm::
@@ -134,10 +133,10 @@ setInterval(long long interval)
     }
 }
 
-long long Alarm::
-getStartTime()
+void Alarm::
+getStartTime(long long& time)
 {
-    return this->start;
+    time = this->start;
 }
 
 void Alarm::
@@ -161,20 +160,20 @@ cancel()
     nextTick = 0;
 }
 
-void* Alarm::
-queryInterface(const Guid& riid)
+bool Alarm::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IAlarm::iid())
+    if (riid == IID_IAlarm)
     {
-        objectPtr = static_cast<IAlarm*>(this);
+        *objectPtr = static_cast<IAlarm*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Alarm::
@@ -200,7 +199,7 @@ set(Alarm* alarm)
 {
     long long start;
 
-    start = alarm->getStartTime();
+    alarm->getStartTime(start);
     if (0 < start)
     {
         queues[0].add(alarm);

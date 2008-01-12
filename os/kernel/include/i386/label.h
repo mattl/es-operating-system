@@ -18,12 +18,6 @@
 
 class Label
 {
-    struct Frame
-    {
-        Frame* prev;
-        void*  pc;
-    };
-
 public:
     unsigned esp;       // 0
     unsigned eip;       // 4
@@ -73,16 +67,6 @@ public:
     bool isSane()
     {
         return (ebp == 0 || *reinterpret_cast<void**>(ebp) == reinterpret_cast<void*>(link)) ? true : false;
-    }
-
-    void where()
-    {
-        Frame* frame = (Frame*) ebp;
-        while (frame)
-        {
-            esReport("%p %p\n", frame->pc, frame->prev);
-            frame = frame->prev;
-        }
     }
 
     static void start();

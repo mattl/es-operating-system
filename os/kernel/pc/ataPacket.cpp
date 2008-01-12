@@ -245,32 +245,32 @@ unlock()
     return preventAllowMediumRemoval(false);
 }
 
-void* AtaPacketDevice::
-queryInterface(const Guid& riid)
+bool AtaPacketDevice::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IRemovableMedia::iid() && removal)
+    else if (riid == IID_IRemovableMedia && removal)
     {
-        objectPtr = static_cast<IRemovableMedia*>(this);
+        *objectPtr = static_cast<IRemovableMedia*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaPacketDevice::
@@ -295,9 +295,6 @@ detect()
         return true;
     }
 
-#ifdef VERBOSE
-    esReport("AtaPacketDevice::detect()\n");
-#endif
     u8 status = testUnitReady();
 #ifdef VERBOSE
     esReport("status: %02x\n", status);

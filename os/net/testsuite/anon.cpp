@@ -24,8 +24,6 @@
 #include <es/net/IResolver.h>
 #include <es/net/arp.h>
 
-using namespace es;
-
 extern int esInit(IInterface** nameSpace);
 extern void esRegisterInternetProtocol(IContext* context);
 

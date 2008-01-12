@@ -56,10 +56,8 @@ public:
 
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# output\n");
         esDump(packet, len);
-#endif
         stream->write(packet, len);
         return true;
     }

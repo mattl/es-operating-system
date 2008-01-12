@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,259 +16,79 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <es/ent.h>
+#include <unistd.h>
+
 #include <es/reflect.h>
-#include "utf.h"
+#include <es/types.h>
 
 void printGuid(const Guid& guid)
 {
     printf("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-           guid.Data1, guid.Data2, guid.Data3,
-           guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
-           guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
+             guid.Data1, guid.Data2, guid.Data3,
+             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
+             guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
 }
 
-void processType(Reflect::Type type)
+const char* Reflect::typeID[ReflectionFile::TAG_MAX] =
 {
-    switch (type.getType())
-    {
-    case Ent::SpecS8:
-        printf("s8");
-        break;
-    case Ent::SpecS16:
-        printf("s16");
-        break;
-    case Ent::SpecS32:
-        printf("s32");
-        break;
-    case Ent::SpecS64:
-        printf("s64");
-        break;
-    case Ent::SpecU8:
-        printf("u8");
-        break;
-    case Ent::SpecU16:
-        printf("u16");
-        break;
-    case Ent::SpecU32:
-        printf("u32");
-        break;
-    case Ent::SpecU64:
-        printf("u64");
-        break;
-    case Ent::SpecF32:
-        printf("f32");
-        break;
-    case Ent::SpecF64:
-        printf("f64");
-        break;
-    case Ent::SpecF128:
-        printf("f128");
-        break;
-    case Ent::SpecBool:
-        printf("bool");
-        break;
-    case Ent::SpecChar:
-        printf("char");
-        break;
-    case Ent::SpecWChar:
-        printf("wchar");
-        break;
-    case Ent::SpecVoid:
-        printf("void");
-        break;
-    case Ent::SpecUuid:
-        printf("uuid");
-        break;
-    case Ent::SpecString:
-        printf("string");
-        break;
-    case Ent::SpecWString:
-        printf("wstring");
-        break;
-    case Ent::SpecAny:
-        printf("any");
-        break;
-    case Ent::SpecObject:
-        printf("object");
-        break;
-    case Ent::SpecFixed:
-        printf("fixed");
-        break;
-    case Ent::SpecValue:
-        printf("value");
-        break;
-    case Ent::TypeModule:
-        printf("module");
-        break;
-    case Ent::TypeInterface:
-        printf("interface");
-        break;
-    case Ent::TypeStructure:
-        printf("structure");
-        break;
-    case Ent::TypeException:
-        printf("exception");
-        break;
-    case Ent::TypeEnum:
-        printf("enum");
-        break;
-    case Ent::TypeArray:
-        printf("array");
-        break;
-    case Ent::TypeSequence:
-        printf("sequence");
-        break;
-    default:
-        fprintf(stderr, "Unknown type %x\n", type.getType());
-        exit(EXIT_FAILURE);
-        break;
-    }
-}
+    "signed char",
+    "short",
+    "int",
+    "long long",
+    "unsigned char",
+    "unsigned short",
+    "unsigned int",
+    "unsigned long long",
+    "float",
+    "double",
+    "bool",
+    "char",
+    "wchar_t",
+    "void",
+    "Guid"
+};
 
-void processConstant(Reflect::Constant& c)
+void printType(Reflect::Type type)
 {
-    char utf8[9];
-
-    processType(c.getType());
-    printf(" %s = ", c.getName());
-    switch (c.getType().getType())
+    if (type.isConst())
     {
-    case Ent::SpecU8:
-        printf("%u", c.getValue<u8>());
-        break;
-    case Ent::SpecU16:
-        printf("%u", c.getValue<u16>());
-        break;
-    case Ent::SpecU32:
-        printf("%u", c.getValue<u32>());
-        break;
-    case Ent::SpecU64:
-        printf("%llu", c.getValue<u64>());
-        break;
-    case Ent::SpecS8:
-        printf("%d", c.getValue<s8>());
-        break;
-    case Ent::SpecS16:
-        printf("%d", c.getValue<s16>());
-        break;
-    case Ent::SpecS32:
-        printf("%d", c.getValue<s32>());
-        break;
-    case Ent::SpecS64:
-        printf("%lld", c.getValue<s64>());
-        break;
-    case Ent::SpecF32:
-        printf("%g", c.getValue<f32>());
-        break;
-    case Ent::SpecF64:
-        printf("%g", c.getValue<f64>());
-        break;
-    case Ent::SpecF128:
-        printf("%Lg", c.getValue<f128>());
-        break;
-    case Ent::SpecBool:
-        printf("%s", c.getValue<bool>() ? "true" : "false");
-        break;
-    case Ent::SpecChar:
-        printf("'%c'", c.getValue<char>());
-        break;
-    case Ent::SpecWChar:
-        if (char* end = utf32to8(c.getValue<wchar_t>(), utf8))
-        {
-            *end = '\0';
-            printf("L'%s'", utf8);
-        }
-        break;
-    case Ent::SpecString:
-        printf("\"%s\"", c.getString());
-        break;
-    case Ent::SpecWString:
-        printf("L\"%s\"", c.getString());
-        break;
-    }
-    printf(";\n");
-}
-
-void processMethod(Reflect::Method& method)
-{
-    processType(method.getReturnType());
-    if (method.isGetter())
-    {
-        printf(" get_%s(", method.getName());
-    }
-    else if (method.isSetter())
-    {
-        printf(" set_%s(", method.getName());
-    }
-    else
-    {
-        printf(" %s(", method.getName());
-    }
-    for (int i = 0; i < method.getParameterCount(); ++i)
-    {
-        Reflect::Parameter param(method.getParameter(i));
-        processType(param.getType());
-        printf(" %s", param.getName());
-        if (i + 1 < method.getParameterCount())
-        {
-            printf(", ");
-        }
-    }
-    printf(")\n");
-}
-
-void processInterface(Reflect::Interface& interface)
-{
-    printf("interface %s\n", interface.getName());
-    printf("iid: ");
-    printGuid(interface.getIid());
-    printf("\n");
-
-    if (interface.getSuperIid() != GUID_NULL)
-    {
-        printf("piid: ");
-        printGuid(interface.getSuperIid());
-        printf("\n");
+        printf("const ");
     }
 
-    for (int i = 0; i < interface.getMethodCount(); ++i)
+    printf("%s", type.getName());
+
+    if (type.getPointer() == 1)
     {
-        Reflect::Method method(interface.getMethod(i));
-        processMethod(method);
+        printf("*");
+    }
+    else if (type.getPointer() == 2)
+    {
+        printf("**");
     }
 
-    for (int i = 0; i < interface.getConstantCount(); ++i)
+    if (type.isReference())
     {
-        Reflect::Constant c(interface.getConstant(i));
-        processConstant(c);
+        printf("&");
+    }
+
+    // We also need the byte count of each parameter.
+    printf(" {%d}", type.getSize());
+
+    if (type.isPointer() || type.isReference())
+    {
+        printf("-{%d}", type.getReferentSize());
     }
 }
 
-void processModule(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface(module.getInterface(i));
-        processInterface(interface);
-    }
-
-    for (int i = 0; i < module.getConstantCount(); ++i)
-    {
-        Reflect::Constant c(module.getConstant(i));
-        processConstant(c);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
-    {
-        Reflect::Module m(module.getModule(i));
-        processModule(m);
-    }
-}
+char* indent = "";
 
 int main(int argc, char* argv[])
 {
-    for (int i = 1; i < argc; ++i)
+    int size;
+    int i;
+    char* buf = 0;
+
+    for (i = 1; i < argc; ++i)
     {
         int fd = open(argv[i], O_RDONLY);
         if (fd < 0)
@@ -281,21 +101,99 @@ int main(int argc, char* argv[])
         {
             continue;
         }
-        void* ent = malloc(s.st_size);
-        if (!ent)
+        void* buf = malloc(s.st_size);
+        if (!buf)
         {
             continue;
         }
-        read(fd, ent, s.st_size);
+        read(fd, buf, s.st_size);
         close(fd);
 
-        printf("# %s\n", argv[i]);
-        Reflect r(ent);
-        Reflect::Module global(r.getGlobalModule());
-        processModule(global);
+        Reflect r(buf);
+        for (int i = 0; i < r.getInterfaceCount(); ++i)
+        {
+            Reflect::Interface interface(r.getInterface(i));
+            printf("interface %s\n", interface.getName());
+            printf("    iid: ");
+            printGuid(interface.getIid());
+            printf("\n");
 
-        free(ent);
+            if (interface.getType().isImported())
+            {
+                continue;
+            }
+
+            if (interface.getSuperIid() != GUID_NULL)
+            {
+                printf("    piid: ");
+                printGuid(interface.getSuperIid());
+                printf("\n");
+                printf("    method count: %d\n", interface.getTotalMethodCount());
+            }
+
+            indent = "    ";
+            for (int i = 0; i < interface.getMethodCount(); ++i)
+            {
+                Reflect::Function method(interface.getMethod(i));
+
+                printf("%sfunction %s : ", indent, method.getName());
+                printType(method.getReturnType());
+                if (method.getReturnType().isInterfacePointer())
+                {
+                    printf(" interface_pointer");
+                    printf(": ");
+                    printGuid(method.getReturnType().getInterface().getIid());
+                }
+
+                printf("\n");
+
+                indent = "        ";
+                for (int i = 0; i < method.getParameterCount(); ++i)
+                {
+                    Reflect::Identifier param(method.getParameter(i));
+                    printf("%s%s : ", indent, param.getName());
+                    printType(param.getType());
+                    if (param.getType().isArray())
+                    {
+                    }
+                    else
+                    {
+                        if (0 <= param.getIidIs())
+                        {
+                            printf(" iid_is(%s)", method.getParameter(param.getIidIs()).getName());
+                        }
+                        if (0 <= param.getSizeIs())
+                        {
+                            printf(" size_is(%s)", method.getParameter(param.getSizeIs()).getName());
+                        }
+                    }
+
+                    if (param.isInterfacePointer())
+                    {
+                        printf(" interface_pointer");
+                        // We also need to know the IID of the interface.
+                        if (param.getType().isInterfacePointer())
+                        {
+                            printf(": ");
+                            printGuid(param.getType().getInterface().getIid());
+                        }
+                    }
+
+                    printf("\n");
+                }
+                indent = "    ";
+            }
+            printf("%smember count: %d\n", indent, interface.getMemberCount());
+            indent = "";
+        }
+        for (int i = 0; i < r.getTypeCount(); ++i)
+        {
+            Reflect::Identifier type(r.getIdentifier(i));
+            printf("%s : ", type.getName());
+            printType(type.getType());
+            printf("\n");
+        }
+
+        free(buf);
     }
-
-    return EXIT_SUCCESS;
 }
