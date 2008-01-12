@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -20,8 +20,8 @@
 #include <es/clsid.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
-#include "core.h"
 #include "memoryStream.h"
+#include "cache.h"
 
 #define PAGE_SIZE   4096
 #define NON_RESERVED_PAGE  4
@@ -49,8 +49,9 @@ int main()
 #endif // VERBOSE
     // Reserved all pages except for NON_RESERVER_PAGE pages.
     IPageSet* pageSet;
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    esCreateInstance(CLSID_PageSet,
+                     IID_IPageSet,
+                     reinterpret_cast<void**>(&pageSet));
     unsigned long long reserved = maxPage - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -68,9 +69,9 @@ int main()
         setData(buf1, size1, 1);
         buf2 = new u8[size1];
         setData(buf2, size1, 2);
-
-        cacheFactory = reinterpret_cast<ICacheFactory*>(
-            esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+        esCreateInstance(CLSID_CacheFactory,
+                         IID_ICacheFactory,
+                         reinterpret_cast<void**>(&cacheFactory));
     }
     catch (...)
     {

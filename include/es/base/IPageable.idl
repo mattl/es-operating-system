@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,37 +11,21 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+[object, uuid(0327e274-25db-11db-9c02-0009bf000001)]
+interface IPageable : IInterface
 {
-    /**
-     * This interface provides methods for managing pageable objects.
+    /** Gets the physical page address at the specified offset of this pageable object.
+     * @return      Physical page address.
      */
-    interface IPageable : IInterface
-    {
-        #pragma ID IPageable = "DCE:0327e274-25db-11db-9c02-0009bf000001";
-        /** Gets the physical page address at the specified offset of this pageable object.
-         * @param offset the offset of this pageable object.
-         * @return      Physical page address.
-         */
-        unsigned long long get(in long long offset);
+    unsigned long get(long offset);
 
-        /** Releases the page at the specified offset of this pageable object.
-         * @param offset the offset of this pageable object.
-         * @param pte the page table entry.
-         */
-        void put(in long long offset, in unsigned long long pte);
+    /** Releases the page at the specified offset of this pageable object.
+     */
+    void put(long offset, unsigned long pte);
 
-        /** The size of this pageable object.
-         * @return the size of this pageable object.
-         */
-        attribute long long size;
-    };
-};
+    long getSize();
 
-#endif // NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
-
+    void setSize(long size);
+}

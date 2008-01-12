@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,19 +11,15 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
-#include <es/exception.h>
-#include <es/handle.h>
 #include <es/usage.h>
+#include <es/clsid.h>
+#include <es/handle.h>
 #include "core.h"
 #include "io.h"
 #include "8042.h"
-
-// #define VERBOSE
 
 using namespace UsageID;
 
@@ -371,18 +367,13 @@ sendData(u8 data)
 }
 
 u8 Keyboard::
-receiveData(int retry)
+receiveData()
 {
     while (!(inpb(STATUS_BYTE) & OUTPUT_BUFFER_FULL))
     {
 #if defined(__i386__) || defined(__x86_64__)
         __asm__ __volatile__ ("pause\n");
 #endif
-        --retry;
-        if (retry < 0)
-        {
-            throw SystemException<ENODEV>();
-        }
     }
     return inpb(DATA_BUFFER);
 }
@@ -453,18 +444,19 @@ invoke(int param)
             }
             packet[count] = data;
 
-            s8 dz = 0;
+
+            int dz = 0;
             ++count;
             switch (aux)
             {
-            case 0: // PS/2 mouse
+            case 0:
                 if (count == 3)
                 {
                     count = 0;
                     packet[3] = 0;
                 }
                 break;
-            case 3: // Intellimouse
+            case 3:
                 if (count == 4)
                 {
                     dz = data;
@@ -472,7 +464,7 @@ invoke(int param)
                     packet[3] = 0;
                 }
                 break;
-            case 4: // Intellimouse (5 button)
+            case 4:
                 if (count == 4)
                 {
                     dz = data & 0xff;
@@ -490,7 +482,7 @@ invoke(int param)
 
             if (count == 0)
             {
-                Lock::Synchronized method(spinLock);
+                SpinLock::Synchronized method(spinLock);
 
                 int d;
 
@@ -510,7 +502,7 @@ invoke(int param)
 
                 axis[2] = clamp(axis[2] + dz);
                 button = ((packet[3] >> 1) & 0x18) | (packet[0] & 0x07);
-                // esReport("aux: %02x %02x %02x %02x: %02x\n", packet[0], packet[1], packet[2], packet[3], (u8) dz);
+                // esReport("aux: %02x %d %d %d\n", button, axis[0], axis[1], axis[2]);
             }
         }
         else
@@ -548,7 +540,7 @@ invoke(int param)
             }
             if (key)
             {
-                Lock::Synchronized method(spinLock);
+                SpinLock::Synchronized method(spinLock);
 
                 if (data & 0x80)
                 {
@@ -560,13 +552,8 @@ invoke(int param)
                     // make
                     map[key / (8 * sizeof(unsigned))] |= (1u << (key % (8 * sizeof(unsigned))));
                 }
+                // esReport("kbd: %02x (%02x) %s\n", key, data, (data & 0x80) ? "break" : "make");
             }
-#ifdef VERBOSE
-            if (key)
-            {
-                esReport("kbd: %02x (%02x) %s\n", key, data, (data & 0x80) ? "break" : "make");
-            }
-#endif  // VERBOSE
         }
     }
     return 0;
@@ -600,8 +587,8 @@ Keyboard(IContext* device) :
 
     detectAuxDevice();
 
-    Core::registerInterruptHandler(IRQ_KEYBOARD, this);
-    Core::registerInterruptHandler(IRQ_AUXILIARY_DEVICE, this);
+    Core::registerExceptionHandler(32 + IRQ_KEYBOARD, this);
+    Core::registerExceptionHandler(32 + IRQ_AUXILIARY_DEVICE, this);
 
     device->bind("keyboard", static_cast<IStream*>(&keyboardStream));
     device->bind("mouse", static_cast<IStream*>(&mouseStream));
@@ -612,24 +599,24 @@ Keyboard::
 {
 }
 
-void* Keyboard::
-queryInterface(const Guid& riid)
+bool Keyboard::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Keyboard::
@@ -661,11 +648,21 @@ writeAuxDevice(u8 byte)
 void Keyboard::
 detectAuxDevice(void)
 {
-    try
-    {
-        writeAuxDevice(SET_DEFAULTS);
-        writeAuxDevice(SET_STREAM_MODE);
+    writeAuxDevice(SET_DEFAULTS);
+    writeAuxDevice(SET_STREAM_MODE);
 
+    // Try to enter the scrolling wheel plus 5 button mode.
+    writeAuxDevice(SET_SAMPLE_RATE);
+    writeAuxDevice(200);
+    writeAuxDevice(SET_SAMPLE_RATE);
+    writeAuxDevice(200);
+    writeAuxDevice(SET_SAMPLE_RATE);
+    writeAuxDevice(80);
+
+    writeAuxDevice(GET_DEVICE_ID);
+    aux = receiveData();
+    if (aux != 0x04)
+    {
         // Try to enter the scrolling wheel mode.
         writeAuxDevice(SET_SAMPLE_RATE);
         writeAuxDevice(200);
@@ -673,45 +670,27 @@ detectAuxDevice(void)
         writeAuxDevice(100);
         writeAuxDevice(SET_SAMPLE_RATE);
         writeAuxDevice(80);
-        writeAuxDevice(GET_DEVICE_ID);
-        aux = receiveData();
-
-        if (aux == 0x03)
-        {
-            // Try to enter the scrolling wheel plus 5 button mode.
-            writeAuxDevice(SET_SAMPLE_RATE);
-            writeAuxDevice(200);
-            writeAuxDevice(SET_SAMPLE_RATE);
-            writeAuxDevice(200);
-            writeAuxDevice(SET_SAMPLE_RATE);
-            writeAuxDevice(80);
-        }
-
-        writeAuxDevice(GET_DEVICE_ID);
-        aux = receiveData();
-        esReport("PS2 mouse: type = %02x\n", aux);
-        switch (aux)
-        {
-        case 0x00:  // PS/2 mouse
-        case 0x03:  // Intellimouse
-        case 0x04:  // Intellimouse (5 button)
-            writeAuxDevice(ENABLE_DATA_REPORTING);
-            break;
-        default:
-            writeAuxDevice(DISABLE_DATA_REPORTING);
-            break;
-        }
     }
-    catch (...)
+    writeAuxDevice(GET_DEVICE_ID);
+    aux = receiveData();
+    // esReport("mouse type: %d\n", aux);
+    switch (aux)
     {
-        esReport("PS2 mouse: not detected.\n");
+    case 0x00:  // PS/2 mouse
+    case 0x03:  // Intellimouse
+    case 0x04:  // Intellimouse (5 button)
+        writeAuxDevice(ENABLE_DATA_REPORTING);
+        break;
+    default:
+        writeAuxDevice(DISABLE_DATA_REPORTING);
+        break;
     }
 }
 
 int Keyboard::
 readKeyboard(void* dst, int count)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     if (count <= 0)
     {
@@ -752,7 +731,7 @@ readKeyboard(void* dst, int count)
 int Keyboard::
 readMouse(void* dst, int count)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     if (count <= 0)
     {
@@ -825,24 +804,24 @@ Stream::flush()
 {
 }
 
-void* Keyboard::
-Stream::queryInterface(const Guid& riid)
+bool Keyboard::
+Stream::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Keyboard::

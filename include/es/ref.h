@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -14,34 +14,20 @@
 #ifndef NINTENDO_ES_REF_H_INCLUDED
 #define NINTENDO_ES_REF_H_INCLUDED
 
-/**
- * This class represents a reference count.
- */
 class Ref
 {
     volatile long count;
 public:
-    /**
-     * Constructs a reference count.
-     * @param initial the initial value of this reference count.
-     */
     Ref(long initial = 1) : count(initial)
     {
     }
 
-    /**
-     * A conversion operator.
-     */
     operator long() const
     {
         return count;
     }
 
 #ifdef __i386__
-    /**
-     * Increments this reference count.
-     * @return the new reference count.
-     */
     long addRef(void)
     {
         register long eax = 1;
@@ -55,10 +41,6 @@ public:
         return eax;
     }
 
-    /**
-     * Decrements this reference count.
-     * @return the new reference count.
-     */
     long release(void)
     {
         register long eax = -1;
@@ -72,10 +54,6 @@ public:
         return eax;
     }
 #elif __x86_64__
-    /**
-     * Increments this reference count.
-     * @return the new reference count.
-     */
     long addRef(void)
     {
         register long rax = 1;
@@ -89,10 +67,6 @@ public:
         return rax;
     }
 
-    /**
-     * Decrements this reference count.
-     * @return the new reference count.
-     */
     long release(void)
     {
         register long rax = -1;
@@ -106,15 +80,7 @@ public:
         return rax;
     }
 #else   // __i386__
-    /**
-     * Increments this reference count.
-     * @return the new reference count.
-     */
     long addRef(void);
-    /**
-     * Decrements this reference count.
-     * @return the new reference count.
-     */
     long release(void);
 #endif  // __i386__
 };

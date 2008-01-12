@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,19 +16,19 @@
 #include "core.h"
 #include "elfFile.h"
 #include "process.h"
-#include "interfaceStore.h"
 
 extern ICurrentProcess* esCurrentProcess();
 
-ICacheFactory* Process::cacheFactory;
+CacheFactory* Process::cacheFactory;
 Swap* Process::swap;
 Zero* Process::zero;
 
 void Process::
 initialize()
 {
-    cacheFactory = reinterpret_cast<CacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
     ASSERT(cacheFactory);
 
     zero = new Zero;
@@ -114,7 +114,7 @@ isValid(const void* start, long long length, bool write)
 
 void* Process::
 map(const void* start, long long length, unsigned prot, unsigned flags,
-    IPageable* pageable, long long offset)
+                   IPageable* pageable, long long offset)
 {
     Monitor::Synchronized method(monitor);
 
@@ -129,8 +129,8 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
 
 void* Process::
 map(const void* start, long long length, unsigned prot, unsigned flags,
-    IPageable* pageable, long long offset, long long size /* in pageable object */,
-    void* min, void* max)
+                   IPageable* pageable, long long offset, long long size /* in pageable object */,
+                   void* min, void* max)
 {
     Map::List::Iterator iter = mapList.begin();
     Map* map;
@@ -338,14 +338,6 @@ setBreak(long long increment)
     return from;
 }
 
-bool Process::
-trace(bool on)
-{
-    bool prev(log);
-    log = on;
-    return prev;
-}
-
 int Process::
 validityFault(const void* addr, u32 error)
 {
@@ -512,62 +504,36 @@ Process() :
     tlsImageSize(0),
     tlsSize(0),
     threadCount(0),
-    root(0),
-    current(0),
-    in(0),
-    out(0),
-    error(0),
-    log(false),
-    upcallCount(0)
+    root(0)
 {
     ICache* cache = cacheFactory->create(zero);
     mmu = new Mmu(dynamic_cast<Cache*>(cache));
     ASSERT(mmu);
 
-    syscallTable[0].set(esCurrentProcess(), ICurrentProcess::iid(), true);
+    interfaceTable[0].set((void*) esCurrentProcess(), &IID_ICurrentProcess);
 
-    Process* current(Process::getCurrentProcess());
-    if (current)
-    {
-        setRoot(current->root);
-        setInput(current->in);
-        setOutput(current->out);
-        setError(current->error);
-    }
+    const unsigned stackSize = 2*1024*1024;
+    Thread* thread(createThread(stackSize));
+    ASSERT(thread);
 }
 
 Process::
 ~Process()
 {
-#ifdef VERBOSE
-    esReport("Process::~Process %p\n", this);
-#endif
-
-    setInput(0);
-    setOutput(0);
-    setError(0);
-    setRoot(0);
-
-    for (SyscallProxy* proxy(syscallTable);
-         proxy < &syscallTable[INTERFACE_POINTER_MAX];
-         ++proxy)
+    for (InterfaceStub* stub(interfaceTable);
+         stub < &interfaceTable[INTERFACE_POINTER_MAX];
+         ++stub)
     {
-        proxy->addRef();
-        while (0 < proxy->release())
-            ;
-   }
-
-    while (!upcallList.isEmpty())
-    {
-        upcallCount.decrement();
-        UpcallRecord* record(upcallList.removeFirst());
-        delete record;
+        if (stub->interface)
+        {
+            static_cast<IInterface*>(stub->interface)->release();
+        }
     }
-    ASSERT(upcallCount == 0);
 
     ASSERT(threadList.isEmpty());
 
     unmap(USER_MIN, static_cast<u8*>(USER_MAX) - static_cast<u8*>(USER_MIN));
+
     ASSERT(mmu);
     delete mmu;
 }
@@ -575,50 +541,43 @@ Process::
 void Process::
 load()
 {
-    unsigned x = Core::splHi();
     Core* core = Core::getCurrentCore();
-    ASSERT(core);
     core->currentProc = this;
-    ASSERT(mmu);
     mmu->load();
-    Core::splX(x);
 }
 
 // XXX if this interface has been registered already, should return the slot
 // that has been assigned for the interface. However, the reference count of
 // the interface pointer must also be adjusted to do this.
 int Process::
-set(SyscallProxy* table, void* interface, const Guid& iid, bool used)
+set(void* interface, const Guid* iid)
 {
     Monitor::Synchronized method(monitor);
 
-    for (SyscallProxy* proxy(table);
-         proxy < &table[INTERFACE_POINTER_MAX];
-         ++proxy)
+    for (InterfaceStub* stub(interfaceTable);
+         stub < &interfaceTable[INTERFACE_POINTER_MAX];
+         ++stub)
     {
-        if (proxy->set(interface, iid, used))
+        if (0 <= stub->set(interface, iid))
         {
 #ifdef VERBOSE
             esReport("Process::set(%p, {%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}) : %d;\n",
                      interface,
-                     iid.Data1, iid.Data2, iid.Data3,
-                     iid.Data4[0], iid.Data4[1], iid.Data4[2], iid.Data4[3],
-                     iid.Data4[4], iid.Data4[5], iid.Data4[6], iid.Data4[7],
-                     proxy - table);
+                     iid->Data1, iid->Data2, iid->Data3,
+                     iid->Data4[0], iid->Data4[1], iid->Data4[2], iid->Data4[3],
+                     iid->Data4[4], iid->Data4[5], iid->Data4[6], iid->Data4[7],
+                     stub - interfaceTable);
 #endif
-            return proxy - table;
+            return stub - interfaceTable;
         }
     }
-    esReport("Ins. interface pointer table.\n");
     return -1;
 }
 
 void Process::
-// setStartup(void (*startup)(void* (*start)(void* param), void* param)) // [check] startup must be a function pointer.
-setStartup(const void* startup)
+setStartup(void (*startup)(void* (*start)(void* param), void* param))
 {
-    typedef void (*Startup)(void* (*start)(void* param), void* param); // [check]
-    this->startup = reinterpret_cast<Startup>(startup);
+    this->startup = startup;
 }
 
 void* Process::
@@ -629,14 +588,11 @@ ast(void* param)
     if (process->threadCount == 1)  // The default thread?
     {
         // Push arguments now as the process finally becomes the current one.
-
-        // Set up TLS.
         void* tls = thread->tls(process->tlsSize, process->tlsAlign);
 #ifdef VERBOSE
-        esReport("ast: %p \n", tls);
+        esReport("ast: %p\n", tls);
 #endif  // VERBOSE
         memmove(tls, process->tlsImage, process->tlsImageSize);
-        memset((u8*) tls + process->tlsImageSize, 0, process->tlsSize - process->tlsImageSize);
 
         // Copy-out the argument.
         Ureg* ureg(static_cast<Ureg*>(thread->param));
@@ -653,7 +609,7 @@ Thread* Process::
 createThread(const unsigned stackSize)
 {
     // Map a user stack
-    void* userStack(static_cast<u8*>(USER_MAX) - ((threadCount + upcallCount + 1) * stackSize));
+    void* userStack(static_cast<u8*>(USER_MAX) - ((threadCount + 1) * stackSize));
     userStack = map(userStack, stackSize - Page::SIZE,
                     ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
                     ICurrentProcess::MAP_PRIVATE, 0, 0);
@@ -662,7 +618,7 @@ createThread(const unsigned stackSize)
         return 0;
     }
 
-    u8* stack = new u8[16*1024];
+    u8* stack = new u8[8192];
     if (!stack)
     {
         unmap(userStack, stackSize - Page::SIZE);
@@ -680,7 +636,7 @@ createThread(const unsigned stackSize)
                                 ureg,               // argument to thread function
                                 IThread::Normal,    // priority
                                 stack,              // stack
-                                16*1024);           // stack size
+                                8192);              // stack size
     if (!thread)
     {
         unmap(userStack, stackSize - Page::SIZE);
@@ -688,12 +644,11 @@ createThread(const unsigned stackSize)
         return 0;
     }
 
-    // Add this thread to this process.
+    // Add this thread to this process and memorize the user stack address.
     ++threadCount;
     thread->process = this;
     thread->userStack = userStack;
     threadList.addLast(thread);
-    addRef();
     return thread;
 }
 
@@ -712,8 +667,6 @@ detach(Thread* thread)
     threadList.remove(thread);
     --threadCount;
     waitPoint.wakeup();
-
-    release();
 }
 
 IThread* Process::
@@ -735,7 +688,6 @@ createThread(void* (*start)(void* param), void* param)
 
     void* tls = thread->tls(tlsSize, tlsAlign);
     memmove(tls, tlsImage, tlsImageSize);
-    memset((u8*) tls + tlsImageSize, 0, tlsSize - tlsImageSize);
     if (!startup)
     {
         thread->push(reinterpret_cast<unsigned>(param));
@@ -769,11 +721,6 @@ start(IFile* file, const char* argument)
     Monitor::Synchronized method(monitor);
 
     // XXX Check no elf file is set yet.
-
-    const unsigned stackSize = 2*1024*1024;
-    Thread* thread(createThread(stackSize));
-    ASSERT(thread);
-    syscallTable[1].set(thread, IThread::iid(), true);   // just for reference counting
 
     Elf elf(file);
 
@@ -856,14 +803,12 @@ start(IFile* file, const char* argument)
         }
     }
 
-    char name[32];
-    file->getName(name, sizeof name);
-    esReport("start %p %s\n", this, name);
-
 #ifdef VERBOSE
     dump();
     esReport("break: %p\n", end);
 #endif // VERBOSE
+
+    Thread* thread(threadList.getFirst());
 
     // Copy-in the argument.
     Ureg* ureg(static_cast<Ureg*>(thread->param));
@@ -911,7 +856,7 @@ exit(int status)
 
     exitValue = status;
 
-    // Cancel all the threads.
+    // Cancel all the threads
     Thread* thread;
     List<Thread, &Thread::linkProcess>::Iterator iter = threadList.begin();
     while ((thread = iter.next()))
@@ -923,9 +868,12 @@ exit(int status)
         thread->setCancelState(ICurrentThread::CANCEL_ENABLE);
         thread->setCancelType(ICurrentThread::CANCEL_DEFERRED);
         thread->cancel();
+        thread->release();
     }
 
     thread = Thread::getCurrentThread();
+    thread->release();
+
     thread->exit(0);
     // NOT REACHED HERE
 
@@ -941,7 +889,7 @@ kill()
         // NOT REACHED HERE
     }
 
-    // Cancel all the threads.
+    // Cancel all the threads
     Monitor::Synchronized method(monitor);
     Thread* thread;
     List<Thread, &Thread::linkProcess>::Iterator iter = threadList.begin();
@@ -949,8 +897,9 @@ kill()
     {
         ASSERT(thread != Thread::getCurrentThread());
         thread->setCancelState(ICurrentThread::CANCEL_ENABLE);
-        thread->setCancelType(ICurrentThread::CANCEL_DEFERRED);
+        thread->setCancelType(ICurrentThread::CANCEL_ASYNCHRONOUS);
         thread->cancel();
+        thread->release();
     }
 }
 
@@ -983,37 +932,8 @@ setRoot(IContext* root)
     }
 }
 
-IContext* Process::
-getCurrent()
-{
-    Monitor::Synchronized method(monitor);
-
-    if (current)
-    {
-        current->addRef();
-    }
-    return current;
-}
-
-void Process::
-setCurrent(IContext* current)
-{
-    Monitor::Synchronized method(monitor);
-
-    IContext* prev(this->current);
-    if (current)
-    {
-        current->addRef();
-    }
-    this->current = current;
-    if (prev)
-    {
-        prev->release();
-    }
-}
-
 IStream* Process::
-getInput()
+getIn()
 {
     Monitor::Synchronized method(monitor);
 
@@ -1025,7 +945,7 @@ getInput()
 }
 
 void Process::
-setInput(IStream* in)
+setIn(IStream* in)
 {
     Monitor::Synchronized method(monitor);
 
@@ -1042,7 +962,7 @@ setInput(IStream* in)
 }
 
 IStream* Process::
-getOutput()
+getOut()
 {
     Monitor::Synchronized method(monitor);
 
@@ -1054,7 +974,7 @@ getOutput()
 }
 
 void Process::
-setOutput(IStream* out)
+setOut(IStream* out)
 {
     Monitor::Synchronized method(monitor);
 
@@ -1099,24 +1019,24 @@ setError(IStream* error)
     }
 }
 
-void* Process::
-queryInterface(const Guid& riid)
+bool Process::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IInterface::iid())
+    if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IProcess*>(this);
+        *objectPtr = static_cast<IProcess*>(this);
     }
-    else if (riid == IProcess::iid())
+    else if (riid == IID_IProcess)
     {
-        objectPtr = static_cast<IProcess*>(this);
+        *objectPtr = static_cast<IProcess*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Process::
@@ -1140,85 +1060,6 @@ release()
 Process* Process::
 getCurrentProcess()
 {
-    unsigned x = Core::splHi();
     Core* core = Core::getCurrentCore();
-    Process* process = core->currentProc;
-    Core::splX(x);
-    return process;
-}
-
-int Process::
-read(void* dst, int count, long long offset)
-{
-    u8* addr(reinterpret_cast<u8*>(offset));
-    int len;
-    int n;
-    unsigned long pageOffset(Page::pageOffset(offset));
-    for (len = 0;
-         len < count;
-         len += n, addr += n, dst = (u8*) dst + n)
-    {
-        if (validityFault(addr, ICurrentProcess::PROT_READ) < 0)
-        {
-            break;
-        }
-        unsigned long pte = mmu->get(addr);
-        if (!pte)
-        {
-            break;
-        }
-        u8* src = static_cast<u8*>(mmu->getPointer(pte));
-        if (!src)
-        {
-            break;
-        }
-        n = Page::SIZE - pageOffset;
-        if (count - len < n)
-        {
-            n = count - len;
-        }
-        memmove(dst, src + pageOffset, n);
-        pageOffset = 0;
-    }
-    return len;
-}
-
-int Process::
-write(const void* src, int count, long long offset)
-{
-    u8* addr(reinterpret_cast<u8*>(offset));
-    int len;
-    int n;
-    unsigned long pageOffset(Page::pageOffset(offset));
-    for (len = 0;
-         len < count;
-         len += n, addr += n, src = (u8*) src + n)
-    {
-        if (validityFault(addr, ICurrentProcess::PROT_READ) < 0)
-        {
-            break;
-        }
-        if (protectionFault(addr, ICurrentProcess::PROT_WRITE) < 0)
-        {
-            break;
-        }
-        unsigned long pte = mmu->get(addr);
-        if (!pte)
-        {
-            break;
-        }
-        u8* dst = static_cast<u8*>(mmu->getPointer(pte));
-        if (!dst)
-        {
-            break;
-        }
-        n = Page::SIZE - pageOffset;
-        if (count - len < n)
-        {
-            n = count - len;
-        }
-        memmove(dst + pageOffset, src, n);
-        pageOffset = 0;
-    }
-    return len;
+    return core->currentProc;
 }

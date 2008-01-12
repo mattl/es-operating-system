@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -45,7 +45,6 @@ class AtaController : public ICallback
     friend class AtaPacketDevice;
 
     IMonitor*       monitor;
-    Lock            lock;
     Ref             ref;
 
     int             cmdPort;
@@ -59,7 +58,6 @@ class AtaController : public ICallback
     u8*             data;
     u8*             limit;
     volatile bool   done;
-    Rendezvous      rendezvous;
 
     u8              packet[16];
     u8              features;
@@ -69,11 +67,6 @@ class AtaController : public ICallback
     bool softwareReset();
     bool detectDevice(int dev, u8* signature);
 
-    int condDone(int);
-    void wait();
-    void notify();
-
-    static bool isAtaDevice(const u8* signature);
     static bool isAtapiDevice(const u8* signature);
     static void* run(void* param);
 
@@ -87,7 +80,7 @@ public:
     int issue(AtaDevice* device, u8* packet, int packetSize,
               void* buffer = 0, int count = 0, u8 features = 0);
     int invoke(int);
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 
@@ -145,11 +138,11 @@ public:
 
     // IDiskManagement
     int initialize();
-    void getGeometry(Geometry* geometry);
-    void getLayout(Partition* partition);
-    void setLayout(const Partition* partition);
+    int getGeometry(Geometry* geometry);
+    int getLayout(Partition* partition);
+    int setLayout(Partition* partition);
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 
@@ -178,7 +171,7 @@ public:
 
     int read(void* dst, int count, long long offset);
     int write(const void* src, int count, long long offset);
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,60 +11,52 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <algorithm>
 #include <string.h>
 #include <es.h>
 #include <es/ring.h>
 
 long Ring::
-peek(void* dst, long count, long offset) const
+peek(void* dst, long count)
 {
-    ASSERT(0 <= offset);
-    if (used < offset + count)
+    u8* ptr(static_cast<u8*>(dst));
+    u8* end;
+
+    if (used < count)
     {
-        count = used - offset;
+        count = used;
     }
     if (count <= 0)
     {
         return 0;
     }
-    ASSERT(offset < used);
 
-    u8* ptr = static_cast<u8*>(dst);
-    const u8* end = buf + size;
+    end = buf + size;
     ASSERT(buf <= head && head < end);
 
-    const u8* src = head + offset;
-    if (end <= src)
+    if (head + count < end)
     {
-        src = buf + (offset - (end - src));
+        //  buf      head         tail      end
+        //  |        |            |         |
+        //  +--------XXXXXXXXXXXXX----------+
+        //  |        |<- count ->|            |
+        memmove(ptr, head, count);
     }
-    ASSERT(buf <= src && src < end);
-
-    if (src + count < end)
+    else    // (end <= head + count)
     {
-        //  buf      src            tail    end
-        //  |        |              |       |
-        //  +--------XXXXXXXXXXXXXXXX-------+
-        //  |        |<- count ->|          |
-        memmove(ptr, src, count);
-    }
-    else    // (end <= src + count)
-    {
-        //  buf      tail     src           end
+        //  buf      tail     head         end
         //  |        |        |             |
         //  XXXXXXXXX---------XXXXXXXXXXXXXXX
         //  +->|              |<-- count ---+
         //
         //                or
         //
-        //  buf      tail     src           end
+        //  buf      tail     head         end
         //  |        |        |             |
         //  XXXXXXXXX---------XXXXXXXXXXXXXXX
         //  |                 |<-- count -->|
-        long snip = end - src;
+        long snip = end - head;
         ASSERT(snip <= count);
-        memmove(ptr, src, snip);
+        memmove(ptr, head, snip);
         memmove(ptr + snip, buf, count - snip);
     }
     return count;
@@ -113,54 +105,7 @@ read(void* dst, long count)
         long snip = end - head;
         ASSERT(snip <= count);
         memmove(ptr, head, snip);
-        memmove(ptr + snip, buf, count - snip);
-        head = buf + count - snip;
-    }
-    ASSERT(buf <= head && head < end);
-    used -= count;
-    return count;
-}
-
-long Ring::
-skip(long count)
-{
-    u8* end;
-
-    if (used < count)
-    {
-        count = used;
-    }
-    if (count <= 0)
-    {
-        return 0;
-    }
-
-    end = buf + size;
-    ASSERT(buf <= head && head < end);
-
-    if (head + count < end)
-    {
-        //  buf      head         tail      end
-        //  |        |            |         |
-        //  +--------XXXXXXXXXXXXX----------+
-        //  |        |<- count ->|            |
-        head += count;
-    }
-    else    // (end <= head + count)
-    {
-        //  buf      tail     head         end
-        //  |        |        |             |
-        //  XXXXXXXXX---------XXXXXXXXXXXXXXX
-        //  +->|              |<-- count ---+
-        //
-        //                or
-        //
-        //  buf      tail     head         end
-        //  |        |        |             |
-        //  XXXXXXXXX---------XXXXXXXXXXXXXXX
-        //  |                 |<-- count -->|
-        long snip = end - head;
-        ASSERT(snip <= count);
+        memmove(ptr + size, buf, count - snip);
         head = buf + count - snip;
     }
     ASSERT(buf <= head && head < end);
@@ -243,7 +188,7 @@ marge(u8* adv, long count, Vec* blocks, long maxblock, u8* tail)
             pb = pos(tail, (u8*) block->data);
             if (pb <= pr)
             {
-                pr = std::max(pb + block->count, pr);
+                pr = max(pb + block->count, pr);
                 count = pr - pl;
                 // Delete block
                 memmove(block, block + 1, (u8*) end - (u8*) (block + 1));
@@ -262,7 +207,7 @@ marge(u8* adv, long count, Vec* blocks, long maxblock, u8* tail)
         pb = pos(tail, (u8*) block->data);
         if (pl <= pb + block->count && pb <= pr)
         {
-            pr = std::max(pb + block->count, pr);
+            pr = max(pb + block->count, pr);
             if (pb < pl)
             {
                 pl = pb;

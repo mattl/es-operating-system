@@ -4,7 +4,9 @@ SUFFIXES = .img .gz .iso
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% : %.img
+	$(srcdir)/makeScript "`pwd`" $@
 
 if POSIX
 
@@ -14,15 +16,13 @@ TESTS = iso9660 iso9660_create iso9660_attribute iso9660_readwrite iso9660_read 
 
 noinst_PROGRAMS = $(TESTS)
 
-noinst_DATA = isotest.iso fat16_5MB.img.gz
+noinst_DATA = isotest.iso
 
 LDADD += -lpthread -lrt
 
 endif POSIX
 
 if ES
-
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
 
 TESTS = iso9660 iso9660_create iso9660_attribute iso9660_readwrite iso9660_read \
         iso9660_maxLevel iso9660_getStream \
@@ -32,7 +32,7 @@ noinst_SCRIPTS = $(TESTS)
 
 noinst_PROGRAMS = $(noinst_SCRIPTS)
 
-noinst_DATA = isotest.iso fat16_5MB.img \
+noinst_DATA = isotest.iso \
 	iso9660.img iso9660_create.img iso9660_attribute.img iso9660_readwrite.img iso9660_read.img \
         iso9660_maxLevel.img iso9660_getStream.img \
         iso9660_object.img iso9660_remove.img iso9660_size.img iso9660_time.img iso9660_rename.img
@@ -73,13 +73,10 @@ iso9660_rename_SOURCES = iso9660_rename.cpp vdisk.h
 isotest.iso: isotest.iso.gz
 	gunzip -c $< > $@
 
-fat16_5MB.img : fat16_5MB.img.gz
-	gunzip -c $< > $@
-
 AM_CPPFLAGS = \
 	-I$(srcdir)/.. \
 	-I- \
 	-I../../../../include \
 	-I$(srcdir)/../../../../include
 
-EXTRA_DIST = isotest.iso.gz fat16_5MB.img.gz makeScript testLoader
+EXTRA_DIST = isotest.iso.gz makeScript

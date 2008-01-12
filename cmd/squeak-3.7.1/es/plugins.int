@@ -1,2 +1,0 @@
-# Automatically generated makefile include for internal plugins
-INTERNAL_PLUGINS = B2DPlugin BitBltPlugin FilePlugin FloatArrayPlugin LargeIntegers Matrix2x3Plugin MiscPrimitivePlugin SoundPlugin SoundGenerationPlugin SecurityPlugin SocketPlugin

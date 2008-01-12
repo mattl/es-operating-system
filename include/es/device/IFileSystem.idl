@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,57 +11,17 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IFILESYSTEM_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IFILESYSTEM_IDL_INCLUDED
+import "es/base/IStream.idl", "es/naming/IContext.idl";
 
-#include "es/base/IStream.idl"
-#include "es/naming/IContext.idl"
-
-module es
+[object, uuid(83a6a1dc-25dc-11db-9c02-0009bf000001)]
+interface IFileSystem : IInterface
 {
-    /**
-     * This interface provides methods for managing a file system.
-     */
-    interface IFileSystem : IInterface
-    {
-        #pragma ID IFileSystem = "DCE:83a6a1dc-25dc-11db-9c02-0009bf000001";
-
-        /**
-         * Attaches a disk to the file subsystem, and
-         * makes the file system accessible.
-         */
-        void mount(in IStream disk);
-        /**
-         * Detaches the disk from the file subsystem.
-         */
-        void dismount();
-        /**
-         * Checks this file system.
-         * @param fixError the boolean if <code>checkDisk</code> repairs this file system or not.
-         */
-        long checkDisk(in boolean fixError);
-        /**
-         * Formats this file system.
-         */
-        void format();
-        /**
-         *  Reduces fragmentation in this file system.
-         */
-        long defrag();
-        /**
-         * The size of the free spacein this file system in bytes.
-         */
-        readonly attribute long long freeSpace;
-        /**
-         * The root namespace of this file system.
-         */
-        readonly attribute IContext root;
-        /**
-         * The total size of the space in this file system in bytes
-         */
-        readonly attribute long long totalSpace;
-    };
-};
-
-#endif // NINTENDO_ES_DEVICE_IFILESYSTEM_IDL_INCLUDED
-
+    void mount(IStream* disk);
+    void dismount();
+    void getRoot([out] IContext** root);
+    void getFreeSpace([out] long& freeBytes);
+    void getTotalSpace([out] long& bytes);
+    int checkDisk(boolean fixError);
+    void format();
+    int defrag();
+}

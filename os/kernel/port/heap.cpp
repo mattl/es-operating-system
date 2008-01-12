@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -95,7 +95,7 @@ alloc(size_t size)
         void* place = arena.alloc(size + Cell::SIZE, Arena::ALIGN);
         if (place)
         {
-            Lock::Synchronized method(spinLock);
+            SpinLock::Synchronized method(spinLock);
 
             Cell* cell = new(place) Cell(size);
             listLargeCell.addLast(cell);
@@ -123,7 +123,7 @@ free(void* place)
         Cell* cell = getCell(place);
         if (isLargeCell(cell->size))
         {
-            Lock::Synchronized method(spinLock);
+            SpinLock::Synchronized method(spinLock);
 
             listLargeCell.remove(cell);
             arena.free(cell, cell->size + Cell::SIZE);
@@ -193,7 +193,7 @@ Mass::putCell(Cell* cell)
 Heap::Cell* Heap::
 Bucket::alloc(size_t size)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     Mass* mass;
     Mass::List::Iterator iter = listMass.begin();
@@ -220,7 +220,7 @@ Bucket::alloc(size_t size)
 size_t Heap::
 Bucket::free(Mass* mass, Cell* cell)
 {
-    Lock::Synchronized method(spinLock);
+    SpinLock::Synchronized method(spinLock);
 
     if (mass->putCell(cell) == 0)
     {

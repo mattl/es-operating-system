@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,108 +11,105 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ITHREAD_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ITHREAD_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/** A thread of execution in a program.
+ */
+[object, uuid(032d1118-25db-11db-9c02-0009bf000001)]
+interface IThread : IInterface
 {
-    /** A thread of execution in a program.
-     */
-    interface IThread : IInterface
+    enum State
     {
-        #pragma ID IThread = "DCE:032d1118-25db-11db-9c02-0009bf000001";
-        enum State
-        {
-            NEW,
-            RUNNABLE,
-            RUNNING,
-            BLOCKED,
-            WAITING,
-            TIMED_WAITING,
-            TERMINATED
-        };
-
-        /** The minimum priority that a thread can have.
-         */
-        const long Lowest = 1;
-
-        /** The default priority that is assigned to a thread.
-         */
-        const long Normal = 16;
-
-        /** The maximum priority that a thread can have.
-         */
-        const long Highest = 31;
-
-        /** Starts the execution of this thread.
-         */
-        void start();
-
-        /** Waits for this thread to die.
-         */
-        boolean join(out any rval);
-
-        /** Cancels this thread.
-         */
-        void cancel();
-
-        /** This thread's priority.
-         */
-        attribute long priority;
-
-        /** The state of this thread.
-         */
-        readonly attribute long state;
+        NEW,
+        RUNNABLE,
+        RUNNING,
+        BLOCKED,
+        WAITING,
+        TIMED_WAITING,
+        TERMINATED
     };
 
-    interface ICurrentThread : IInterface
-    {
-        #pragma ID ICurrentThread = "DCE:beb0489e-4492-11db-9c02-0009bf000001";
+    /** The minimum priority that a thread can have.
+     */
+    const int Lowest = 1;
 
+    /** The default priority that is assigned to a thread.
+     */
+    const int Normal = 16;
+
+    /** The maximum priority that a thread can have.
+     */
+    const int Highest = 31;
+
+    /** Starts the execution of this thread.
+     */
+    void start();
+
+    /** Returns this thread's priority.
+     */
+    int getPriority();
+
+    /** Changes the priority of this thread.
+     */
+    void setPriority(int priority);
+
+    /** Waits for this thread to die.
+     */
+    boolean join([out] void** rval);
+
+    /** Cancels this thread.
+     */
+    void cancel();
+
+    /** Returns the state of this thread.
+     */
+    int getState();
+};
+
+[object, uuid(032e562c-25db-11db-9c02-0009bf000001)]
+interface ICurrentThread : IInterface
+{
+    enum Attr
+    {
         /** Cancellation requests are held pending until a cancellation point
          * is reached
          */
-        const long CANCEL_DEFERRED = 0x00;
+        CANCEL_DEFERRED = 0x00,
 
         /** New or pending cancellation requests are acted upon at any time.
          */
-        const long CANCEL_ASYNCHRONOUS = 0x01;
+        CANCEL_ASYNCHRONOUS = 0x01,
 
         /** Cancellation requests against the target thread are held pending.
          */
-        const long CANCEL_DISABLE = 0x00;
+        CANCEL_DISABLE = 0x00,
 
         /** Cancellation requests are acted upon at any time.
          */
-        const long CANCEL_ENABLE = 0x02;
+        CANCEL_ENABLE = 0x02,
 
-        const long CANCEL_REQUESTED = 0X04;
-
-        /** Terminates the currently executing thread.
-         */
-        void exit(in any val);
-
-        /** Causes the currently executing thread to sleep.
-         */
-        void sleep(in long long timeout);
-
-        /** Sets the currently executing thread's cancelability state.
-         * @param state <code>CANCEL_ENABLE</code> or <code>CANCEL_DISABLE</code>.
-         */
-        long setCancelState(in long state);
-
-        /** Sets the currently executing thread's cancelability type.
-         * @param state <code>CANCEL_DEFERRED</code> or <code>CANCEL_ASYNCHRONOUS</code>.
-         */
-        long setCancelType(in long type);
-
-        /** Tests whether the current thread has been canceled.
-         */
-        void testCancel();
+        CANCEL_REQUESTED = 0X04
     };
-};
 
-#endif // NINTENDO_ES_BASE_ITHREAD_IDL_INCLUDED
+    /** Terminate the currently executing thread.
+     */
+    void exit([in] void* val);
 
+    /** Causes the currently executing thread to sleep.
+     */
+    void sleep(long timeout);
+
+    /** Sets the currently executing thread's cancelability state.
+     * @param state <code>CANCEL_ENABLE</code> or <code>CANCEL_DISABLE</code>.
+     */
+    int setCancelState(int state);
+
+    /** Sets the currently executing thread's cancelability type.
+     * @param state <code>CANCEL_DEFERRED</code> or <code>CANCEL_ASYNCHRONOUS</code>.
+     */
+    int setCancelType(int type);
+
+    /** Tests whether the current thread has been canceled.
+     */
+    void testCancel();
+}

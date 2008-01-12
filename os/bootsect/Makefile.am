@@ -1,6 +1,6 @@
 EXEEXT =
 
-bin_PROGRAMS = bootfat12.bin bootfat16.bin bootfat32.bin es.ldr mbr.bin
+bin_PROGRAMS = bootfat12.bin bootfat16.bin bootfat32.bin es.ldr
 
 noinst_HEADERS = fat.h
 
@@ -12,7 +12,6 @@ bootfat12_bin_SOURCES = bootfat.S
 bootfat16_bin_SOURCES = bootfat.S
 bootfat32_bin_SOURCES = bootfat32.S
 es_ldr_SOURCES = loader.S
-mbr_bin_SOURCES = mbr.S
 
 INCLUDES = \
 	-I$(srcdir)

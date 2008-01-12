@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -16,7 +16,6 @@
 #include <stdlib.h>
 #include <es.h>
 #include <es/dateTime.h>
-#include "core.h"
 #include "thread.h"
 #include "process.h"
 
@@ -44,7 +43,7 @@ bool Thread::
 holdsLock(Monitor* monitor)
 {
     bool holds = false;
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     lock();
     if (monitor)
     {
@@ -60,7 +59,7 @@ holdsLock(Monitor* monitor)
         }
     }
     unlock();
-    Core::splX(x);
+    splX(x);
     return holds;
 }
 
@@ -78,14 +77,16 @@ setPriority(int priority)
         return;
     }
 
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
+    lock();
     if (base != priority)
     {
         base = priority;
         updatePriority();
     }
+    unlock();
+    splX(x);
     reschedule();
-    Core::splX(x);
 }
 
 /** Sets new effective scheduling priority to the thread.
@@ -124,42 +125,6 @@ setEffectivePriority(int effective)
     return 0;
 }
 
-/** Updates the thread's scheduling priority based on the currently holding
- * monitor priorities.
- */
-Thread* Thread::
-resetPriority()
-{
-    ASSERT(isLocked());
-
-    Thread* next;
-    Monitor* monitor;
-    MonitorList::Iterator iter = monitorList.begin();
-    int effective = base;
-    while ((monitor = iter.next()))
-    {
-        monitor->spinLock();
-        int monitorPriority = monitor->getPriority();
-        if (effective < monitorPriority)
-        {
-            effective = monitorPriority;
-        }
-    }
-    if (priority != effective)
-    {
-        next = setEffectivePriority(effective);
-    }
-    else
-    {
-        next = 0;
-    }
-    while ((monitor = iter.previous()))
-    {
-        monitor->spinUnlock();
-    }
-    return next;
-}
-
 /** Updates the thread's scheduling priority. Propagates it if necessary.
  */
 void Thread::
@@ -167,25 +132,47 @@ updatePriority()
 {
     Thread* thread = this;
     do {
+        Thread* next = 0;
+
         thread->lock();
-        Thread* next = thread->resetPriority();
+        int effective = thread->base;
+        Monitor* monitor;
+        MonitorList::Iterator iter = thread->monitorList.begin();
+        while ((monitor = iter.next()))
+        {
+            monitor->spinLock();
+            int monitorPriority = monitor->getPriority();
+            if (effective < monitorPriority)
+            {
+                effective = monitorPriority;
+            }
+        }
+
+        if (thread->priority != effective)
+        {
+            next = thread->setEffectivePriority(effective);
+        }
+
+        while ((monitor = iter.previous()))
+        {
+            monitor->spinUnlock();
+        }
         thread->unlock();
-        // At this point, next might have been released the monitor.
-        // XXX there is a small window where priority inversion could occur.
-        thread = next;
+        thread = next;      // at this point, next might have been released the monitor.
     } while (thread);
 }
 
 /** Unlocks all the monitors locked by this thread.
- * This thread is being locked.
  */
 void Thread::
 unlockAllMonitors()
 {
-    ASSERT(state == TERMINATED);
     while (!monitorList.isEmpty())
     {
+        lock();
         Monitor* monitor = monitorList.getFirst();
+        unlock();
+        monitor->lockCount = 1;
         monitor->unlock();
     }
 }
@@ -212,32 +199,22 @@ isDeadlocked()
 }
 
 void Thread::
-exit(void* val)
+exit(const void* val)
 {
-    UpcallRecord* record(upcallList.getLast());
-    if (record)
-    {
-        // Move back to the client process.
-        ASSERT(process);
-        Ureg* ureg(static_cast<Ureg*>(param));
-        ureg->ecx = reinterpret_cast<u32>(val);
-        process->returnFromUpcall(ureg);
-        return;
-    }
-
     if (process)
     {
         process->detach(this);
     }
 
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     ASSERT(state == RUNNING);
     ASSERT(getCurrentThread() == this);
 
-    lock();
-    // XXX Clear FPU context
-    state = TERMINATED;
     unlockAllMonitors();
+
+    lock();
+    // ClearContext(context);
+    state = TERMINATED;
     this->val = val;
     joinPoint.wakeup();
     unlock();
@@ -245,7 +222,7 @@ exit(void* val)
     reschedule();
     // NOT REACHED HERE
 
-    Core::splX(x);
+    splX(x);
 }
 
 int Thread::
@@ -273,7 +250,7 @@ join(void** rval)
 int Thread::
 setCancelState(int state)
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     lock();
 
     // ASSERT(this == getCurrentThread());
@@ -288,7 +265,7 @@ setCancelState(int state)
     }
 
     unlock();
-    Core::splX(x);
+    splX(x);
 
     return previous;
 }
@@ -296,7 +273,7 @@ setCancelState(int state)
 int Thread::
 setCancelType(int type)
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     lock();
 
     // ASSERT(this == getCurrentThread());
@@ -311,7 +288,7 @@ setCancelType(int type)
     }
 
     unlock();
-    Core::splX(x);
+    splX(x);
 
     return previous;
 }
@@ -319,25 +296,25 @@ setCancelType(int type)
 void Thread::
 testCancel()
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     ASSERT(this == getCurrentThread());
     if (attr & ICurrentThread::CANCEL_REQUESTED)
     {
         exit(0);
     }
-    Core::splX(x);
+    splX(x);
 }
 
 void Thread::
 cancel()
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     lock();
 
     if (attr & ICurrentThread::CANCEL_DISABLE)
     {
         unlock();
-        Core::splX(x);
+        splX(x);
         return;
     }
 
@@ -357,19 +334,13 @@ cancel()
         }
 
         unlock();
-        Core::splX(x);
+        splX(x);
         return;
-    }
-
-    if (process)
-    {
-        process->detach(this);
     }
 
     switch (state)
     {
       case RUNNABLE:
-        unsetRun();
         break;
       case RUNNING:
         sched->runQueueHint = true;    // Hint to scheduler to check run queue
@@ -379,24 +350,23 @@ cancel()
         if (monitor)
         {
             monitor->update();        // Reset BPI
-            monitor = 0;
         }
         break;
       default:
         unlock();
-        Core::splX(x);
+        splX(x);
         return;
     }
 
-    // XXX Clear FPU context
+    // OSClearContext(&context);
 
     ASSERT(0 < ref);    // i.e., not detached.
+    unlockAllMonitors();// XXX deadlock
     state = TERMINATED;
-    unlockAllMonitors();
     joinPoint.wakeup();
 
     unlock();
-    Core::splX(x);
+    splX(x);
 
     reschedule();
 }
@@ -404,7 +374,7 @@ cancel()
 void Thread::
 start()
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     lock();
     if (state == NEW)
     {
@@ -413,7 +383,7 @@ start()
         addRef();
     }
     unlock();
-    Core::splX(x);
+    splX(x);
     reschedule();
 }
 
@@ -434,20 +404,20 @@ condSleep(int)
 void Thread::
 sleep(s64 timeout)
 {
-    unsigned x = Core::splHi();
+    unsigned x = splHi();
     ASSERT(state == RUNNING);
     alarm.setInterval(timeout);
     alarm.setCallback(static_cast<ICallback*>(this));
     alarm.setEnabled(true);
     DelegateTemplate<Thread> d(this, &Thread::condSleep);
     sleepPoint.sleep(&d);
-    Core::splX(x);
+    splX(x);
 }
 
 void Thread::
 startUp(void* param)
 {
-    Core::splLo();
+    splLo();
     Thread* thread = (Thread*) param;
     void* ret = thread->func(thread->param);
     thread->exit(ret);
@@ -458,7 +428,6 @@ Thread(void* (*func)(void*), void* param, int priority,
        void* stack, unsigned stackSize) :
     state(NEW),
     attr(ICurrentThread::CANCEL_DEFERRED | ICurrentThread::CANCEL_ENABLE),
-    core(0),
     base(priority),
     priority(priority),
     error(0),
@@ -476,56 +445,41 @@ Thread(void* (*func)(void*), void* param, int priority,
     if (!stack)
     {
         stack = new u8[stackSize];
+        ASSERT(stack);
     }
     this->stack = stack;
-    *(int*) stack = 0xa5a5a5a5;
-    sp0 = (u32) stack + stackSize - 2048;   // 2048: default kernel TLS size
-    memset((void*) sp0, 0, 2048);           // Clear TLS
-    ktcb = static_cast<u8*>(stack) + stackSize - sizeof(void*);
-    *(void**) ktcb = ktcb;
+    ktcb = static_cast<u8*>(stack) + stackSize;
     label.init(stack, stackSize - 2048 /* default kernel TLS size */, startUp, this);
-#ifdef VERBOSE
-    esReport("Thread::Thread %p %p %d\n", this, stack, stackSize);
-#endif
 }
 
 Thread::
 ~Thread()
 {
-#ifdef VERBOSE
-    esReport("Thread::%s %p\n", __func__, this);
-#endif
     delete[] (u8*) stack;
 }
 
 bool Thread::
-checkStack()
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    return *(int*) stack == 0xa5a5a5a5;
-}
-
-void* Thread::
-queryInterface(const Guid& riid)
-{
-    void* objectPtr;
-    if (riid == IThread::iid())
+    if (riid == IID_IThread)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::
@@ -544,54 +498,4 @@ release(void)
         return 0;
     }
     return count;
-}
-
-Process* Thread::
-returnToClient()
-{
-    Process* client;
-
-    unsigned x = Core::splHi();
-    Core* core = Core::getCurrentCore();
-
-    upcallList.removeLast();
-    UpcallRecord* record(upcallList.getLast());
-    if (!record)
-    {
-        core->tcb->tcb = tcb;
-        client = process;
-    }
-    else
-    {
-        core->tcb->tcb = record->tcb;
-        client = record->process;
-        ASSERT(client);
-    }
-
-    if (client)
-    {
-        client->load();
-    }
-
-    Core::splX(x);
-
-    return client;
-}
-
-Process* Thread::
-leapIntoServer(UpcallRecord* record)
-{
-    Process* server;
-
-    unsigned x = Core::splHi();
-    Core* core = Core::getCurrentCore();
-
-    upcallList.addLast(record);
-    core->tcb->tcb = record->tcb;
-    server = record->process;
-    ASSERT(server);
-    server->load();
-
-    Core::splX(x);
-    return server;
 }

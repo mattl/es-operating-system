@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -63,7 +63,7 @@ struct MD5Context
 };
 
 void MD5Init  (MD5Context* context);
-void MD5Update(MD5Context* context, const void* input, size_t inputLen);
+void MD5Update(MD5Context* context, u8* input, u32 inputLen);
 void MD5Final (u8 digest[16], MD5Context* context);
 
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,66 +11,49 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
-#define NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
+import "es/util/IIterator.idl", "es/naming/IBinding.idl";
 
-#include "es/util/IIterator.idl"
-#include "es/naming/IBinding.idl"
-
-module es
+/** This interface represents a naming context, which consists of a set
+ * of name-to-object bindings. It contains methods for examining and
+ * updating these bindings.
+ */
+[object, uuid(33f8180a-25dc-11db-9c02-0009bf000001)]
+interface IContext : IInterface
 {
-    /** This interface represents a naming context, which consists of a set
-     * of name-to-object bindings. It contains methods for examining and
-     * updating these bindings.
+    /** Binds a name to an object.
+     * @param name      The name to bind.
+     * @param obj       The object to bind.
      */
-    interface IContext : IInterface
-    {
-        #pragma ID IContext = "DCE:33f8180a-25dc-11db-9c02-0009bf000001";
+    IBinding* bind([in] char* name, IInterface* element);
 
-        /** Binds a name to an object.
-         * @param name      The name to bind.
-         * @param obj       The object to bind.
-         */
-        IBinding bind(in string name, in IInterface element);
+    IContext* createSubcontext([in] char* name);
 
-        /** Creates a new context.
-         * @param name      The name of the context to create.
-         */
-        IContext createSubcontext(in string name);
+    int destroySubcontext([in] char* name);
 
-        /** Removes the named context.
-         * @param name      The name of the context to be destroyed.
-         */
-        long destroySubcontext(in string name);
+    /** Retrieves the named object.
+     * @param name      The name of the object to look up.
+     * @return          The object bound to <code>name</code>.
+     */
+    IInterface* lookup([in] char* name);
 
-        /** Retrieves the named object.
-         * @param name      The name of the object to look up.
-         * @return          The object bound to <code>name</code>.
-         */
-        IInterface lookup(in string name);
+    /** Binds a new name to the object bound to an old name, and unbinds
+     * the old name.
+     * @param oldName   The name of the existing binding.
+     * @param newName   The name of the new binding.
+     */
+    int rename([in] char* oldName, [in] char* newName);
 
-        /** Binds a new name to the object bound to an old name, and unbinds
-         * the old name.
-         * @param oldName   The name of the existing binding.
-         * @param newName   The name of the new binding.
-         */
-        long rename(in string oldName, in string newName);
+    /** Unbinds the named object.
+     * @param name      The name to unbind; may not be empty.
+     */
+    int unbind([in] char* name);
 
-        /** Unbinds the named object.
-         * @param name      The name to unbind; may not be empty.
-         */
-        long unbind(in string name);
-
-        /** Enumerates the names bound in the named context, along with the
-         * objects bound to them.
-         * @param name      The name of the context to list.
-         * @return          An iterator of the name-to-object bindings in this
-         *                  context. Each element of the iterator is of type
-         *                  <code>IBinding</code>.
-         */
-        IIterator list(in string name);
-    };
-};
-
-#endif // NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
-
+    /** Enumerates the names bound in the named context, along with the
+     * objects bound to them.
+     * @param name      The name of the context to list.
+     * @return          An iterator of the name-to-object bindings in this
+     *                  context. Each element of the iterator is of type
+     *                  <code>IBinding</code>.
+     */
+    IIterator* list([in] char* name);
+}

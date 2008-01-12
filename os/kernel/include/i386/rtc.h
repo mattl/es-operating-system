@@ -18,22 +18,9 @@
 #include <es/ref.h>
 #include <es/device/IRtc.h>
 
-using namespace es;
-
 class Rtc : public IRtc
 {
     friend DateTime DateTime::getNow();
-
-    Ref                 ref;
-
-    static Lock         spinLock;
-    static long long    epoch;
-
-    static int getCounter(int addr);
-    static void setCounter(int addr, int count);
-    static DateTime getDateTime();
-
-public:
 
     enum
     {
@@ -51,19 +38,26 @@ public:
         YEAR_FTD = 0x32
     };
 
+    Ref                 ref;
+
+    static SpinLock     spinLock;
+    static long long    epoch;
+
+    static int getCounter(int addr);
+    static void setCounter(int addr, int count);
+    static DateTime getTime();
+
+public:
     Rtc();
 
     // IRtc
-    long long getTime();
+    void getTime(long long& time);
     void setTime(long long time);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
-
-    static u8 cmosRead(u8 offset);
-    static void cmosWrite(u8 offset, u8 val);
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_RTC_H_INCLUDED

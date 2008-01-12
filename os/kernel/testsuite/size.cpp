@@ -15,7 +15,6 @@
 #include <es/base/ICache.h>
 #include <es/exception.h>
 #include <iostream>
-#include "core.h"
 #include "memoryStream.h"
 
 #define TEST(exp)                           \
@@ -34,8 +33,9 @@ int main()
     esReport("Check getSize() and setSize().\n");
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     MemoryStream* backingStore = new MemoryStream(16);
     TEST(backingStore);

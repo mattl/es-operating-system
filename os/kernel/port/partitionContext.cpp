@@ -19,7 +19,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <es.h>
-#include <es/exception.h>
 #include <es/handle.h>
 #include "partition.h"
 
@@ -31,11 +30,6 @@ const char* PartitionContext::PREFIX_PRIMARY = "partition";
 const char* PartitionContext::PREFIX_EXTENDED = "extended";
 const char* PartitionContext::PREFIX_LOGICAL = "logical";
 const int PartitionContext::MAX_PREFIX_LEN = 9;
-
-extern "C"
-{
-    extern unsigned char mbr[];
-}
 
 PartitionContext::
 PartitionContext(void) : disk(0)
@@ -216,7 +210,11 @@ createPartition(const char* name, u8 type)
         break;
     }
 
-    stream->setLayout(&partition);
+    if (stream->setLayout(&partition) < 0)
+    {
+        return 0;
+    }
+
     return stream;
 }
 
@@ -309,11 +307,7 @@ createLogicalPartition(const char* name)
     partition.hiddenSectors = 0;
     partition.bootIndicator = 0;
 
-    try
-    {
-        stream->setLayout(&partition);
-    }
-    catch (Exception& error)
+    if (stream->setLayout(&partition) < 0)
     {
         partitionList.remove(stream);
         stream->release();
@@ -334,14 +328,7 @@ getGeometry(IDiskManagement::Geometry* geometry)
     Handle<IDiskManagement> dm(disk, true);
     if (dm)
     {
-        try
-        {
-            dm->getGeometry(geometry);
-            return 0;
-        }
-        catch (Exception& error)
-        {
-        }
+        return dm->getGeometry(geometry);
     }
     return -1;
 }
@@ -473,11 +460,7 @@ clearBootRecord(PartitionStream* stream)
     partition.partitionType = 0;
     partition.bootIndicator = 0;
 
-    try
-    {
-        stream->setLayout(&partition);
-    }
-    catch (Exception& error)
+    if (stream->setLayout(&partition) < 0)
     {
         return -1;
     }
@@ -617,29 +600,6 @@ getDefaultPartitionType(long long size)
 //
 // PartitionContext : IPartition
 //
-
-int PartitionContext::
-initialize(void)
-{
-    if (!disk)
-    {
-        return -1;
-    }
-
-    u8* sector = new u8[512];
-    if (!sector)
-    {
-        return -1;
-    }
-    memmove(sector, mbr, 512);
-
-    disk->write(sector, 512, 0);
-    disk->flush();
-
-    delete[] sector;
-
-    return 0;
-}
 
 /*
  *  In the partition list,
@@ -960,28 +920,28 @@ list(const char* name)
 // PartitionContext : IInterface
 //
 
-void* PartitionContext::
-queryInterface(const Guid& riid)
+bool PartitionContext::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IContext::iid())
+    if (riid == IID_IContext)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IPartition::iid())
+    else if (riid == IID_IPartition)
     {
-        objectPtr = static_cast<IPartition*>(this);
+        *objectPtr = static_cast<IPartition*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int PartitionContext::

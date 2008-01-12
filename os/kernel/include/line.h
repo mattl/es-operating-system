@@ -34,7 +34,7 @@ protected:
     IMonitor*   monitor;
     ICallback*  callback;
 
-    Lock        spinLock;
+    SpinLock    spinLock;
     u8          buffer[8 * 1024];
     Ring        ring;
 
@@ -61,7 +61,7 @@ public:
     virtual int write(const void* src, int count) = 0;
     int write(const void* src, int count, long long offset);
 
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

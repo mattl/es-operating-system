@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -11,35 +11,11 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_DEVICE_IPARTITION_IDL_INCLUDED
-#define NINTENDO_ES_DEVICE_IPARTITION_IDL_INCLUDED
+import "es/base/IStream.idl";
 
-#include "es/base/IStream.idl"
-
-module es
+[object, uuid(83a7a1b8-25dc-11db-9c02-0009bf000001)]
+interface IPartition : IInterface
 {
-    /**
-     * This interface represents partitions in a disk.
-     */
-    interface IPartition : IInterface
-    {
-        #pragma ID IPartition = "DCE:e4a2e00a-47b4-11db-9c02-0009bf000001";
-        /**
-         * Initialize MBR of the mounted disk.
-         */
-        long initialize();
-
-        /**
-         * Registers partitions in the specified disk to this partition object.
-         * @param disk the disk divided into partitions.
-         */
-        long mount(in IStream disk);
-        /**
-         * Removes all entries of partitions from this partition object.
-         */
-        long unmount();
-    };
-};
-
-#endif // NINTENDO_ES_DEVICE_IPARTITION_IDL_INCLUDED
-
+    int mount(IStream* disk);
+    int unmount();
+}

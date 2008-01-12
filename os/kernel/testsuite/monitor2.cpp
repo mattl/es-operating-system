@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -14,7 +14,7 @@
 #include <es.h>
 #include <fstream>
 #include <sstream>
-#include "core.h"
+#include "thread.h"
 #include <es/dateTime.h>
 
 #define TEST(exp)                           \
@@ -57,14 +57,12 @@ void* child2timeout(void* param)
     return 0;   // lint
 }
 
-void* test2(void* id)
+void* test2(void*)
 {
     void* val;
     long count;
     IMonitor* monitor[2];
     IThread* thread;
-
-    esReport("'%s'\n", id);
 
     // check timeout.
     monitor[0] = new Monitor();
@@ -115,8 +113,6 @@ void* test2(void* id)
     return 0;
 }
 
-char* id = "hello.";
-
 int main()
 {
     IInterface* root = NULL;
@@ -124,7 +120,7 @@ int main()
 
     // check wait(s64 timeout).
     IThread* thread2 = new Thread(test2,            // thread function
-                                  id,               // argument to thread function
+                                  0,                // argument to thread function
                                   IThread::Normal); // priority
     thread2->start();
     void* val;

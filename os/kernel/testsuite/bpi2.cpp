@@ -17,7 +17,7 @@
 #include <es/base/IAlarm.h>
 #include <es/clsid.h>
 #include <es/handle.h>
-#include "core.h"
+#include "thread.h"
 #include "alarm.h"
 
 #define TEST(exp)                           \
@@ -34,7 +34,7 @@ public:
     int invoke(int result);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };
@@ -46,16 +46,19 @@ namespace
     IMonitor* MonitorA;
     IMonitor* MonitorB;
     bool Flag = false;
+    int CheckPoint = 0;
 };
 
 static void* Hi(void* param)
 {
     #pragma unused( param )
 
+    TEST(CheckPoint++ == 0);
     esReport("Hi!\n");
     MonitorB->lock();
     MonitorB->unlock();
     esReport("Hi, done!\n");
+    TEST(CheckPoint++ == 1);
     return 0;
 }
 
@@ -65,11 +68,13 @@ static void* Mid(void* param)
     esReport("Mid!\n");
 
     MonitorA->lock();
+    TEST(CheckPoint++ == 3);
     MonitorB->lock();
     MonitorA->unlock();
     MonitorB->unlock();
 
     esReport("Mid, done!\n");
+    TEST(CheckPoint++ == 4);
     return 0;
 }
 
@@ -85,9 +90,11 @@ static void* Lo(void* param)
     {
         ;
     }
+    TEST(CheckPoint++ == 2);
     MonitorA->unlock();
 
     esReport("Lo, done!\n");
+    TEST(CheckPoint++ == 5);
     return 0;
 }
 
@@ -97,8 +104,9 @@ int main()
     esInit(&ns);
 
     Handle<IAlarm> alarm;
-    alarm = reinterpret_cast<IAlarm*>(
-        esCreateInstance(CLSID_Alarm, IAlarm::iid()));
+    esCreateInstance(CLSID_Alarm,
+                     IID_IAlarm,
+                     reinterpret_cast<void**>(&alarm));
 
     AlarmCallback* alarmCallback = new AlarmCallback;
     alarm->setInterval(50000000LL);
@@ -152,24 +160,24 @@ invoke(int result)
 // IInterface
 //
 
-void* AlarmCallback::
-queryInterface(const Guid& riid)
+bool AlarmCallback::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == ICallback::iid())
+    if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AlarmCallback::

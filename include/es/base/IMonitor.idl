@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,55 +11,45 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+import "es/base/IThread.idl";
 
-#include "es/base/IThread.idl"
-
-module es
+/** Provides a mechanism that synchronizes access to objects.
+ * <p>
+ * The <code>createMonitor</code> method of <code>ICurrentProcess</code> creates
+ * an unlocked monitor.
+ *
+ * @see ICurrentProcess
+ */
+[object, uuid(0326e914-25db-11db-9c02-0009bf000001)]
+interface IMonitor : IInterface
 {
-    /** Provides a mechanism that synchronizes access to objects.
-     * <p>
-     * The <code>createMonitor</code> method of <code>ICurrentProcess</code> creates
-     * an unlocked monitor.
-     *
-     * @see ICurrentProcess
+    /** Acquires the lock on this monitor.
      */
-    interface IMonitor : IInterface
-    {
-        #pragma ID IMonitor = "DCE:0326e914-25db-11db-9c02-0009bf000001";
+    void lock();
 
-        /** Acquires the lock on this monitor.
-         */
-        void lock();
+    /** Tries to acquires the lock on this monitor.
+     */
+    boolean tryLock();
 
-        /** Tries to acquires the lock on this monitor.
-         */
-        boolean tryLock();
+    /** Releases the lock on this monitor.
+     */
+    void unlock();
 
-        /** Releases the lock on this monitor.
-         */
-        void unlock();
+    /** Releases the lock on this monitor and blocks the current thread until
+     * it reacquires the lock.
+     */
+    boolean wait();
 
-        /** Releases the lock on this monitor and blocks the current thread until
-         * it reacquires the lock.
-         */
-        boolean wait();
+    /** Releases the lock on this monitor and blocks the current thread until
+     * either it reacquires the lock, or a specified time has elapsed.
+     */
+    boolean wait(long timeout);
 
-        /** Releases the lock on this monitor and blocks the current thread until
-         * either it reacquires the lock, or a specified time has elapsed.
-         */
-        boolean wait(in long long timeout);
+    /** Wakes up at least one thread that is waiting on this monitor.
+     */
+    void notify();
 
-        /** Wakes up at least one thread that is waiting on this monitor.
-         */
-        void notify();
-
-        /** Wakes up all threads that are waiting on this monitor.
-         */
-        void notifyAll();
-    };
-};
-
-#endif // NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
-
+    /** Wakes up all threads that are waiting on this monitor.
+     */
+    void notifyAll();
+}

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2006
  * Nintendo Co., Ltd.
- *
+ *  
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies and
@@ -70,8 +70,6 @@ typedef struct _GUID Guid;
 // Guid helper functions
 #ifdef __cplusplus
 
-#include <functional>   // equal_to<>
-
 const Guid GUID_NULL =
 {
    0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 }
@@ -90,27 +88,12 @@ inline int operator!=(const Guid& g1, const Guid& g2)
     return !(g1 == g2);
 }
 
-namespace std
-{
-    template<>
-    struct equal_to<const Guid&>
-    {
-        bool operator()(const Guid& x, const Guid& y) const
-        {
-            return (x == y);
-        }
-    };
-}
-
 #endif  // #ifdef __cplusplus
 
 #endif  // #ifdef WIN32
 
 #ifdef __cplusplus
 
-/**
- * This represents a UUID (Universally Unique Identifier).
- */
 struct Uuid
 {
     u32 timeLow;

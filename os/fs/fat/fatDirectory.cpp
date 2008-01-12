@@ -28,8 +28,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 extern "C"
 {
     int ffs(int param);
