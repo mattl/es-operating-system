@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -20,7 +20,6 @@
 #include <es/base/IStream.h>
 #include <es/base/IPageable.h>
 #include <es/device/ICursor.h>
-#include "thread.h"
 
 class Vesa : public IStream, public ICursor, public IPageable
 {
@@ -93,7 +92,6 @@ class Vesa : public IStream, public ICursor, public IPageable
     long    size;
 
     // mouse cursor
-    Monitor     monitor;
     Interlocked count;
     static u32  data[32];
     static u32  mask[32];
@@ -126,16 +124,16 @@ public:
     int show();
     int hide();
     void move(int dx, int dy);
-    void getPosition(int* x, int* y);
+    void getPosition(int& x, int& y);
     void setPosition(int x, int y);
-    void setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot);
+    void setPattern(u32 data[32], u32 mask[32], u16 xHotSpot, u16 yHotSpot);
 
     // IPageable
     unsigned long long get(long long offset);
     void put(long long offset, unsigned long long pte);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

@@ -150,7 +150,7 @@ lookupPathName(const char*& name)
 }
 
 int Iso9660StreamUcs2::
-getName(char* name, int len)
+getName(char* name, unsigned int len)
 {
     if (len == 0)
     {

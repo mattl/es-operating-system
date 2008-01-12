@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -177,15 +177,16 @@ updatePriority()
 }
 
 /** Unlocks all the monitors locked by this thread.
- * This thread is being locked.
  */
 void Thread::
 unlockAllMonitors()
 {
-    ASSERT(state == TERMINATED);
     while (!monitorList.isEmpty())
     {
+        lock();
         Monitor* monitor = monitorList.getFirst();
+        unlock();
+        monitor->lockCount = 1;
         monitor->unlock();
     }
 }
@@ -234,10 +235,11 @@ exit(void* val)
     ASSERT(state == RUNNING);
     ASSERT(getCurrentThread() == this);
 
-    lock();
-    // XXX Clear FPU context
-    state = TERMINATED;
     unlockAllMonitors();
+
+    lock();
+    // ClearContext(context);
+    state = TERMINATED;
     this->val = val;
     joinPoint.wakeup();
     unlock();
@@ -361,15 +363,9 @@ cancel()
         return;
     }
 
-    if (process)
-    {
-        process->detach(this);
-    }
-
     switch (state)
     {
       case RUNNABLE:
-        unsetRun();
         break;
       case RUNNING:
         sched->runQueueHint = true;    // Hint to scheduler to check run queue
@@ -379,7 +375,6 @@ cancel()
         if (monitor)
         {
             monitor->update();        // Reset BPI
-            monitor = 0;
         }
         break;
       default:
@@ -388,11 +383,11 @@ cancel()
         return;
     }
 
-    // XXX Clear FPU context
+    // OSClearContext(&context);
 
     ASSERT(0 < ref);    // i.e., not detached.
+    unlockAllMonitors();// XXX deadlock
     state = TERMINATED;
-    unlockAllMonitors();
     joinPoint.wakeup();
 
     unlock();
@@ -476,11 +471,11 @@ Thread(void* (*func)(void*), void* param, int priority,
     if (!stack)
     {
         stack = new u8[stackSize];
+        ASSERT(stack);
     }
     this->stack = stack;
     *(int*) stack = 0xa5a5a5a5;
     sp0 = (u32) stack + stackSize - 2048;   // 2048: default kernel TLS size
-    memset((void*) sp0, 0, 2048);           // Clear TLS
     ktcb = static_cast<u8*>(stack) + stackSize - sizeof(void*);
     *(void**) ktcb = ktcb;
     label.init(stack, stackSize - 2048 /* default kernel TLS size */, startUp, this);
@@ -492,9 +487,6 @@ Thread(void* (*func)(void*), void* param, int priority,
 Thread::
 ~Thread()
 {
-#ifdef VERBOSE
-    esReport("Thread::%s %p\n", __func__, this);
-#endif
     delete[] (u8*) stack;
 }
 
@@ -504,28 +496,28 @@ checkStack()
     return *(int*) stack == 0xa5a5a5a5;
 }
 
-void* Thread::
-queryInterface(const Guid& riid)
+bool Thread::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IThread::iid())
+    if (riid == IID_IThread)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (riid == IID_ICallback)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        *objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IThread*>(this);
+        *objectPtr = static_cast<IThread*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Thread::
@@ -565,14 +557,7 @@ returnToClient()
     {
         core->tcb->tcb = record->tcb;
         client = record->process;
-        ASSERT(client);
     }
-
-    if (client)
-    {
-        client->load();
-    }
-
     Core::splX(x);
 
     return client;
@@ -589,8 +574,6 @@ leapIntoServer(UpcallRecord* record)
     upcallList.addLast(record);
     core->tcb->tcb = record->tcb;
     server = record->process;
-    ASSERT(server);
-    server->load();
 
     Core::splX(x);
     return server;

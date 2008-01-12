@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -50,7 +50,6 @@ public:
     static const u16 UCODESEL = 56 | 3;
     static const u16 UDATASEL = 64 | 3;
     static const u16 TCBSEL = 72 | 3;   // for TCB
-    static const u16 TSS1SEL = 80;
 
 private:
     u8                  id;             // Core ID (may not be equal to local APIC ID)
@@ -62,11 +61,10 @@ private:
 
     void*               stack;
     Label               label;
-    Tss*                tss0;           // 128 byte aligned
-    Tss*                tss1;           // 128 byte aligned
+    Tss*                tss;            // 256 byte aligned
     Tcb*                tcb;
     Tcb                 ktcb;
-    Segdesc             gdt[11] __attribute__ ((aligned (16)));
+    Segdesc             gdt[10] __attribute__ ((aligned (16)));
     SegdescLoc          gdtLoc;
 
     static Core*        coreTable[CORE_MAX];
@@ -80,7 +78,6 @@ private:
     static Lock         spinLock;
     static ICallback*   exceptionHandlers[255];
     static IPic*        pic;
-    static u8           isaBus;     // ISA Bus #
 
 public:
     Core(Sched* sched);
@@ -109,18 +106,6 @@ public:
     static long registerExceptionHandler(u8 exceptionNumber, ICallback* callback);
     static long unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback);
 
-    static long registerInterruptHandler(u8 bus, u8 irq, ICallback* callback);
-    static long unregisterInterruptHandler(u8 bus, u8 irq, ICallback* callback);
-
-    static long registerInterruptHandler(u8 irq, ICallback* callback)
-    {
-        return registerInterruptHandler(isaBus, irq, callback);
-    }
-    static long unregisterInterruptHandler(u8 irq, ICallback* callback)
-    {
-        return unregisterInterruptHandler(isaBus, irq, callback);
-    }
-
     // processor execution level
     static unsigned int splIdle()
     {
@@ -145,7 +130,6 @@ public:
     static void enableFPU();
     static void disableFPU();
     static void shutdown();
-    static void doubleFault();
 
     // class specific allocator
     static void* operator new(size_t size) throw(std::bad_alloc);
@@ -154,6 +138,5 @@ public:
 } __attribute__ ((aligned (16)));
 
 int esInit(IInterface** nameSpace);
-IThread* esCreateThread(void* (*start)(void* param), void* param);
 
 #endif  // NINTENDO_ES_KERNEL_I386_CORE_H_INCLUDED

@@ -4,7 +4,9 @@ SUFFIXES = .img .gz
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% : %.img
+	$(srcdir)/makeScript "`pwd`" $@
 
 if POSIX
 
@@ -29,8 +31,6 @@ LDADD += -lpthread -lrt
 endif POSIX
 
 if ES
-
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
 
 TESTS = fat16 fat16_replace \
 	fat16_createdir fat16_createfile fat16_readwrite fat16_attribute fat16_size \
@@ -167,4 +167,4 @@ AM_CPPFLAGS = \
 	-I../../../../include \
 	-I$(srcdir)/../../../../include
 
-EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript testLoader
+EXTRA_DIST = 2hd.img.gz fat16_5MB.img.gz fat32.img.gz makeScript

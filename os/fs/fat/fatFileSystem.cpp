@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -26,8 +26,6 @@
 #include <es/classFactory.h>
 #include <es/clsid.h>
 #include "fatStream.h"
-
-using namespace es;
 
 u8* FatFileSystem::zero;
 
@@ -209,7 +207,12 @@ lookup(u32 dirClus, u32 offset)
     {
         if (stream->dirClus == dirClus && stream->offset == offset && !stream->isRemoved())
         {
-            stream->addRef();
+            if (stream->addRef() == 2)
+            {
+                // This stream has been standing by.
+                ASSERT(standbyList.contains(stream));
+                standbyList.remove(stream);
+            }
             return stream;
         }
     }
@@ -238,23 +241,19 @@ remove(FatStream* stream)
     }
 }
 
-void FatFileSystem::
-activate(FatStream* stream)
-{
-    Synchronized<IMonitor*> method(hashMonitor);
-
-    ASSERT(standbyList.contains(stream));
-    standbyList.remove(stream);
-}
-
-void FatFileSystem::
+unsigned int FatFileSystem::
 standBy(FatStream* stream)
 {
     Synchronized<IMonitor*> method(hashMonitor);
 
-    ASSERT(!standbyList.contains(stream));
-    standbyList.addLast(stream);
-    // XXX Maintain standbyList
+    unsigned int count = stream->ref.release();
+    if (count == 1)
+    {
+        ASSERT(!standbyList.contains(stream));
+        standbyList.addLast(stream);
+        // XXX Maintain standbyList
+    }
+    return count;
 }
 
 // Returns the first sector number of the first sector of cluster 'n'.
@@ -308,20 +307,24 @@ init()
     hashSize = 20;
     hashTable = new FatStreamChain[hashSize];
 
-    hashMonitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&hashMonitor));
 
-    fatMonitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&fatMonitor));
 
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     // We must reserve a few pages for diskCache so that
     // we can access to FAT to write back file streams
     // under any low memory condition.
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    esCreateInstance(CLSID_PageSet,
+                     IID_IPageSet,
+                     reinterpret_cast<void**>(&pageSet));
     pageSet->reserve(1);
 }
 
@@ -622,16 +625,16 @@ getRoot(IContext** root)
     }
 }
 
-long long FatFileSystem::
-getFreeSpace()
+void FatFileSystem::
+getFreeSpace(long long& freeBytes)
 {
-    return (long long) freeCount * bytsPerClus;
+    freeBytes = (long long) freeCount * bytsPerClus;
 }
 
-long long FatFileSystem::
-getTotalSpace()
+void FatFileSystem::
+getTotalSpace(long long& bytes)
 {
-    return (long long) countOfClusters * bytsPerClus;
+    bytes = (long long) countOfClusters * bytsPerClus;
 }
 
 int FatFileSystem::
@@ -664,24 +667,24 @@ defrag()
     return 0;
 }
 
-void* FatFileSystem::
-queryInterface(const Guid& riid)
+bool FatFileSystem::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IFileSystem::iid())
+    if (riid == IID_IFileSystem)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        *objectPtr = static_cast<IFileSystem*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        *objectPtr = static_cast<IFileSystem*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int FatFileSystem::

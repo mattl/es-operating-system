@@ -4,7 +4,9 @@ SUFFIXES = .img .gz .iso
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% : %.img
+	$(srcdir)/makeScript "`pwd`" $@
 
 AM_CPPFLAGS = \
 	-I $(srcdir)/../include \
@@ -16,21 +18,21 @@ if POSIX
 
 AM_CPPFLAGS += -iquote $(srcdir)/../include/posix
 
-TESTS = handle interlocked exception utf ring \
-	heap page cache replace \
-	position size write_read write_read2 write read \
-	create_release getPageCount invalidate \
-	context datetime thread thread_cancel \
-	monitor0 monitor1 monitor2 monitor3 pageSet \
-	partition partition_error partition_extended partition_iterator \
-	partition_bind partition_print \
-	loopback ethernet timer
+TESTS = interlocked exception utf ring \
+        heap page cache replace \
+        position size write_read write_read2 write read \
+        create_release getPageCount invalidate \
+        context datetime thread thread_cancel \
+        monitor0 monitor1 monitor2 monitor3 pageSet \
+	bpi bpi2 bpi3 \
+        partition partition_error partition_extended partition_iterator \
+        partition_bind partition_over8GB partition_print
 
 noinst_PROGRAMS = $(TESTS)
+                  
+noinst_DATA = fat16_32MB.img over8GB.img fat16.img
 
-noinst_DATA = fat16_32MB.img fat16.img
-
-LDADD += -lpthread -lrt -lstdc++
+LDADD += -lpthread -lrt
 
 endif POSIX
 
@@ -40,37 +42,33 @@ if I386
 AM_CPPFLAGS += -iquote $(srcdir)/../include/i386
 endif I386
 
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
-
-TESTS = handle interlocked exception utf ring fpu \
+TESTS = interlocked exception utf ring fpu tsd \
 	context datetime thread thread_cancel thread_smp \
 	monitor0 monitor1 monitor2 monitor3 \
 	bpi bpi2 bpi3 \
-	ata beep 8042 vesa fdc sb16 es1370 cdrom \
+	ata beep 8042 vesa fdc fdc_diskChange sb16 cdrom \
 	page cache replace \
 	position size write_read write_read2 \
 	write read create_release getPageCount \
 	invalidate \
-	pageSet \
-	loopback ethernet
+	pageSet process
 
 noinst_SCRIPTS = $(TESTS)
 
-noinst_PROGRAMS = $(TESTS) fdc_diskChange
+noinst_PROGRAMS = $(noinst_SCRIPTS)
 
 noinst_DATA = fat16.img isotest.iso \
-	handle.img interlocked.img exception.img utf.img ring.img fpu.img \
+	interlocked.img exception.img utf.img ring.img fpu.img tsd.img \
 	context.img datetime.img thread.img thread_cancel.img thread_smp.img \
 	monitor0.img monitor1.img monitor2.img monitor3.img \
 	bpi.img bpi2.img bpi3.img \
 	ata.img beep.img 8042.img vesa.img fdc.img \
-	fdc_diskChange.img sb16.img es1370.img cdrom.img \
+        fdc_diskChange.img sb16.img cdrom.img \
 	page.img cache.img replace.img \
 	position.img size.img write_read.img write_read2.img \
 	write.img read.img create_release.img getPageCount.img \
 	invalidate.img \
-	pageSet.img \
-	ethernet.img loopback.img
+	pageSet.img process.img
 
 CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 
@@ -81,8 +79,6 @@ AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map
 
 endif ES
 
-handle_SOURCES = handle.cpp
-
 interlocked_SOURCES = interlocked.cpp
 
 exception_SOURCES = exception.cpp
@@ -92,6 +88,8 @@ utf_SOURCES = utf.cpp
 ring_SOURCES = ring.cpp
 
 fpu_SOURCES = fpu.cpp
+
+tsd_SOURCES = tsd.cpp
 
 heap_SOURCES = heap.cpp
 
@@ -113,11 +111,11 @@ fdc_diskChange_SOURCES = fdc_diskChange.cpp
 
 sb16_SOURCES = sb16.cpp wave.cpp
 
-es1370_SOURCES = es1370.cpp wave.cpp
-
 cdrom_SOURCES = cdrom.cpp
 
 pageSet_SOURCES = pageSet.cpp  memoryStream.h
+
+process_SOURCES = process.cpp
 
 position_SOURCES = position.cpp memoryStream.h
 
@@ -173,19 +171,14 @@ partition_iterator_SOURCES = partition_iterator.cpp vdisk.h
 
 partition_bind_SOURCES = partition_bind.cpp vdisk.h
 
+partition_over8GB_SOURCES = partition_over8GB.cpp vdisk.h
+
 partition_print_SOURCES = partition_print.cpp vdisk.h
 
-ethernet_SOURCES = ethernet.cpp
-
-loopback_SOURCES = loopback.cpp
-
-if POSIX
-
-timer_SOURCES = timer.cpp
-
-endif POSIX
-
 fat16_32MB.img: fat16_32MB.img.gz
+	gunzip -c $< > $@
+
+over8GB.img: over8GB.img.gz
 	gunzip -c $< > $@
 
 fat16.img: fat16.img.gz
@@ -194,4 +187,4 @@ fat16.img: fat16.img.gz
 isotest.iso: isotest.iso.gz
 	gunzip -c $< > $@
 
-EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript testLoader
+EXTRA_DIST = fat16_32MB.img.gz over8GB.img.gz fat16.img.gz isotest.iso.gz makeScript

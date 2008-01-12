@@ -42,8 +42,9 @@ int main()
     esInit(&root);
 
     ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    esCreateInstance(CLSID_CacheFactory,
+                     IID_ICacheFactory,
+                     reinterpret_cast<void**>(&cacheFactory));
 
     MemoryStream* backingStore = new MemoryStream(0);
     ICache* cache = cacheFactory->create(backingStore);
@@ -126,7 +127,8 @@ int main()
     cache = cacheFactory->create(backingStore);
     int sectorSize = 512;
     cache->setSectorSize(sectorSize);
-    sectorSize = cache->getSectorSize();
+    sectorSize = 0;
+    cache->getSectorSize(sectorSize);
     TEST(sectorSize == 512);
     stream = cache->getStream();
     stream->setSize(4096);
