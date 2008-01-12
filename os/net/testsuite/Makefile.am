@@ -4,7 +4,9 @@ SUFFIXES = .img
 
 %.img : %.elf
 	$(host_alias)-objcopy -O binary $< $@
-	$(srcdir)/makeScript "`pwd`" $(*F)
+
+% :: %.elf
+	$(srcdir)/makeScript "`pwd`" $@
 
 AM_CPPFLAGS = \
 	-I $(srcdir)/../include \
@@ -14,8 +16,7 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
-	udpEchoClient udpEchoServer
+TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -24,8 +25,6 @@ LDADD += -lpthread -lrt
 endif POSIX
 
 if ES
-
-TESTS_ENVIRONMENT = $(srcdir)/testLoader
 
 TESTS = config dhcp
 
@@ -68,8 +67,4 @@ dns_SOURCES = dns.cpp
 
 unreach_SOURCES = unreach.cpp
 
-udpEchoClient_SOURCES = udpEchoClient.cpp
-
-udpEchoServer_SOURCES = udpEchoServer.cpp
-
-EXTRA_DIST = makeScript testLoader
+EXTRA_DIST = makeScript

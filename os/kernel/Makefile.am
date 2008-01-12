@@ -2,10 +2,10 @@ SUBDIRS = . testsuite
 
 lib_LIBRARIES = libeskernel.a
 
-SUFFIXES = .ent .c .bin
-vpath %.ent = ../../include/es
+SUFFIXES = .ird .c .bin
+vpath %.ird = ../../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;
@@ -64,8 +64,7 @@ nodist_libeskernel_a_SOURCES = \
 	net/IResolver.c \
 	net/ISocket.c \
 	util/IIterator.c \
-	util/ISet.c \
-	util/ICanvasRenderingContext2D.c
+	util/ISet.c
 
 #
 # port
@@ -177,7 +176,6 @@ cpp_source_files += \
 	pc/pc_thread.cpp \
 	pc/rtc.cpp \
 	pc/sb16.cpp \
-	pc/es1370.cpp \
 	pc/uart.cpp \
 	pc/vesa.cpp \
 	pc/xreg.cpp \
@@ -209,7 +207,6 @@ header_files += \
 	include/i386/pci.h \
 	include/i386/rtc.h \
 	include/i386/sb16.h \
-	include/i386/es1370.h \
 	include/i386/vesa.h \
 	include/i386/dp8390d.h
 
@@ -219,6 +216,17 @@ header_files += \
 #	pc/pci.h
 
 endif ES
+
+#
+# windows
+#
+
+if WIN32
+
+cpp_source_files += \
+	windows/ref.cpp
+
+endif WIN32
 
 #
 # posix

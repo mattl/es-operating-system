@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,28 +11,19 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ICLASSFACTORY_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ICLASSFACTORY_IDL_INCLUDED
+import "es/base/IInterface.idl";
 
-#include "es/base/IInterface.idl"
-
-module es
+/**
+ * This interface represents a factory for creating an object.
+ */
+[object, uuid(0323fccc-25db-11db-9c02-0009bf000001)]
+interface IClassFactory : IInterface
 {
     /**
-     * This interface represents a factory for creating an object.
+     * Creates a new object from this class factory.
+     * @param riid the interface ID of the interface to be used to communicate with the new object.
+     * @param objectPtr the new object.
+     * @return true if the object is successfully created. Otherwise, false.
      */
-    interface IClassFactory : IInterface
-    {
-        #pragma ID IClassFactory = "DCE:0323fccc-25db-11db-9c02-0009bf000001";
-
-        /**
-         * Creates a new object from this class factory.
-         * @param riid the interface ID of the interface to be used to communicate with the new object.
-         * @return the new object if the object is successfully created. Otherwise, null.
-         */
-        Object createInstance(in uuid riid);
-    };
-};
-
-#endif // NINTENDO_ES_BASE_ICLASSFACTORY_IDL_INCLUDED
-
+    boolean createInstance([in] uuid& riid, [out, iid_is(riid)] void** objectPtr);
+}

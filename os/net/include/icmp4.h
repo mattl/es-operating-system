@@ -100,8 +100,9 @@ public:
         addr(addr),
         replied(false)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        esCreateInstance(CLSID_Monitor,
+                         IID_IMonitor,
+                         reinterpret_cast<void**>(&monitor));
     }
     ~ICMPEchoReplyReceiver()
     {

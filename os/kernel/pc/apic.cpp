@@ -367,7 +367,7 @@ splX(unsigned x)
         splHi();
         break;
     default:
-        esPanic(__FILE__, __LINE__, "inv. spl %d", x);
+        esPanic(__FILE__, __LINE__, "inv. spl %d\n", x);
         break;
     }
 }
@@ -376,24 +376,24 @@ splX(unsigned x)
 // IInterface
 //
 
-void* Apic::
-queryInterface(const Guid& riid)
+bool Apic::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IPic::iid())
+    if (riid == IID_IPic)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Apic::
@@ -470,7 +470,7 @@ setTimer(int vec, long hz)
     ASSERT(vec < 256);
     ASSERT(0 < busClock);
     localApic[LVT_TR] |= 0x10000;   // mask
-    localApic[LVT_TR] &= ~0x200ff;  // one-shot
+    localApic[LVT_TR] &= ~0x20000;  // one-shot
     if (0 < hz)
     {
         this->hz = hz;
@@ -480,42 +480,6 @@ setTimer(int vec, long hz)
         localApic[LVT_TR] |= 0x20000 | vec;     // periodic
         localApic[LVT_TR] &= ~0x10000;          // unmask
     }
-}
-
-void Apic::
-enableWatchdog()
-{
-    localApic[LVT_PCR] |= 0x10000;          // mask
-    localApic[LVT_PCR] &= ~0x7ff;
-    localApic[LVT_PCR] |= 0x400 | NO_NMI;   // NMI
-    localApic[LVT_PCR] &= ~0x10000;         // unmask
-
-    // wrmsr and rdpmc
-    // ESCR: USR on, OS on, tag diable,
-    // CCCR
-
-    //
-    // Architectural Performance Monitoring Version 1 Facilities
-    //
-
-    // IA32_PERFEVTSELx
-    //
-
-    // IA32_PERFEVTSELx MSRs
-    //
-    // Event Select 3CH, Umask 01H - Unhalted reference cycles
-    // USR on, OS on, edge off, PC clear, INT set, EN set, INV clear
-    // Counter mask 1
-
-    // 186H 390 IA32_PERFEVTSEL0 Unique
-    // 187H 391 IA32_PERFEVTSEL1 Unique
-    // C1H 193 IA32_PMC0 Unique Performance counter register.
-    // C2H 194 IA32_PMC1 Unique Performance counter register.
-
-    // XXX Add overflow check. cf. Core 2 Duo/945G @ 266MHz
-    wrmsr(IA32_PMC0, 0xffffffffu - 5 * busClock, 0xffffffffu);
-    //  1 0101 0011b
-    wrmsr(IA32_PERFEVTSEL0, 0x0153013c, 0x00000000);
 }
 
 //

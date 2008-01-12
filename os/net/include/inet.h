@@ -21,8 +21,6 @@
 #include "address.h"
 #include "conduit.h"
 
-using namespace es;
-
 class InetMessenger;
 
 class InetReceiver : public virtual Receiver
@@ -67,7 +65,6 @@ public:
                   long len = 0, long pos = 0, void* chunk = 0) :
         Messenger(len, pos, chunk),
         op(op),
-        scopeID(0),
         remoteAddress(0),
         localAddress(0),
         remotePort(0),

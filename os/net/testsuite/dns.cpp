@@ -25,8 +25,6 @@
 #include <es/net/IInternetConfig.h>
 #include <es/net/IResolver.h>
 
-using namespace es;
-
 extern int esInit(IInterface** nameSpace);
 extern void esRegisterInternetProtocol(IContext* context);
 

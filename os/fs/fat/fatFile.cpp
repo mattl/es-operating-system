@@ -30,6 +30,60 @@
 const DateTime FatFileSystem::epoch(1980, 1, 1);
 const DateTime FatFileSystem::wane(2107, 12, 31, 23, 59, 59, 99);
 
+DateTime FatStream::
+getCreationTime()
+{
+    Synchronized<IMonitor*> method(monitor);
+
+    try
+    {
+        u16 date = word(fcb + DIR_CrtDate);
+        u16 time = word(fcb + DIR_CrtTime);
+        u8 tenth = byte(fcb + DIR_CrtTimeTenth);
+        return DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f,
+                        time >> 11, (time >> 5) & 0x3f, (time & 0x1f) * 2 + tenth / 100,
+                        (tenth % 100) * 10);
+    }
+    catch (...)
+    {
+        return FatFileSystem::epoch;
+    }
+}
+
+DateTime FatStream::
+getLastAccessTime()
+{
+    Synchronized<IMonitor*> method(monitor);
+
+    try
+    {
+        u16 date = word(fcb + DIR_LstAccDate);
+        return DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f);
+    }
+    catch (...)
+    {
+        return FatFileSystem::epoch;
+    }
+}
+
+DateTime FatStream::
+getLastWriteTime()
+{
+    Synchronized<IMonitor*> method(monitor);
+
+    try
+    {
+        u16 date = word(fcb + DIR_WrtDate);
+        u16 time = word(fcb + DIR_WrtTime);
+        return DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f,
+                        time >> 11, (time >> 5) & 0x3f, (time & 0x1f) * 2);
+    }
+    catch (...)
+    {
+        return FatFileSystem::epoch;
+    }
+}
+
 void FatStream::
 setCreationTime(DateTime d)
 {
@@ -90,7 +144,7 @@ setLastWriteTime(DateTime d)
     flags |= Updated;
 }
 
-void FatStream::
+int FatStream::
 setAttributes(unsigned int attributes)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -98,9 +152,10 @@ setAttributes(unsigned int attributes)
     attributes &= (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
     fcb[DIR_Attr] &= ~(ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
     fcb[DIR_Attr] |= attributes;
+    return 0;
 }
 
-void FatStream::
+int FatStream::
 setCreationTime(long long time)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -112,11 +167,12 @@ setCreationTime(long long time)
     }
     catch (...)
     {
-        // [check] throw exception.
+        return -1;
     }
+    return 0;
 }
 
-void FatStream::
+int FatStream::
 setLastAccessTime(long long time)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -128,11 +184,12 @@ setLastAccessTime(long long time)
     }
     catch (...)
     {
-        // [check] throw exception.
+        return -1;
     }
+    return 0;
 }
 
-void FatStream::
+int FatStream::
 setLastWriteTime(long long time)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -144,79 +201,48 @@ setLastWriteTime(long long time)
     }
     catch (...)
     {
-        // [check] throw exception.
+        return -1;
     }
+    return 0;
 }
 
-unsigned int FatStream::
-getAttributes()
+int FatStream::
+getAttributes(unsigned int& attributes)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    return fcb[DIR_Attr] & (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_DIRECTORY | ATTR_ARCHIVE);
+    attributes = fcb[DIR_Attr] & (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_DIRECTORY | ATTR_ARCHIVE);
+    return 0;
 }
 
-long long FatStream::
-getCreationTime()
+int FatStream::
+getCreationTime(long long& time)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    DateTime d;
-    try
-    {
-        u16 date = word(fcb + DIR_CrtDate);
-        u16 time = word(fcb + DIR_CrtTime);
-        u8 tenth = byte(fcb + DIR_CrtTimeTenth);
-        d = DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f,
-                        time >> 11, (time >> 5) & 0x3f, (time & 0x1f) * 2 + tenth / 100,
-                        (tenth % 100) * 10);
-    }
-    catch (...)
-    {
-        d = FatFileSystem::epoch;
-    }
-
-    return d.getTicks();
+    DateTime d = getCreationTime();
+    time = d.getTicks();
+    return 0;
 }
 
-long long FatStream::
-getLastAccessTime()
+int FatStream::
+getLastAccessTime(long long& time)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    DateTime d;
-    try
-    {
-        u16 date = word(fcb + DIR_LstAccDate);
-        d = DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f);
-    }
-    catch (...)
-    {
-        d = FatFileSystem::epoch;
-    }
-
-    return d.getTicks();
+    DateTime d = getLastAccessTime();
+    time = d.getTicks();
+    return 0;
 }
 
-long long FatStream::
-getLastWriteTime()
+int FatStream::
+getLastWriteTime(long long& time)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    DateTime d;
-    try
-    {
-        u16 date = word(fcb + DIR_WrtDate);
-        u16 time = word(fcb + DIR_WrtTime);
-        d = DateTime(1980 + (date >> 9), (date >> 5) & 0x0f, date & 0x1f,
-                        time >> 11, (time >> 5) & 0x3f, (time & 0x1f) * 2);
-    }
-    catch (...)
-    {
-        d = FatFileSystem::epoch;
-    }
-
-    return d.getTicks();
+    DateTime d = getLastWriteTime();
+    time = d.getTicks();
+    return 0;
 }
 
 bool FatStream::
@@ -275,6 +301,6 @@ getPageable()
     }
 
     IPageable* pageable;
-    pageable = reinterpret_cast<IPageable*>(cache->queryInterface(IPageable::iid()));
+    cache->queryInterface(IID_IPageable, (void**) &pageable);
     return pageable;
 }

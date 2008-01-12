@@ -38,32 +38,11 @@
 #include <es/net/dns.h>
 #include <es/net/udp.h>
 
-using namespace es;
-
 int esInit(IInterface** nameSpace);
 extern void esRegisterInternetProtocol(IContext* context);
 extern void esRegisterDHCPClient(IContext* context);
 
 IStream* esReportStream();
-
-void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile> file)
-{
-    ASSERT(root);
-    ASSERT(process);
-    ASSERT(file);
-
-    long long size = 0;
-
-    size = file->getSize();
-    esReport("size: %lld\n", size);
-
-    process->setRoot(root);
-    process->setCurrent(root);
-    process->setInput(esReportStream());
-    process->setOutput(esReportStream());
-    process->setError(esReportStream());
-    process->start(file);
-}
 
 void init(Handle<IContext> root)
 {
@@ -71,35 +50,26 @@ void init(Handle<IContext> root)
     Handle<IFile>       file;
     long long           size = 0;
 
-    // get console.
-    Handle<IStream> console = 0;
-    while (!console)
-    {
-        console = root->lookup("device/console");
-        esSleep(10000000 / 60);
-    }
-
-    file = root->lookup("file/esjs.elf");
+    file = root->lookup("file/squeak.elf");
     if (!file)
     {
-        esReport("Could not open \"esjs.elf\"\n");
+        esReport("Could not open \"squeak.elf\"\n");
         return;
     }
     size = file->getSize();
     esReport("main size: %lld\n", size);
 
     Handle<IProcess> process;
-    process = reinterpret_cast<IProcess*>(
-        esCreateInstance(CLSID_Process, IProcess::iid()));
+    esCreateInstance(CLSID_Process, IID_IProcess,
+                     reinterpret_cast<void**>(&process));
     ASSERT(process);
     process->setRoot(root);
-    process->setCurrent(root);
-    process->setInput(console);
-    process->setOutput(console);
-    process->setError(console);
-    process->start(file, "esjs file/shell.js");
+    process->setIn(esReportStream());
+    process->setOut(esReportStream());
+    process->setError(esReportStream());
+    process->start(file);
     process->wait();
-    esReport("esjs exited.\n");
+    esReport("Squeak exited.\n");
 }
 
 int initNetwork(Handle<IContext> context)
@@ -127,10 +97,7 @@ int initNetwork(Handle<IContext> context)
     esRegisterDHCPClient(context);
 
     Handle<IService> service = context->lookup("network/interface/2/dhcp");
-    if (service)
-    {
-        service->start();
-    }
+    service->start();
 
 #if 0
     esSleep(120000000);
@@ -146,10 +113,7 @@ int initNetwork(Handle<IContext> context)
     }
 #endif
 
-    if (service)
-    {
-        // service->stop();
-    }
+    // service->stop();
     // ethernetInterface->stop();
     return 0;
 }
@@ -174,43 +138,23 @@ int main(int argc, char* argv[])
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    esCreateInstance(CLSID_FatFileSystem, IID_IFileSystem,
+                     reinterpret_cast<void**>(&fatFileSystem));
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root = fatFileSystem->getRoot();
+        Handle<IContext> root;
+
+        fatFileSystem->getRoot(reinterpret_cast<IContext**>(&root));
 
         nameSpace->bind("file", root);
-
-        // start event manager process.
-        Handle<IProcess> eventProcess;
-        eventProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
-        Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
-        ASSERT(eventElf);
-        startProcess(nameSpace, eventProcess, eventElf);
-
-        // start console process.
-        Handle<IProcess> consoleProcess;
-        consoleProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
-        Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
-        ASSERT(consoleElf);
-        startProcess(nameSpace, consoleProcess, consoleElf);
-
         init(nameSpace);
 
-        consoleProcess->kill();
-        eventProcess->kill();
-
-        esSleep(10000000);
+        fatFileSystem->getFreeSpace(freeSpace);
+        fatFileSystem->getTotalSpace(totalSpace);
+        esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     }
-
-    freeSpace = fatFileSystem->getFreeSpace();
-    totalSpace = fatFileSystem->getTotalSpace();
-    esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
-
     fatFileSystem->dismount();
     fatFileSystem = 0;
+
     esSleep(10000000);
 }

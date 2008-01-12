@@ -49,7 +49,6 @@
 #define USE_SVGA
 #define GDB_STUB
 #define USE_COM1
-// #define USE_COM3
 #define USE_SB16
 // #define USE_NE2000ISA
 
@@ -75,7 +74,6 @@ namespace
     u8              loopbackBuffer[64 * 1024];
     Uart*           uart;
     Pci*            pci;
-    IStream*        stubStream;
 };
 
 const int Page::SIZE = 4096;
@@ -144,6 +142,7 @@ static void initAP(...)
     apic->splHi();
     apic->setTimer(32, 1000);
     Core* core = new Core(sched);
+    apic->started();
     core->start();
     // NOT REACHED HERE
 }
@@ -168,6 +167,26 @@ int esInit(IInterface** nameSpace)
 
     Cga* cga = new Cga;
     reportStream = cga;
+
+#ifdef USE_COM1
+    // COM1 for stdio
+    if (int port = ((u16*) 0x400)[0])
+    {
+        Uart* uart = new Uart(port);
+        if (uart)
+        {
+            reportStream = uart;
+        }
+    }
+#endif
+
+#ifdef GDB_STUB
+    // COM2 for gdb
+    if (int port = ((u16*) 0x400)[1])
+    {
+        uart = new Uart(port);
+    }
+#endif
 
     // Initialize 8259 anyways.
     pic = new Pic();
@@ -199,15 +218,20 @@ int esInit(IInterface** nameSpace)
         apic->busFreq();
         Core::pic = apic;
 
-        Core::registerExceptionHandler(32, apic);
         if (2 <= mps->getProcessorCount())
         {
             // Startup APs
             u32 hltAP = 0x30000 + *(u16*) (0x30000 + 138);
             u32 startAP = 0x30000 + *(u16*) (0x30000 + 126);
-            *(volatile u32*) (0x30000 + 132) = (u32) initAP;
+            *(u32*) (0x30000 + 132) = (u32) initAP;
+
+            esReport("Startap: %x\n", startAP);
+            esReport("Halt: %x\n", hltAP);
+
             apic->startupAllAP(hltAP, startAP);
         }
+
+        Core::registerExceptionHandler(32, apic);
         apic->setTimer(32, 1000);
     }
 
@@ -221,39 +245,6 @@ int esInit(IInterface** nameSpace)
         "movl   $0x10000, %%eax\n"
         "movl   %%eax, %%cr3\n"
         ::: "%eax");
-
-#ifdef USE_COM1
-    // COM1 for stdio
-    if (int port = ((u16*) 0x80000400)[0])
-    {
-        Uart* uart = new Uart(port, Core::isaBus, 4);
-        if (uart)
-        {
-            reportStream = uart;
-        }
-    }
-#endif
-
-#ifdef GDB_STUB
-    // COM2 for gdb
-    if (int port = ((u16*) 0x80000400)[1])
-    {
-        uart = new Uart(port);
-    }
-#endif
-
-#ifdef USE_COM3
-    // COM3 for network test stub
-    if (int port = ((u16*) 0x80000400)[2])
-    {
-        Uart* uart = new Uart(port, Core::isaBus, 4);
-        if (uart)
-        {
-            stubStream = uart;
-            ASSERT(stubStream);
-        }
-    }
-#endif
 
     // Create the default thread (stack top: 0x80010000)
     Thread* thread = new Thread(0, 0, IThread::Normal,
@@ -333,19 +324,6 @@ int esInit(IInterface** nameSpace)
         breakpoint();
         //  Core::pic->startup(4);
     }
-    else if (apic)
-    {
-        // Check Architectural Performance Monitoring leaf.
-        int eax, ebx, ecx, edx;
-        Core::cpuid(0x0a, &eax, &ebx, &ecx, &edx);
-        if (0 < (eax & 0x0f) && // Check the version identifier
-            !(ebx & 0x04))      // Check the availability of UnHalted Reference Cycles event
-        {
-            esReport("Enabled NMI kernel watchdog.\n");
-
-            apic->enableWatchdog();
-        }
-    }
 
     root->bind("device/beep", static_cast<IBeep*>(pit));
 
@@ -392,19 +370,14 @@ int esInit(IInterface** nameSpace)
 
     pci = new Pci(mps, device);
 
-#ifdef USE_COM3
-    ASSERT(stubStream);
-    device->bind("com3", static_cast<IStream*>(stubStream));
-#endif
-
     Process::initialize();
 
     return 0;
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 void esSleep(s64 timeout)
@@ -493,15 +466,6 @@ IThread* esCreateThread(void* (*start)(void* param), void* param)
     return new Thread(start, param, IThread::Normal);
 }
 
-bool nmiHandler()
-{
-    if (apic)
-    {
-        apic->enableWatchdog();
-    }
-    return true;
-}
-
 /* write a single character      */
 void putDebugChar(int ch)
 {
@@ -519,19 +483,6 @@ int getDebugChar()
     return data;
 }
 
-extern "C"
-{
-    int _close(int file);
-    void _exit(int i);
-    int _write(int file, const char *ptr, size_t len);
-    int _read(int file, char *ptr, size_t len);
-}
-
-int _close(int file)
-{
-    return 0;
-}
-
 void _exit(int i)
 {
     if (!mps->getFloatingPointerStructure())
@@ -547,14 +498,4 @@ void _exit(int i)
     {
         __asm__ __volatile__ ("hlt");
     }
-}
-
-int _write(int file, const char *ptr, size_t len)
-{
-    return -1;
-}
-
-int _read(int file, char *ptr, size_t len)
-{
-    return -1;
 }

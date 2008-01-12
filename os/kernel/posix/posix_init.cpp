@@ -129,14 +129,8 @@ int esInit(IInterface** nameSpace)
     device->bind("loopback", static_cast<IStream*>(loopback));
 
     // Register the Ethernet interface
-    try
-    {
-        Tap* tap = new Tap("eth1");
-        device->bind("ethernet", static_cast<IStream*>(tap));
-    }
-    catch (...)
-    {
-    }
+    Tap* tap = new Tap("tap0", "br0", "/etc/qemu-ifup");
+    device->bind("ethernet", static_cast<IStream*>(tap));
 
     device->release();
 
@@ -155,9 +149,9 @@ int esReportv(const char* spec, va_list list)
     return len;
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
 {
-    return classStore->createInstance(rclsid, riid);
+    return classStore->createInstance(rclsid, riid, objectPtr);
 }
 
 void esSleep(s64 timeout)

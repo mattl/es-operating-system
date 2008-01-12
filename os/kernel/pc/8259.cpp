@@ -196,24 +196,24 @@ splX(unsigned x)
 // IInterface
 //
 
-void* Pic::
-queryInterface(const Guid& riid)
+bool Pic::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IPic::iid())
+    if (riid == IID_IPic)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IPic*>(this);
+        *objectPtr = static_cast<IPic*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Pic::

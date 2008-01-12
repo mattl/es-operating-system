@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -20,8 +20,6 @@
 #include <es/base/IProcess.h>
 #include "location.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -41,10 +39,11 @@ int main(int argc, char* argv[])
     Handle<ILocation> location[2];
     for (int i(0); i < 2; ++i)
     {
-        location[i] = reinterpret_cast<IProcess*>(
+        bool result =
             classStore->createInstance(CLSID_Location,
-                                       location[i]->iid()));
-        TEST(location[i]);
+                                       location[i]->interfaceID(),
+                                       reinterpret_cast<void**>(&location[i]));
+        TEST(result);
 
         char name[14];
         location[i]->getName(name, sizeof(name));

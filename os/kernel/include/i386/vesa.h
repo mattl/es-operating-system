@@ -126,7 +126,7 @@ public:
     int show();
     int hide();
     void move(int dx, int dy);
-    void getPosition(int* x, int* y);
+    void getPosition(int& x, int& y);
     void setPosition(int x, int y);
     void setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot);
 
@@ -135,7 +135,7 @@ public:
     void put(long long offset, unsigned long long pte);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef(void);
     unsigned int release(void);
 };

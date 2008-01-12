@@ -14,9 +14,8 @@
 #include <es.h>
 #include "i386/pci.h"
 #include "i386/dp8390d.h"
-#include "i386/es1370.h"
 
-// #define VERBOSE
+#define VERBOSE
 
 Pci::
 Pci(Mps* mps, IContext* device) :
@@ -58,7 +57,6 @@ void Pci::
 attach(int bus, int dev, ConfigurationSpaceHeader* csp)
 {
     int nicCount = 0;
-    int soundCount = 0;
     u8 irq;
 
     if (!mps->getFloatingPointerStructure())
@@ -91,31 +89,6 @@ attach(int bus, int dev, ConfigurationSpaceHeader* csp)
                                               irq);
                 device->bind("ethernet", static_cast<IStream*>(ne2000));
                 ne2000->release();
-            }
-        }
-        break;
-
-    case 0x0401: // Audio device
-        if (csp->vendorID == 0x1274 /* Ensoniq */ && csp->deviceID == 0x5000)
-        {
-            if (++soundCount == 1)
-            {
-                u32 command;
-                u32 tagValue = tag(bus, dev, 0);
-                command = read(tagValue, 0x04);
-                write(tagValue, 0x04, command | 0x0004 | 0x0002 | 0x0001); // enable bus master.
-
-                // ENSONIQ, AudioPCI ES1370
-                esReport("ENSONIQ, AudioPCI ES1370 Sound Ahdapter (%x, %d)\n",
-                         csp->baseAddressRegisters[0] & ~1, csp->interruptLine);
-                Es1370* es1370 = new Es1370(bus,
-                                            csp->baseAddressRegisters[0] & ~1,
-                                            irq);
-                ASSERT(static_cast<IStream*>(&es1370->inputLine));
-                ASSERT(static_cast<IStream*>(&es1370->outputLine));
-                device->bind("soundInput", static_cast<IStream*>(&es1370->inputLine));
-                device->bind("soundOutput", static_cast<IStream*>(&es1370->outputLine));
-                es1370->release();
             }
         }
         break;

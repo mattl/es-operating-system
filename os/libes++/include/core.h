@@ -20,8 +20,8 @@
 
 #include <es/base/IThread.h>
 
-int esInit(es::IInterface** nameSpace);
-es::IThread* esCreateThread(void* (*start)(void* param), void* param);
+int esInit(IInterface** nameSpace);
+IThread* esCreateThread(void* (*start)(void* param), void* param);
 
 extern "C" {
 #endif

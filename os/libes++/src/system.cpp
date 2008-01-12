@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -27,8 +27,6 @@
 #include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 #include <es/base/IRuntime.h>
-
-using namespace es;
 
 static __thread void* stopCfa;
 static __thread jmp_buf stopBuf;
@@ -68,10 +66,10 @@ class System : public ICurrentProcess
             release();
         }
 
-        void exit(const void* val)
+        void exit(void* val)
         {
             // Call destructors before terminating the current thread.
-            rval = const_cast<void*>(val);
+            rval = val;
             exc.exception_class = 0;
             exc.exception_cleanup = System::cleanup;
             _Unwind_ForcedUnwind(&exc, System::stop, stopBuf);
@@ -97,9 +95,9 @@ class System : public ICurrentProcess
             currentThread->testCancel();
         }
 
-        void* queryInterface(const Guid& riid)
+        bool queryInterface(const Guid& riid, void** objectPtr)
         {
-            return currentThread->queryInterface(riid);
+            return currentThread->queryInterface(riid, objectPtr);
         }
 
         unsigned int addRef(void)
@@ -122,11 +120,11 @@ public:
         current(currentProcess->currentThread())
     {
         IRuntime* runtime;
-        runtime = reinterpret_cast<IRuntime*>(currentProcess->queryInterface(IRuntime::iid()));
+        currentProcess->queryInterface(IID_IRuntime, (void**) &runtime);
         if (runtime)
         {
-            runtime->setStartup(reinterpret_cast<void*>(start)); // [check] cast.
-            runtime->setFocus(reinterpret_cast<void*>(focus)); // [check] cast.
+            runtime->setStartup(start);
+            runtime->setFocus(focus);
             runtime->release();
         }
     }
@@ -152,8 +150,7 @@ public:
         return &current;
     }
 
-    // IThread* createThread(void* (*start)(void* param), void* param) // [check] function pointer.
-    IThread* createThread(const void* start, const void* param)
+    IThread* createThread(void* (*start)(void* param), void* param)
     {
         return currentProcess->createThread(start, param);
     }
@@ -173,14 +170,14 @@ public:
         return currentProcess->getRoot();
     }
 
-    IStream* getInput()
+    IStream* getIn()
     {
-        return currentProcess->getInput();
+        return currentProcess->getIn();
     }
 
-    IStream* getOutput()
+    IStream* getOut()
     {
-        return currentProcess->getOutput();
+        return currentProcess->getOut();
     }
 
     IStream* getError()
@@ -203,19 +200,9 @@ public:
         return currentProcess->trace(on);
     }
 
-    void setCurrent(IContext* context)
+    bool queryInterface(const Guid& riid, void** objectPtr)
     {
-        return currentProcess->setCurrent(context);
-    }
-
-    IContext* getCurrent()
-    {
-        return currentProcess->getCurrent();
-    }
-
-    void* queryInterface(const Guid& riid)
-    {
-        return currentProcess->queryInterface(riid);
+        return currentProcess->queryInterface(riid, objectPtr);
     }
 
     unsigned int addRef(void)
@@ -250,8 +237,6 @@ ICurrentProcess* System()
 {
     return &current;
 }
-
-extern "C" void esDeallocateSpecific(void);
 
 void System::
 start(void* (*func)(void*), void* param)
@@ -324,4 +309,58 @@ focus(void* param)
         errorCode = EINVAL;
     }
     return reinterpret_cast<void*>(errorCode);
+}
+
+int esReport(const char* spec, ...) __attribute__((weak));
+int esReportv(const char* spec, va_list list) __attribute__((weak));
+void esPanic(const char* file, int line, const char* msg, ...) __attribute__((weak));
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr) __attribute__((weak));
+
+int esReport(const char* spec, ...)
+{
+    va_list list;
+    int count;
+
+    va_start(list, spec);
+    count = esReportv(spec, list);
+    va_end(list);
+    return count;
+}
+
+int esReportv(const char* spec, va_list list)
+{
+    IStream* output(System()->getOut());
+    Formatter textOutput(output);
+    int count = textOutput.format(spec, list);
+    output->release();
+    return count;
+}
+
+void esPanic(const char* file, int line, const char* msg, ...)
+{
+    va_list marker;
+
+    va_start(marker, msg);
+    esReportv(msg, marker);
+    va_end(marker);
+    esReport(" in \"%s\" on line %d.\n", file, line);
+
+    System()->exit(1);
+}
+
+bool esCreateInstance(const Guid& rclsid, const Guid& riid, void** objectPtr)
+{
+    static Handle<IClassStore> classStore;
+
+    if (!classStore)
+    {
+        Handle<IContext> root = System()->getRoot();
+        classStore = root->lookup("class");
+    }
+    return classStore->createInstance(rclsid, riid, objectPtr);
+}
+
+DateTime DateTime::getNow()
+{
+    return DateTime(System()->getNow());
 }
