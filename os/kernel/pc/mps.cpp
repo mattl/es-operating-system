@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,7 +11,7 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#define VERBOSE
+// #define VERBOSE
 
 #include <es.h>
 #include "cpu.h"
@@ -168,11 +168,11 @@ Mps() :
 }
 
 volatile u32* Mps::
-getInterruptAssignment(unsigned int bus, unsigned int irq, InterruptAssignment& assignment)
+getInterruptAssignment(unsigned int irq, unsigned int bus, InterruptAssignment& assignment)
 {
     if (cth == 0)
     {
-        if (16 <= irq || irq == 2)
+        if (16 <= irq || irq == 2 || bus != 0)
         {
             return 0;
         }
@@ -186,7 +186,7 @@ getInterruptAssignment(unsigned int bus, unsigned int irq, InterruptAssignment& 
         return reinterpret_cast<u32*>(0xfec00000);
     }
 
-    LookupAssignment entry(bus, irq);
+    LookupAssignment entry(irq, bus);
     cth->accept(entry);
     if (!entry)
     {

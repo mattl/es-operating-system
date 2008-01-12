@@ -103,28 +103,24 @@ flush()
     cache->flush();
 }
 
-void* Stream::
-queryInterface(const Guid& riid)
+bool Stream::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
-    }
-    else if (riid == IFile::iid() && cache->file)
-    {
-        objectPtr = static_cast<IFile*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Stream::
@@ -201,121 +197,4 @@ int OutputStream::
 read(void* dst, int count, long long offset)
 {
     esThrow(EACCES);
-}
-
-//
-// IFile containment
-//
-
-unsigned int Stream::
-getAttributes()
-{
-    ASSERT(cache->file);
-    return cache->file->getAttributes();
-}
-
-void Stream::
-setAttributes(unsigned int attributes)
-{
-    ASSERT(cache->file);
-    return cache->file->setAttributes(attributes);
-}
-
-long long Stream::
-getCreationTime()
-{
-    ASSERT(cache->file);
-    return cache->file->getCreationTime();
-}
-
-void Stream::
-setCreationTime(long long creationTime)
-{
-    ASSERT(cache->file);
-    return cache->file->setCreationTime(creationTime);
-}
-
-long long Stream::
-getLastAccessTime()
-{
-    ASSERT(cache->file);
-    return cache->file->getLastAccessTime();
-}
-
-void Stream::
-setLastAccessTime(long long lastAccessTime)
-{
-    ASSERT(cache->file);
-    return cache->file->setLastAccessTime(lastAccessTime);
-}
-
-long long Stream::
-getLastWriteTime()
-{
-    ASSERT(cache->file);
-    return cache->file->getLastWriteTime();
-}
-
-void Stream::
-setLastWriteTime(long long lastWriteTime)
-{
-    ASSERT(cache->file);
-    return cache->file->setLastWriteTime(lastWriteTime);
-}
-
-bool Stream::
-canRead()
-{
-    ASSERT(cache->file);
-    return cache->file->canRead();
-}
-
-bool Stream::
-canWrite()
-{
-    ASSERT(cache->file);
-    return cache->file->canWrite();
-}
-
-bool Stream::
-isDirectory()
-{
-    ASSERT(cache->file);
-    return cache->file->isDirectory();
-}
-
-bool Stream::
-isFile()
-{
-    ASSERT(cache->file);
-    return cache->file->isFile();
-}
-
-bool Stream::
-isHidden()
-{
-    ASSERT(cache->file);
-    return cache->file->isHidden();
-}
-
-int Stream::
-getName(char* name, int nameLength)
-{
-    ASSERT(cache->file);
-    return cache->file->getName(name, nameLength);
-}
-
-IPageable* Stream::
-getPageable()
-{
-    ASSERT(cache->file);
-    return cache->file->getPageable();
-}
-
-IStream* Stream::
-getStream()
-{
-    ASSERT(cache->file);
-    addRef();
-    return this;
 }

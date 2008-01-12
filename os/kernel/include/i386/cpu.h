@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -88,12 +88,6 @@ struct Segdesc
         d1 = (exceptionAddress & 0xffff0000) | SEGP | SEGTG;
     }
 
-    void setTaskGate(u16 sel)
-    {
-        d0 = (sel << 16);
-        d1 = SEGP | SEGTASK;
-    }
-
     void setDPL(u8 dpl)
     {
         ASSERT(dpl < 4);
@@ -157,20 +151,6 @@ struct Tss
     u32 gs;
     u32 ldt;    // local descriptor table
     u32 iomap;  // io map base
-
-    void dump()
-    {
-        esReport("edi %08x  esi %08x  ebp %08x  esp %08x\n",
-                 edi, esi, ebp, esp);
-        esReport("ebx %08x  edx %08x  ecx %08x  eax %08x\n",
-                 ebx, edx, ecx, eax);
-        esReport("ds %04x  es %04x  fs %04x  gs %04x  ss %04x\n",
-                 (u16) ds, (u16) es, (u16) fs, (u16) gs, (u16) ss);
-        esReport("trap %d  error %08x  eip %08x  cs %04x\n",
-                 NO_DF, 0, eip, (u16) cs);
-        esReport("eflags %08x\n",
-                 eflags);
-    }
 };
 
 // Layout of fsave and frstor memory region
@@ -249,7 +229,6 @@ struct Ureg
     void load()
     {
          __asm__ __volatile__ (
-            "cli\n"
             "movl   %0, %%esp\n"
             "popal\n"
             "popl   %%gs\n"
@@ -274,47 +253,8 @@ struct Ureg
         esReport("eflags %08x  esp %08x  ss %04x\n",
                  eflags, esp, (u16) ss);
     }
-
-    struct Frame
-    {
-        Frame* prev;
-        void*  pc;
-    };
-
-    void where()
-    {
-        Frame* frame = (Frame*) ebp;
-        while (frame)
-        {
-            esReport("%p %p\n", frame->pc, frame->prev);
-            frame = frame->prev;
-        }
-    }
 };
 
-#define rdmsr(msr, val1, val2)      \
-    __asm__ __volatile__(           \
-        "rdmsr"                     \
-        : "=a" (val1), "=d" (val2)  \
-        : "c" (msr))
-
-#define wrmsr(msr, val1, val2)      \
-    __asm__ __volatile__(           \
-        "wrmsr"                     \
-        :: "c" (msr), "a" (val1), "d" (val2))
-
-#define rdpmc(counter, low, high)   \
-     __asm__ __volatile__(          \
-        "rdpmc"                     \
-        : "=a" (low), "=d" (high)   \
-        : "c" (counter))
-
-
 #define IA32_APIC_BASE      0x1b    // APIC Location and Status
-
-#define IA32_PERFEVTSEL0    0x186
-#define IA32_PERFEVTSEL1    0x187
-#define IA32_PMC0           0xc1
-#define IA32_PMC1           0xc2
 
 #endif  // NINTENDO_ES_KERNEL_I386_CPU_H_INCLUDED

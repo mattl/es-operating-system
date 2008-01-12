@@ -2,10 +2,10 @@ SUBDIRS = . testsuite
 
 lib_LIBRARIES = libeskernel.a
 
-SUFFIXES = .ent .c .bin
-vpath %.ent = ../../include/es
+SUFFIXES = .ird .c .bin
+vpath %.ird = ../../include/es
 
-%.c : %.ent
+%.c : %.ird
 	mkdir -p $(*D);
 	echo -n "unsigned char" $(*F) > $@;
 	echo "Info[] = {" >> $@;
@@ -41,8 +41,6 @@ nodist_libeskernel_a_SOURCES = \
 	base/IPageSet.c \
 	base/IProcess.c \
 	base/IRuntime.c \
-	base/ISelectable.c \
-	base/IService.c \
 	base/IStream.c \
 	base/IThread.c \
 	device/IAudioFormat.c \
@@ -52,20 +50,15 @@ nodist_libeskernel_a_SOURCES = \
 	device/IDiskManagement.c \
 	device/IDmac.c \
 	device/IFileSystem.c \
-	device/INetworkInterface.c \
 	device/IPic.c \
 	device/IRemovableMedia.c \
 	device/IRtc.c \
 	device/IPartition.c \
+	device/IEthernet.c \
 	naming/IBinding.c \
 	naming/IContext.c \
-	net/IInternetAddress.c \
-	net/IInternetConfig.c \
-	net/IResolver.c \
-	net/ISocket.c \
 	util/IIterator.c \
-	util/ISet.c \
-	util/ICanvasRenderingContext2D.c
+	util/ISet.c
 
 #
 # port
@@ -75,6 +68,7 @@ c_source_files =
 
 cpp_source_files = \
 	port/classStore.cpp \
+	port/context.cpp \
 	port/elf.cpp \
 	port/init.cpp \
 	port/interface.cpp
@@ -99,6 +93,7 @@ header_files = \
 	include/arena.h \
 	include/cache.h \
 	include/classStore.h \
+	include/context.h \
 	include/elfFile.h \
 	include/heap.h \
 	include/interfaceStore.h \
@@ -154,7 +149,7 @@ cpp_source_files += \
 	port/upcall.cpp
 
 # c_source_files += \
-#
+#	pc/i386-stub.c
 
 cpp_source_files += \
 	pc/8042.cpp \
@@ -168,16 +163,13 @@ cpp_source_files += \
 	pc/cga.cpp \
 	pc/fdc.cpp \
 	pc/fdd.cpp \
-	pc/gdbstub.cpp \
 	pc/mps.cpp \
-	pc/pci.cpp \
 	pc/pc_core.cpp \
 	pc/pc_dateTime.cpp \
 	pc/pc_init.cpp \
 	pc/pc_thread.cpp \
 	pc/rtc.cpp \
 	pc/sb16.cpp \
-	pc/es1370.cpp \
 	pc/uart.cpp \
 	pc/vesa.cpp \
 	pc/xreg.cpp \
@@ -206,10 +198,8 @@ header_files += \
 	include/i386/io.h \
 	include/i386/label.h \
 	include/i386/mps.h \
-	include/i386/pci.h \
 	include/i386/rtc.h \
 	include/i386/sb16.h \
-	include/i386/es1370.h \
 	include/i386/vesa.h \
 	include/i386/dp8390d.h
 
@@ -219,6 +209,17 @@ header_files += \
 #	pc/pci.h
 
 endif ES
+
+#
+# windows
+#
+
+if WIN32
+
+cpp_source_files += \
+	windows/ref.cpp
+
+endif WIN32
 
 #
 # posix

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -31,9 +31,6 @@ init(void* base, size_t size)
 #ifdef __es__
 #ifdef __i386__
     base = (void*) (((unsigned) base) | 0x80000000);
-#ifndef NDEBUG
-    memset(base, 0xa5, size);   // Fill memory with some non-zero value.
-#endif
 #endif // __i386__
 #endif
 

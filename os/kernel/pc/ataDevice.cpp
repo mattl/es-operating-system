@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -40,8 +40,9 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
     using namespace DeviceIdentification;
     using namespace Status;
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    esCreateInstance(CLSID_Monitor,
+                     IID_IMonitor,
+                     reinterpret_cast<void**>(&monitor));
 
     if (!identify(signature))
     {
@@ -60,11 +61,6 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
             dma |= 0x80;
         }
     }
-
-#ifdef VERBOSE
-    esReport("CHS=%d/%d/%d\n", id[1], id[3], id[6]);
-    esDump(id, 512);
-#endif
 
     if (AtaController::isAtapiDevice(signature))
     {
@@ -220,13 +216,8 @@ read(void* dst, int count)
 int AtaDevice::
 read(void* dst, int count, long long offset)
 {
-#ifdef VERBOSE
-    esReport("AtaDevice::%s(%p, %d, %lld)\n", __func__, dst, count, offset);
-#endif
+    // esReport("AtaDevice::%s(%p, %d, %lld)\n", __func__, dst, count, offset);
     count = ctlr->issue(this, readCmd, dst, count / sectorSize, offset / sectorSize);
-#ifdef VERBOSE
-    esReport("AtaDevice::%s : %d\n", __func__, count);
-#endif
     return (count <= 0) ? count : (count * sectorSize);
 }
 
@@ -239,13 +230,8 @@ write(const void* src, int count)
 int AtaDevice::
 write(const void* src, int count, long long offset)
 {
-#ifdef VERBOSE
-    esReport("AtaDevice::%s(%p, %d, %lld)\n", __func__, src, count, offset);
-#endif
+    // esReport("AtaDevice::%s(%p, %d, %lld)\n", __func__, src, count, offset);
     count = ctlr->issue(this, writeCmd, const_cast<void*>(src), count / sectorSize, offset / sectorSize);
-#ifdef VERBOSE
-    esReport("AtaDevice::%s : %d\n", __func__, count);
-#endif
     return (count <= 0) ? count : (count * sectorSize);
 }
 
@@ -259,7 +245,7 @@ int AtaDevice::initialize()
     return 0;
 }
 
-void AtaDevice::
+int AtaDevice::
 getGeometry(Geometry* geometry)
 {
     geometry->cylinders = id[1];        // 0..1023
@@ -267,18 +253,19 @@ getGeometry(Geometry* geometry)
     geometry->sectorsPerTrack = id[6];  // 1..63
     geometry->bytesPerSector = sectorSize;
     geometry->diskSize = size;
+    return 0;
 }
 
-void AtaDevice::
+int AtaDevice::
 getLayout(Partition* partition)
 {
-    // [check] throw excpetion.
+    return -1;
 }
 
-void AtaDevice::
-setLayout(const Partition* partition)
+int AtaDevice::
+setLayout(Partition* partition)
 {
-    // [check] throw excpetion.
+    return -1;
 }
 
 IContext* AtaDevice::
@@ -288,8 +275,9 @@ getPartition()
     {
         Synchronized<IMonitor*> method(monitor);
 
-        partition = reinterpret_cast<IContext*>(
-            esCreateInstance(CLSID_Partition, IContext::iid()));
+        esCreateInstance(CLSID_Partition,
+                         IID_IContext,
+                         reinterpret_cast<void**>(&partition));
         if (partition)
         {
             Handle<IPartition> handle(partition);
@@ -372,32 +360,32 @@ list(const char* name)
     return partition->list(name);
 }
 
-void* AtaDevice::
-queryInterface(const Guid& riid)
+bool AtaDevice::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IContext::iid() && getPartition())
+    else if (riid == IID_IContext && getPartition())
     {
-        objectPtr = static_cast<IContext*>(this);
+        *objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int AtaDevice::

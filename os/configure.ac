@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script
-AC_INIT([es-os], [0.1.1])
+AC_INIT([es-os], [0.0.6])
 AC_CONFIG_AUX_DIR(.)
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
@@ -40,6 +40,6 @@ AM_CONDITIONAL(ES, test x$os_type = xes)
 AM_CONDITIONAL(WIN32, test x$os_type = xwin32)
 AM_CONDITIONAL(POSIX, test x$os_type = xposix)
 
-AC_CONFIG_FILES(Makefile libes++/Makefile libes++/testsuite/Makefile bootsect/Makefile net/Makefile net/testsuite/Makefile net/posix/Makefile fs/Makefile fs/fat/Makefile fs/fat/testsuite/Makefile fs/iso9660/Makefile fs/iso9660/testsuite/Makefile kernel/Makefile kernel/testsuite/Makefile)
+AC_CONFIG_FILES(Makefile libes++/Makefile libes++/testsuite/Makefile bootsect/Makefile net/Makefile net/testsuite/Makefile fs/Makefile fs/fat/Makefile fs/fat/testsuite/Makefile fs/iso9660/Makefile fs/iso9660/testsuite/Makefile kernel/Makefile kernel/testsuite/Makefile)
 
 AC_OUTPUT

@@ -25,7 +25,7 @@ checksum(InetMessenger* m)
     sum += addr->sumUp();
     addr = m->getLocal();
     sum += addr->sumUp();
-    sum += htons(len);
+    sum += len;
     sum += ntohs(IPPROTO_TCP);
     while (sum >> 16)
     {

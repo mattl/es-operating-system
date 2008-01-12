@@ -24,8 +24,7 @@
 
 class InternetConfig : public IInternetConfig
 {
-    Ref                             ref;
-    AddressSet<IInternetAddress>    nameServers;
+    Ref     ref;
 
 public:
     //
@@ -39,19 +38,14 @@ public:
     IInternetAddress* getRouter();
     void removeRouter(IInternetAddress* router);
 
-    int addInterface(INetworkInterface* networkInterface);
+    int addInterface(IStream* stream, int hrd);
     IInterface* getInterface(int scopeID);
-    int getScopeID(INetworkInterface* networkInterface);
-    void removeInterface(INetworkInterface* networkInterface);
-
-    void addNameServer(IInternetAddress* address);
-    IInternetAddress* getNameServer();
-    void removeNameServer(IInternetAddress* address);
+    void removeInterface(IStream* stream);
 
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
 };

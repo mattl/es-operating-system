@@ -14,20 +14,23 @@
 #include <stdlib.h>
 #include "dix.h"
 
-const u8 DIXInterface::macAllHost[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0x01 };
-
-DIXInterface::DIXInterface(INetworkInterface* networkInterface) :
-    networkInterface(networkInterface, true),
-    stream(this->networkInterface),
+DIXInterface::DIXInterface(IStream* stream) :
+    stream(stream),
     dixReceiver(this),
     inReceiver(this),
     arpReceiver(this),
-    Interface(networkInterface, &dixAccessor, &dixReceiver)
+    Interface(stream, &dixAccessor, &dixReceiver)
 {
-    u8 mac[6];
-    networkInterface->getMacAddress(mac);
-    setMacAddress(mac);
-    seed48((u16*) mac);
+    if (stream)
+    {
+        Handle<IEthernet> ethernet = stream;
+        u8 mac[6];
+        ethernet->getMacAddress(mac);
+        setMacAddress(mac);
+        stream->addRef();
+
+        seed48((u16*) mac);
+    }
 
     inProtocol.setReceiver(&inReceiver);
     arpProtocol.setReceiver(&arpReceiver);
@@ -39,25 +42,6 @@ DIXInterface::DIXInterface(INetworkInterface* networkInterface) :
 
 bool DIXReceiver::input(InetMessenger* m, Conduit* c)
 {
-    static const u8 bcast[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-    u32 flag;
-
-    // [RFC1122] The link layer MUST include a flag to indicate
-    // whether the incoming packet was addressed to a link-layer
-    // broadcast address.
-    DIXHdr* dixhdr = static_cast<DIXHdr*>(m->fix(sizeof(DIXHdr)));
-    if (memcmp(dixhdr->dst, bcast, 6) == 0)
-    {
-        m->setFlag(InetMessenger::Broadcast);
-    }
-    else if (dixhdr->dst[0] & 0x01)
-    {
-        m->setFlag(InetMessenger::Multicast);
-    }
-    else
-    {
-        m->setFlag(InetMessenger::Unicast);
-    }
     return true;
 }
 
@@ -70,10 +54,8 @@ bool DIXReceiver::output(InetMessenger* m, Conduit* c)
     {
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# dix output\n");
         esDump(packet, len);
-#endif
         dix->write(packet, len);
     }
     // else discard the packet
@@ -91,15 +73,11 @@ bool DIXInReceiver::output(InetMessenger* m, Conduit* c)
     dixhdr->type = htons(DIXHdr::DIX_IP);
 
     // Fill in dixhdr->dst
-    Handle<Inet4Address> nextHop = m->getRemote();
+    Handle<Address> nextHop = m->getRemote();
     nextHop->getMacAddress(dixhdr->dst);
     if (memcmp(zero, dixhdr->dst, 6) == 0)
     {
         // Try to resolve the link layer address of nextHop.
-        if (nextHop->getScopeID() == 0)
-        {
-            nextHop->setScopeID(m->getScopeID());
-        }
         nextHop->start();
         m->restorePosition();
         nextHop->hold(m);

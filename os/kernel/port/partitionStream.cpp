@@ -361,19 +361,18 @@ initialize()
     return -1;
 }
 
-void PartitionStream::
+int PartitionStream::
 getGeometry(Geometry* geometry)
 {
     Handle<IDiskManagement> dm(context->disk, true);
     if (dm)
     {
-        dm->getGeometry(geometry);
-        return;
+        return dm->getGeometry(geometry);
     }
-    // [check] throw exception.
+    return -1;
 }
 
-void PartitionStream::
+int PartitionStream::
 getLayout(Partition* partition)
 {
     Monitor::Synchronized method(context->monitor);
@@ -383,14 +382,13 @@ getLayout(Partition* partition)
     partition->hiddenSectors = 0;
     partition->partitionType = system;
     partition->bootIndicator = boot;
+    return 0;
 }
 
-void PartitionStream::
-setLayout(const Partition* constPartition)
+int PartitionStream::
+setLayout(Partition* partition)
 {
     Monitor::Synchronized method(context->monitor);
-
-    Partition* partition = const_cast<Partition*>(constPartition); // [check]
 
     // Check paritition parameters.
     Geometry geometry;
@@ -415,7 +413,7 @@ setLayout(const Partition* constPartition)
 
     if (context->checkPartition(this, &geometry, partition) < 0)
     {
-        return; // [check] throw exception.
+        return -1;
     }
 
     // Read MBR (or EPBR)
@@ -424,13 +422,13 @@ setLayout(const Partition* constPartition)
     if (word(mbr + PartitionContext::MBR_Signature) != PartitionContext::MBR_SIGNATURE)
     {
         esReport("Not found MBR.\n");
-        return; // [check] throw exception.
+        return -1;
     }
 
     u8* entry = context->getEntry(mbr, type, id);
     if (!entry || setEntry(entry, partition, &geometry) < 0)
     {
-        return; // [check] throw exception.
+        return -1;
     }
 
     if (isLogicalPartition() && parent->isLogicalPartition())
@@ -444,7 +442,7 @@ setLayout(const Partition* constPartition)
         params.partitionType = PartitionContext::PT_EXTENDED;
         if (setParentEPBR(&params) < 0)
         {
-            return; // [check] throw exception.
+            return -1;
         }
     }
 
@@ -471,34 +469,36 @@ setLayout(const Partition* constPartition)
         dword(entry + PartitionContext::MBR_StartingSector);
     size = (long long) geometry.bytesPerSector *
         dword(entry + PartitionContext::MBR_TotalSectors);
+
+    return 0;
 }
 
 //
 // PartitionStream : IInterface
 //
 
-void* PartitionStream::
-queryInterface(const Guid& riid)
+bool PartitionStream::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IStream::iid())
+    if (riid == IID_IStream)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (riid == IID_IDiskManagement)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        *objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IStream*>(this);
+        *objectPtr = static_cast<IStream*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int PartitionStream::

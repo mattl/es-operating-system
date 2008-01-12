@@ -28,6 +28,7 @@
 #include "inetConfig.h"
 #include "loopback.h"
 #include "resolver.h"
+#include "scope.h"
 #include "tcp.h"
 #include "udp.h"
 #include "visualizer.h"
@@ -58,8 +59,8 @@ int main()
     visualize();
 
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
-    int scopeID = Socket::addInterface(loopbackInterface);
+    Handle<IStream> loopbackStream = context->lookup("device/loopback");
+    int scopeID = Socket::addInterface(loopbackStream, ARPHdr::HRD_LOOPBACK);
 
     // Register localhost address
     Handle<Inet4Address> localhost = new Inet4Address(InAddrLoopback, Inet4Address::statePreferred, scopeID, 8);

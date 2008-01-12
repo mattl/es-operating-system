@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -79,7 +79,6 @@ lock()
         {
             esThrow(err);
         }
-        addRef();
     }
     current->state = IThread::RUNNABLE;
 }
@@ -91,7 +90,6 @@ tryLock()
     switch (err)
     {
       case 0:
-        addRef();
         return true;
       case EBUSY:
       case EAGAIN:
@@ -108,7 +106,6 @@ unlock()
     {
         esThrow(err);
     }
-    release();
 }
 
 bool Monitor::
@@ -132,22 +129,12 @@ wait(s64 timeout)
     struct timespec ts;
     Thread* current(Thread::getCurrentThread());
 
-    int err;
-    if (0 < timeout)
-    {
-        clock_gettime(CLOCK_REALTIME, &ts);
-        ts.tv_sec += timeout / 10000000;
-        ts.tv_nsec += (timeout % 10000000) * 100;
-        current->state = IThread::TIMED_WAITING;
-        err = pthread_cond_timedwait(&cond, &mutex, &ts);
-        current->state = IThread::RUNNABLE;
-    }
-    else
-    {
-        current->state = IThread::WAITING;
-        err = pthread_cond_wait(&cond, &mutex);
-        current->state = IThread::RUNNABLE;
-    }
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec += timeout / 10000000;
+    ts.tv_nsec += (timeout % 10000000) * 100;
+    current->state = IThread::TIMED_WAITING;
+    int err = pthread_cond_timedwait(&cond, &mutex, &ts);
+    current->state = IThread::RUNNABLE;
     switch (err)
     {
     case 0:
@@ -181,24 +168,24 @@ notifyAll()
     }
 }
 
-void* Monitor::
-queryInterface(const Guid& riid)
+bool Monitor::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IMonitor::iid())
+    if (riid == IID_IMonitor)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        *objectPtr = static_cast<IMonitor*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Monitor::

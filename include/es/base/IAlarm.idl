@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,50 +11,60 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_IALARM_IDL_INCLUDED
-#define NINTENDO_ES_BASE_IALARM_IDL_INCLUDED
+import "es/base/ICallback.idl";
 
-#include "es/base/ICallback.idl"
-
-module es
+/**
+ * This interface provides a timer
+ * which issues the specified callback function after a specified delay.
+ */
+[object, uuid(032000e0-25db-11db-9c02-0009bf000001)]
+interface IAlarm : IInterface
 {
     /**
-     * This interface provides a timer
-     * which issues the specified callback function after a specified delay.
+     * Gets the interval from when this alarm starts till when it fires.
+     * @param interval the interval.
      */
-    interface IAlarm : IInterface
-    {
-        #pragma ID IAlarm = "DCE:032000e0-25db-11db-9c02-0009bf000001";
-
-        /**
-         * The interval from when this alarm starts till when it fires.
-         */
-        attribute long long interval;
-        /**
-         * The time when this alarm starts.
-         * @param time the start time.
-         */
-        attribute long long startTime;
-
-        /**
-         * Whether this alarm is enabled.
-         * @return true if this alarm is enabled. Otherwise, false.
-         */
-        attribute boolean enabled;
-
-        /**
-         * Whether this alarm is periodic.
-         * @return true if this alarm is periodic. Otherwise, false.
-         */
-        attribute boolean periodic;
-
-        /**
-         * Sets a callback function which is called when this alarm fires.
-         * @param callback the callback function.
-         */
-        void setCallback(in ICallback callback);
-    };
-};
-
-#endif  // NINTENDO_ES_BASE_IALARM_IDL_INCLUDED
-
+    void getInterval(long& interval);
+    /**
+     * Gets the time when this alarm starts.
+     * @param time the start time.
+     */
+    void getStartTime(long& time);
+    /**
+     * Tests whether this alarm is enabled.
+     * @return true if this alarm is enabled. Otherwise, false.
+     */
+    boolean isEnabled();
+    /**
+     * Tests whether this alarm is periodic.
+     * @return true if this alarm is periodic. Otherwise, false.
+     */
+    boolean isPeriodic();
+    /**
+     * Sets a callback function which is called when this alarm fires.
+     * @param callback the callback function.
+     */
+    void setCallback(ICallback* callback);
+    /**
+     * Enables or disables this alarm.
+     * @param enabled this alarm is enabled if <code>enebled</code> is true.
+     * This alarm is disabled if <code>enebled</code> is false.
+     */
+    void setEnabled(boolean enabled);
+    /**
+     * Sets this alarm to fire once or periodically.
+     * @param periodic this alarm is set to fire periodically if <code>periodic</code> is true.
+     * This alarm fires once if <code>periodic</code> is false.
+     */
+    void setPeriodic(boolean periodic);
+    /**
+     * Sets delay before this alarm fires.
+     * @param interval the interval from when this alarm starts till when it fires.
+     */
+    void setInterval(long interval);
+    /**
+     * Sets the time when this alarm starts.
+     * @param time the time when this alarm starts.
+     */
+    void setStartTime(long time);
+}

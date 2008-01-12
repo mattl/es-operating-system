@@ -11,7 +11,6 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#include <es/naming/IBinding.h>
 #include "inetConfig.h"
 
 void InternetConfig::
@@ -35,11 +34,6 @@ addAddress(IInternetAddress* address, unsigned int prefix)
 IInternetAddress* InternetConfig::
 getAddress(unsigned int scopeID)
 {
-    InFamily* family = static_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-    if (family)
-    {
-        return family->getHostAddress(scopeID);
-    }
     return 0;   // XXX
 }
 
@@ -51,11 +45,10 @@ removeAddress(IInternetAddress* address)
     {
     case AF_INET:
         Inet4Address* host = dynamic_cast<Inet4Address*>(address);
-        if (host && host->isLocalAddress())
+        if (host)
         {
-            host->cancel();
-            host->setState(Inet4Address::stateDeprecated);
-            host->start();
+            InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
+            inFamily->removeAddress(host);
         }
         break;
     }
@@ -68,11 +61,11 @@ addRouter(IInternetAddress* router)
     switch (af)
     {
     case AF_INET:
-        Inet4Address* node = dynamic_cast<Inet4Address*>(router);
-        if (node)
+        Inet4Address* host = dynamic_cast<Inet4Address*>(router);
+        if (host)
         {
             InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-            inFamily->addRouter(node);
+            inFamily->addRouter(host);
         }
         break;
     }
@@ -80,8 +73,7 @@ addRouter(IInternetAddress* router)
 
 IInternetAddress* InternetConfig::getRouter()
 {
-    InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-    return inFamily->getRouter();
+    return 0;   // XXX
 }
 
 void InternetConfig::
@@ -91,86 +83,50 @@ removeRouter(IInternetAddress* router)
     switch (af)
     {
     case AF_INET:
-        Inet4Address* node = dynamic_cast<Inet4Address*>(router);
-        if (node)
+        Inet4Address* host = dynamic_cast<Inet4Address*>(router);
+        if (host)
         {
             InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
-            inFamily->removeRouter(node);
+            inFamily->removeRouter(host);
         }
         break;
     }
 }
 
-int InternetConfig::
-addInterface(INetworkInterface* networkInterface)
+int InternetConfig::addInterface(IStream* stream, int hrd)
 {
-    int scopeID = Socket::addInterface(networkInterface);
-    if (0 < scopeID && Socket::interface)
-    {
-        char name[3];
-        sprintf(name, "%d", scopeID);
-        esReport("addInterface: %s\n", name);
-        Handle<IContext> folder(Socket::interface->createSubcontext(name));
-        Handle<IBinding>(folder->bind("interface", networkInterface));
-    }
-    return scopeID;
+    return Socket::addInterface(stream, hrd);
 }
 
-IInterface* InternetConfig::
-getInterface(int scopeID)
+IInterface* InternetConfig::getInterface(int scopeID)
 {
     Interface* interface = Socket::getInterface(scopeID);
-    return interface->getNetworkInterface();
+    return interface->getStream();
 }
 
-int InternetConfig::
-getScopeID(INetworkInterface* networkInterface)
+void InternetConfig::removeInterface(IStream* stream)
 {
-    return Socket::getScopeID(networkInterface);
+    Socket::removeInterface(stream);
 }
 
-void InternetConfig::
-removeInterface(INetworkInterface* networkInterface)
+bool InternetConfig::
+queryInterface(const Guid& riid, void** objectPtr)
 {
-    Socket::removeInterface(networkInterface);
-}
-
-void InternetConfig::
-addNameServer(IInternetAddress* address)
-{
-    nameServers.addAddress(address);
-}
-
-IInternetAddress* InternetConfig::
-getNameServer()
-{
-    return nameServers.getAddress();
-}
-
-void InternetConfig::
-removeNameServer(IInternetAddress* address)
-{
-    nameServers.removeAddress(address);
-}
-
-void* InternetConfig::
-queryInterface(const Guid& riid)
-{
-    void* objectPtr;
-    if (riid == IInternetConfig::iid())
+    if (riid == IID_IInternetConfig)
     {
-        objectPtr = static_cast<IInternetConfig*>(this);
+        *objectPtr = static_cast<IInternetConfig*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IInternetConfig*>(this);
+        *objectPtr = static_cast<IInternetConfig*>(this);
     }
     else
     {
-        return 0;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int InternetConfig::

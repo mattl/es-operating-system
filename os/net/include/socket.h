@@ -19,11 +19,7 @@
 #include <es/endian.h>
 #include <es/ref.h>
 #include <es/timer.h>
-#include <es/base/ISelectable.h>
 #include <es/base/IStream.h>
-#include <es/naming/IContext.h>
-#include <es/net/IInternetConfig.h>
-#include <es/net/IResolver.h>
 #include <es/net/ISocket.h>
 #include <es/net/udp.h>
 #include "inet.h"
@@ -56,16 +52,11 @@ public:
 
 class Socket :
     public IMulticastSocket,
-    public ISelectable,
     public InetReceiver,
     public InetMessenger
 {
 public:
     static const int INTERFACE_MAX = 8;
-
-    static IResolver*       resolver;
-    static IInternetConfig* config;
-    static IContext*        interface;
 
 private:
     static AddressFamily::List  addressFamilyList;
@@ -80,13 +71,7 @@ private:
     AddressFamily*  af;
     int             recvBufferSize;
     int             sendBufferSize;
-    int             errorCode;
-    TimeSpan        timeout;
     Collection<Address*>    addresses;
-
-    // Asynchronous I/O
-    IMonitor*       selector;
-    bool            blocking;
 
 public:
     static void initialize();
@@ -120,26 +105,15 @@ public:
         return af->getProtocol(this);
     }
 
-    static int addInterface(INetworkInterface* networkInterface);
-    static void removeInterface(INetworkInterface* networkInterface);
+    static int addInterface(IStream* stream, int hrd);
+    static void removeInterface(IStream* stream);
     static Interface* getInterface(int scopeID)
     {
-        if (scopeID < 1 || INTERFACE_MAX <= scopeID)
+        if (scopeID < 0 || INTERFACE_MAX <= scopeID)
         {
             return 0;
         }
         return interfaces[scopeID];
-    }
-    static int getScopeID(INetworkInterface* networkInterface)
-    {
-        for (int id = 1; id < INTERFACE_MAX; ++id)
-        {
-            if (networkInterface == interfaces[id]->networkInterface)
-            {
-                return id;
-            }
-        }
-        return 0;
     }
 
     static void alarm(TimerTask* timerTask, TimeSpan delay)
@@ -215,10 +189,6 @@ public:
     {
         return type;
     }
-    int getLastError()
-    {
-        return errorCode;
-    }
 
     bool isBound();
     bool isClosed();
@@ -236,9 +206,6 @@ public:
     bool isReuseAddress();
     void setReuseAddress(bool on);
 
-    long long getTimeout();
-    void setTimeout(long long timeSpan);
-
     ISocket* accept();
     void bind(IInternetAddress* addr, int port);
     void close();
@@ -251,28 +218,8 @@ public:
     void shutdownOutput();
     int write(const void* src, int count);
 
-    void notify();
-
-    bool isBlocking()
-    {
-        return blocking;
-    }
-    void setBlocking(bool on)
-    {
-        blocking = on;
-    }
-
-    bool isAcceptable();
-    bool isConnectable();
-    bool isReadable();
-    bool isWritable();
-
-    // ISelectable
-    int add(IMonitor* selector);
-    int remove(IMonitor* selector);
-
     // IMulticastSocket
-    bool isLoopbackMode();
+    int getLoopbackMode();
     void setLoopbackMode(bool disable);
     void joinGroup(IInternetAddress* addr);
     void leaveGroup(IInternetAddress* addr);
@@ -280,12 +227,9 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
+    bool queryInterface(const Guid& riid, void** objectPtr);
     unsigned int addRef();
     unsigned int release();
-
-    friend class StreamReceiver;
-    friend class DatagramReceiver;
 };
 
 class SocketMessenger;
@@ -328,31 +272,6 @@ public:
     }
 
     virtual bool shutdownInput(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isAcceptable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isConnectable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isReadable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool isWritable(SocketMessenger* m, Conduit* c)
-    {
-        return false;
-    }
-
-    virtual bool notify(SocketMessenger* m, Conduit* c)
     {
         return false;
     }

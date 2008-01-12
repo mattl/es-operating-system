@@ -53,17 +53,6 @@ struct ICMPUnreach
     u16      unused;    // must be zero
     u16      mtu;       // RFC 1191
 
-    int getMTU() const
-    {
-        return ntohs(mtu);
-    }
-
-    void setMTU(int mtu)
-    {
-        ASSERT(0 <= mtu && mtu < 65536);
-        this->mtu = htons(mtu);
-    }
-
     // Unreach. codes
     static const int Net = 0;               // hint
     static const int Host = 1;              // hint

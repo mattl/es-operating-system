@@ -53,11 +53,11 @@ class IsInterfaceImp
 
     static const bool IsAbstract = sizeof(isAbstract<T>(0)) == sizeof(YesType);
 
-    // IsObject has to deal with ambiguous 'es::IInterface' base classes.
+    // IsObject has to deal with ambiguous 'IInterface' base classes.
     // See http://groups.google.com/group/comp.lang.c++.moderated/msg/dd6c4e4d5160bd83
     struct C
     {
-        operator es::IInterface const volatile *() const;
+        operator IInterface const volatile *() const;
         operator T const volatile *();
     };
 
@@ -65,7 +65,7 @@ class IsInterfaceImp
 
     template <typename U>
     static YesType isObject(T const volatile *, U);
-    static NoType isObject(es::IInterface const volatile *, int);
+    static NoType isObject(IInterface const volatile *, int);
 
     static const bool IsObject = sizeof(isObject(getObject(), 0)) == sizeof(YesType);
 
@@ -73,22 +73,15 @@ public:
     static const bool Value = IsAbstract && IsObject;
 };
 
-template<>
-class IsInterfaceImp<es::IInterface>
-{
-public:
-    static const bool Value = true;
-};
-
 /** If <code>T</code> is an abstruct interface that inherits
- * <code>es::IInterface</code> then <code>IsInterface</code> inherits from
+ * <code>IInterface</code> then <code>IsInterface</code> inherits from
  * <code>TrueType</code>, otherwise inherits from <code>FalseType</code>.
  */
 template <typename T>
 struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
 {
     /** <code>true</code> if <code>T</code> is an abstruct interface
-     * that inherits from <code>es::IInterface</code>, otherwise
+     * that inherits from <code>IInterface</code>, otherwise
      * <code>false</code>.
      */
     static const bool Value = IsInterfaceImp<T>::Value;
@@ -98,8 +91,8 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  * interface pointers.
  * <code>Handle</code> has a template parameter, <code>I</code>,
  * which specifies the type of interface to be used.
- * <code>I</code> must be derived from <code>es::IInterface</code> or
- * <code>es::IInterface</code>.
+ * <code>I</code> must be derived from <code>IInterface</code> or
+ * <code>IInterface</code>.
  * <p>
  * <code>Handle</code> is smart in that it manages
  * <code>addRef</code>, <code>release</code> and <code>queryInterface</code>
@@ -115,9 +108,9 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  *     IIterator* iterator = context->list("");
  *     while (iterator->hasNext())
  *     {
- *         es::IInterface* unknown = iterator->next();
+ *         IInterface* unknown = iterator->next();
  *         IBinding* binding;
- *         unknown->queryInterface(IBinding::iid(),
+ *         unknown->queryInterface(IID_IBinding,
  *                                 reinterpret_cast&lt;void**&gt;(&binding));
  *         unknown->release();
  *         binding->getName(name, sizeof name);
@@ -154,8 +147,8 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  * A <code>Handle</code> constructor that takes a <code>Handle</code>
  * argument of another interface type automatically invokes
  * <code>queryInterface</code> for the interface to be used.
- * Note the interface UUID must be retrieved as a static member
- * <code>iid</code> so that the constructor can invoke
+ * Note the interface UUID must be retrieved using <code>interfaceID</code>
+ * static member function so that the constructor can invoke
  * <code>queryInterface</code> for the appropriate interface type.
  */
 template<class I>
@@ -181,7 +174,7 @@ class Handle
         // a virtual function.
         unsigned int addRef();
         unsigned int release();
-        void* queryInterface(const Guid& riid);
+        bool queryInterface(const Guid& riid, void** objectPtr);
 
         void operator delete(void*, size_t);
         Protected& operator=(const I&);
@@ -206,7 +199,11 @@ class Handle
         }
         else
         {
-            void* to = unknown->queryInterface(I::iid());
+            void* to;
+            if (!unknown->queryInterface(I::interfaceID(), &to))
+            {
+                to = 0;
+            }
             return static_cast<I*>(to);
         }
     }
@@ -242,7 +239,7 @@ public:
         object = cast(unknown, IsInterface<J>());
         if (object && !addRef)
         {
-            unknown->release();
+            object->release();
         }
     }
 
@@ -263,7 +260,7 @@ public:
     template<class J>
     Handle(const Handle<J>& comptr)
     {
-        es::IInterface* unknown = comptr.get();
+        IInterface* unknown = comptr.get();
         object = cast(unknown, IsInterface<J>());
     }
 

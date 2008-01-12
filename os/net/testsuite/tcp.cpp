@@ -27,6 +27,7 @@
 #include "inet6.h"
 #include "inet6address.h"
 #include "loopback.h"
+#include "scope.h"
 #include "tcp.h"
 #include "udp.h"
 #include "visualizer.h"
@@ -63,10 +64,8 @@ static void* serve(void* param)
     len = socket->read(input, 4);
     esReport("read: %s (%d)\n", input, len);
     ASSERT(len == 4);
-    ASSERT(memcmp(input, "abc", 4) == 0);
 
     socket->close();
-    esReport("close() by serve()\n");
     socket->release();
 
     // Wait for 2 MSL time wait
@@ -105,8 +104,8 @@ int main()
     visualize();
 
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
-    int scopeID = Socket::addInterface(loopbackInterface);
+    Handle<IStream> loopbackStream = context->lookup("device/loopback");
+    int scopeID = Socket::addInterface(loopbackStream, ARPHdr::HRD_LOOPBACK);
 
     // Register localhost address
     Handle<Inet4Address> localhost = new Inet4Address(InAddrLoopback, Inet4Address::statePreferred, scopeID);
@@ -142,7 +141,6 @@ int main()
     client.read(input, 4);
 
     client.close();
-    esReport("close() by main()\n");
     visualize();
 
     void* val;

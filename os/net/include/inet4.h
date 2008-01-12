@@ -24,6 +24,7 @@
 #include "igmp.h"
 #include "inet4address.h"
 #include "inet4reass.h"
+#include "scope.h"
 #include "socket.h"
 #include "stream.h"
 #include "tcp.h"
@@ -54,7 +55,7 @@ public:
 class InFamily : public AddressFamily
 {
     // Scope demultiplexer
-    InetScopeAccessor           scopeAccessor;
+    ScopeAccessor               scopeAccessor;
     ConduitFactory              scopeFactory;
     Mux                         scopeMux;
 
@@ -88,17 +89,9 @@ class InFamily : public AddressFamily
     ICMPUnreachReceiver         unreachReceiver;
     Protocol                    unreachProtocol;
 
-    // ICMP Source Quench
-    ICMPSourceQuenchReceiver    sourceQuenchReceiver;
-    Protocol                    sourceQuenchProtocol;
-
     // ICMP Time Exceeded
     ICMPTimeExceededReceiver    timeExceededReceiver;
     Protocol                    timeExceededProtocol;
-
-    // ICMP ParamProb
-    ICMPParamProbReceiver       paramProbReceiver;
-    Protocol                    paramProbProtocol;
 
     // ICMP Redirect
     // ...
@@ -172,7 +165,7 @@ class InFamily : public AddressFamily
     ARPFamily                   arpFamily;
 
     // Default Router List
-    AddressSet<Inet4Address>    routerList;
+    RouterList<Inet4Address>    routerList;
 
 public:
     InFamily();
@@ -248,20 +241,32 @@ public:
         return selectSourceAddress(dynamic_cast<Inet4Address*>(dst));
     }
 
-    void addInterface(Interface* interface);
+    void addInterface(Interface* interface)
+    {
+        scopeMux.addB(reinterpret_cast<void*>(interface->getScopeID()),
+                      interface->addAddressFamily(this, &scopeMux));
+    }
 
     Inet4Address* getAddress(InAddr addr, int scopeID = 0);
     void addAddress(Inet4Address* address);
     void removeAddress(Inet4Address* address);
 
-    Inet4Address* getRouter();
-    void addRouter(Inet4Address* addr);
-    void removeRouter(Inet4Address* addr);
+    void addRouter(Inet4Address* addr)
+    {
+        Handle<Inet4Address> local;
+        local = onLink(addr->getAddress(), addr->getScopeID());
+        if (local)
+        {
+            routerList.addRouter(addr);
+        }
+    }
+    void removeRouter(Inet4Address* addr)
+    {
+        routerList.removeRouter(addr);
+    }
 
     void joinGroup(Inet4Address* addr);
     void leaveGroup(Inet4Address* addr);
-
-    Inet4Address* getHostAddress(int scopeID = 0);
 
     Inet4Address* onLink(InAddr addr, int scopeID = 0);
 
@@ -279,7 +284,6 @@ public:
     friend class Inet4Address::StateTentative;
     friend class Inet4Address::StatePreferred;
     friend class Inet4Address::StateReachable;
-    friend class Inet4Address::StateDestination;
     friend class InReceiver;
 };
 

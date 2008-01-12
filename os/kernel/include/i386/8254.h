@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -27,10 +27,7 @@ class Pit : public ICallback, public IBeep
     friend DateTime DateTime::getNow();
 
     Ref         ref;
-    Lock        spinLock;
     unsigned    hz;         // for counter 0
-
-    Alarm       alarm;
     unsigned    freq;       // for counter 2 (beep)
     unsigned    duration;
     long long   beeper;
@@ -62,15 +59,12 @@ public:
     void setDuration(unsigned msec);
     unsigned getFrequency();
     unsigned getDuration();
-    void beep();
+    void beep(void);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef();
-    unsigned int release();
-
-    friend class Apic;
-    friend class Core;
+    bool queryInterface(const Guid& riid, void** objectPtr);
+    unsigned int addRef(void);
+    unsigned int release(void);
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_8254_H_INCLUDED

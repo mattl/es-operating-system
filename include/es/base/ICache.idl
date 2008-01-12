@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007
+ * Copyright (c) 2006
  * Nintendo Co., Ltd.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -11,72 +11,76 @@
  * purpose.  It is provided "as is" without express or implied warranty.
  */
 
-#ifndef NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
-#define NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
+import "es/base/IStream.idl", "es/base/IPageSet.idl";
 
-#include "es/base/IStream.idl"
-#include "es/base/IPageSet.idl"
-
-module es
+/**
+ * This interface provides methods for handling a cache
+ * that is a block of memory for temporary storage.
+ */
+[object, uuid(03212600-25db-11db-9c02-0009bf000001)]
+interface ICache : IInterface
 {
-    /**
-     * This interface provides methods for handling a cache
-     * that is a block of memory for temporary storage.
+    /** Creates a new stream for this cache.
+     * @return  IStream interface pointer.
      */
-    interface ICache : IInterface
-    {
-        #pragma ID ICache = "DCE:03212600-25db-11db-9c02-0009bf000001";
+    IStream* getStream();
+    /** Creates a new input stream for this cache.
+     * @return  IStream interface pointer.
+     */
+    IStream* getInputStream();
+    /** Creates a new output stream for this cache.
+     * @return  IStream interface pointer.
+     */
+    IStream* getOutputStream();
 
-        /** Creates a new stream for this cache.
-         */
-        readonly attribute IStream stream;
-        /** Creates a new input stream for this cache.
-         */
-        readonly attribute IStream inputStream;
-        /** Creates a new output stream for this cache.
-         */
-        readonly attribute IStream outputStream;
+    /** Gets the size of this cache.
+     * @return the size of this cache.
+     */
+    long getSize();
 
-        /** The size of this cache.
-         */
-        attribute long long size;
+    /** Resizes this cache.
+     * @param size the new size of this cache.
+     */
+    void setSize(long size);
 
-        /** Gets the size of a sector in this cache.
-         */
-        attribute long sectorSize;
+    /** Gets the size of a sector in this cache.
+     * @param size the sector size.
+     */
+    void getSectorSize([out] int& size);
 
-        /**
-         * Forces all pending data to be written out.
-         */
-        void flush();
-
-        /** Releases all the changed pages associated with this cache
-         * without flushing them.
-         */
-        void invalidate();
-
-        /** Gets the number of pages associated to this cache.
-         * @return  page count
-         */
-        unsigned long long getPageCount();
-    };
+    /** Changes the size of a sector in this cache.
+     * @param size the new sector size.
+     */
+    void setSectorSize(int size);
 
     /**
-     *  This interface provides methods to create caches and associate them with page sets.
+     * Forces all pending data to be written out.
      */
-    interface ICacheFactory : IInterface
-    {
-        #pragma ID ICacheFactory = "DCE:03220a48-25db-11db-9c02-0009bf000001";
+    void flush();
 
-        /** Creates a new cache.
-         */
-        ICache create(in IStream backingStore);
+    /** Releases all the changed pages associated with this cache
+     * without flushing them.
+     */
+    void invalidate();
 
-        /** Creates a new cache associated with the specified pageSet.
-         */
-        ICache create(in IStream backingStore, in IPageSet pageSet);
-    };
-};
+    /** Gets the number of pages associated to this cache.
+     * @return  page count
+     */
+    unsigned long getPageCount();
+}
 
-#endif // NINTENDO_ES_BASE_ICACHE_IDL_INCLUDED
 
+/**
+ *  This interface provides methods to create caches and associate them with page sets.
+ */
+[object, uuid(03220a48-25db-11db-9c02-0009bf000001)]
+interface ICacheFactory : IInterface
+{
+    /** Creates a new cache.
+     */
+    ICache* create(IStream* backingStore);
+
+    /** Creates a new cache associated with the specified pageSet.
+     */
+    ICache* create(IStream* backingStore, IPageSet* pageSet);
+}

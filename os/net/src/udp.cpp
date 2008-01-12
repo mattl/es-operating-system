@@ -144,7 +144,7 @@ input(InetMessenger* m, Conduit* c)
     if (!IN_ARE_ADDR_EQUAL(iphdr->dst, InAddrBroadcast) &&
         !IN_IS_ADDR_MULTICAST(iphdr->dst) &&
         !IN_IS_ADDR_UNSPECIFIED(iphdr->src) &&
-        (!IN_IS_ADDR_LOOPBACK(iphdr->src) || IN_IS_ADDR_LOOPBACK(iphdr->dst)) &&    // XXX
+        !IN_IS_ADDR_LOOPBACK(iphdr->src) &&
         !IN_ARE_ADDR_EQUAL(iphdr->src, InAddrBroadcast) &&
         !IN_IS_ADDR_MULTICAST(iphdr->src))  // XXX check for directed broadcast
     {

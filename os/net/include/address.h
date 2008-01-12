@@ -20,8 +20,6 @@
 #include <es/net/IInternetAddress.h>
 #include "conduit.h"
 
-using namespace es;
-
 class Socket;
 
 class Address : public IInternetAddress
@@ -89,24 +87,24 @@ public:
 };
 
 template <class Address>
-class AddressSet
+class RouterList
 {
     // A node should retain at least two entries in the Default Router List [RFC 2461]
-    static const int MaxAddresses = 2;
+    static const int ROUTER_MAX = 2;
 
-    Address* list[MaxAddresses];
+    Address*    list[ROUTER_MAX];
 
 public:
-    AddressSet()
+    RouterList()
     {
-        for (int i = 0; i < MaxAddresses; ++i)
+        for (int i = 0; i < ROUTER_MAX; ++i)
         {
             list[i] = 0;
         }
     }
-    ~AddressSet()
+    ~RouterList()
     {
-        for (int i = 0; i < MaxAddresses; ++i)
+        for (int i = 0; i < ROUTER_MAX; ++i)
         {
             if (list[i])
             {
@@ -114,50 +112,43 @@ public:
             }
         }
     }
-    void addAddress(Address* address)
+    void addRouter(Address* router)
     {
-        if (address)
+        ASSERT(router);
+        router->addRef();
+        for (int i = 0; i < ROUTER_MAX; ++i)
         {
-            address->addRef();
-            for (int i = 0; i < MaxAddresses; ++i)
+            if (!list[i])
             {
-                if (!list[i])
-                {
-                    list[i] = address;
-                    return;
-                }
+                list[i] = router;
+                return;
             }
-            shuffle();
-            list[MaxAddresses - 1]->release();
-            list[MaxAddresses - 1] = address;
         }
+        shuffle();
+        list[ROUTER_MAX - 1]->release();
+        list[ROUTER_MAX - 1] = router;
     }
-    void removeAddress(Address* address)
+    void removeRouter(Address* router)
     {
-        for (int i = 0; i < MaxAddresses; ++i)
+        for (int i = 0; i < ROUTER_MAX; ++i)
         {
-            if (list[i] == address)
+            if (list[i] == router)
             {
                 list[i] = 0;
-                address->release();
+                router->release();
                 return;
             }
         }
     }
-    Address* getAddress()
+    Address* getRouter()
     {
-        Address* address = list[0];
-        if (address)
-        {
-            address->addRef();
-        }
-        return address;
+        return list[0];
     }
     void shuffle()
     {
         Address* tmp = list[0];
         int i;
-        for (i = 0; i < MaxAddresses - 1; ++i)
+        for (i = 0; i < ROUTER_MAX - 1; ++i)
         {
             if (list[i + 1])
             {
@@ -169,7 +160,7 @@ public:
                 return;
             }
         }
-        ASSERT(i == MaxAddresses - 1);
+        ASSERT(i == ROUTER_MAX - 1);
         list[i] = tmp;
     }
 };

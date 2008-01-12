@@ -103,24 +103,24 @@ Chan::getCount()
     return (count << dmac->shift) + 1;
 }
 
-void* Dmac::
-Chan::queryInterface(const Guid& riid)
+bool Dmac::
+Chan::queryInterface(const Guid& riid, void** objectPtr)
 {
-    void* objectPtr;
-    if (riid == IDmac::iid())
+    if (riid == IID_IDmac)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        *objectPtr = static_cast<IDmac*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (riid == IID_IInterface)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        *objectPtr = static_cast<IDmac*>(this);
     }
     else
     {
-        return NULL;
+        *objectPtr = NULL;
+        return false;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
-    return objectPtr;
+    static_cast<IInterface*>(*objectPtr)->addRef();
+    return true;
 }
 
 unsigned int Dmac::

@@ -100,8 +100,9 @@ public:
         addr(addr),
         replied(false)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        esCreateInstance(CLSID_Monitor,
+                         IID_IMonitor,
+                         reinterpret_cast<void**>(&monitor));
     }
     ~ICMPEchoReplyReceiver()
     {
@@ -147,21 +148,6 @@ public:
     bool output(InetMessenger* m, Conduit* c);
 };
 
-class ICMPSourceQuenchReceiver : public InetReceiver
-{
-public:
-    ICMPSourceQuenchReceiver()
-    {
-    }
-
-    ~ICMPSourceQuenchReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-};
-
 class ICMPTimeExceededReceiver : public InetReceiver
 {
 public:
@@ -170,21 +156,6 @@ public:
     }
 
     ~ICMPTimeExceededReceiver()
-    {
-    }
-
-    bool input(InetMessenger* m, Conduit* c);
-    bool output(InetMessenger* m, Conduit* c);
-};
-
-class ICMPParamProbReceiver : public InetReceiver
-{
-public:
-    ICMPParamProbReceiver()
-    {
-    }
-
-    ~ICMPParamProbReceiver()
     {
     }
 

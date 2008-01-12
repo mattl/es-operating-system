@@ -14,7 +14,6 @@
 #include <string.h>
 #include <new>
 #include <es/handle.h>
-#include <es/net/dix.h>
 #include "inet4.h"
 
 ARPFamily::ARPFamily(InFamily* inFamily) :
@@ -203,8 +202,6 @@ StateProbe::expired(Inet4Address* a)
     {
         // Not found:
         a->setState(stateInit);
-        // Uninstall ARP cache for this address.
-        a->inFamily->arpFamily.removeAddress(a);
     }
 }
 
@@ -385,24 +382,6 @@ StatePreferred::error(InetMessenger* m, Inet4Address* a)
 
 // StateDeprecated
 
-void Inet4Address::
-StateDeprecated::start(Inet4Address* a)
-{
-    // Uninstall ARP cache for this address.
-    a->inFamily->arpFamily.removeAddress(a);
-
-    // Install an ICMP echo request adapter for this address if necessary.
-    InetMessenger m;
-    m.setLocal(a);
-    void* key = a->inFamily->echoRequestMux.getKey(&m);
-    Adapter* adapter = dynamic_cast<Adapter*>(a->inFamily->echoRequestMux.getB(key));
-    if (adapter)
-    {
-        Uninstaller uninstaller(&m);
-        adapter->accept(&uninstaller);
-    }
-}
-
 bool Inet4Address::
 StateDeprecated::input(InetMessenger* m, Inet4Address* a)
 {
@@ -447,14 +426,7 @@ input(InetMessenger* m, Conduit* c)
     {
         addr->setMacAddress(arphdr->sha);
         addr->cancel();
-        if (addr->isLocalAddress())
-        {
-            addr->setState(Inet4Address::stateDeprecated);
-        }
-        else
-        {
-            addr->setState(Inet4Address::stateReachable);
-        }
+        addr->setState(Inet4Address::stateReachable);
         addr->start();  // To send waiting packets.
     }
 

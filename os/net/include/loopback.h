@@ -39,13 +39,24 @@ public:
 class LoopbackReceiver :
     public InetReceiver
 {
-    Handle<IStream> stream;
+    IStream* stream;
 
 public:
-    LoopbackReceiver(INetworkInterface* loopbackInterface) :
-        stream(loopbackInterface, true)
+    LoopbackReceiver(IStream* stream) :
+        stream(stream)
     {
         ASSERT(stream);
+        if (stream)
+        {
+            stream->addRef();
+        }
+    }
+    ~LoopbackReceiver()
+    {
+        if (stream)
+        {
+            stream->release();
+        }
     }
 
     bool output(InetMessenger* m, Conduit* c)
@@ -56,10 +67,8 @@ public:
 
         long len = m->getLength();
         void* packet = m->fix(len);
-#ifdef VERBOSE
         esReport("# output\n");
         esDump(packet, len);
-#endif
         stream->write(packet, len);
         return true;
     }
@@ -72,9 +81,9 @@ class LoopbackInterface : public Interface
     LoopbackReceiver        loopbackReceiver;
 
 public:
-    LoopbackInterface(INetworkInterface* loopbackInterface) :
-        loopbackReceiver(loopbackInterface),
-        Interface(loopbackInterface, &loopbackAccessor, &loopbackReceiver)
+    LoopbackInterface(IStream* stream) :
+        loopbackReceiver(stream),
+        Interface(stream, &loopbackAccessor, &loopbackReceiver)
     {
     }
     ~LoopbackInterface()
