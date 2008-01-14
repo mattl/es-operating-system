@@ -2431,7 +2431,7 @@ diff -bcrN gcc-4.2.1.org/gcc/config/es.h gcc-4.2.1/gcc/config/es.h
 +   "crtend.o%s crtn.o%s"
 + 
 + #undef LIB_SPEC
-+ #define LIB_SPEC "-lc -les -lc"
++ #define LIB_SPEC "-lc -les -lc -les"
 diff -bcrN gcc-4.2.1.org/gcc/config/gthr-es.c gcc-4.2.1/gcc/config/gthr-es.c
 *** gcc-4.2.1.org/gcc/config/gthr-es.c	1970-01-01 09:00:00.000000000 +0900
 --- gcc-4.2.1/gcc/config/gthr-es.c	2007-08-07 14:05:53.000000000 +0900
