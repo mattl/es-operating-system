@@ -3,12 +3,12 @@ SUFFIXES = .h .idl
 if ES
 
 %.h %.ent : %.idl
-	esidl -C -I $(srcdir) $<
+	esidl -C -I$(srcdir) $<
 
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -I $(srcdir) $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) $<
 
 endif !ES
 
