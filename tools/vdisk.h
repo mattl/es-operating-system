@@ -263,12 +263,12 @@ public:
 
     void getLayout(Partition* partition)
     {
-        // [check] thow exception.
+        esThrow(ENODEV);
     }
 
     void setLayout(const Partition* partition)
     {
-        // [check] thow exception.
+        esThrow(ENODEV);
     }
 
     //
