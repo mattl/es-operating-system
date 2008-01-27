@@ -35,21 +35,21 @@ echo 'vcopy '$DIR'/fat32.img '$SRC'/fonts.conf > /dev/null' >> $SCRIPT
 echo 'vcopy '$DIR'/fat32.img '$SRC'/fonts.dtd > /dev/null' >> $SCRIPT
 echo 'vcopy '$DIR'/fat32.img '$SRC'/40-generic.conf conf.d/ > /dev/null' >> $SCRIPT
 
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/japanese/TrueType/sazanami-mincho.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/japanese/TrueType/sazanami-gothic.ttf fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name sazanami-mincho.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name sazanami-gothic.ttf` fonts/ > /dev/null' >> $SCRIPT
 
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationMono-Bold.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationMono-Italic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationMono-Regular.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSans-Bold.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSans-Italic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSans-Regular.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSerif-Bold.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSerif-Italic.ttf fonts/ > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img /usr/share/fonts/liberation/LiberationSerif-Regular.ttf fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationMono-Bold.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationMono-BoldItalic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationMono-Italic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationMono-Regular.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSans-Bold.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSans-BoldItalic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSans-Italic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSans-Regular.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSerif-Bold.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSerif-BoldItalic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSerif-Italic.ttf` fonts/ > /dev/null' >> $SCRIPT
+echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSerif-Regular.ttf` fonts/ > /dev/null' >> $SCRIPT
 
 echo 'vcopy '$DIR'/fat32.img '$SRC'/1b68cf4fced22970e89022fed6868d03-x86.cache-2 > /dev/null' >> $SCRIPT
 
