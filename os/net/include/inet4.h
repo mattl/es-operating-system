@@ -284,6 +284,8 @@ public:
     friend class Inet4Address::StatePreferred;
     friend class Inet4Address::StateReachable;
     friend class Inet4Address::StateDestination;
+    friend class Inet4Address::StateProbe;
+    friend class Inet4Address::StateDeprecated;
     friend class InReceiver;
 };
 
