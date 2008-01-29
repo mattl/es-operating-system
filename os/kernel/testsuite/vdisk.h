@@ -221,10 +221,12 @@ public:
 
     void getLayout(Partition* partition)
     {
+        esThrow(ENODEV);
     }
 
     void setLayout(const Partition* partition)
     {
+        esThrow(ENODEV);
     }
 
     //
