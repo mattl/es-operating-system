@@ -1,0 +1,43 @@
+ES operating system
+Copyright 2008 Google Inc.
+Copyright 2006, 2007 Nintdo Co., Ltd.
+
+This product includes software developed at Google Inc.
+(http://www.google.com/), and Nintendo Co., Ltd (http://www.nintendo.co.jp).
+
+This software contains security software derived from the RSA Data Security
+Inc. MD5 Message-Digest Algorithm.
+
+Newlib is used for the C library. Newlib is covered by several licenses,
+please read the code of each particular package in the source distribution
+for copyright information. The original software is available from
+    http://sources.redhat.com/newlib/
+
+The Perl Compatible Regular Expressions (PCRE) library is used for the
+regular expression support. PCRE is distributed under the terms of the BSD
+licence. The original software is available from
+    http://www.pcre.org/
+
+FreeType 2 is used as a software font engine. FreeType 2 is released under
+two open-source licenses: their own BSD-like FreeType License and the GPL.
+The original software is available from
+    http://www.freetype.org/
+
+Fontconfig is used for font customization and configuration. Fontconfig is
+distributed under the terms of "Historical Permission Notice and Disclaimer".
+The original software is available from
+    http://fontconfig.org/
+
+The Expat XML Parser is used as an XML parser for fontconfig. Expat is
+released under the MIT license. The original software is available from
+    http://expat.sourceforge.net/
+
+Cairo is used for the 2D graphics. Cairo is free software and is available
+to be redistributed and/or modified under the terms of either LGPL 2.1 or
+MPL 1.1. The original software is available from
+    http://cairographics.org/
+
+This product includes Squeak port for the ES operating system. Squeak port is
+presumed subject to the Squeak license (http://www.squeak.org/SqueakLicense/).
+The original software is available from
+    http://www.squeak.org/
