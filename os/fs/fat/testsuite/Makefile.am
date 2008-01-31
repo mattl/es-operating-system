@@ -24,6 +24,8 @@ noinst_PROGRAMS = $(TESTS)
 
 noinst_DATA = 2hd.img fat16_5MB.img fat32.img
 
+CLEANFILES = 2hd.img fat16_5MB.img fat32.img
+
 LDADD += -lpthread -lrt
 
 endif POSIX
@@ -150,15 +152,12 @@ fileSystem_SOURCES = fileSystem.cpp vdisk.h
 
 2hd.img: 2hd.img.gz
 	gunzip -c $< > $@
-	vformat $@
 
 fat16_5MB.img: fat16_5MB.img.gz
 	gunzip -c $< > $@
-	vformat $@
 
 fat32.img: fat32.img.gz
 	gunzip -c $< > $@
-	vformat $@
 
 AM_CPPFLAGS = \
 	-I$(srcdir)/.. \

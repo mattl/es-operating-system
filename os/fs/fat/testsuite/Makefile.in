@@ -561,9 +561,10 @@ SUFFIXES = .img .gz
 @ES_TRUE@	fat_createmax.img fat16_createmax.img fat32_createmax.img
 
 @POSIX_TRUE@noinst_DATA = 2hd.img fat16_5MB.img fat32.img
+@ES_TRUE@CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
+@POSIX_TRUE@CLEANFILES = 2hd.img fat16_5MB.img fat32.img
 @ES_TRUE@TESTS_ENVIRONMENT = $(srcdir)/testLoader
 @ES_TRUE@noinst_SCRIPTS = $(TESTS)
-@ES_TRUE@CLEANFILES = $(noinst_DATA) $(noinst_SCRIPTS)
 @ES_TRUE@AM_LDFLAGS = -Wl,--section-start,".init"=0x81000000,-static,--omagic,--cref,-Map,$@.map
 fat_SOURCES = fat.cpp vdisk.h
 replace_SOURCES = replace.cpp vdisk.h
@@ -1092,15 +1093,12 @@ uninstall-am:
 
 2hd.img: 2hd.img.gz
 	gunzip -c $< > $@
-	vformat $@
 
 fat16_5MB.img: fat16_5MB.img.gz
 	gunzip -c $< > $@
-	vformat $@
 
 fat32.img: fat32.img.gz
 	gunzip -c $< > $@
-	vformat $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
