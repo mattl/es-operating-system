@@ -2,6 +2,7 @@ SUBDIRS = $(ESIDL) include os $(TOOLS) $(INIT) $(CMD) esjs
 DIST_SUBDIRS = esidl include os tools init cmd esjs
 
 EXTRA_DIST = \
+	NOTICE \
 	patches/README \
 	patches/binutils-2.16.1.patch \
 	patches/binutils-2.17.patch \
