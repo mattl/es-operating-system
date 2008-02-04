@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../../include
 
 c_source_files = \
+	src/apply386.S \
 	src/md5.c \
 	src/rand48.c \
 	src/string.c \

@@ -17,38 +17,6 @@
 
 #include <es/apply.h>
 
-#ifdef __i386__
-
-s32 applyS32(int argc, Param* argv, s32 (*function)())
-{
-     __asm__ __volatile__ (
-        "and     %0, %0\n"
-        "jz      break\n"
-        "mov     %0, %%eax\n"
-        "mov     $20, %%edx\n"
-        "mul     %%edx\n"
-        "movl    %1, %%edx\n"
-        "add     %%edx, %%eax\n"
-    "while:\n"
-        "sub     $20, %%eax\n"
-        "mov     16(%%eax), %%edx\n"
-        "cmpl    $5, %%edx\n"        // is REF?
-        "jne     0f\n"
-        "pushl   %%eax\n"
-        "loop    while\n"
-    "0:  andl    $1, %%edx\n"       // check parameter class
-        "jz      1f\n"              // 32 bit value
-        "pushl   4(%%eax)\n"
-    "1:  pushl   0(%%eax)\n"
-        "loop    while\n"
-    "break:\n"
-        :: "c"(argc), "r"(argv) : "%eax", "%edx");
-
-    return function();
-}
-
-#endif  // __i386__
-
 #ifdef __x86_64__
 
 s32 applyS32(int argc, Param* argv, s32 (*function)())
@@ -234,9 +202,9 @@ s32 applyS32(int argc, Param* argv, s32 (*function)())
     return function();
 }
 
-#endif  // __x86_64__
-
 s64 applyS64(int argc, Param* argv, s64 (*function)()) __attribute__((alias("applyS32")));
 f32 applyF32(int argc, Param* argv, f32 (*function)()) __attribute__((alias("applyS32")));
 f64 applyF64(int argc, Param* argv, f64 (*function)()) __attribute__((alias("applyS32")));
 void* applyPTR(int argc, Param* argv, const void* (*function)()) __attribute__((alias("applyS32")));
+
+#endif  // __x86_64__

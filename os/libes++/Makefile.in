@@ -56,13 +56,13 @@ AR = ar
 ARFLAGS = cru
 libes___a_AR = $(AR) $(ARFLAGS)
 libes___a_LIBADD =
-am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
-	src/utf.c src/apply.cpp src/color.cpp src/context.cpp \
-	src/dateTime.cpp src/dump.cpp src/inet.cpp src/throw.cpp \
-	src/formatter.cpp src/ring.cpp include/core.h src/report.cpp \
-	src/system.cpp src/posix_system.cpp
-am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
-	utf.$(OBJEXT)
+am__libes___a_SOURCES_DIST = src/apply386.S src/md5.c src/rand48.c \
+	src/string.c src/utf.c src/apply.cpp src/color.cpp \
+	src/context.cpp src/dateTime.cpp src/dump.cpp src/inet.cpp \
+	src/throw.cpp src/formatter.cpp src/ring.cpp include/core.h \
+	src/report.cpp src/system.cpp src/posix_system.cpp
+am__objects_1 = apply386.$(OBJEXT) md5.$(OBJEXT) rand48.$(OBJEXT) \
+	string.$(OBJEXT) utf.$(OBJEXT)
 am__objects_2 = apply.$(OBJEXT) color.$(OBJEXT) context.$(OBJEXT) \
 	dateTime.$(OBJEXT) dump.$(OBJEXT) inet.$(OBJEXT) \
 	throw.$(OBJEXT) formatter.$(OBJEXT) ring.$(OBJEXT)
@@ -81,6 +81,8 @@ libessup___a_OBJECTS = $(am_libessup___a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
+CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -215,6 +217,7 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../../include
 
 c_source_files = \
+	src/apply386.S \
 	src/md5.c \
 	src/rand48.c \
 	src/string.c \
@@ -240,7 +243,7 @@ libes___a_SOURCES = $(libessup___a_SOURCES) src/report.cpp \
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .o .obj
+.SUFFIXES: .S .c .cpp .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -315,6 +318,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apply.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apply386.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/context.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dateTime.Po@am__quote@
@@ -330,6 +334,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/throw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utf.Po@am__quote@
+
+.S.o:
+@am__fastdepCCAS_TRUE@	$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CPPASCOMPILE) -c -o $@ $<
+
+.S.obj:
+@am__fastdepCCAS_TRUE@	$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CPPASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+apply386.o: src/apply386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT apply386.o -MD -MP -MF $(DEPDIR)/apply386.Tpo -c -o apply386.o `test -f 'src/apply386.S' || echo '$(srcdir)/'`src/apply386.S
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/apply386.Tpo $(DEPDIR)/apply386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='apply386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o apply386.o `test -f 'src/apply386.S' || echo '$(srcdir)/'`src/apply386.S
+
+apply386.obj: src/apply386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT apply386.obj -MD -MP -MF $(DEPDIR)/apply386.Tpo -c -o apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/apply386.Tpo $(DEPDIR)/apply386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='apply386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
