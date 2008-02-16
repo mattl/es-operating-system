@@ -163,6 +163,8 @@ static __inline u64 bswap64(u64 x)
 
 #endif  // !defined(__x86_64__)
 
+#ifdef __es__
+
 #if defined(__i386__) || defined(__x86_64__)
 
 static __inline u64 htonll(u64 hostlonglong)
@@ -228,5 +230,11 @@ static __inline u16 ntohs(u16 netshort)
 }
 
 #endif  // !defined(__i386__) && !defined(__x86_64__)
+
+#else
+
+#include <arpa/inet.h>
+
+#endif  // __es__
 
 #endif  // #ifndef NINTENDO_ES_ENDIAN_H_INCLUDED
