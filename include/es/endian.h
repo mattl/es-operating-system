@@ -163,9 +163,7 @@ static __inline u64 bswap64(u64 x)
 
 #endif  // !defined(__x86_64__)
 
-#ifdef __es__
-
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(__es__) || defined(__linux__)
 
 static __inline u64 htonll(u64 hostlonglong)
 {
@@ -197,43 +195,14 @@ static __inline u16 ntohs(u16 netshort)
     return bswap16(netshort);
 }
 
-#else   // !defined(__i386__) && !defined(__x86_64__)
+#else   // !__es__
 
-static __inline u64 htonll(u64 hostlonglong)
-{
-    return hostlonglong;
-}
-
-static __inline u32 htonl(u32 hostlong)
-{
-    return hostlong;
-}
-
-static __inline u16 htons(u16 hostshort)
-{
-    return hostshort;
-}
-
-static __inline u64 ntohll(u64 netlonglong)
-{
-    return netlonglong;
-}
-
-static __inline u32 ntohl(u32 netlong)
-{
-    return netlong;
-}
-
-static __inline u16 ntohs(u16 netshort)
-{
-    return netshort;
-}
-
-#endif  // !defined(__i386__) && !defined(__x86_64__)
-
-#else
-
-#include <arpa/inet.h>
+extern u64 (htonll)(u64 hostlonglong);
+extern u32 (htonl)(u32 hostlong);
+extern u16 (htons)(u16 hostshort);
+extern u64 (ntohll)(u64 netlonglong);
+extern u32 (ntohl)(u32 netlong);
+extern u16 (ntohs)(u16 netshort);
 
 #endif  // __es__
 
