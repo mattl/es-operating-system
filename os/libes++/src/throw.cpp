@@ -107,6 +107,7 @@ void esThrow(int result)
         throw SystemException<ENOMSG>();
     case EIDRM:         // Identifier removed
         throw SystemException<EIDRM>();
+#ifndef __APPLE__
     case ECHRNG:        // Channel number out of range
         throw SystemException<ECHRNG>();
     case EL2NSYNC:      // Level 2 not synchronized
@@ -137,6 +138,7 @@ void esThrow(int result)
         throw SystemException<EBADSLT>();
     case EBFONT:        // Bad font file format
         throw SystemException<EBFONT>();
+#endif  // __APPLE__
     case ENOSTR:        // Device not a stream
         throw SystemException<ENOSTR>();
     case ENODATA:       // No data available
@@ -145,30 +147,37 @@ void esThrow(int result)
         throw SystemException<ETIME>();
     case ENOSR:         // Out of streams resources
         throw SystemException<ENOSR>();
+#ifndef __APPLE__
     case ENONET:        // Machine is not on the network
         throw SystemException<ENONET>();
     case ENOPKG:        // Package not installed
         throw SystemException<ENOPKG>();
+#endif  // __APPLE__
     case EREMOTE:       // Object is remote
         throw SystemException<EREMOTE>();
     case ENOLINK:       // Link has been severed
         throw SystemException<ENOLINK>();
+#ifndef __APPLE__
     case EADV:          // Advertise error
         throw SystemException<EADV>();
     case ESRMNT:        // Srmount error
         throw SystemException<ESRMNT>();
     case ECOMM:         // Communication error on send
         throw SystemException<ECOMM>();
+#endif  // __APPLE__
     case EPROTO:        // Protocol error
         throw SystemException<EPROTO>();
     case EMULTIHOP:     // Multihop attempted
         throw SystemException<EMULTIHOP>();
+#ifndef __APPLE__
     case EDOTDOT:       // RFS specific error
         throw SystemException<EDOTDOT>();
+#endif  // __APPLE__
     case EBADMSG:       // Not a data message
         throw SystemException<EBADMSG>();
     case EOVERFLOW:     // Value too large for defined data type
         throw SystemException<EOVERFLOW>();
+#ifndef __APPLE__
     case ENOTUNIQ:      // Name not unique on network
         throw SystemException<ENOTUNIQ>();
     case EBADFD:        // File descriptor in bad state
@@ -185,6 +194,7 @@ void esThrow(int result)
         throw SystemException<ELIBMAX>();
     case ELIBEXEC:      // Cannot exec a shared library directly
         throw SystemException<ELIBEXEC>();
+#endif  // __APPLE__
     case EILSEQ:        // Illegal byte sequence
         throw SystemException<EILSEQ>();
 #ifdef __posix__
@@ -267,8 +277,10 @@ void esThrow(int result)
 #endif
     case EDQUOT:        // Quota exceeded
         throw SystemException<EDQUOT>();
+#ifndef __APPLE__
     case ENOMEDIUM:     // No medium found
         throw SystemException<ENOMEDIUM>();
+#endif  // __APPLE__
 #ifdef __posix__
     case EMEDIUMTYPE:   // Wrong medium type
         throw SystemException<EMEDIUMTYPE>();
