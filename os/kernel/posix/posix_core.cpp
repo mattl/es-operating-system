@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 #include <es.h>
 #include <es/dateTime.h>
 #include <es/timeSpan.h>
@@ -104,8 +105,15 @@ long long Core::
 getNow()
 {
     struct timespec ts;
+#ifdef __APPLE__
+    struct timeval tv;
 
+    gettimeofday(&tv, NULL);
+    ts.tv_sec = tv.tv_sec;
+    ts.tv_nsec = tv.tv_usec * 1000;
+#else
     clock_gettime(CLOCK_REALTIME, &ts);
+#endif
     DateTime now(1970, 1, 1);
     now += TimeSpan(ts.tv_sec * 10000000LL + ts.tv_nsec / 100);
     return now.getTicks();
@@ -132,7 +140,7 @@ sleep(long long timeout)
 
     ts.tv_sec = timeout / 10000000;
     ts.tv_nsec = (timeout % 10000000) * 100;
-    clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, 0);
+    nanosleep(&ts, 0);
 }
 
 int Core::

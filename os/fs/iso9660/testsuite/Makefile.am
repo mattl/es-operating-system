@@ -16,7 +16,11 @@ noinst_PROGRAMS = $(TESTS)
 
 noinst_DATA = isotest.iso fat16_5MB.img.gz
 
+if APPLE
+LDADD += -lpthread
+else
 LDADD += -lpthread -lrt
+endif
 
 endif POSIX
 

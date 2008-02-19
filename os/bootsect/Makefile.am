@@ -22,3 +22,5 @@ LINK = $(host_alias)-ld -Ttext 0 -s --oformat binary -o $@ -Map $@.map
 
 clean-local:
 	-rm -f *.map
+
+EXTRA_DIST = mbr.bin bootfat12.bin bootfat32.bin bootfat16.bin

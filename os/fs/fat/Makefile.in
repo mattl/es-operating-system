@@ -628,11 +628,11 @@ uninstall-am: uninstall-libLIBRARIES
 	ps ps-am tags tags-recursive uninstall uninstall-am \
 	uninstall-libLIBRARIES
 
-vpath %.bin = ../../bootsect
+vpath %.bin = ../../bootsect $(srcdir)/../../bootsect
 
 .bin.c:
 	echo "unsigned char" $(*F) "[] = {" > $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

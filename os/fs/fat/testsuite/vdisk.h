@@ -19,7 +19,7 @@
 using namespace es;
 int esInit(IInterface** nameSpace);
 
-#ifdef __unix__
+#ifndef __es__
 
 #include <errno.h>
 #include <fcntl.h>
@@ -117,7 +117,7 @@ public:
     {
         int err;
         long long pos;
-        pos = lseek64(fd, 0, SEEK_CUR);
+        pos = lseek(fd, 0, SEEK_CUR);
         if (pos < 0)
         {
             esThrow(errno);
@@ -134,7 +134,7 @@ public:
             esThrow(EINVAL);
         }
 
-        err = lseek64(fd, pos, SEEK_SET);
+        err = lseek(fd, pos, SEEK_SET);
         if (err < 0)
         {
             esThrow(errno);
@@ -145,7 +145,7 @@ public:
     {
         long long tmp;
         tmp = getPosition();
-        lseek64(fd, 0, SEEK_END);
+        lseek(fd, 0, SEEK_END);
         long long size;
         size = getPosition();
         setPosition(tmp);
@@ -276,4 +276,4 @@ public:
     }
 };
 
-#endif  // __endif__
+#endif  // __es__

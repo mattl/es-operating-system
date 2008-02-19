@@ -3,16 +3,16 @@ SUBDIRS = . testsuite
 SUFFIXES = .h .idl .ent
 
 %.h %.ent: %.idl
-	esidl -I $(srcdir)/../include $<
+	esidl -I$(srcdir)/../include $<
 
 %.c : %.ent
 	mkdir -p $(*D);
-	echo -n "unsigned char" $(*F) > $@;
+	printf 'unsigned char %s' $(*F) > $@;
 	echo "Info[] = {" >> $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
-	echo -n "unsigned" $(*F) >> $@;
-	echo -n "InfoSize = sizeof" $(*F) >> $@;
+	printf 'unsigned %s' $(*F) >> $@;
+	printf 'InfoSize = sizeof %s' $(*F) >> $@;
 	echo "Info;" >> $@;
 
 noinst_PROGRAMS = \

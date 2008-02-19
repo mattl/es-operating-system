@@ -40,6 +40,16 @@ AM_CONDITIONAL(ES, test x$os_type = xes)
 AM_CONDITIONAL(WIN32, test x$os_type = xwin32)
 AM_CONDITIONAL(POSIX, test x$os_type = xposix)
 
+case ${target} in
+  *-apple-*)
+    vendor_type=apple
+    ;;
+  *)
+    ;;
+esac
+
+AM_CONDITIONAL(APPLE, test x$vendor_type = xapple)
+
 AC_CONFIG_FILES(Makefile libes++/Makefile libes++/testsuite/Makefile bootsect/Makefile net/Makefile net/testsuite/Makefile net/posix/Makefile fs/Makefile fs/fat/Makefile fs/fat/testsuite/Makefile fs/iso9660/Makefile fs/iso9660/testsuite/Makefile kernel/Makefile kernel/testsuite/Makefile)
 
 AC_OUTPUT

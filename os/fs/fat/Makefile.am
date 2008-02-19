@@ -9,11 +9,11 @@ AM_CXXFLAGS = -DIA32 -DNINTENDO_ES
 endif
 
 SUFFIXES = .bin
-vpath %.bin = ../../bootsect
+vpath %.bin = ../../bootsect $(srcdir)/../../bootsect
 
 .bin.c:
 	echo "unsigned char" $(*F) "[] = {" > $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
 s_source_files =

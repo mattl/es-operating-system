@@ -46,7 +46,8 @@ target_triplet = @target@
 @ES_TRUE@TESTS = config$(EXEEXT) dhcp$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
-@POSIX_TRUE@am__append_1 = -lpthread -lrt
+@APPLE_TRUE@@POSIX_TRUE@am__append_1 = -lpthread
+@APPLE_FALSE@@POSIX_TRUE@am__append_2 = -lpthread -lrt
 subdir = net/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -70,72 +71,86 @@ anon_OBJECTS = $(am_anon_OBJECTS)
 anon_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 anon_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_config_OBJECTS = config.$(OBJEXT)
 config_OBJECTS = $(am_config_OBJECTS)
 config_LDADD = $(LDADD)
 config_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_dhcp_OBJECTS = dhcp.$(OBJEXT)
 dhcp_OBJECTS = $(am_dhcp_OBJECTS)
 dhcp_LDADD = $(LDADD)
 dhcp_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_dns_OBJECTS = dns.$(OBJEXT)
 dns_OBJECTS = $(am_dns_OBJECTS)
 dns_LDADD = $(LDADD)
 dns_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_frag_OBJECTS = frag.$(OBJEXT)
 frag_OBJECTS = $(am_frag_OBJECTS)
 frag_LDADD = $(LDADD)
 frag_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_inet4_OBJECTS = inet4.$(OBJEXT)
 inet4_OBJECTS = $(am_inet4_OBJECTS)
 inet4_LDADD = $(LDADD)
 inet4_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_mcast_OBJECTS = mcast.$(OBJEXT)
 mcast_OBJECTS = $(am_mcast_OBJECTS)
 mcast_LDADD = $(LDADD)
 mcast_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_tcp_OBJECTS = tcp.$(OBJEXT)
 tcp_OBJECTS = $(am_tcp_OBJECTS)
 tcp_LDADD = $(LDADD)
 tcp_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_tcp1_OBJECTS = tcp1.$(OBJEXT)
 tcp1_OBJECTS = $(am_tcp1_OBJECTS)
 tcp1_LDADD = $(LDADD)
 tcp1_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_tcp2_OBJECTS = tcp2.$(OBJEXT)
 tcp2_OBJECTS = $(am_tcp2_OBJECTS)
 tcp2_LDADD = $(LDADD)
 tcp2_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_timeout_OBJECTS = timeout.$(OBJEXT)
 timeout_OBJECTS = $(am_timeout_OBJECTS)
 timeout_LDADD = $(LDADD)
 timeout_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_udpEchoClient_OBJECTS = udpEchoClient.$(OBJEXT)
 udpEchoClient_OBJECTS = $(am_udpEchoClient_OBJECTS)
 udpEchoClient_LDADD = $(LDADD)
 udpEchoClient_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_udpEchoServer_OBJECTS = udpEchoServer.$(OBJEXT)
 udpEchoServer_OBJECTS = $(am_udpEchoServer_OBJECTS)
 udpEchoServer_LDADD = $(LDADD)
 udpEchoServer_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_unreach_OBJECTS = unreach.$(OBJEXT)
 unreach_OBJECTS = $(am_unreach_OBJECTS)
 unreach_LDADD = $(LDADD)
 unreach_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 SCRIPTS = $(noinst_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -261,7 +276,7 @@ target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LDADD = ../libesnet.a ../../kernel/libeskernel.a \
-	../../libes++/libessup++.a $(am__append_1)
+	../../libes++/libessup++.a $(am__append_1) $(am__append_2)
 SUFFIXES = .img
 AM_CPPFLAGS = \
 	-I $(srcdir)/../include \

@@ -19,6 +19,7 @@
 
 #include <errno.h>
 #include <time.h>
+#include <sys/time.h>
 #include <es.h>
 #include <es/exception.h>
 #include "core.h"
@@ -139,7 +140,15 @@ wait(s64 timeout)
     int err;
     if (0 < timeout)
     {
+#ifdef __APPLE__
+        struct timeval tv;
+
+        gettimeofday(&tv, NULL);
+        ts.tv_sec = tv.tv_sec;
+        ts.tv_nsec = tv.tv_usec * 1000;
+#else
         clock_gettime(CLOCK_REALTIME, &ts);
+#endif
         ts.tv_sec += timeout / 10000000;
         ts.tv_nsec += (timeout % 10000000) * 100;
         current->state = IThread::TIMED_WAITING;

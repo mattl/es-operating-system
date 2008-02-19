@@ -7,16 +7,16 @@ vpath %.ent = ../../include/es
 
 %.c : %.ent
 	mkdir -p $(*D);
-	echo -n "unsigned char" $(*F) > $@;
+	printf 'unsigned char %s' $(*F) > $@;
 	echo "Info[] = {" >> $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
-vpath %.bin = ../bootsect
+vpath %.bin = ../bootsect $(srcdir)/../bootsect
 
 .bin.c:
 	echo "unsigned char" $(*F) "[] = {" > $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
 AM_CPPFLAGS = \

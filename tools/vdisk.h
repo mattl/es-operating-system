@@ -156,7 +156,7 @@ public:
     {
         int err;
 
-        long long pos = lseek64(fd, 0, SEEK_CUR);
+        long long pos = lseek(fd, 0, SEEK_CUR);
         if (pos < 0)
         {
             esThrow(errno);
@@ -173,7 +173,7 @@ public:
             esThrow(EINVAL);
         }
 
-        err = lseek64(fd, pos, SEEK_SET);
+        err = lseek(fd, pos, SEEK_SET);
         if (err < 0)
         {
             esThrow(errno);
@@ -186,7 +186,7 @@ public:
         long long size;
 
         tmp = getPosition();
-        lseek64(fd, 0, SEEK_END);
+        lseek(fd, 0, SEEK_END);
         size = getPosition();
         setPosition(tmp);
         if (vhd)

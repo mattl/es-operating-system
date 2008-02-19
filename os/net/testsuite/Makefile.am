@@ -19,7 +19,11 @@ TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
 
 noinst_PROGRAMS = $(TESTS)
 
+if APPLE
+LDADD += -lpthread
+else
 LDADD += -lpthread -lrt
+endif
 
 endif POSIX
 

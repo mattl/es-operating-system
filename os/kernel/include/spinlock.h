@@ -78,10 +78,11 @@ public:
     };
 };
 
-#endif  // __es__
+#else   // !__es__
 
-#ifdef __unix__
 #include "core.h"
-#endif  // __unix__
+
+#endif  // !__es__
+
 
 #endif  // NINTENDO_ES_KERNEL_SPINLOCK_H_INCLUDED

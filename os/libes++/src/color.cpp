@@ -64,26 +64,19 @@ bool Rgb::assign(const char* color)
     {
         unsigned int r, g, b;
 
-        switch (strnlen(color, 8))
+        if (sscanf(color, "#%2x%2x%2x", &r, &g, &b) == 3)
         {
-        case 7:
-            if (sscanf(color, "#%2x%2x%2x", &r, &g, &b) == 3)
-            {
-                rgba = 0xff000000 | (b << 16) | (g << 8) | r;
-                return true;
-            }
-            break;
-        case 4:
-            if (sscanf(color, "#%1x%1x%1x", &r, &g, &b) == 3)
-            {
-                r |= (r << 4);
-                g |= (g << 4);
-                b |= (b << 4);
-                rgba = 0xff000000 | (b << 16) | (g << 8) | r;
-                return true;
-            }
-            break;
+            rgba = 0xff000000 | (b << 16) | (g << 8) | r;
+            return true;
         }
+        else if (sscanf(color, "#%1x%1x%1x", &r, &g, &b) == 3)
+        {
+            r |= (r << 4);
+            g |= (g << 4);
+            b |= (b << 4);
+            rgba = 0xff000000 | (b << 16) | (g << 8) | r;
+            return true;
+       }
     }
     else if (strncasecmp(color, "rgb(", 4) == 0)
     {

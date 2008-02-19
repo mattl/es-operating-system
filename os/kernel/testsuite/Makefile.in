@@ -75,8 +75,9 @@ target_triplet = @target@
 @ES_TRUE@	pageSet$(EXEEXT) loopback$(EXEEXT) ethernet$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1) fdc_diskChange$(EXEEXT)
-@POSIX_TRUE@am__append_2 = -lpthread -lrt -lstdc++
-@ES_TRUE@@I386_TRUE@am__append_3 = -iquote $(srcdir)/../include/i386
+@APPLE_TRUE@@POSIX_TRUE@am__append_2 = -lpthread -lstdc++
+@APPLE_FALSE@@POSIX_TRUE@am__append_3 = -lpthread -lstdc++ -lrt
+@ES_TRUE@@I386_TRUE@am__append_4 = -iquote $(srcdir)/../include/i386
 subdir = kernel/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -128,253 +129,262 @@ am_8042_OBJECTS = 8042.$(OBJEXT)
 8042_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 8042_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_ata_OBJECTS = ata.$(OBJEXT)
 ata_OBJECTS = $(am_ata_OBJECTS)
 ata_LDADD = $(LDADD)
 ata_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_beep_OBJECTS = beep.$(OBJEXT)
 beep_OBJECTS = $(am_beep_OBJECTS)
 beep_LDADD = $(LDADD)
 beep_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_bpi_OBJECTS = bpi.$(OBJEXT)
 bpi_OBJECTS = $(am_bpi_OBJECTS)
 bpi_LDADD = $(LDADD)
 bpi_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_bpi2_OBJECTS = bpi2.$(OBJEXT)
 bpi2_OBJECTS = $(am_bpi2_OBJECTS)
 bpi2_LDADD = $(LDADD)
 bpi2_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_bpi3_OBJECTS = bpi3.$(OBJEXT)
 bpi3_OBJECTS = $(am_bpi3_OBJECTS)
 bpi3_LDADD = $(LDADD)
 bpi3_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_cache_OBJECTS = cache.$(OBJEXT)
 cache_OBJECTS = $(am_cache_OBJECTS)
 cache_LDADD = $(LDADD)
 cache_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_cdrom_OBJECTS = cdrom.$(OBJEXT)
 cdrom_OBJECTS = $(am_cdrom_OBJECTS)
 cdrom_LDADD = $(LDADD)
 cdrom_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_context_OBJECTS = context.$(OBJEXT)
 context_OBJECTS = $(am_context_OBJECTS)
 context_LDADD = $(LDADD)
 context_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_create_release_OBJECTS = create_release.$(OBJEXT)
 create_release_OBJECTS = $(am_create_release_OBJECTS)
 create_release_LDADD = $(LDADD)
 create_release_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_datetime_OBJECTS = datetime.$(OBJEXT)
 datetime_OBJECTS = $(am_datetime_OBJECTS)
 datetime_LDADD = $(LDADD)
 datetime_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_es1370_OBJECTS = es1370.$(OBJEXT) wave.$(OBJEXT)
 es1370_OBJECTS = $(am_es1370_OBJECTS)
 es1370_LDADD = $(LDADD)
 es1370_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_ethernet_OBJECTS = ethernet.$(OBJEXT)
 ethernet_OBJECTS = $(am_ethernet_OBJECTS)
 ethernet_LDADD = $(LDADD)
 ethernet_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_exception_OBJECTS = exception.$(OBJEXT)
 exception_OBJECTS = $(am_exception_OBJECTS)
 exception_LDADD = $(LDADD)
 exception_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fdc_OBJECTS = fdc.$(OBJEXT)
 fdc_OBJECTS = $(am_fdc_OBJECTS)
 fdc_LDADD = $(LDADD)
 fdc_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fdc_diskChange_OBJECTS = fdc_diskChange.$(OBJEXT)
 fdc_diskChange_OBJECTS = $(am_fdc_diskChange_OBJECTS)
 fdc_diskChange_LDADD = $(LDADD)
 fdc_diskChange_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fpu_OBJECTS = fpu.$(OBJEXT)
 fpu_OBJECTS = $(am_fpu_OBJECTS)
 fpu_LDADD = $(LDADD)
 fpu_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_getPageCount_OBJECTS = getPageCount.$(OBJEXT)
 getPageCount_OBJECTS = $(am_getPageCount_OBJECTS)
 getPageCount_LDADD = $(LDADD)
 getPageCount_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_handle_OBJECTS = handle.$(OBJEXT)
 handle_OBJECTS = $(am_handle_OBJECTS)
 handle_LDADD = $(LDADD)
 handle_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_heap_OBJECTS = heap.$(OBJEXT)
 heap_OBJECTS = $(am_heap_OBJECTS)
 heap_LDADD = $(LDADD)
 heap_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_interlocked_OBJECTS = interlocked.$(OBJEXT)
 interlocked_OBJECTS = $(am_interlocked_OBJECTS)
 interlocked_LDADD = $(LDADD)
 interlocked_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_invalidate_OBJECTS = invalidate.$(OBJEXT)
 invalidate_OBJECTS = $(am_invalidate_OBJECTS)
 invalidate_LDADD = $(LDADD)
 invalidate_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_loopback_OBJECTS = loopback.$(OBJEXT)
 loopback_OBJECTS = $(am_loopback_OBJECTS)
 loopback_LDADD = $(LDADD)
 loopback_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_monitor0_OBJECTS = monitor0.$(OBJEXT)
 monitor0_OBJECTS = $(am_monitor0_OBJECTS)
 monitor0_LDADD = $(LDADD)
 monitor0_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_monitor1_OBJECTS = monitor1.$(OBJEXT)
 monitor1_OBJECTS = $(am_monitor1_OBJECTS)
 monitor1_LDADD = $(LDADD)
 monitor1_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_monitor2_OBJECTS = monitor2.$(OBJEXT)
 monitor2_OBJECTS = $(am_monitor2_OBJECTS)
 monitor2_LDADD = $(LDADD)
 monitor2_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_monitor3_OBJECTS = monitor3.$(OBJEXT)
 monitor3_OBJECTS = $(am_monitor3_OBJECTS)
 monitor3_LDADD = $(LDADD)
 monitor3_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_page_OBJECTS = page.$(OBJEXT)
 page_OBJECTS = $(am_page_OBJECTS)
 page_LDADD = $(LDADD)
 page_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pageSet_OBJECTS = pageSet.$(OBJEXT)
 pageSet_OBJECTS = $(am_pageSet_OBJECTS)
 pageSet_LDADD = $(LDADD)
 pageSet_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_partition_OBJECTS = partition.$(OBJEXT)
 partition_OBJECTS = $(am_partition_OBJECTS)
 partition_LDADD = $(LDADD)
 partition_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_partition_bind_OBJECTS = partition_bind.$(OBJEXT)
 partition_bind_OBJECTS = $(am_partition_bind_OBJECTS)
 partition_bind_LDADD = $(LDADD)
 partition_bind_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_partition_error_OBJECTS = partition_error.$(OBJEXT)
 partition_error_OBJECTS = $(am_partition_error_OBJECTS)
 partition_error_LDADD = $(LDADD)
 partition_error_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_partition_extended_OBJECTS = partition_extended.$(OBJEXT)
 partition_extended_OBJECTS = $(am_partition_extended_OBJECTS)
 partition_extended_LDADD = $(LDADD)
 partition_extended_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_partition_iterator_OBJECTS = partition_iterator.$(OBJEXT)
 partition_iterator_OBJECTS = $(am_partition_iterator_OBJECTS)
 partition_iterator_LDADD = $(LDADD)
 partition_iterator_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_partition_print_OBJECTS = partition_print.$(OBJEXT)
 partition_print_OBJECTS = $(am_partition_print_OBJECTS)
 partition_print_LDADD = $(LDADD)
 partition_print_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_position_OBJECTS = position.$(OBJEXT)
 position_OBJECTS = $(am_position_OBJECTS)
 position_LDADD = $(LDADD)
 position_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_read_OBJECTS = read.$(OBJEXT)
 read_OBJECTS = $(am_read_OBJECTS)
 read_LDADD = $(LDADD)
 read_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_replace_OBJECTS = replace.$(OBJEXT)
 replace_OBJECTS = $(am_replace_OBJECTS)
 replace_LDADD = $(LDADD)
 replace_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_ring_OBJECTS = ring.$(OBJEXT)
 ring_OBJECTS = $(am_ring_OBJECTS)
 ring_LDADD = $(LDADD)
 ring_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_sb16_OBJECTS = sb16.$(OBJEXT) wave.$(OBJEXT)
 sb16_OBJECTS = $(am_sb16_OBJECTS)
 sb16_LDADD = $(LDADD)
 sb16_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_size_OBJECTS = size.$(OBJEXT)
 size_OBJECTS = $(am_size_OBJECTS)
 size_LDADD = $(LDADD)
 size_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_thread_OBJECTS = thread.$(OBJEXT)
 thread_OBJECTS = $(am_thread_OBJECTS)
 thread_LDADD = $(LDADD)
 thread_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_thread_cancel_OBJECTS = thread_cancel.$(OBJEXT)
 thread_cancel_OBJECTS = $(am_thread_cancel_OBJECTS)
 thread_cancel_LDADD = $(LDADD)
 thread_cancel_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_thread_smp_OBJECTS = thread_smp.$(OBJEXT)
 thread_smp_OBJECTS = $(am_thread_smp_OBJECTS)
 thread_smp_LDADD = $(LDADD)
 thread_smp_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__timer_SOURCES_DIST = timer.cpp
 @POSIX_TRUE@am_timer_OBJECTS = timer.$(OBJEXT)
 timer_OBJECTS = $(am_timer_OBJECTS)
 timer_LDADD = $(LDADD)
 timer_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_utf_OBJECTS = utf.$(OBJEXT)
 utf_OBJECTS = $(am_utf_OBJECTS)
 utf_LDADD = $(LDADD)
 utf_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_vesa_OBJECTS = vesa.$(OBJEXT)
 vesa_OBJECTS = $(am_vesa_OBJECTS)
 vesa_LDADD = $(LDADD)
 vesa_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_write_OBJECTS = write.$(OBJEXT)
 write_OBJECTS = $(am_write_OBJECTS)
 write_LDADD = $(LDADD)
 write_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_write_read_OBJECTS = write_read.$(OBJEXT)
 write_read_OBJECTS = $(am_write_read_OBJECTS)
 write_read_LDADD = $(LDADD)
 write_read_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_write_read2_OBJECTS = write_read2.$(OBJEXT)
 write_read2_OBJECTS = $(am_write_read2_OBJECTS)
 write_read2_LDADD = $(LDADD)
 write_read2_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 SCRIPTS = $(noinst_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -531,10 +541,11 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-LDADD = ../libeskernel.a ../../libes++/libessup++.a $(am__append_2)
+LDADD = ../libeskernel.a ../../libes++/libessup++.a $(am__append_2) \
+	$(am__append_3)
 SUFFIXES = .img .gz .iso
 AM_CPPFLAGS = -I $(srcdir)/../include -I- -I ../../../include -I \
-	$(srcdir)/../../../include $(am__append_1) $(am__append_3)
+	$(srcdir)/../../../include $(am__append_1) $(am__append_4)
 @ES_TRUE@noinst_DATA = fat16.img isotest.iso \
 @ES_TRUE@	handle.img interlocked.img exception.img utf.img ring.img fpu.img \
 @ES_TRUE@	context.img datetime.img thread.img thread_cancel.img thread_smp.img \

@@ -75,7 +75,7 @@
 
 // es:di        Pointer to system BIOS plug and play installation check structure
 // dl           Physical device number the OS is being loaded
-.global _start
+.globl _start
 _start:                                 // at location 0000:7C00
         jmp     0f
         nop

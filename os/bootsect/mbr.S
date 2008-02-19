@@ -54,7 +54,7 @@
 .code16
 .text
 
-.global _start
+.globl _start
 _start:                                 // at location 0000:7C00
 
         // Set %sp

@@ -30,7 +30,11 @@ noinst_PROGRAMS = $(TESTS)
 
 noinst_DATA = fat16_32MB.img fat16.img
 
-LDADD += -lpthread -lrt -lstdc++
+if APPLE
+LDADD += -lpthread -lstdc++
+else
+LDADD += -lpthread -lstdc++ -lrt
+endif
 
 endif POSIX
 

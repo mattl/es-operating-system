@@ -24,6 +24,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <sys/wait.h>
 #include <es/dateTime.h>
 #include <es/handle.h>
@@ -328,7 +329,11 @@ class Iterator : public IIterator
 
 public:
     Iterator(int fd) :
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 4)
         dir(fdopendir(dup(fd))),
+#else
+        dir(0),
+#endif
         offset(-1)
     {
         if (dir)
@@ -728,9 +733,12 @@ public:
             argv[argc] = 0;
 
             int fd = ((File*) file)->getfd();
-            //int fd = open("hello.elf", O_RDONLY);
             lseek(fd, 0, SEEK_SET);
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3)
             id = fexecve(fd, argv, environ);
+#else
+            id = -1;
+#endif
             esReport("fexecve %d %d %d\n", id, errno, fd);
         }
     }
@@ -819,10 +827,12 @@ public:
     System() :
         current(0)
     {
+#ifdef __linux__
         struct termio tty;
         ioctl(0, TCGETA, &tty);
         tty.c_lflag &= ~(ICANON|ECHO);
         ioctl(0, TCSETAF, &tty);
+#endif
 
         in = new Stream(0);
         out = new Stream(1);
@@ -847,10 +857,12 @@ public:
     {
         root->release();
 
+#ifdef __linux__
         struct termio tty;
         ioctl(0, TCGETA, &tty);
         tty.c_lflag |= ICANON|ECHO;
         ioctl(0, TCSETAF, &tty);
+#endif
     }
 
     void exit(int status)
@@ -934,8 +946,15 @@ public:
     long long getNow()
     {
         struct timespec ts;
+#ifdef __APPLE__
+        struct timeval tv;
 
+        gettimeofday(&tv, NULL);
+        ts.tv_sec = tv.tv_sec;
+        ts.tv_nsec = tv.tv_usec * 1000;
+#else
         clock_gettime(CLOCK_REALTIME, &ts);
+#endif
         DateTime now = DateTime(1970, 1, 1) + TimeSpan(ts.tv_sec * 10000000LL + ts.tv_nsec / 100);
         return now.getTicks();
     }

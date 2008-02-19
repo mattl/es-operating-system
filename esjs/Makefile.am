@@ -8,9 +8,9 @@ vpath %.ent = ../include/es
 
 %.c : %.ent
 	mkdir -p $(*D);
-	echo -n "unsigned char" $(*F) > $@;
+	printf 'unsigned char %s' $(*F) > $@;
 	echo "Info[] = {" >> $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
 # default interface information
@@ -75,7 +75,12 @@ bin_PROGRAMS = esjs
 
 if POSIX
 
-LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lrt -lpcreposix -lpcre
+if APPLE
+LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre
+else
+LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt
+endif
+
 esjs_CXXFLAGS = -D YYERROR_VERBOSE
 
 valueptr_SOURCES = src/valueptr.cpp

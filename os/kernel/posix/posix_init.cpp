@@ -102,9 +102,19 @@ int esInit(IInterface** nameSpace)
     binding->release();
 
     // Initialize the page table
-    int fd = open("/dev/zero", O_RDWR);
     size_t size = 64 * 1024;
-    void* arena = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+    void* arena = 0;
+    int fd = open("/dev/zero", O_RDWR);
+    if (fd != -1)
+    {
+        arena = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+    }
+    if (arena == 0 || arena == (void*) -1)
+    {
+        arena = sbrk(0);
+        arena = (void*) (((unsigned long) arena + 4096 - 1) & ~(4096 - 1));
+        sbrk((char*) arena - (char*) sbrk(0) + size);
+    }
 #ifdef VERBOSE
     esReport("arena: %p, size: %zu\n", arena, size);
 #endif
@@ -132,6 +142,7 @@ int esInit(IInterface** nameSpace)
     Loopback* loopback = new Loopback(loopbackBuffer, sizeof loopbackBuffer);
     device->bind("loopback", static_cast<IStream*>(loopback));
 
+#ifdef __linux__
     // Register the Ethernet interface
     try
     {
@@ -141,6 +152,7 @@ int esInit(IInterface** nameSpace)
     catch (...)
     {
     }
+#endif  // __linux__
 
     device->release();
 
@@ -170,10 +182,9 @@ void esSleep(s64 timeout)
     Thread* current(Thread::getCurrentThread());
 
     current->state = IThread::TIMED_WAITING;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    ts.tv_sec += timeout / 10000000;
-    ts.tv_nsec += (timeout % 10000000) * 100;
-    int err = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &ts, 0);
+    ts.tv_sec = timeout / 10000000;
+    ts.tv_nsec = (timeout % 10000000) * 100;
+    int err = nanosleep(&ts, 0);
     current->state = IThread::RUNNABLE;
     if (err)
     {

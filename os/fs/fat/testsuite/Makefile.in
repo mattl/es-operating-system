@@ -92,7 +92,8 @@ target_triplet = @target@
 @ES_TRUE@	fat16_createmax$(EXEEXT) fat32_createmax$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_2)
-@POSIX_TRUE@am__append_1 = -lpthread -lrt
+@APPLE_TRUE@@POSIX_TRUE@am__append_1 = -lpthread
+@APPLE_FALSE@@POSIX_TRUE@am__append_2 = -lpthread -lrt
 subdir = fs/fat/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -163,230 +164,242 @@ fat_OBJECTS = $(am_fat_OBJECTS)
 fat_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 fat_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat16_OBJECTS = fat16.$(OBJEXT)
 fat16_OBJECTS = $(am_fat16_OBJECTS)
 fat16_LDADD = $(LDADD)
 fat16_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat16_attribute_OBJECTS = fat16_attribute.$(OBJEXT)
 fat16_attribute_OBJECTS = $(am_fat16_attribute_OBJECTS)
 fat16_attribute_LDADD = $(LDADD)
 fat16_attribute_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_createdir_OBJECTS = fat16_createdir.$(OBJEXT)
 fat16_createdir_OBJECTS = $(am_fat16_createdir_OBJECTS)
 fat16_createdir_LDADD = $(LDADD)
 fat16_createdir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_createfile_OBJECTS = fat16_createfile.$(OBJEXT)
 fat16_createfile_OBJECTS = $(am_fat16_createfile_OBJECTS)
 fat16_createfile_LDADD = $(LDADD)
 fat16_createfile_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_createmax_OBJECTS = fat16_createmax.$(OBJEXT)
 fat16_createmax_OBJECTS = $(am_fat16_createmax_OBJECTS)
 fat16_createmax_LDADD = $(LDADD)
 fat16_createmax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_getStream_OBJECTS = fat16_getStream.$(OBJEXT)
 fat16_getStream_OBJECTS = $(am_fat16_getStream_OBJECTS)
 fat16_getStream_LDADD = $(LDADD)
 fat16_getStream_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_object_OBJECTS = fat16_object.$(OBJEXT)
 fat16_object_OBJECTS = $(am_fat16_object_OBJECTS)
 fat16_object_LDADD = $(LDADD)
 fat16_object_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_readwrite_OBJECTS = fat16_readwrite.$(OBJEXT)
 fat16_readwrite_OBJECTS = $(am_fat16_readwrite_OBJECTS)
 fat16_readwrite_LDADD = $(LDADD)
 fat16_readwrite_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_removedir_OBJECTS = fat16_removedir.$(OBJEXT)
 fat16_removedir_OBJECTS = $(am_fat16_removedir_OBJECTS)
 fat16_removedir_LDADD = $(LDADD)
 fat16_removedir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_replace_OBJECTS = fat16_replace.$(OBJEXT)
 fat16_replace_OBJECTS = $(am_fat16_replace_OBJECTS)
 fat16_replace_LDADD = $(LDADD)
 fat16_replace_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat16_size_OBJECTS = fat16_size.$(OBJEXT)
 fat16_size_OBJECTS = $(am_fat16_size_OBJECTS)
 fat16_size_LDADD = $(LDADD)
 fat16_size_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat16_time_OBJECTS = fat16_time.$(OBJEXT)
 fat16_time_OBJECTS = $(am_fat16_time_OBJECTS)
 fat16_time_LDADD = $(LDADD)
 fat16_time_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat16_writemax_OBJECTS = fat16_writemax.$(OBJEXT)
 fat16_writemax_OBJECTS = $(am_fat16_writemax_OBJECTS)
 fat16_writemax_LDADD = $(LDADD)
 fat16_writemax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_attribute_OBJECTS = fat32_attribute.$(OBJEXT)
 fat32_attribute_OBJECTS = $(am_fat32_attribute_OBJECTS)
 fat32_attribute_LDADD = $(LDADD)
 fat32_attribute_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_createdir_OBJECTS = fat32_createdir.$(OBJEXT)
 fat32_createdir_OBJECTS = $(am_fat32_createdir_OBJECTS)
 fat32_createdir_LDADD = $(LDADD)
 fat32_createdir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_createfile_OBJECTS = fat32_createfile.$(OBJEXT)
 fat32_createfile_OBJECTS = $(am_fat32_createfile_OBJECTS)
 fat32_createfile_LDADD = $(LDADD)
 fat32_createfile_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_createmax_OBJECTS = fat32_createmax.$(OBJEXT)
 fat32_createmax_OBJECTS = $(am_fat32_createmax_OBJECTS)
 fat32_createmax_LDADD = $(LDADD)
 fat32_createmax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_getStream_OBJECTS = fat32_getStream.$(OBJEXT)
 fat32_getStream_OBJECTS = $(am_fat32_getStream_OBJECTS)
 fat32_getStream_LDADD = $(LDADD)
 fat32_getStream_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_object_OBJECTS = fat32_object.$(OBJEXT)
 fat32_object_OBJECTS = $(am_fat32_object_OBJECTS)
 fat32_object_LDADD = $(LDADD)
 fat32_object_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_readwrite_OBJECTS = fat32_readwrite.$(OBJEXT)
 fat32_readwrite_OBJECTS = $(am_fat32_readwrite_OBJECTS)
 fat32_readwrite_LDADD = $(LDADD)
 fat32_readwrite_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_removedir_OBJECTS = fat32_removedir.$(OBJEXT)
 fat32_removedir_OBJECTS = $(am_fat32_removedir_OBJECTS)
 fat32_removedir_LDADD = $(LDADD)
 fat32_removedir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_replace_OBJECTS = fat32_replace.$(OBJEXT)
 fat32_replace_OBJECTS = $(am_fat32_replace_OBJECTS)
 fat32_replace_LDADD = $(LDADD)
 fat32_replace_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat32_size_OBJECTS = fat32_size.$(OBJEXT)
 fat32_size_OBJECTS = $(am_fat32_size_OBJECTS)
 fat32_size_LDADD = $(LDADD)
 fat32_size_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat32_test_OBJECTS = fat32_test.$(OBJEXT)
 fat32_test_OBJECTS = $(am_fat32_test_OBJECTS)
 fat32_test_LDADD = $(LDADD)
 fat32_test_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat32_time_OBJECTS = fat32_time.$(OBJEXT)
 fat32_time_OBJECTS = $(am_fat32_time_OBJECTS)
 fat32_time_LDADD = $(LDADD)
 fat32_time_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat32_writemax_OBJECTS = fat32_writemax.$(OBJEXT)
 fat32_writemax_OBJECTS = $(am_fat32_writemax_OBJECTS)
 fat32_writemax_LDADD = $(LDADD)
 fat32_writemax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_attribute_OBJECTS = fat_attribute.$(OBJEXT)
 fat_attribute_OBJECTS = $(am_fat_attribute_OBJECTS)
 fat_attribute_LDADD = $(LDADD)
 fat_attribute_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_createdir_OBJECTS = fat_createdir.$(OBJEXT)
 fat_createdir_OBJECTS = $(am_fat_createdir_OBJECTS)
 fat_createdir_LDADD = $(LDADD)
 fat_createdir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_createfile_OBJECTS = fat_createfile.$(OBJEXT)
 fat_createfile_OBJECTS = $(am_fat_createfile_OBJECTS)
 fat_createfile_LDADD = $(LDADD)
 fat_createfile_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_createmax_OBJECTS = fat_createmax.$(OBJEXT)
 fat_createmax_OBJECTS = $(am_fat_createmax_OBJECTS)
 fat_createmax_LDADD = $(LDADD)
 fat_createmax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_getStream_OBJECTS = fat_getStream.$(OBJEXT)
 fat_getStream_OBJECTS = $(am_fat_getStream_OBJECTS)
 fat_getStream_LDADD = $(LDADD)
 fat_getStream_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_object_OBJECTS = fat_object.$(OBJEXT)
 fat_object_OBJECTS = $(am_fat_object_OBJECTS)
 fat_object_LDADD = $(LDADD)
 fat_object_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat_readwrite_OBJECTS = fat_readwrite.$(OBJEXT)
 fat_readwrite_OBJECTS = $(am_fat_readwrite_OBJECTS)
 fat_readwrite_LDADD = $(LDADD)
 fat_readwrite_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_removedir_OBJECTS = fat_removedir.$(OBJEXT)
 fat_removedir_OBJECTS = $(am_fat_removedir_OBJECTS)
 fat_removedir_LDADD = $(LDADD)
 fat_removedir_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fat_size_OBJECTS = fat_size.$(OBJEXT)
 fat_size_OBJECTS = $(am_fat_size_OBJECTS)
 fat_size_LDADD = $(LDADD)
 fat_size_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat_time_OBJECTS = fat_time.$(OBJEXT)
 fat_time_OBJECTS = $(am_fat_time_OBJECTS)
 fat_time_LDADD = $(LDADD)
 fat_time_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_fat_writemax_OBJECTS = fat_writemax.$(OBJEXT)
 fat_writemax_OBJECTS = $(am_fat_writemax_OBJECTS)
 fat_writemax_LDADD = $(LDADD)
 fat_writemax_DEPENDENCIES = ../libesfat.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_fileSystem_OBJECTS = fileSystem.$(OBJEXT)
 fileSystem_OBJECTS = $(am_fileSystem_OBJECTS)
 fileSystem_LDADD = $(LDADD)
 fileSystem_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_replace_OBJECTS = replace.$(OBJEXT)
 replace_OBJECTS = $(am_replace_OBJECTS)
 replace_LDADD = $(LDADD)
 replace_DEPENDENCIES = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 SCRIPTS = $(noinst_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -546,7 +559,7 @@ target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LDADD = ../libesfat.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__append_1)
+	../../../libes++/libessup++.a $(am__append_1) $(am__append_2)
 SUFFIXES = .img .gz 
 @ES_TRUE@noinst_DATA = 2hd.img fat16_5MB.img fat32.img \
 @ES_TRUE@	fat16.img fat16_replace.img \

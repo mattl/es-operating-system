@@ -18,7 +18,10 @@
 #ifndef NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED
 #define NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED
 
+#ifdef __linux__
+
 #include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <net/if.h>
 #include <es.h>
 #include <es/ref.h>
@@ -107,4 +110,6 @@ public:
     unsigned int release(void);
 };
 
-#endif // NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED
+#endif  // __linux__
+
+#endif  // NINTENDO_ES_KERNEL_POSIX_TAP_H_INCLUDED

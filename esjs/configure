@@ -689,6 +689,8 @@ WIN32_TRUE
 WIN32_FALSE
 POSIX_TRUE
 POSIX_FALSE
+APPLE_TRUE
+APPLE_FALSE
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -4339,6 +4341,23 @@ else
 fi
 
 
+case ${target} in
+  *-apple-*)
+    vendor_type=apple
+    ;;
+  *)
+    ;;
+esac
+
+ if test x$vendor_type = xapple; then
+  APPLE_TRUE=
+  APPLE_FALSE='#'
+else
+  APPLE_TRUE='#'
+  APPLE_FALSE=
+fi
+
+
 ac_config_files="$ac_config_files Makefile testsuite/Makefile"
 
 cat >confcache <<\_ACEOF
@@ -4527,6 +4546,13 @@ if test -z "${POSIX_TRUE}" && test -z "${POSIX_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"POSIX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"POSIX\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${APPLE_TRUE}" && test -z "${APPLE_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"APPLE\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"APPLE\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -5200,11 +5226,13 @@ WIN32_TRUE!$WIN32_TRUE$ac_delim
 WIN32_FALSE!$WIN32_FALSE$ac_delim
 POSIX_TRUE!$POSIX_TRUE$ac_delim
 POSIX_FALSE!$POSIX_FALSE$ac_delim
+APPLE_TRUE!$APPLE_TRUE$ac_delim
+APPLE_FALSE!$APPLE_FALSE$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 18; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 20; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

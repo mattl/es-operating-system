@@ -54,7 +54,8 @@ target_triplet = @target@
 @ES_TRUE@	iso9660_time$(EXEEXT) iso9660_rename$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_2)
-@POSIX_TRUE@am__append_1 = -lpthread -lrt
+@APPLE_TRUE@@POSIX_TRUE@am__append_1 = -lpthread
+@APPLE_FALSE@@POSIX_TRUE@am__append_2 = -lpthread -lrt
 subdir = fs/iso9660/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -88,73 +89,74 @@ iso9660_OBJECTS = $(am_iso9660_OBJECTS)
 iso9660_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 iso9660_DEPENDENCIES = ../libesiso9660.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__DEPENDENCIES_1)
+	../../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_iso9660_attribute_OBJECTS = iso9660_attribute.$(OBJEXT)
 iso9660_attribute_OBJECTS = $(am_iso9660_attribute_OBJECTS)
 iso9660_attribute_LDADD = $(LDADD)
 iso9660_attribute_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_create_OBJECTS = iso9660_create.$(OBJEXT)
 iso9660_create_OBJECTS = $(am_iso9660_create_OBJECTS)
 iso9660_create_LDADD = $(LDADD)
 iso9660_create_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_getStream_OBJECTS = iso9660_getStream.$(OBJEXT)
 iso9660_getStream_OBJECTS = $(am_iso9660_getStream_OBJECTS)
 iso9660_getStream_LDADD = $(LDADD)
 iso9660_getStream_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_maxLevel_OBJECTS = iso9660_maxLevel.$(OBJEXT)
 iso9660_maxLevel_OBJECTS = $(am_iso9660_maxLevel_OBJECTS)
 iso9660_maxLevel_LDADD = $(LDADD)
 iso9660_maxLevel_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_object_OBJECTS = iso9660_object.$(OBJEXT)
 iso9660_object_OBJECTS = $(am_iso9660_object_OBJECTS)
 iso9660_object_LDADD = $(LDADD)
 iso9660_object_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_read_OBJECTS = iso9660_read.$(OBJEXT)
 iso9660_read_OBJECTS = $(am_iso9660_read_OBJECTS)
 iso9660_read_LDADD = $(LDADD)
 iso9660_read_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_readwrite_OBJECTS = iso9660_readwrite.$(OBJEXT)
 iso9660_readwrite_OBJECTS = $(am_iso9660_readwrite_OBJECTS)
 iso9660_readwrite_LDADD = $(LDADD)
 iso9660_readwrite_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_remove_OBJECTS = iso9660_remove.$(OBJEXT)
 iso9660_remove_OBJECTS = $(am_iso9660_remove_OBJECTS)
 iso9660_remove_LDADD = $(LDADD)
 iso9660_remove_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_rename_OBJECTS = iso9660_rename.$(OBJEXT)
 iso9660_rename_OBJECTS = $(am_iso9660_rename_OBJECTS)
 iso9660_rename_LDADD = $(LDADD)
 iso9660_rename_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_size_OBJECTS = iso9660_size.$(OBJEXT)
 iso9660_size_OBJECTS = $(am_iso9660_size_OBJECTS)
 iso9660_size_LDADD = $(LDADD)
 iso9660_size_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_iso9660_time_OBJECTS = iso9660_time.$(OBJEXT)
 iso9660_time_OBJECTS = $(am_iso9660_time_OBJECTS)
 iso9660_time_LDADD = $(LDADD)
 iso9660_time_DEPENDENCIES = ../libesiso9660.a \
 	../../../kernel/libeskernel.a ../../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 SCRIPTS = $(noinst_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -286,7 +288,7 @@ target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LDADD = ../libesiso9660.a ../../../kernel/libeskernel.a \
-	../../../libes++/libessup++.a $(am__append_1)
+	../../../libes++/libessup++.a $(am__append_1) $(am__append_2)
 SUFFIXES = .img .gz .iso
 @ES_TRUE@noinst_DATA = isotest.iso fat16_5MB.img \
 @ES_TRUE@	iso9660.img iso9660_create.img iso9660_attribute.img iso9660_readwrite.img iso9660_read.img \

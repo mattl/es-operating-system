@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#ifdef __linux__
+
 #include "posix/tap.h"
 
 #include <errno.h>
@@ -26,9 +28,10 @@
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <netpacket/packet.h>
 #include <net/ethernet.h>
 #include <net/if_arp.h>
+
+#include <netpacket/packet.h>
 #include <linux/if_ether.h>
 
 #include <es/clsid.h>
@@ -375,3 +378,5 @@ release()
     }
     return count;
 }
+
+#endif  // __linux__

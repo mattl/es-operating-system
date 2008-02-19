@@ -75,20 +75,28 @@ nodist_esjs_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	ISet.$(OBJEXT) ICanvasRenderingContext2D.$(OBJEXT)
 esjs_OBJECTS = $(am_esjs_OBJECTS) $(nodist_esjs_OBJECTS)
 esjs_LDADD = $(LDADD)
-@ES_FALSE@@POSIX_TRUE@esjs_DEPENDENCIES = ../os/libes++/libes++.a \
-@ES_FALSE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
-@ES_FALSE@@POSIX_TRUE@	../os/libes++/libes++.a
-@ES_TRUE@esjs_DEPENDENCIES = ../os/libes++/libes++.a
+@APPLE_FALSE@@POSIX_TRUE@esjs_DEPENDENCIES = ../os/libes++/libes++.a \
+@APPLE_FALSE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
+@APPLE_FALSE@@POSIX_TRUE@	../os/libes++/libes++.a
+@APPLE_TRUE@@POSIX_TRUE@esjs_DEPENDENCIES = ../os/libes++/libes++.a \
+@APPLE_TRUE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
+@APPLE_TRUE@@POSIX_TRUE@	../os/libes++/libes++.a
+@ES_TRUE@@POSIX_FALSE@esjs_DEPENDENCIES = ../os/libes++/libes++.a
 esjs_LINK = $(CXXLD) $(esjs_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am__valueptr_SOURCES_DIST = src/valueptr.cpp
 @POSIX_TRUE@am_valueptr_OBJECTS = valueptr.$(OBJEXT)
 valueptr_OBJECTS = $(am_valueptr_OBJECTS)
 valueptr_LDADD = $(LDADD)
-@ES_FALSE@@POSIX_TRUE@valueptr_DEPENDENCIES = ../os/libes++/libes++.a \
-@ES_FALSE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
-@ES_FALSE@@POSIX_TRUE@	../os/libes++/libes++.a
-@ES_TRUE@valueptr_DEPENDENCIES = ../os/libes++/libes++.a
+@APPLE_FALSE@@POSIX_TRUE@valueptr_DEPENDENCIES =  \
+@APPLE_FALSE@@POSIX_TRUE@	../os/libes++/libes++.a \
+@APPLE_FALSE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
+@APPLE_FALSE@@POSIX_TRUE@	../os/libes++/libes++.a
+@APPLE_TRUE@@POSIX_TRUE@valueptr_DEPENDENCIES =  \
+@APPLE_TRUE@@POSIX_TRUE@	../os/libes++/libes++.a \
+@APPLE_TRUE@@POSIX_TRUE@	../os/kernel/libeskernel.a \
+@APPLE_TRUE@@POSIX_TRUE@	../os/libes++/libes++.a
+@ES_TRUE@@POSIX_FALSE@valueptr_DEPENDENCIES = ../os/libes++/libes++.a
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -294,8 +302,9 @@ esjs_SOURCES = \
 	src/string.cpp \
 	include/esjs.h include/value.h include/interface.h include/smartptr.h
 
+@APPLE_FALSE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt
+@APPLE_TRUE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre
 @ES_TRUE@LDADD = ../os/libes++/libes++.a -lpcreposix -lpcre
-@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lrt -lpcreposix -lpcre
 @POSIX_TRUE@esjs_CXXFLAGS = -D YYERROR_VERBOSE
 @POSIX_TRUE@valueptr_SOURCES = src/valueptr.cpp
 @ES_TRUE@AM_LDFLAGS = -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
@@ -1673,9 +1682,9 @@ vpath %.ent = ../include/es
 
 %.c : %.ent
 	mkdir -p $(*D);
-	echo -n "unsigned char" $(*F) > $@;
+	printf 'unsigned char %s' $(*F) > $@;
 	echo "Info[] = {" >> $@;
-	od -A n -t x1 -v -w8 $< | sed -e 's/^ */0x/' -e 's/ /, 0x/g' -e 's/$$/,/' >> $@;
+	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
 clean-local:

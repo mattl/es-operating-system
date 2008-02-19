@@ -117,7 +117,7 @@
 .text
 
 // dl           Physical device number the OS is being loaded
-.global _start
+.globl _start
 _start:                                 // at location 3000:0000
         jmp     0f
         nop
@@ -548,7 +548,7 @@ text_mode:
         pushl   %eax                    // argc
         ljmpl   $8, $0x81000010         // Jump to the es.img
 
-.global _shutdown
+.globl _shutdown
 _shutdown:
         cli
 
@@ -622,7 +622,7 @@ _shutdown:
 hang:
         leaw    failed, %si
         call    prtstr
-.global _halt
+.globl _halt
 _halt:
         hlt
         jmp     _halt
@@ -767,11 +767,11 @@ readCluster:
 
         // Determine FAT12, FAT16 or FAT32
         cmpl    $65525, (CountOfClusters)
-        jae     32f
+        jae     rf32
         cmpl    $4085, (CountOfClusters)
-        jae     16f
+        jae     rf16
 
-12:     // FAT 12
+rf12:   // FAT 12
         movl    %esi, %eax
         shrl    $1, %eax
         addl    %esi, %eax              // eax = fat offset
@@ -800,7 +800,7 @@ readCluster:
         movl    %eax, %esi              // esi = next cluster number
         ret
 
-16:     // FAT 16
+rf16:   // FAT 16
         movzwl  (BPB_BytsPerSec), %ecx
         shrl    $1, %ecx                // ecx = (BPB_BytsPerSec / 2)
         xorl    %edx, %edx
@@ -826,7 +826,7 @@ readCluster:
         popw    %es
         ret
 
-32:     // FAT 32
+rf32:   // FAT 32
         movzwl  (BPB_BytsPerSec), %ecx
         shrl    $2, %ecx                // ecx = (BPB_BytsPerSec / 4)
         xorl    %edx, %edx
@@ -996,7 +996,7 @@ filename:
         .ascii  "ES      IMG"
 
         // Global Descriptor Table (GDT)
-        .align  16
+        .p2align 4
 gdt:
         // Not used
         .word   0
@@ -1035,7 +1035,7 @@ gdt:
         .word   0x8040                  // 80h:0b:D:0b:0b:0h
 gdtEnd:
 
-        .align  4
+        .p2align 2
         .word   0                       // alignment byte
 idt48:
         .word   0                       // idt limit = 0
@@ -1051,9 +1051,9 @@ idt48Real:
         .word   0x400                   // idt limit = 0
         .word   0, 0                    // idt base = 0L
 
-        .align  4096
+        .p2align 12
         // Application processor startup routine
-.global _startap
+.globl _startap
 _startap:
         // Set %sp
         cli
