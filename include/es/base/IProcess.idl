@@ -29,9 +29,9 @@ module es
 {
     /** This interface provides methods for handling child processes of the current process.
      */
-    interface IProcess : IInterface
+    interface Process : Interface
     {
-        #pragma ID IProcess = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
+        #pragma ID Process = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
 
         /**
          * Kills this process.
@@ -42,12 +42,12 @@ module es
          * @param file an executable file.
          * @param command arguments to be passed to the program.
          */
-        void start(in IFile file, in string command);
+        void start(in File file, in string command);
         /**
          * Starts this process, which executes a program <code>file</code>.
          * @param file an executable file.
          */
-        void start(in IFile file);
+        void start(in File file);
         /**
          * Starts this process.
          */
@@ -64,23 +64,23 @@ module es
         /**
          * The root of the namespace for this process.
          */
-        attribute IContext root;
+        attribute Context root;
         /**
          * The standard input for this process.
          */
-        attribute IStream input;
+        attribute Stream input;
         /**
          * The standard output for this process.
          */
-        attribute IStream output;
+        attribute Stream output;
         /**
          * The standard error for this process.
          */
-        attribute IStream error;
+        attribute Stream error;
         /**
          * The current working context in the namespace for this process.
          */
-        attribute IContext current;
+        attribute Context current;
 
         /**
          * The exit value of this process.
@@ -90,9 +90,9 @@ module es
 
     /** This interface provides methods for handling the current process.
      */
-    interface ICurrentProcess : IInterface
+    interface CurrentProcess : Interface
     {
-        #pragma ID ICurrentProcess = "DCE:3c10827b-44c2-11dc-9c02-0009bf000001";
+        #pragma ID CurrentProcess = "DCE:3c10827b-44c2-11dc-9c02-0009bf000001";
         const unsigned long PROT_NONE = 0x0;
         const unsigned long PROT_READ = 0x1;
         const unsigned long PROT_WRITE = 0x2;
@@ -116,7 +116,7 @@ module es
          * @return the address of the mapping.
          */
         any map(in any start, in long long length, in unsigned long prot, in unsigned long flags,
-                in IPageable pageable, in long long offset);
+                in Pageable pageable, in long long offset);
 
         /**
          * Deletes the mappings.
@@ -127,7 +127,7 @@ module es
 
         /** Returns the currently executing thread.
          */
-        ICurrentThread currentThread();
+        CurrentThread currentThread();
 
         /** Creates and returns a new thread.
          * @return          a new thread.
@@ -135,7 +135,7 @@ module es
          * @param param     the argument to be passed to <code>start</code>.
          * @see IThread
          */
-        IThread createThread(in any start, in any param);
+        Thread createThread(in any start, in any param);
 
         /** Causes the currently executing thread to temporarily pause
          * and allow other threads to execute.
@@ -144,27 +144,27 @@ module es
 
         /** Creates and returns an unlocked monitor.
          * @return          an unlocked monitor.
-         * @see IMonitor
+         * @see Monitor
          */
-        IMonitor createMonitor();
+        Monitor createMonitor();
 
         /**
          * The root of the namespace.
          */
-        readonly attribute IContext root;
+        readonly attribute Context root;
 
         /**
          * The standard input.
          */
-        readonly attribute IStream input;
+        readonly attribute Stream input;
         /**
          * The standard output.
          */
-        readonly attribute IStream output;
+        readonly attribute Stream output;
         /**
          * The standard error.
          */
-        readonly attribute IStream error;
+        readonly attribute Stream error;
 
         /**
          * Increments the program data space.
@@ -186,7 +186,7 @@ module es
         /**
          * The current working context in the namespace.
          */
-        attribute IContext current;
+        attribute Context current;
     };
 };
 

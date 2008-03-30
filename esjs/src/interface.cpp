@@ -768,7 +768,7 @@ public:
 
         if (interface.getSuperIid() == GUID_NULL)
         {
-            prototype->setPrototype(getGlobal()->get("Interface")->getPrototype()->getPrototype());
+            prototype->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype()->getPrototype());
         }
         else
         {
@@ -890,7 +890,7 @@ static void constructSystemObject(Reflect::Module& module)
         PRINTF("%s\n", interface.getName());
         ObjectValue* object = new ObjectValue;
         object->setCode(new InterfaceConstructor(object, interface.getIid()));
-        object->setPrototype(getGlobal()->get("Interface")->getPrototype());
+        object->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype());
         getGlobal()->put(interface.getName(), object);
     }
 
@@ -914,6 +914,6 @@ ObjectValue* constructSystemObject(void* system)
 
     System()->addRef();
     ObjectValue* object = new InterfacePointerValue(System());
-    object->setPrototype(getGlobal()->get("ICurrentProcess")->get("prototype"));
+    object->setPrototype(getGlobal()->get("CurrentProcess")->get("prototype"));
     return object;
 }

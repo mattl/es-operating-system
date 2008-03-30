@@ -25,17 +25,17 @@ module es
 {
     /**
      */
-    interface ICanvasPattern : IInterface
+    interface CanvasPattern : Interface
     {
-        #pragma ID ICanvasPattern = "DCE:02c5e50b-d29f-4e4b-bd6c-4b74597b9776";
+        #pragma ID CanvasPattern = "DCE:02c5e50b-d29f-4e4b-bd6c-4b74597b9776";
         void apply(in any cr); // [check] how to pass the context?
     };
 
     /**
      */
-    interface ICanvasGradient : IInterface
+    interface CanvasGradient : Interface
     {
-        #pragma ID ICanvasGradient = "DCE:fdcbb39f-de6b-4812-9c33-7d1856bea6ec";
+        #pragma ID CanvasGradient = "DCE:fdcbb39f-de6b-4812-9c33-7d1856bea6ec";
         void addColorStop(in float offset, in string color);
         void apply(in any cr); // [check] how to pass the context?
     };
@@ -44,9 +44,9 @@ module es
      * This interface provides methods for handling
      * a script rendering bitmap images.
      */
-    interface ICanvasRenderingContext2D : IInterface
+    interface CanvasRenderingContext2D : Interface
     {
-        #pragma ID ICanvasRenderingContext2D = "DCE:8661833f-25d8-4d4c-999c-ede0fcbbbf32";
+        #pragma ID CanvasRenderingContext2D = "DCE:8661833f-25d8-4d4c-999c-ede0fcbbbf32";
 
         // state
         void restore();
@@ -77,12 +77,12 @@ module es
         void clip();
 
         // drawing images
-        void drawImage(in IFile image, in float dx, in float dy, in float dw, in float dh);
+        void drawImage(in File image, in float dx, in float dy, in float dw, in float dh);
 
         // creating gradient and pattern styles
-        ICanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
-        ICanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
-        ICanvasPattern createPattern(in IFile image, in string repeat);
+        CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
+        CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
+        CanvasPattern createPattern(in File image, in string repeat);
 
         // compositing
         attribute float globalAlpha;
@@ -91,8 +91,8 @@ module es
         // colors and styles
         attribute string strokeStyle;
         attribute string fillStyle;
-        attribute ICanvasGradient fillGradient;
-        attribute ICanvasPattern fillPattern;
+        attribute CanvasGradient fillGradient;
+        attribute CanvasPattern fillPattern;
 
         // line caps/joins
         attribute float lineWidth;

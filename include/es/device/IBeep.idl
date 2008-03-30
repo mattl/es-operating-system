@@ -25,9 +25,9 @@ module es
     /**
      * This interface represents properties of beep sound.
      */
-    interface IBeep : IInterface
+    interface Beep : Interface
     {
-        #pragma ID IBeep = "DCE:83a0e378-25dc-11db-9c02-0009bf000001";
+        #pragma ID Beep = "DCE:83a0e378-25dc-11db-9c02-0009bf000001";
 
         /**
          * Generates a beep sound according to the setting in this beep object.

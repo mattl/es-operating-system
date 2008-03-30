@@ -26,9 +26,9 @@ module es
      * This interface provides a timer
      * which issues the specified callback function after a specified delay.
      */
-    interface IAlarm : IInterface
+    interface Alarm : Interface
     {
-        #pragma ID IAlarm = "DCE:032000e0-25db-11db-9c02-0009bf000001";
+        #pragma ID Alarm = "DCE:032000e0-25db-11db-9c02-0009bf000001";
 
         /**
          * The interval from when this alarm starts till when it fires.
@@ -56,7 +56,7 @@ module es
          * Sets a callback function which is called when this alarm fires.
          * @param callback the callback function.
          */
-        void setCallback(in ICallback callback);
+        void setCallback(in Callback callback);
     };
 };
 

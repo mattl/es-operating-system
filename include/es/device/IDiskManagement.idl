@@ -25,9 +25,9 @@ module es
     /**
      * This interface provides methods for managing disk partitions.
      */
-    interface IDiskManagement : IInterface
+    interface DiskManagement : Interface
     {
-        #pragma ID IDiskManagement = "DCE:83a44e14-25dc-11db-9c02-0009bf000001";
+        #pragma ID DiskManagement = "DCE:83a44e14-25dc-11db-9c02-0009bf000001";
         struct Geometry
         {
             unsigned long heads;

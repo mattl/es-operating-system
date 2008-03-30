@@ -25,20 +25,20 @@ module es
     /** A selectable object notifies the registered monitor objects
      * when its state is changed.
      */
-    interface ISelectable : IInterface
+    interface Selectable : Interface
     {
-        #pragma ID ISelectable = "DCE:4714271e-d101-11db-9c02-0009bf000001";
+        #pragma ID Selectable = "DCE:4714271e-d101-11db-9c02-0009bf000001";
 
         /**
          * Registers a monitor object to this selectable object.
          * @param selector a monitor object.
          */
-        long add(in IMonitor selector);
+        long add(in Monitor selector);
         /**
          * Unregisters a monitor object from this selectable object.
          * @param selector a monitor object.
          */
-        long remove(in IMonitor selector);
+        long remove(in Monitor selector);
     };
 };
 

@@ -23,7 +23,7 @@ for (;;)
     var line = readLine("% ");
     try
     {
-        var file = IFile(root.lookup(line));
+        var file = File(root.lookup(line));
         var stream = file.getStream();
         var x = "";
         while ((c = stream.read(255)) != '')

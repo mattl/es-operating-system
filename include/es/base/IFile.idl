@@ -25,9 +25,9 @@ module es
 {
     /** This interface provides methods for handling files and directories.
      */
-    interface IFile : IInterface
+    interface File : Interface
     {
-        #pragma ID IFile = "DCE:0325f4e6-25db-11db-9c02-0009bf000001";
+        #pragma ID File = "DCE:0325f4e6-25db-11db-9c02-0009bf000001";
 
         const long ReadOnly = 0x01;
         const long Hidden = 0x02;
@@ -88,7 +88,7 @@ module es
 
         /** The unique IPageable interface associated with this file.
          */
-        readonly attribute IPageable pageable;
+        readonly attribute Pageable pageable;
 
         /** The length of this file.
          */
@@ -96,7 +96,7 @@ module es
 
         /** The unique IStream interface associated with this file.
          */
-        readonly attribute IStream stream;
+        readonly attribute Stream stream;
     };
 };
 

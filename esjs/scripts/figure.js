@@ -1,4 +1,4 @@
-var c = ICanvasRenderingContext2D(root.lookup("/device/canvas"));
+var c = CanvasRenderingContext2D(root.lookup("/device/canvas"));
 
 // bar graph
 var top = 50;

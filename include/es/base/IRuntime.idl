@@ -25,9 +25,9 @@ module es
     /** This interface provides methods for run-time setup.
      * @since 0.0.2
      */
-    interface IRuntime : IInterface
+    interface Runtime : Interface
     {
-        #pragma ID IRuntime = "DCE:fd4ad80c-414b-11db-9c02-0009bf000001";
+        #pragma ID Runtime = "DCE:fd4ad80c-414b-11db-9c02-0009bf000001";
 
         /**
          * Sets the startup routine of threads.

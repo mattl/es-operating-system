@@ -12,7 +12,7 @@ for (var i = 1; i < params.length; ++i)
 {
     try
     {
-        var file = IFile(cwd.lookup(params[i]));
+        var file = File(cwd.lookup(params[i]));
         var stream = file.stream;
         print(stream);
     }

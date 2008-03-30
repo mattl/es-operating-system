@@ -25,9 +25,9 @@ module es
     /**
      * This interface provides methods for getting internet addresses.
      */
-    interface IResolver : IInterface
+    interface Resolver : Interface
     {
-        #pragma ID IResolver = "DCE:ab43362c-c601-11db-8100-0009bf000001";
+        #pragma ID Resolver = "DCE:ab43362c-c601-11db-8100-0009bf000001";
         typedef sequence<octet> Buf;
 
         /** Gets an internet address about the host for the specified DNS host name.
@@ -35,7 +35,7 @@ module es
          * @param addressFamily the address family of the internet address to be requested.
          * @return the internet address of the host.
          */
-        IInternetAddress getHostByName(in string hostName, in long addressFamily);
+        InternetAddress getHostByName(in string hostName, in long addressFamily);
 
 
         /** Creates an internet address based on the provided IP address.
@@ -45,14 +45,14 @@ module es
          * @param scopeID the scope identifier of the network interface.
          * @return the new internet address.
          */
-        IInternetAddress getHostByAddress(in Buf address, in unsigned long scopeID);
+        InternetAddress getHostByAddress(in Buf address, in unsigned long scopeID);
 
         /** Gets the host name of the specified internet address.
          * @param address  the internet address.
          * @param hostName the host name.
          * @param len      the length of the buffer to contain the host name.
          */
-        string getHostName(in IInternetAddress address);
+        string getHostName(in InternetAddress address);
     };
 };
 

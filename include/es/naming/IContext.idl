@@ -27,20 +27,20 @@ module es
      * of name-to-object bindings. It contains methods for examining and
      * updating these bindings.
      */
-    interface IContext : IInterface
+    interface Context : Interface
     {
-        #pragma ID IContext = "DCE:33f8180a-25dc-11db-9c02-0009bf000001";
+        #pragma ID Context = "DCE:33f8180a-25dc-11db-9c02-0009bf000001";
 
         /** Binds a name to an object.
          * @param name      The name to bind.
          * @param obj       The object to bind.
          */
-        IBinding bind(in string name, in IInterface element);
+        Binding bind(in string name, in Interface element);
 
         /** Creates a new context.
          * @param name      The name of the context to create.
          */
-        IContext createSubcontext(in string name);
+        Context createSubcontext(in string name);
 
         /** Removes the named context.
          * @param name      The name of the context to be destroyed.
@@ -51,7 +51,7 @@ module es
          * @param name      The name of the object to look up.
          * @return          The object bound to <code>name</code>.
          */
-        IInterface lookup(in string name);
+        Interface lookup(in string name);
 
         /** Binds a new name to the object bound to an old name, and unbinds
          * the old name.
@@ -72,7 +72,7 @@ module es
          *                  context. Each element of the iterator is of type
          *                  <code>IBinding</code>.
          */
-        IIterator list(in string name);
+        Iterator list(in string name);
     };
 };
 

@@ -11,7 +11,7 @@ for (var i = 1; i < params.length; ++i)
         while (iter.hasNext())
         {
             unknown = iter.next();
-            binding = IBinding(unknown);
+            binding = Binding(unknown);
             name = binding.name;
             if (name != "." && name != "..")
             {

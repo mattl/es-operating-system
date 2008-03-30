@@ -24,9 +24,9 @@ module es
 {
     /** A thread of execution in a program.
      */
-    interface IThread : IInterface
+    interface Thread : Interface
     {
-        #pragma ID IThread = "DCE:032d1118-25db-11db-9c02-0009bf000001";
+        #pragma ID Thread = "DCE:032d1118-25db-11db-9c02-0009bf000001";
         enum State
         {
             NEW,
@@ -71,9 +71,9 @@ module es
         readonly attribute long state;
     };
 
-    interface ICurrentThread : IInterface
+    interface CurrentThread : Interface
     {
-        #pragma ID ICurrentThread = "DCE:beb0489e-4492-11db-9c02-0009bf000001";
+        #pragma ID CurrentThread = "DCE:beb0489e-4492-11db-9c02-0009bf000001";
 
         /** Cancellation requests are held pending until a cancellation point
          * is reached

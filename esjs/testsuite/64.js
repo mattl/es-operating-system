@@ -12,7 +12,7 @@ function print(stream)
     }
 }
 
-file = IFile(root.lookup(filename));
+file = File(root.lookup(filename));
 stream = file.stream;
 print(stream);
 "Ok";

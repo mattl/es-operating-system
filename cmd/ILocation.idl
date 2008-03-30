@@ -31,9 +31,9 @@ module es
     /**
      * This interface provides a location service.
      */
-    interface ILocation : IInterface
+    interface Location : Interface
     {
-        #pragma ID ILocation = "DCE:113772a7-bf4a-4c91-b4cc-50514cf3b4f0";
+        #pragma ID Location = "DCE:113772a7-bf4a-4c91-b4cc-50514cf3b4f0";
 
         void set(in Point point);
         void get(out Point point);

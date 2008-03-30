@@ -22,9 +22,9 @@ module es
 {
     /** This interface is the root of the component interface hierarchy.
      */
-    interface IInterface
+    interface Interface
     {
-        #pragma ID IInterface = "DCE:D73C48F0-37E9-11DB-9C02-0009BF000001";
+        #pragma ID Interface = "DCE:D73C48F0-37E9-11DB-9C02-0009BF000001";
 
         /** Determines if an interface can be used with this object.
          * @param riid          UUID of the interface to be queried.

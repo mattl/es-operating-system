@@ -4,5 +4,5 @@ if (params.length <= 1)
 }
 else
 {
-    cwd = IContext(cwd.lookup(params[1]));
+    cwd = Context(cwd.lookup(params[1]));
 }

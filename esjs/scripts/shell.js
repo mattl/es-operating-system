@@ -5,7 +5,7 @@ stdin = System.input;
 stdout = System.output;
 stderr = System.error;
 root = System.root;
-classStore = IClassStore(root.lookup("class"));
+classStore = ClassStore(root.lookup("class"));
 cwd = root;
 
 path = [ "file" ];
@@ -46,17 +46,17 @@ function getFile(pathname)
         var name = path[i] + '/' + pathname;
         try
         {
-            return IFile(root.lookup(name));
+            return File(root.lookup(name));
         }
         catch (e)
         {
             try
             {
-                return IFile(root.lookup(name + ".js"));
+                return File(root.lookup(name + ".js"));
             }
             catch (e)
             {
-                return IFile(root.lookup(name + ".elf"));
+                return File(root.lookup(name + ".elf"));
             }
         }
     }

@@ -26,15 +26,15 @@ module es
     /**
      * This interface provides methods for managing a file system.
      */
-    interface IFileSystem : IInterface
+    interface FileSystem : Interface
     {
-        #pragma ID IFileSystem = "DCE:83a6a1dc-25dc-11db-9c02-0009bf000001";
+        #pragma ID FileSystem = "DCE:83a6a1dc-25dc-11db-9c02-0009bf000001";
 
         /**
          * Attaches a disk to the file subsystem, and
          * makes the file system accessible.
          */
-        void mount(in IStream disk);
+        void mount(in Stream disk);
         /**
          * Detaches the disk from the file subsystem.
          */
@@ -59,7 +59,7 @@ module es
         /**
          * The root namespace of this file system.
          */
-        readonly attribute IContext root;
+        readonly attribute Context root;
         /**
          * The total size of the space in this file system in bytes
          */

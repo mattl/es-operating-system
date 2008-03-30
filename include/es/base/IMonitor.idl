@@ -29,9 +29,9 @@ module es
      *
      * @see ICurrentProcess
      */
-    interface IMonitor : IInterface
+    interface Monitor : Interface
     {
-        #pragma ID IMonitor = "DCE:0326e914-25db-11db-9c02-0009bf000001";
+        #pragma ID Monitor = "DCE:0326e914-25db-11db-9c02-0009bf000001";
 
         /** Acquires the lock on this monitor.
          */

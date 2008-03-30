@@ -25,15 +25,15 @@ module es
     /**
      * This interface provides methods for managing class factories.
      */
-    interface IClassStore : IInterface
+    interface ClassStore : Interface
     {
-        #pragma ID IClassStore = "DCE:eeb4c758-4a0b-11db-9c02-0009bf000001";
+        #pragma ID ClassStore = "DCE:eeb4c758-4a0b-11db-9c02-0009bf000001";
         /**
          * Registers the specified class factory in this class store.
          * @param rclsid    the class ID.
          * @param factory   the class factory.
          */
-        void add(in uuid rclsid, in IClassFactory factory);
+        void add(in uuid rclsid, in ClassFactory factory);
         /**
          * Removes the specified class factory from this class store.
          * @param rclsid    the class ID.

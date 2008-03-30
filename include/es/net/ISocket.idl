@@ -25,9 +25,9 @@ module es
     /**
      * This interface represents a socket.
      */
-    interface ISocket : IInterface
+    interface Socket : Interface
     {
-        #pragma ID ISocket = "DCE:2f2ea026-d137-11db-9c02-0009bf000001";
+        #pragma ID Socket = "DCE:2f2ea026-d137-11db-9c02-0009bf000001";
 
         typedef sequence<octet> Buf;
 
@@ -42,14 +42,14 @@ module es
          * The original socket remains open for further connection requests.
          * @return a new socket.
          */
-        ISocket accept();
+        Socket accept();
 
         /** Assigns the specified local internet address and the specified port to this socket that
          *  has no local socket address assigned.
          * @param addr the internet address to be assigned.
          * @param port the port number.
          */
-        void bind(in IInternetAddress addr, in long port);
+        void bind(in InternetAddress addr, in long port);
 
         /** Closes this socket.
          */
@@ -61,7 +61,7 @@ module es
          * @param addr the internet address of the server
          * @param port the port number of the server.
          */
-        void connect(in IInternetAddress addr, in long port);
+        void connect(in InternetAddress addr, in long port);
 
         /** Enables the connection-mode socket to accept connections.
          * @param backlog The maximum number of pending connections in the socket's listen backlog queue.
@@ -88,7 +88,7 @@ module es
          * @param port  the port number of the peer.
          * @return the number of bytes received in the buffer.
          */
-        Buf recvFrom(in long flags, out IInternetAddress addr, out long port);
+        Buf recvFrom(in long flags, out InternetAddress addr, out long port);
 
         /** Sends a message to the specified destination through this socket.
          * @param src   the buffer containing the message to send.
@@ -98,7 +98,7 @@ module es
          * @param port  the port number of the destination.
          * @return      the number of bytes sent.
          */
-        long sendTo(in Buf src, in long flags, in IInternetAddress addr, in long port);
+        long sendTo(in Buf src, in long flags, in InternetAddress addr, in long port);
 
         /** Disables read-half of this socket connection.
          * Any data sent to the input side of this socket is discarded
@@ -146,7 +146,7 @@ module es
 
         /** The local address to which this socket is bound.
          */
-        readonly attribute IInternetAddress localAddress;
+        readonly attribute InternetAddress localAddress;
 
         /** The local port to which this socket is bound.
          */
@@ -162,7 +162,7 @@ module es
 
         /** The remote internet address to which this socket is connected.
          */
-        readonly attribute IInternetAddress remoteAddress;
+        readonly attribute InternetAddress remoteAddress;
 
         /** The remote port to which this socket is connected.
          */
@@ -207,9 +207,9 @@ module es
     /**
      * This interface represents a stream socket.
      */
-    interface IStreamSocket : ISocket
+    interface StreamSocket : Socket
     {
-        #pragma ID IStreamSocket = "DCE:bed398d0-9fa5-11db-8100-0009bf000001";
+        #pragma ID StreamSocket = "DCE:bed398d0-9fa5-11db-8100-0009bf000001";
 
         void sendUrgentData(in octet data);
 
@@ -223,12 +223,12 @@ module es
     /**
      * This interface represents a multicast socket.
      */
-    interface IMulticastSocket : ISocket
+    interface MulticastSocket : Socket
     {
-        #pragma ID IMulticastSocket = "DCE:bf5985a8-9fa5-11db-8100-0009bf000001";
+        #pragma ID MulticastSocket = "DCE:bf5985a8-9fa5-11db-8100-0009bf000001";
 
-        void joinGroup(in IInternetAddress addr);
-        void leaveGroup(in IInternetAddress addr);
+        void joinGroup(in InternetAddress addr);
+        void leaveGroup(in InternetAddress addr);
 
         attribute boolean loopbackMode;
     };

@@ -22,9 +22,9 @@
 
 module es
 {
-    interface INetworkInterface : IInterface
+    interface NetworkInterface : Interface
     {
-        #pragma ID INetworkInterface = "DCE:0069e36a-c85c-11db-9c02-0009bf000001";
+        #pragma ID NetworkInterface = "DCE:0069e36a-c85c-11db-9c02-0009bf000001";
 
         // Interface type [http://www.iana.org/assignments/smi-numbers]
         const long Other = 1;      // none of the following

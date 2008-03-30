@@ -25,9 +25,9 @@ module es
     /**
      * This interface represents a restartable service.
      */
-    interface IService : IInterface
+    interface Service : Interface
     {
-        #pragma ID IService = "DCE:e9e58a92-c6c9-11db-8100-0009bf000001";
+        #pragma ID Service = "DCE:e9e58a92-c6c9-11db-8100-0009bf000001";
 
         /**
          * Starts this service.

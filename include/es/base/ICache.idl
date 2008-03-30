@@ -27,19 +27,19 @@ module es
      * This interface provides methods for handling a cache
      * that is a block of memory for temporary storage.
      */
-    interface ICache : IInterface
+    interface Cache : Interface
     {
-        #pragma ID ICache = "DCE:03212600-25db-11db-9c02-0009bf000001";
+        #pragma ID Cache = "DCE:03212600-25db-11db-9c02-0009bf000001";
 
         /** Creates a new stream for this cache.
          */
-        readonly attribute IStream stream;
+        readonly attribute Stream stream;
         /** Creates a new input stream for this cache.
          */
-        readonly attribute IStream inputStream;
+        readonly attribute Stream inputStream;
         /** Creates a new output stream for this cache.
          */
-        readonly attribute IStream outputStream;
+        readonly attribute Stream outputStream;
 
         /** The size of this cache.
          */
@@ -68,17 +68,17 @@ module es
     /**
      *  This interface provides methods to create caches and associate them with page sets.
      */
-    interface ICacheFactory : IInterface
+    interface CacheFactory : Interface
     {
-        #pragma ID ICacheFactory = "DCE:03220a48-25db-11db-9c02-0009bf000001";
+        #pragma ID CacheFactory = "DCE:03220a48-25db-11db-9c02-0009bf000001";
 
         /** Creates a new cache.
          */
-        ICache create(in IStream backingStore);
+        Cache create(in Stream backingStore);
 
         /** Creates a new cache associated with the specified pageSet.
          */
-        ICache create(in IStream backingStore, in IPageSet pageSet);
+        Cache create(in Stream backingStore, in PageSet pageSet);
     };
 };
 
