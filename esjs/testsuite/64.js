@@ -2,7 +2,7 @@ stdin = System.input;
 stdout = System.output;
 root = System.root;
 
-filename = "Makefile";
+filename = "file/Makefile";
 
 function print(stream)
 {
