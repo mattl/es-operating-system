@@ -36,8 +36,8 @@ target_triplet = @target@
 noinst_PROGRAMS = squeak$(EXEEXT)
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure COPYING \
-	ChangeLog config.guess config.sub depcomp install-sh missing
+	$(srcdir)/Makefile.in $(top_srcdir)/configure ChangeLog \
+	config.guess config.sub depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -250,7 +250,8 @@ INCLUDES = \
 	-I$(srcdir)/es/vm/intplugins/SecurityPlugin
 
 EXTRA_DIST = \
-	License \
+	LICENSE \
+	NOTICE \
 	es/plugins.ext \
 	es/plugins.int
 

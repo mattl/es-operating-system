@@ -163,9 +163,11 @@ top_srcdir = @top_srcdir@
 SUBDIRS = $(ESIDL) include os $(TOOLS) $(INIT) $(CMD) esjs
 DIST_SUBDIRS = esidl include os tools init cmd esjs
 EXTRA_DIST = \
+	setup \
 	LICENSE \
 	NOTICE \
 	patches/README \
+	patches/automake-1.10.patch \
 	patches/binutils-2.16.1.patch \
 	patches/binutils-2.17.patch \
 	patches/gcc-4.1.0.patch \

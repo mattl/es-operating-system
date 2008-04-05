@@ -1,15 +1,86 @@
+2008-04-04 23:00  Shiki.Okasaka
+
+	* COPYING, LICENSE, License, NOTICE, README: Update URL, etc.
+
+2008-01-15 14:03  Shiki.Okasaka
+
+	* es/vm/intplugins/FilePlugin/sqEsDirectory.cpp,
+	  es/vm/intplugins/FilePlugin/sqEsFile.cpp,
+	  es/vm/intplugins/SocketPlugin/sqEsSocket.cpp,
+	  es/vm/intplugins/SoundPlugin/sqEsSound.cpp, es/vm/selector.h,
+	  es/vm/sqEs.cpp, es/vm/sqEsInput.cpp: Convert to the Apache
+	  License, Version 2.0.
+
+2008-01-15 11:50  Shiki.Okasaka
+
+	* COPYING: (COPYING) : Convert to the Apache License, Version 2.0.
+
+2008-01-12 17:45  Shiki.Okasaka
+
+	* es/vm/interp.c, es/vm/selector.h, es/vm/sqConfig.h,
+	  es/vm/sqEs.cpp, es/vm/sqEsInput.cpp, es/vm/sqNamedPrims.h,
+	  es/vm/sqPlatformSpecific.h: (svn:executable) : Remove.
+
+2008-01-12 16:51  Shiki.Okasaka
+
+	* es/vm/intplugins/B2DPlugin/B2DPlugin.c,
+	  es/vm/intplugins/BitBltPlugin/BitBltPlugin.c,
+	  es/vm/intplugins/FilePlugin/FilePlugin.c,
+	  es/vm/intplugins/FilePlugin/FilePlugin.h,
+	  es/vm/intplugins/FilePlugin/sqEsDirectory.cpp,
+	  es/vm/intplugins/FilePlugin/sqEsFile.cpp,
+	  es/vm/intplugins/FloatArrayPlugin/FloatArrayPlugin.c,
+	  es/vm/intplugins/LargeIntegers/LargeIntegers.c,
+	  es/vm/intplugins/Matrix2x3Plugin/Matrix2x3Plugin.c,
+	  es/vm/intplugins/MiscPrimitivePlugin/MiscPrimitivePlugin.c,
+	  es/vm/intplugins/SecurityPlugin/SecurityPlugin.c,
+	  es/vm/intplugins/SecurityPlugin/SecurityPlugin.h,
+	  es/vm/intplugins/SecurityPlugin/sqEsSecurity.c,
+	  es/vm/intplugins/SocketPlugin/SocketPlugin.c,
+	  es/vm/intplugins/SocketPlugin/SocketPlugin.h,
+	  es/vm/intplugins/SocketPlugin/sqEsSocket.cpp,
+	  es/vm/intplugins/SoundGenerationPlugin/SoundGenerationPlugin.c,
+	  es/vm/intplugins/SoundGenerationPlugin/SoundGenerationPlugin.h,
+	  es/vm/intplugins/SoundGenerationPlugin/sqOldSoundPrims.c,
+	  es/vm/intplugins/SoundPlugin/SoundPlugin.c,
+	  es/vm/intplugins/SoundPlugin/SoundPlugin.h,
+	  es/vm/intplugins/SoundPlugin/sqEsSound.cpp: (svn:executable) :
+	  Remove.
+
+2008-01-12 16:46  Shiki.Okasaka
+
+	* es/plugins.ext, es/plugins.int: (svn:executable) : Remove.
+
+2008-01-12 16:44  Shiki.Okasaka
+
+	* Cross/vm/sq.h, Cross/vm/sqNamedPrims.c,
+	  Cross/vm/sqVirtualMachine.c, Cross/vm/sqVirtualMachine.h:
+	  (svn:executable) : Remove.
+
+2008-01-12 16:43  Shiki.Okasaka
+
+	* COPYING, ChangeLog, License, Makefile.am, README, configure.ac:
+	  (svn:executable) : Remove.
+
+2008-01-12 02:46  Shiki.Okasaka
+
+	* : (trunk) : Organize
+
+2007-12-10 04:12  okasaka
+
+	* : es 0.1.1 released.
+
 2007-12-10 02:21  okasaka
 
-	* configure, configure.ac: (NEWS) : Set version to 0.1.1.
+	* : (NEWS) : Set version to 0.1.1.
 
 2007-12-03 06:23  okasaka
 
-	* es/vm/intplugins/FilePlugin/sqEsDirectory.cpp: (dir_Lookup) : Fix
-	  a bug.
+	* : (dir_Lookup) : Fix a bug.
 
 2007-10-11 04:04  okasaka
 
-	* .: Move.
+	* : Move.
 
 2007-10-11 02:06  okasaka
 

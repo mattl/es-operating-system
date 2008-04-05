@@ -63,6 +63,7 @@ INCLUDES = \
 	-I$(srcdir)/es/vm/intplugins/SecurityPlugin
 
 EXTRA_DIST =\
-	License \
+	LICENSE \
+	NOTICE \
 	es/plugins.ext \
 	es/plugins.int
