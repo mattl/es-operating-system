@@ -5,6 +5,11 @@ directory shall be presumed subject to the same license of the
 original software.
 
 
+- GNU Automake 1.10 (automake-1.10.patch)
+    http://www.gnu.org/software/automake/
+    usage: $ tar -jxvf automake-1.10.tar.bz2
+           $ patch -p0 -d . < automake-1.10.patch
+
 - GNU Binutils 2.17 (binutils-2.17.patch)
     http://www.gnu.org/software/binutils/
     usage: $ tar -jxvf binutils-2.17.tar.bz2
@@ -45,4 +50,7 @@ original software.
     usage: $ tar -zxvf cairo-1.4.10.tar.gz
            $ patch -p0 -d . < cairo-1.4.10.patch
 
-See http://sourceforge.jp/projects/nes/ for how to report bugs usefully.
+
+See http://code.google.com/p/es-operating-system/ for how to report bugs
+usefully.
+
