@@ -42,6 +42,7 @@ struct Hash<Guid>
     }
 };
 
+// usage: Hashtable<Guid, Reflect::Interface> hashtable;
 template <class K, class V,
           class H = Hash<K>,
           class EQ = std::equal_to<K> >
