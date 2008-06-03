@@ -30,27 +30,51 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = include
-DIST_COMMON = $(nobase_include_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+build_triplet = @build@
+host_triplet = @host@
+target_triplet = @target@
+TESTS = client$(EXEEXT) server$(EXEEXT)
+noinst_PROGRAMS = $(am__EXEEXT_1)
+subdir = testsuite
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
-SOURCES =
-DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(includedir)" "$(DESTDIR)$(includedir)"
-nobase_includeHEADERS_INSTALL = $(install_sh_DATA)
-nobase_nodist_includeHEADERS_INSTALL = $(install_sh_DATA)
-HEADERS = $(nobase_include_HEADERS) $(nobase_nodist_include_HEADERS)
+am__EXEEXT_1 = client$(EXEEXT) server$(EXEEXT)
+PROGRAMS = $(noinst_PROGRAMS)
+am_client_OBJECTS = client.$(OBJEXT)
+client_OBJECTS = $(am_client_OBJECTS)
+client_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@client_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@client_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@client_DEPENDENCIES = ../libes++/libes++.a
+am_server_OBJECTS = server.$(OBJEXT)
+server_OBJECTS = $(am_server_OBJECTS)
+server_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@server_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@server_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@server_DEPENDENCIES = ../libes++/libes++.a
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+am__depfiles_maybe = depfiles
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+SOURCES = $(client_SOURCES) $(server_SOURCES)
+DIST_SOURCES = $(client_SOURCES) $(server_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -61,9 +85,11 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
+CCAS = @CCAS@
+CCASDEPMODE = @CCASDEPMODE@
+CCASFLAGS = @CCASFLAGS@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CMD = @CMD@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXDEPMODE = @CXXDEPMODE@
@@ -74,18 +100,13 @@ DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
-ESIDL = @ESIDL@
 EXEEXT = @EXEEXT@
-INIT = @INIT@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
-LEX = @LEX@
-LEXLIB = @LEXLIB@
-LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -99,13 +120,11 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-TOOLS = @TOOLS@
 VERSION = @VERSION@
-YACC = @YACC@
-YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -118,14 +137,22 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -144,79 +171,29 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUFFIXES = .h .idl
-nobase_include_HEADERS = es.h es/apply.h es/broker.h es/classFactory.h \
-	es/clsid.h es/color.h es/collection.h es/context.h \
-	es/dateTime.h es/elf.h es/ent.h es/endian.h es/exception.h \
-	es/formatter.h es/handle.h es/hashtable.h es/interlocked.h \
-	es/list.h es/md5.h es/objectTable.h es/ref.h es/reflect.h \
-	es/ring.h es/synchronized.h es/timer.h es/timeSpan.h es/tree.h \
-	es/types.h es/usage.h es/utf.h es/uuid.h es/net/arp.h \
-	es/net/dhcp.h es/net/dns.h es/net/dix.h es/net/icmp.h \
-	es/net/igmp.h es/net/inet4.h es/net/inet6.h es/net/tcp.h \
-	es/net/udp.h es/base/IAlarm.idl es/base/ICache.idl \
-	es/base/ICallback.idl es/base/IClassFactory.idl \
-	es/base/IClassStore.idl es/base/IFile.idl \
-	es/base/IInterface.idl es/base/IInterfaceStore.idl \
-	es/base/IMonitor.idl es/base/IPageable.idl \
-	es/base/IPageSet.idl es/base/IProcess.idl es/base/IRuntime.idl \
-	es/base/ISelectable.idl es/base/IService.idl \
-	es/base/IStream.idl es/base/IThread.idl \
-	es/device/IAudioFormat.idl es/device/IBeep.idl \
-	es/device/ICursor.idl es/device/IDevice.idl \
-	es/device/IDiskManagement.idl es/device/IDmac.idl \
-	es/device/IFileSystem.idl es/device/INetworkInterface.idl \
-	es/device/IPic.idl es/device/IRemovableMedia.idl \
-	es/device/IRtc.idl es/device/IPartition.idl \
-	es/naming/IBinding.idl es/naming/IContext.idl \
-	es/net/IInternetAddress.idl es/net/IInternetConfig.idl \
-	es/net/IResolver.idl es/net/ISocket.idl es/util/IIterator.idl \
-	es/util/ISet.idl es/util/ICanvasRenderingContext2D.idl
+@ES_TRUE@AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
+@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt
+@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a
+@ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm
+AM_CPPFLAGS = \
+	-I- \
+	-I ../../include \
+	-I $(srcdir)/../../include
 
-# Specify nobase_ first when used in conjunction with either dist_ or nodist_.
-nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
-	es/base/ICallback.h es/base/IClassFactory.h \
-	es/base/IClassStore.h es/base/IFile.h es/base/IInterface.h \
-	es/base/IInterfaceStore.h es/base/IMonitor.h \
-	es/base/IPageable.h es/base/IPageSet.h es/base/IProcess.h \
-	es/base/IRuntime.h es/base/ISelectable.h es/base/IService.h \
-	es/base/IStream.h es/base/IThread.h es/device/IAudioFormat.h \
-	es/device/IBeep.h es/device/ICursor.h es/device/IDevice.h \
-	es/device/IDiskManagement.h es/device/IDmac.h \
-	es/device/IFileSystem.h es/device/INetworkInterface.h \
-	es/device/IPic.h es/device/IRemovableMedia.h es/device/IRtc.h \
-	es/device/IPartition.h es/naming/IBinding.h \
-	es/naming/IContext.h es/net/IInternetAddress.h \
-	es/net/IInternetConfig.h es/net/IResolver.h es/net/ISocket.h \
-	es/util/IIterator.h es/util/ISet.h \
-	es/util/ICanvasRenderingContext2D.h es/base/IAlarm.ent \
-	es/base/ICache.ent es/base/ICallback.ent \
-	es/base/IClassFactory.ent es/base/IClassStore.ent \
-	es/base/IFile.ent es/base/IInterface.ent \
-	es/base/IInterfaceStore.ent es/base/IMonitor.ent \
-	es/base/IPageable.ent es/base/IPageSet.ent \
-	es/base/IProcess.ent es/base/IRuntime.ent \
-	es/base/ISelectable.ent es/base/IService.ent \
-	es/base/IStream.ent es/base/IThread.ent \
-	es/device/IAudioFormat.ent es/device/IBeep.ent \
-	es/device/ICursor.ent es/device/IDevice.ent \
-	es/device/IDiskManagement.ent es/device/IDmac.ent \
-	es/device/IFileSystem.ent es/device/INetworkInterface.ent \
-	es/device/IPic.ent es/device/IRemovableMedia.ent \
-	es/device/IRtc.ent es/device/IPartition.ent \
-	es/naming/IBinding.ent es/naming/IContext.ent \
-	es/net/IInternetAddress.ent es/net/IInternetConfig.ent \
-	es/net/IResolver.ent es/net/ISocket.ent es/util/IIterator.ent \
-	es/util/ISet.ent es/util/ICanvasRenderingContext2D.ent
+client_SOURCES = client.cpp
+server_SOURCES = server.cpp
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .h .idl
+.SUFFIXES: .cpp .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -226,9 +203,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  include/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  testsuite/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  include/Makefile
+	  $(AUTOMAKE) --foreign  testsuite/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -246,44 +223,38 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-nobase_includeHEADERS: $(nobase_include_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
-	@$(am__vpath_adj_setup) \
-	list='$(nobase_include_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  $(am__vpath_adj) \
-	  echo " $(nobase_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includedir)/$$f'"; \
-	  $(nobase_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includedir)/$$f"; \
-	done
 
-uninstall-nobase_includeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@$(am__vpath_adj_setup) \
-	list='$(nobase_include_HEADERS)'; for p in $$list; do \
-	  $(am__vpath_adj) \
-	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
-	done
-install-nobase_nodist_includeHEADERS: $(nobase_nodist_include_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
-	@$(am__vpath_adj_setup) \
-	list='$(nobase_nodist_include_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  $(am__vpath_adj) \
-	  echo " $(nobase_nodist_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includedir)/$$f'"; \
-	  $(nobase_nodist_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includedir)/$$f"; \
-	done
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+client$(EXEEXT): $(client_OBJECTS) $(client_DEPENDENCIES) 
+	@rm -f client$(EXEEXT)
+	$(CXXLINK) $(client_OBJECTS) $(client_LDADD) $(LIBS)
+server$(EXEEXT): $(server_OBJECTS) $(server_DEPENDENCIES) 
+	@rm -f server$(EXEEXT)
+	$(CXXLINK) $(server_OBJECTS) $(server_LDADD) $(LIBS)
 
-uninstall-nobase_nodist_includeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@$(am__vpath_adj_setup) \
-	list='$(nobase_nodist_include_HEADERS)'; for p in $$list; do \
-	  $(am__vpath_adj) \
-	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
-	done
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT)
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -333,6 +304,79 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; ws='[	 ]'; \
+	srcdir=$(srcdir); export srcdir; \
+	list=' $(TESTS) '; \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *$$ws$$tst$$ws*) \
+		xpass=`expr $$xpass + 1`; \
+		failed=`expr $$failed + 1`; \
+		echo "XPASS: $$tst"; \
+	      ;; \
+	      *) \
+		echo "PASS: $$tst"; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *$$ws$$tst$$ws*) \
+		xfail=`expr $$xfail + 1`; \
+		echo "XFAIL: $$tst"; \
+	      ;; \
+	      *) \
+		failed=`expr $$failed + 1`; \
+		echo "FAIL: $$tst"; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      echo "SKIP: $$tst"; \
+	    fi; \
+	  done; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="All $$all tests passed"; \
+	    else \
+	      banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all tests failed"; \
+	    else \
+	      banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    skipped="($$skip tests were not run)"; \
+	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  echo "$$dashes"; \
+	  echo "$$banner"; \
+	  test -z "$$skipped" || echo "$$skipped"; \
+	  test -z "$$report" || echo "$$report"; \
+	  echo "$$dashes"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
+
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -360,12 +404,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(HEADERS)
+all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(includedir)" "$(DESTDIR)$(includedir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -392,11 +434,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-local mostlyclean-am
+clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-tags
 
 dvi: dvi-am
 
@@ -408,8 +452,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nobase_includeHEADERS \
-	install-nobase_nodist_includeHEADERS
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -428,12 +471,13 @@ install-ps: install-ps-am
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -443,35 +487,25 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nobase_includeHEADERS \
-	uninstall-nobase_nodist_includeHEADERS
+uninstall-am:
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-local ctags distclean distclean-generic distclean-tags \
-	distdir dvi dvi-am html html-am info info-am install \
-	install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-nobase_includeHEADERS \
-	install-nobase_nodist_includeHEADERS install-pdf \
+.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
+	clean-generic clean-noinstPROGRAMS ctags distclean \
+	distclean-compile distclean-generic distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-nobase_includeHEADERS \
-	uninstall-nobase_nodist_includeHEADERS
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am
 
 
-@ES_TRUE@%.h %.ent : %.idl
-@ES_TRUE@	esidl -C -I$(srcdir) $<
-
-@ES_FALSE@%.h %.ent : %.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) $<
-
-clean-local:
-	-rm -rf es
+TESTS : ../libes++/libes++.a ../kernel/libeskernel.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

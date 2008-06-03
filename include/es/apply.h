@@ -42,6 +42,8 @@ struct Param
         double      f64;
         const void* ptr;
         Guid        guid;
+
+        long        size;   // only used by the RPC runtime. This field must be same size as ptr.
     };
     int             cls;    // S32, S64, F32, F64, PTR
 };

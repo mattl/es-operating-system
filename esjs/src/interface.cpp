@@ -35,133 +35,17 @@ using namespace es;
 
 class ObjectValue;
 
-class InterfaceStore
-{
-    static unsigned char* defaultInterfaceInfo[];
-
-    Hashtable<Guid, Reflect::Interface> hashtable;
-
-    void registerInterface(Reflect::Module& module);
-
-public:
-    InterfaceStore(int capacity = 128);
-
-    Reflect::Interface& getInterface(const Guid& iid)
-    {
-        return hashtable.get(iid);
-    }
-
-    bool hasInterface(const Guid& iid)
-    {
-        return hashtable.contains(iid);
-    }
-
-    friend ObjectValue* constructSystemObject(void* system);
-};
-
 #include "interface.h"
-#include "esjs.h"
 
 extern ICurrentProcess* System();
 
-//
-// Reflection data of the default interface set
-//
-
-extern unsigned char IAlarmInfo[];
-extern unsigned char ICacheInfo[];
-extern unsigned char ICallbackInfo[];
-extern unsigned char IClassFactoryInfo[];
-extern unsigned char IClassStoreInfo[];
-extern unsigned char IFileInfo[];
-extern unsigned char IInterfaceInfo[];
-extern unsigned char IInterfaceStoreInfo[];
-extern unsigned char IMonitorInfo[];
-extern unsigned char IPageableInfo[];
-extern unsigned char IPageSetInfo[];
-extern unsigned char IProcessInfo[];
-extern unsigned char IRuntimeInfo[];
-extern unsigned char ISelectableInfo[];
-extern unsigned char IServiceInfo[];
-extern unsigned char IStreamInfo[];
-extern unsigned char IThreadInfo[];
-
-extern unsigned char IAudioFormatInfo[];
-extern unsigned char IBeepInfo[];
-extern unsigned char ICursorInfo[];
-extern unsigned char IDeviceInfo[];
-extern unsigned char IDiskManagementInfo[];
-extern unsigned char IDmacInfo[];
-extern unsigned char IFileSystemInfo[];
-extern unsigned char IPicInfo[];
-extern unsigned char IRemovableMediaInfo[];
-extern unsigned char IRtcInfo[];
-extern unsigned char IPartitionInfo[];
-
-extern unsigned char IBindingInfo[];
-extern unsigned char IContextInfo[];
-
-extern unsigned char IInternetAddressInfo[];
-extern unsigned char IInternetConfigInfo[];
-extern unsigned char IResolverInfo[];
-extern unsigned char ISocketInfo[];
-
-extern unsigned char IIteratorInfo[];
-extern unsigned char ISetInfo[];
-
-extern unsigned char ICanvasRenderingContext2DInfo[];
-
-unsigned char* InterfaceStore::defaultInterfaceInfo[] =
-{
-    // Base classes first
-    IInterfaceInfo,
-
-    IAlarmInfo,
-    ICacheInfo,
-    ICallbackInfo,
-    IClassFactoryInfo,
-    IClassStoreInfo,
-    IFileInfo,
-    IInterfaceStoreInfo,
-    IMonitorInfo,
-    IPageableInfo,
-    IPageSetInfo,
-    IProcessInfo,
-    IRuntimeInfo,
-    ISelectableInfo,
-    IServiceInfo,
-    IStreamInfo,
-    IThreadInfo,
-
-    IAudioFormatInfo,
-    IBeepInfo,
-    ICursorInfo,
-    IDeviceInfo,
-    IDiskManagementInfo,
-    IDmacInfo,
-    IFileSystemInfo,
-    IPicInfo,
-    IRemovableMediaInfo,
-    IRtcInfo,
-    IPartitionInfo,
-
-    IBindingInfo,
-    IContextInfo,
-
-    IInternetAddressInfo,
-    IInternetConfigInfo,
-    IResolverInfo,
-    ISocketInfo,
-
-    IIteratorInfo,
-    ISetInfo,
-
-    ICanvasRenderingContext2DInfo,
-};
+// TODO use proper name prefix or namespace
+extern Reflect::Interface& getInterface(const Guid& iid);
+extern unsigned char* defaultInterfaceInfo[];
+extern size_t defaultInterfaceCount;
 
 namespace
 {
-    InterfaceStore  interfaceStore;
     const int GuidStringLength = 37;        // Including terminating zero
 }
 
@@ -235,74 +119,6 @@ void printGuid(const Guid& guid)
            guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
            guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
 }
-
-void InterfaceStore::
-registerInterface(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface(module.getInterface(i));
-        hashtable.add(interface.getIid(), interface);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
-    {
-        Reflect::Module m(module.getModule(i));
-        registerInterface(m);
-    }
-}
-
-InterfaceStore::
-InterfaceStore(int capacity) :
-    hashtable(capacity)
-{
-    for (int i = 0;
-         i < sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];
-         ++i)
-    {
-        Reflect r(defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        registerInterface(global);
-    }
-}
-
-Reflect::Interface& getInterface(const Guid& iid)
-{
-    return interfaceStore.getInterface(iid);
-}
-
-//
-// InterfacePointerValue
-//
-
-class InterfacePointerValue : public ObjectValue
-{
-    IInterface* object;
-
-public:
-    InterfacePointerValue(IInterface* object) :
-        object(object)
-    {
-    }
-
-    ~InterfacePointerValue()
-    {
-        if (object)
-        {
-            object->release();
-        }
-    }
-
-    IInterface*& getObject()
-    {
-        return object;
-    }
-
-    void clearObject()
-    {
-        object = 0;
-    }
-};
 
 //
 // invoke
@@ -422,8 +238,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         case Ent::SpecObject:
         case Ent::TypeInterface:
             {
-                InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value);
-                if (unknown)
+                if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
                 {
                     argp->ptr = unknown->getObject();
                 }
@@ -903,11 +718,9 @@ static void constructSystemObject(Reflect::Module& module)
 
 ObjectValue* constructSystemObject(void* system)
 {
-    for (int i = 0;
-         i < sizeof InterfaceStore::defaultInterfaceInfo / sizeof InterfaceStore::defaultInterfaceInfo[0];
-         ++i)
+    for (int i = 0; i < defaultInterfaceCount; ++i)
     {
-        Reflect r(InterfaceStore::defaultInterfaceInfo[i]);
+        Reflect r(defaultInterfaceInfo[i]);
         Reflect::Module global(r.getGlobalModule());
         constructSystemObject(global);
     }

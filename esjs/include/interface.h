@@ -21,12 +21,46 @@
 #include <es.h>
 #include <es/reflect.h>
 #include <es/apply.h>
+#include <es/base/IInterface.h>
 
-class ObjectValue;
+#include "esjs.h"
 
 Reflect::Interface& getInterface(const Guid& iid);
 
 ObjectValue* constructInterfaceObject();
 ObjectValue* constructSystemObject(void* system);
+
+//
+// InterfacePointerValue
+//
+
+class InterfacePointerValue : public ObjectValue
+{
+    es::IInterface* object;
+
+    public:
+    InterfacePointerValue(es::IInterface* object) :
+        object(object)
+        {
+        }
+
+        ~InterfacePointerValue()
+        {
+            if (object)
+            {
+                object->release();
+            }
+        }
+
+        es::IInterface*& getObject()
+        {
+            return object;
+        }
+
+        void clearObject()
+        {
+            object = 0;
+        }
+};
 
 #endif // NINTENDO_ESJS_INTERFACE_H_INCLUDED

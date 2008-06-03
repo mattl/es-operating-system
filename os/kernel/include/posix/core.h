@@ -158,7 +158,7 @@ public:
     friend bool Monitor::wait();
     friend bool Monitor::wait(s64 timeout);
 
-    friend int esInit(IInterface** nameSpace);
+    friend void esInitThread();
     friend void esSleep(s64 timeout);
 };
 
@@ -186,6 +186,7 @@ class SpinLock : public Monitor
 
 int esInit(IInterface** nameSpace);
 IThread* esCreateThread(void* (*start)(void* param), void* param);
+IMonitor* esCreateMonitor();
 
 #ifdef __cplusplus
 extern "C" {

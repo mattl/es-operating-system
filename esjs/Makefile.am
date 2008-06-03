@@ -2,58 +2,6 @@ if POSIX
 SUBDIRS = . testsuite
 endif POSIX
 
-SUFFIXES = .ent
-
-vpath %.ent = ../include/es
-
-%.c : %.ent
-	mkdir -p $(*D);
-	printf 'unsigned char %s' $(*F) > $@;
-	echo "Info[] = {" >> $@;
-	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
-	echo "};" >> $@
-
-# default interface information
-nodist_esjs_SOURCES = \
-	base/IAlarm.c \
-	base/ICache.c \
-	base/ICallback.c \
-	base/IClassFactory.c \
-	base/IClassStore.c \
-	base/IFile.c \
-	base/IInterface.c \
-	base/IInterfaceStore.c \
-	base/IMonitor.c \
-	base/IPageable.c \
-	base/IPageSet.c \
-	base/IProcess.c \
-	base/IRuntime.c \
-	base/ISelectable.c \
-	base/IService.c \
-	base/IStream.c \
-	base/IThread.c \
-	device/IAudioFormat.c \
-	device/IBeep.c \
-	device/ICursor.c \
-	device/IDevice.c \
-	device/IDiskManagement.c \
-	device/IDmac.c \
-	device/IFileSystem.c \
-	device/INetworkInterface.c \
-	device/IPic.c \
-	device/IRemovableMedia.c \
-	device/IRtc.c \
-	device/IPartition.c \
-	naming/IBinding.c \
-	naming/IContext.c \
-	net/IInternetAddress.c \
-	net/IInternetConfig.c \
-	net/IResolver.c \
-	net/ISocket.c \
-	util/IIterator.c \
-	util/ISet.c \
-	util/ICanvasRenderingContext2D.c
-
 BUILT_SOURCES = lexer.cc parser.cc parser.h
 
 esjs_SOURCES = \
@@ -126,3 +74,4 @@ EXTRA_DIST = \
 	scripts/pi.js		\
 	scripts/rm.js		\
 	scripts/shell.js
+

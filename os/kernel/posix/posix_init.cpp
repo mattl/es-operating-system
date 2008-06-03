@@ -55,19 +55,9 @@ const int Page::SIZE = 4096;
 const int Page::SHIFT = 12;
 const int Page::SECTOR = 512;
 
-int esInit(IInterface** nameSpace)
+void esInitThread()
 {
-    if (root)
-    {
-        if (nameSpace)
-        {
-            *nameSpace = root;
-        }
-        return 0;
-    }
-
-    int err = pthread_key_create(&Thread::cleanupKey, Thread::cleanup);
-    if (err)
+    if (int err = pthread_key_create(&Thread::cleanupKey, Thread::cleanup))
     {
         esThrow(err);
     }
@@ -83,6 +73,20 @@ int esInit(IInterface** nameSpace)
     thread->state = IThread::RUNNABLE;
     thread->setPriority(IThread::Normal);
     pthread_setspecific(Thread::cleanupKey, thread);
+}
+
+int esInit(IInterface** nameSpace)
+{
+    if (root)
+    {
+        if (nameSpace)
+        {
+            *nameSpace = root;
+        }
+        return 0;
+    }
+
+    esInitThread();
 
     // Create class store
     classStore = static_cast<IClassStore*>(new ClassStore);
@@ -108,6 +112,7 @@ int esInit(IInterface** nameSpace)
     if (fd != -1)
     {
         arena = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+        close(fd);
     }
     if (arena == 0 || arena == (void*) -1)
     {
@@ -206,4 +211,9 @@ void esPanic(const char* file, int line, const char* msg, ...)
 IThread* esCreateThread(void* (*start)(void* param), void* param)
 {
     return new Thread(start, param, IThread::Normal);
+}
+
+IMonitor* esCreateMonitor()
+{
+    return new Monitor;
 }

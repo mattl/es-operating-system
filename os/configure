@@ -4195,7 +4195,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile libes++/Makefile libes++/testsuite/Makefile bootsect/Makefile net/Makefile net/testsuite/Makefile net/posix/Makefile fs/Makefile fs/fat/Makefile fs/fat/testsuite/Makefile fs/iso9660/Makefile fs/iso9660/testsuite/Makefile kernel/Makefile kernel/testsuite/Makefile"
+ac_config_files="$ac_config_files Makefile libes++/Makefile libes++/testsuite/Makefile bootsect/Makefile net/Makefile net/testsuite/Makefile net/posix/Makefile fs/Makefile fs/fat/Makefile fs/fat/testsuite/Makefile fs/iso9660/Makefile fs/iso9660/testsuite/Makefile kernel/Makefile kernel/testsuite/Makefile testsuite/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -4861,6 +4861,7 @@ do
     "fs/iso9660/testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES fs/iso9660/testsuite/Makefile" ;;
     "kernel/Makefile") CONFIG_FILES="$CONFIG_FILES kernel/Makefile" ;;
     "kernel/testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES kernel/testsuite/Makefile" ;;
+    "testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES testsuite/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

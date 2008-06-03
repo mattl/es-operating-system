@@ -24,8 +24,10 @@
 
 #include <es/base/IThread.h>
 
+void esInitThread();
 int esInit(es::IInterface** nameSpace);
 es::IThread* esCreateThread(void* (*start)(void* param), void* param);
+es::IMonitor* esCreateMonitor();
 
 extern "C" {
 #endif

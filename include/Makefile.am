@@ -32,6 +32,7 @@ nobase_include_HEADERS = \
 	es/interlocked.h \
 	es/list.h \
 	es/md5.h \
+	es/objectTable.h \
 	es/ref.h \
 	es/reflect.h \
 	es/ring.h \

@@ -1,1 +1,2 @@
-SUBDIRS = libes++ bootsect kernel fs net .
+SUBDIRS = libes++ bootsect kernel fs net . testsuite
+
