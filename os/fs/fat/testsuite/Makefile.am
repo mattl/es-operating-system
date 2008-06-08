@@ -29,7 +29,7 @@ CLEANFILES = 2hd.img fat16_5MB.img fat32.img
 if APPLE
 LDADD += -lpthread
 else
-LDADD += -lpthread -lrt
+LDADD += -lpthread -lrt -lX11
 endif
 
 endif POSIX

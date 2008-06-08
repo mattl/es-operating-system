@@ -244,7 +244,7 @@ esjs_SOURCES = \
 	src/string.cpp \
 	include/esjs.h include/value.h include/interface.h include/smartptr.h
 
-@APPLE_FALSE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt
+@APPLE_FALSE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lX11
 @APPLE_TRUE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre
 @ES_TRUE@LDADD = ../os/libes++/libes++.a -lpcreposix -lpcre
 @POSIX_TRUE@esjs_CXXFLAGS = -D YYERROR_VERBOSE

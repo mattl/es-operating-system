@@ -26,7 +26,7 @@ if POSIX
 if APPLE
 LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre
 else
-LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt
+LDADD = ../os/libes++/libes++.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lX11
 endif
 
 esjs_CXXFLAGS = -D YYERROR_VERBOSE

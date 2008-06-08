@@ -35,7 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@POSIX_TRUE@am__append_1 = -iquote $(srcdir)/../include/posix
+@POSIX_TRUE@am__append_1 = -iquote $(srcdir)/../include/posix -I/usr/include/cairo
 @ES_FALSE@@POSIX_TRUE@TESTS = handle$(EXEEXT) interlocked$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	exception$(EXEEXT) utf$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	ring$(EXEEXT) heap$(EXEEXT) \
@@ -57,7 +57,8 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	partition_bind$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	partition_print$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT) posix_video$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	posix_cairo$(EXEEXT)
 @ES_TRUE@TESTS = handle$(EXEEXT) interlocked$(EXEEXT) \
 @ES_TRUE@	exception$(EXEEXT) utf$(EXEEXT) ring$(EXEEXT) \
 @ES_TRUE@	fpu$(EXEEXT) context$(EXEEXT) datetime$(EXEEXT) \
@@ -76,7 +77,7 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1) fdc_diskChange$(EXEEXT)
 @APPLE_TRUE@@POSIX_TRUE@am__append_2 = -lpthread -lstdc++
-@APPLE_FALSE@@POSIX_TRUE@am__append_3 = -lpthread -lstdc++ -lrt
+@APPLE_FALSE@@POSIX_TRUE@am__append_3 = -lpthread -lstdc++ -lrt -lX11 -lcairo
 @ES_TRUE@@I386_TRUE@am__append_4 = -iquote $(srcdir)/../include/i386
 subdir = kernel/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -107,7 +108,8 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	partition_bind$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	partition_print$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT) posix_video$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	posix_cairo$(EXEEXT)
 @ES_TRUE@am__EXEEXT_1 = handle$(EXEEXT) interlocked$(EXEEXT) \
 @ES_TRUE@	exception$(EXEEXT) utf$(EXEEXT) ring$(EXEEXT) \
 @ES_TRUE@	fpu$(EXEEXT) context$(EXEEXT) datetime$(EXEEXT) \
@@ -313,6 +315,18 @@ position_OBJECTS = $(am_position_OBJECTS)
 position_LDADD = $(LDADD)
 position_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am__posix_cairo_SOURCES_DIST = posix_cairo.cpp
+@POSIX_TRUE@am_posix_cairo_OBJECTS = posix_cairo.$(OBJEXT)
+posix_cairo_OBJECTS = $(am_posix_cairo_OBJECTS)
+posix_cairo_LDADD = $(LDADD)
+posix_cairo_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am__posix_video_SOURCES_DIST = posix_video.cpp
+@POSIX_TRUE@am_posix_video_OBJECTS = posix_video.$(OBJEXT)
+posix_video_OBJECTS = $(am_posix_video_OBJECTS)
+posix_video_LDADD = $(LDADD)
+posix_video_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_read_OBJECTS = read.$(OBJEXT)
 read_OBJECTS = $(am_read_OBJECTS)
 read_LDADD = $(LDADD)
@@ -411,7 +425,8 @@ SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(pageSet_SOURCES) $(partition_SOURCES) \
 	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
 	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
+	$(partition_print_SOURCES) $(position_SOURCES) \
+	$(posix_cairo_SOURCES) $(posix_video_SOURCES) $(read_SOURCES) \
 	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
 	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(timer_SOURCES) $(utf_SOURCES) \
@@ -430,7 +445,9 @@ DIST_SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(pageSet_SOURCES) $(partition_SOURCES) \
 	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
 	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
+	$(partition_print_SOURCES) $(position_SOURCES) \
+	$(am__posix_cairo_SOURCES_DIST) \
+	$(am__posix_video_SOURCES_DIST) $(read_SOURCES) \
 	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
 	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(am__timer_SOURCES_DIST) $(utf_SOURCES) \
@@ -615,6 +632,8 @@ partition_print_SOURCES = partition_print.cpp vdisk.h
 ethernet_SOURCES = ethernet.cpp
 loopback_SOURCES = loopback.cpp
 @POSIX_TRUE@timer_SOURCES = timer.cpp
+@POSIX_TRUE@posix_video_SOURCES = posix_video.cpp
+@POSIX_TRUE@posix_cairo_SOURCES = posix_cairo.cpp
 EXTRA_DIST = fat16_32MB.img.gz fat16.img.gz isotest.iso.gz makeScript testLoader
 all: all-am
 
@@ -760,6 +779,12 @@ partition_print$(EXEEXT): $(partition_print_OBJECTS) $(partition_print_DEPENDENC
 position$(EXEEXT): $(position_OBJECTS) $(position_DEPENDENCIES) 
 	@rm -f position$(EXEEXT)
 	$(CXXLINK) $(position_OBJECTS) $(position_LDADD) $(LIBS)
+posix_cairo$(EXEEXT): $(posix_cairo_OBJECTS) $(posix_cairo_DEPENDENCIES) 
+	@rm -f posix_cairo$(EXEEXT)
+	$(CXXLINK) $(posix_cairo_OBJECTS) $(posix_cairo_LDADD) $(LIBS)
+posix_video$(EXEEXT): $(posix_video_OBJECTS) $(posix_video_DEPENDENCIES) 
+	@rm -f posix_video$(EXEEXT)
+	$(CXXLINK) $(posix_video_OBJECTS) $(posix_video_LDADD) $(LIBS)
 read$(EXEEXT): $(read_OBJECTS) $(read_DEPENDENCIES) 
 	@rm -f read$(EXEEXT)
 	$(CXXLINK) $(read_OBJECTS) $(read_LDADD) $(LIBS)
@@ -845,6 +870,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_iterator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/position.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_cairo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/replace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ring.Po@am__quote@

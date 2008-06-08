@@ -232,11 +232,13 @@ cpp_source_files += \
 	posix/posix_core.cpp \
 	posix/posix_dateTime.cpp \
 	posix/posix_init.cpp \
-	posix/posix_ethernet.cpp
+	posix/posix_ethernet.cpp \
+	posix/posix_video.cpp
 
 header_files += \
 	include/posix/core.h \
-	include/posix/tap.h
+	include/posix/tap.h \
+	include/posix/video.h
 
 endif POSIX
 

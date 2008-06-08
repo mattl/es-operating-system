@@ -5,7 +5,7 @@ else
 if APPLE
 LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a
 else
-LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt
+LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lX11
 endif
 endif
 

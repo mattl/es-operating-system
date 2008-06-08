@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-AM_CPPFLAGS += -iquote $(srcdir)/../include/posix
+AM_CPPFLAGS += -iquote $(srcdir)/../include/posix -I/usr/include/cairo
 
 TESTS = handle interlocked exception utf ring \
 	heap page cache replace \
@@ -24,7 +24,7 @@ TESTS = handle interlocked exception utf ring \
 	monitor0 monitor1 monitor2 monitor3 pageSet \
 	partition partition_error partition_extended partition_iterator \
 	partition_bind partition_print \
-	loopback ethernet timer
+	loopback ethernet timer posix_video posix_cairo
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -33,7 +33,7 @@ noinst_DATA = fat16_32MB.img fat16.img
 if APPLE
 LDADD += -lpthread -lstdc++
 else
-LDADD += -lpthread -lstdc++ -lrt
+LDADD += -lpthread -lstdc++ -lrt -lX11 -lcairo
 endif
 
 endif POSIX
@@ -186,7 +186,8 @@ loopback_SOURCES = loopback.cpp
 if POSIX
 
 timer_SOURCES = timer.cpp
-
+posix_video_SOURCES = posix_video.cpp
+posix_cairo_SOURCES = posix_cairo.cpp
 endif POSIX
 
 fat16_32MB.img: fat16_32MB.img.gz

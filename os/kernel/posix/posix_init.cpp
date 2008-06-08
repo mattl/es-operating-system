@@ -40,6 +40,7 @@
 #include "loopback.h"
 #include "partition.h"
 #include "posix/tap.h"
+#include "posix/video.h"
 
 #include <sys/mman.h>
 
@@ -158,7 +159,14 @@ int esInit(IInterface** nameSpace)
     {
     }
 #endif  // __linux__
-
+    // Register the pseudo framebuffer device
+    try
+    {
+	VideoBuffer* buffer = new VideoBuffer(device);
+    }
+    catch (...)
+    {
+    }	
     device->release();
 
     // Create network name space
