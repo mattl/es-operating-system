@@ -107,7 +107,7 @@ local : trunk
 	make; \
 	sudo make install
 
-opt/binutils : src/binutils-2.17
+opt/binutils : src/binutils-2.17 local
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
@@ -182,7 +182,7 @@ opt/cairo : src/cairo-1.4.10 opt/fontconfig
 	make; \
 	make install
 
-pc : local opt/pcre opt/cairo
+pc : opt/pcre opt/cairo
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
