@@ -39,7 +39,8 @@ cpp_source_files = \
 	src/ring.cpp
 
 header_files = \
-	include/core.h
+	include/core.h \
+	inlcude/posix_system.h
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
 
@@ -99,3 +100,4 @@ if POSIX
 libes___a_SOURCES += src/posix_system.cpp
 
 endif POSIX
+
