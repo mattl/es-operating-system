@@ -33,7 +33,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-TESTS = client$(EXEEXT) server$(EXEEXT)
+TESTS = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) cairo$(EXEEXT)
 noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -43,8 +43,19 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
-am__EXEEXT_1 = client$(EXEEXT) server$(EXEEXT)
+am__EXEEXT_1 = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) \
+	cairo$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
+am_cairo_OBJECTS = cairo.$(OBJEXT)
+cairo_OBJECTS = $(am_cairo_OBJECTS)
+cairo_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@cairo_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@cairo_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@cairo_DEPENDENCIES = ../libes++/libes++.a
 am_client_OBJECTS = client.$(OBJEXT)
 client_OBJECTS = $(am_client_OBJECTS)
 client_LDADD = $(LDADD)
@@ -65,6 +76,16 @@ server_LDADD = $(LDADD)
 @APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
 @APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
 @ES_TRUE@server_DEPENDENCIES = ../libes++/libes++.a
+am_video_OBJECTS = video.$(OBJEXT)
+video_OBJECTS = $(am_video_OBJECTS)
+video_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@video_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@video_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@video_DEPENDENCIES = ../libes++/libes++.a
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -73,8 +94,10 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(client_SOURCES) $(server_SOURCES)
-DIST_SOURCES = $(client_SOURCES) $(server_SOURCES)
+SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(server_SOURCES) \
+	$(video_SOURCES)
+DIST_SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(server_SOURCES) \
+	$(video_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -180,16 +203,19 @@ target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @ES_TRUE@AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
-@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lX11
-@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a
+@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lX11 -lcairo
+@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lX11 -lcairo
 @ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm
 AM_CPPFLAGS = \
 	-I- \
 	-I ../../include \
-	-I $(srcdir)/../../include
+	-I $(srcdir)/../../include \
+	-I/usr/include/cairo
 
 client_SOURCES = client.cpp
 server_SOURCES = server.cpp
+video_SOURCES = video.cpp
+cairo_SOURCES = cairo.cpp
 all: all-am
 
 .SUFFIXES:
@@ -226,12 +252,18 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+cairo$(EXEEXT): $(cairo_OBJECTS) $(cairo_DEPENDENCIES) 
+	@rm -f cairo$(EXEEXT)
+	$(CXXLINK) $(cairo_OBJECTS) $(cairo_LDADD) $(LIBS)
 client$(EXEEXT): $(client_OBJECTS) $(client_DEPENDENCIES) 
 	@rm -f client$(EXEEXT)
 	$(CXXLINK) $(client_OBJECTS) $(client_LDADD) $(LIBS)
 server$(EXEEXT): $(server_OBJECTS) $(server_DEPENDENCIES) 
 	@rm -f server$(EXEEXT)
 	$(CXXLINK) $(server_OBJECTS) $(server_LDADD) $(LIBS)
+video$(EXEEXT): $(video_OBJECTS) $(video_DEPENDENCIES) 
+	@rm -f video$(EXEEXT)
+	$(CXXLINK) $(video_OBJECTS) $(video_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -239,8 +271,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/video.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
