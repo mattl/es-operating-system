@@ -27,6 +27,7 @@
 #include <es/base/IPageable.h>
 #include <es/device/ICursor.h>
 #include <es/naming/IContext.h>
+#include "posix_system.h"
 
 namespace es
 {
@@ -34,9 +35,8 @@ namespace es
 namespace posix
 {
 
-class VideoBuffer : public IStream, public ICursor, public IPageable
+class VideoBuffer : public ICursor, public Stream
 {
-    Ref     ref;
     u16     xResolution;
     u16     yResolution;
     u8      bitsPerPixel;
@@ -45,8 +45,6 @@ class VideoBuffer : public IStream, public ICursor, public IPageable
     u8      blueFieldPosition;
     u8*     base;
     long    size;
-
-    int     fd; // shared memory descriptor
 
     // mouse cursor
     IMonitor*   monitor;

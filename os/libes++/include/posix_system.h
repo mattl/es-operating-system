@@ -64,6 +64,12 @@ class Stream : public IStream, public IPageable
     Ref ref;
     int fd;
 
+protected:
+    void setfd(int fd)
+    {
+        this->fd = fd;
+    }
+
 public:
     Stream(int fd) :
         fd(fd)

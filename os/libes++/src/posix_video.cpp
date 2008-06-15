@@ -79,7 +79,8 @@ u16 VideoBuffer::xHotSpot(0);
 u16 VideoBuffer::yHotSpot(0);
 
 VideoBuffer::
-VideoBuffer(IContext* device)
+VideoBuffer(IContext* device) :
+    Stream(-1)
 {
     monitor = esCreateMonitor();
 
@@ -94,8 +95,6 @@ VideoBuffer(IContext* device)
 
     xPosition = xResolution / 2;
     yPosition = yResolution / 2;
-
-    fd = -1;
 
     device->bind("framebuffer", static_cast<IStream*>(this));
     device->bind("cursor", static_cast<ICursor*>(this));
@@ -482,7 +481,7 @@ queryInterface(const Guid& riid)
     }
     static_cast<IInterface*>(objectPtr)->addRef();
 
-    if (fd == -1)
+    if (getfd() == -1)
     {
         init();
     }
@@ -493,19 +492,13 @@ queryInterface(const Guid& riid)
 unsigned int VideoBuffer::
 addRef()
 {
-    return ref.addRef();
+    return Stream::addRef();
 }
 
 unsigned int VideoBuffer::
 release()
 {
-    unsigned int count = ref.release();
-    if (count == 0)
-    {
-        delete this;
-        return 0;
-    }
-    return count;
+    return Stream::release();
 }
 
 namespace
@@ -586,7 +579,7 @@ start(void* param)
 void VideoBuffer::
 init()
 {
-    fd = shm_open("/es-frame-buffer", O_RDWR | O_CREAT, 0666);
+    int fd = shm_open("/es-frame-buffer", O_RDWR | O_CREAT, 0666);
     if (fd == -1) {
         perror("shm_open");
         exit(EXIT_FAILURE);
@@ -602,6 +595,8 @@ init()
     }
     shm_unlink("/es-frame-buffer");
     memset(base, 0, size);
+
+    setfd(fd);
 
     IThread* thread = esCreateThread(start, this);
     thread->start();
