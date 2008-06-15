@@ -592,7 +592,7 @@ init()
         exit(EXIT_FAILURE);
     }
     if (ftruncate(fd, size) == -1) {
-        perror("shm_open");
+        perror("ftruncate");
         exit(EXIT_FAILURE);
     }
     base = static_cast<u8*>(mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0));
