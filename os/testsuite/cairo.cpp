@@ -83,5 +83,7 @@ int main(int argc, char* argv[])
         fb->write(data + 4 * 120 * y, 4 * 120, 4 * WIDTH * y);
      }
 
+#ifndef __es__
      esSleep(10000000);
+#endif
 }

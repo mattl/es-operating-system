@@ -232,8 +232,7 @@ cpp_source_files += \
 	posix/posix_core.cpp \
 	posix/posix_dateTime.cpp \
 	posix/posix_init.cpp \
-	posix/posix_ethernet.cpp \
-	posix/posix_video.cpp
+	posix/posix_ethernet.cpp
 
 header_files += \
 	include/posix/core.h \

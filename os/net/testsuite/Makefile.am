@@ -22,7 +22,7 @@ noinst_PROGRAMS = $(TESTS)
 if APPLE
 LDADD += -lpthread
 else
-LDADD += -lpthread -lrt -lX11
+LDADD += -lpthread -lrt
 endif
 
 endif POSIX

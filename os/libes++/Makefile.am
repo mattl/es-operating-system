@@ -40,7 +40,8 @@ cpp_source_files = \
 
 header_files = \
 	include/core.h \
-	inlcude/posix_system.h
+	inlcude/posix_system.h \
+	include/posix_video.h
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
 
@@ -97,7 +98,7 @@ endif ES
 
 if POSIX
 
-libes___a_SOURCES += src/posix_system.cpp
+libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp
 
 endif POSIX
 

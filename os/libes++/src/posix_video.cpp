@@ -1,6 +1,6 @@
 /*
- * Copyright 2008 Chis Dan Ionut
  * Copyright 2008 Google Inc.
+ * Copyright 2008 Chis Dan Ionut
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,18 @@
 
 #include <es.h>
 #include <es/naming/IContext.h>
-#include "posix/video.h"
 #include <string.h>
 #include <stdlib.h>
+#include <X11/Xlib.h>
 
+#include "posix_system.h"
+#include "posix_video.h"
+
+namespace es
+{
+
+namespace posix
+{
 
 // #define VERBOSE
 
@@ -78,21 +86,21 @@ VideoBuffer(IContext* device)
 {
     device->bind("framebuffer", static_cast<IStream*>(this));
     device->bind("cursor", static_cast<ICursor*>(this));
-    
+
     xResolution = 1024;
     yResolution = 768;
     bitsPerPixel = 32;
-    
+
     size = xResolution * yResolution * (bitsPerPixel / 8);
     xPosition = xResolution / 2;
     yPosition = yResolution / 2;
     showCursor = 0;
-    isInitialized = false; 
+    isInitialized = false;
 }
 
 VideoBuffer::
 ~VideoBuffer()
-{ 
+{
 }
 
 long long VideoBuffer::
@@ -148,7 +156,7 @@ write(const void* src, int count, long long offset)
     {
         count = size - offset - 1;
     }
-  
+
     if (count <= 0)
     {
         return 0;
@@ -162,7 +170,7 @@ write(const void* src, int count, long long offset)
 
     line = offset / (xResolution * (bitsPerPixel / 8));
     col = offset % (xResolution * (bitsPerPixel / 8));
- 
+
 #ifdef VERBOSE
     esReport("line=%d col=%d count=%d\n",line, col, count);
 #endif //VERBOSE
@@ -176,13 +184,13 @@ write(const void* src, int count, long long offset)
         }
 
         buffer[line * xi->bytes_per_line + col] = *source;
-        
+
         col++;
         source++;
         cnt--;
     }
     XPutImage(display, window, gc, xi, 0, 0, 0, 0, xResolution, yResolution);
-    
+
     // If cursor is active, draw it over
     if (showCursor)
     {
@@ -217,7 +225,7 @@ show()
         saveBackground();
         drawCursor();
     }
-    return showCursor;;
+    return showCursor;
 }
 
 int VideoBuffer::
@@ -250,7 +258,7 @@ void VideoBuffer::
 setPosition(int x, int y)
 {
     if (x == xPosition && y == yPosition)
-    {  
+    {
         return;
     }
 
@@ -318,8 +326,8 @@ queryInterface(const Guid& riid)
 
     if (!isInitialized)
     {
-        initX11(); 
-        isInitialized = true; 
+        initX11();
+        isInitialized = true;
     }
     return objectPtr;
 }
@@ -342,38 +350,38 @@ initX11()
     // Open a display
     display = XOpenDisplay(0);
     ASSERT(display != NULL);
-    
+
     screen = DefaultScreen(display);
     visual = DefaultVisual(display, screen);
     int blackColor = BlackPixel(display, DefaultScreen(display));
-    
+
     // Create a Window
-    window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0, 
+    window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0,
                                  xResolution, yResolution, 0, blackColor, blackColor);
     XSelectInput(display, window, StructureNotifyMask);
     XMapWindow(display, window);
     gc = XCreateGC(display, window, 0, 0);
-    
+
     // Create and image as the window's content
     // FIXME : for some reason setting the depth to 32 in the call to XCreateImage
-    //         breaks the application; depth is explicitly set in the returned struct 
+    //         breaks the application; depth is explicitly set in the returned struct
     xi = XCreateImage(display, visual, 24, ZPixmap, 0, 0,
                       xResolution, yResolution, 32, 0);
-  
+
     buffer = (char*) malloc(xi->bytes_per_line * yResolution);
     // Explicitly set image depth (bits per pixel)
-    xi->bits_per_pixel = bitsPerPixel; 
+    xi->bits_per_pixel = bitsPerPixel;
     XInitImage(xi);
     xi->data = buffer;
-    
-    for (;;) 
-    {  
+
+    for (;;)
+    {
         XEvent e;
         XNextEvent(display, &e);
         if (e.type == MapNotify)
             break;
     }
-}  
+}
 
 void VideoBuffer::
 drawCursor()
@@ -383,12 +391,12 @@ drawCursor()
     x = xPosition;
     y = yPosition;
     len = 32;
-  
+
     if (xResolution <= x + len)
     {
         len = xResolution - x - 1;
     }
-  
+
     for (int i = 0; i < 32 && y < yResolution; i++, y++)
     {
         for (int j = 0; j < len; j++)
@@ -397,7 +405,7 @@ drawCursor()
             u32 d = data[i];
             u32 bit = 0x80000000 >> j;
             char r, g, b;
-        
+
             if ((m & bit) && (d & bit))
             {
                 r = g = b = 0; // black
@@ -414,9 +422,9 @@ drawCursor()
             {
                 continue;
             }
-        buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL] = b;
-        buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL + 1] = g;
-        buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL + 2] = r;
+            buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL] = b;
+            buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL + 1] = g;
+            buffer[y * xi->bytes_per_line + (x + j) * BYTES_PER_PIXEL + 2] = r;
         }
     }
     XPutImage(display, window, gc, xi, 0, 0, 0, 0, xResolution, yResolution);
@@ -427,7 +435,7 @@ saveBackground()
 {
     int x, y;
     int len = 32;
-  
+
     x = xPosition;
     y = yPosition;
     if (xResolution <= x + len)
@@ -452,7 +460,7 @@ restoreBackground()
     {
       len = xResolution - x - 1;
     }
-  
+
     len *= BYTES_PER_PIXEL;
     for (int i = 0; i < 32 && y < yResolution; i++, y++)
     {
@@ -460,3 +468,6 @@ restoreBackground()
     }
 }
 
+}   // namespace posix
+
+}   // namespace es

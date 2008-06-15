@@ -52,6 +52,7 @@
 
 #include "core.h"
 #include "posix_system.h"
+#include "posix_video.h"
 
 #define VERBOSE
 
@@ -561,6 +562,16 @@ public:
             Handle<IClassStore> classStore(root->lookup("class"));
             IClassFactory* processFactory = new(ClassFactory<Process>);
             classStore->add(CLSID_Process, processFactory);
+
+            // Register the pseudo framebuffer device
+            try
+            {
+                Handle<IContext> device = root->lookup("device");
+                VideoBuffer* buffer = new VideoBuffer(device);
+            }
+            catch (...)
+            {
+            }
 
             setCurrent(root);
 

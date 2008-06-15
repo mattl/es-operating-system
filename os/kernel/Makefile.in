@@ -89,8 +89,7 @@ target_triplet = @target@
 @POSIX_TRUE@	posix/posix_core.cpp \
 @POSIX_TRUE@	posix/posix_dateTime.cpp \
 @POSIX_TRUE@	posix/posix_init.cpp \
-@POSIX_TRUE@	posix/posix_ethernet.cpp \
-@POSIX_TRUE@	posix/posix_video.cpp
+@POSIX_TRUE@	posix/posix_ethernet.cpp
 
 @POSIX_TRUE@am__append_5 = \
 @POSIX_TRUE@	include/posix/core.h \
@@ -138,19 +137,19 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/classStore.cpp \
 	pc/uart.cpp pc/vesa.cpp pc/xreg.cpp pc/dp8390d.cpp \
 	posix/posix_thread.cpp posix/posix_monitor.cpp \
 	posix/posix_core.cpp posix/posix_dateTime.cpp \
-	posix/posix_init.cpp posix/posix_ethernet.cpp \
-	posix/posix_video.cpp include/alarm.h include/arena.h \
-	include/cache.h include/classStore.h include/elfFile.h \
-	include/heap.h include/interfaceStore.h include/line.h \
-	include/loopback.h include/partition.h include/process.h \
-	include/spinlock.h include/thread.h include/zero.h \
-	include/ata.h include/uart.h include/i386/8042.h \
-	include/i386/8237a.h include/i386/8254.h include/i386/8259.h \
-	include/i386/apic.h include/i386/ataController.h \
-	include/i386/cga.h include/i386/core.h include/i386/cpu.h \
-	include/i386/fdc.h include/i386/io.h include/i386/label.h \
-	include/i386/mps.h include/i386/pci.h include/i386/rtc.h \
-	include/i386/sb16.h include/i386/es1370.h include/i386/vesa.h \
+	posix/posix_init.cpp posix/posix_ethernet.cpp include/alarm.h \
+	include/arena.h include/cache.h include/classStore.h \
+	include/elfFile.h include/heap.h include/interfaceStore.h \
+	include/line.h include/loopback.h include/partition.h \
+	include/process.h include/spinlock.h include/thread.h \
+	include/zero.h include/ata.h include/uart.h \
+	include/i386/8042.h include/i386/8237a.h include/i386/8254.h \
+	include/i386/8259.h include/i386/apic.h \
+	include/i386/ataController.h include/i386/cga.h \
+	include/i386/core.h include/i386/cpu.h include/i386/fdc.h \
+	include/i386/io.h include/i386/label.h include/i386/mps.h \
+	include/i386/pci.h include/i386/rtc.h include/i386/sb16.h \
+	include/i386/es1370.h include/i386/vesa.h \
 	include/i386/dp8390d.h include/posix/core.h \
 	include/posix/tap.h include/posix/video.h
 @ES_TRUE@am__objects_1 = label.$(OBJEXT)
@@ -172,7 +171,7 @@ am__objects_2 =
 @POSIX_TRUE@am__objects_4 = posix_thread.$(OBJEXT) \
 @POSIX_TRUE@	posix_monitor.$(OBJEXT) posix_core.$(OBJEXT) \
 @POSIX_TRUE@	posix_dateTime.$(OBJEXT) posix_init.$(OBJEXT) \
-@POSIX_TRUE@	posix_ethernet.$(OBJEXT) posix_video.$(OBJEXT)
+@POSIX_TRUE@	posix_ethernet.$(OBJEXT)
 am__objects_5 = classStore.$(OBJEXT) elf.$(OBJEXT) init.$(OBJEXT) \
 	interface.$(OBJEXT) arena.$(OBJEXT) cache.$(OBJEXT) \
 	cacheFactory.$(OBJEXT) heap.$(OBJEXT) line.$(OBJEXT) \
@@ -557,7 +556,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_monitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_thread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rendezvous.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtc.Po@am__quote@
@@ -2043,20 +2041,6 @@ posix_ethernet.obj: posix/posix_ethernet.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='posix/posix_ethernet.cpp' object='posix_ethernet.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o posix_ethernet.obj `if test -f 'posix/posix_ethernet.cpp'; then $(CYGPATH_W) 'posix/posix_ethernet.cpp'; else $(CYGPATH_W) '$(srcdir)/posix/posix_ethernet.cpp'; fi`
-
-posix_video.o: posix/posix_video.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT posix_video.o -MD -MP -MF $(DEPDIR)/posix_video.Tpo -c -o posix_video.o `test -f 'posix/posix_video.cpp' || echo '$(srcdir)/'`posix/posix_video.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/posix_video.Tpo $(DEPDIR)/posix_video.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='posix/posix_video.cpp' object='posix_video.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o posix_video.o `test -f 'posix/posix_video.cpp' || echo '$(srcdir)/'`posix/posix_video.cpp
-
-posix_video.obj: posix/posix_video.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT posix_video.obj -MD -MP -MF $(DEPDIR)/posix_video.Tpo -c -o posix_video.obj `if test -f 'posix/posix_video.cpp'; then $(CYGPATH_W) 'posix/posix_video.cpp'; else $(CYGPATH_W) '$(srcdir)/posix/posix_video.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/posix_video.Tpo $(DEPDIR)/posix_video.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='posix/posix_video.cpp' object='posix_video.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o posix_video.obj `if test -f 'posix/posix_video.cpp'; then $(CYGPATH_W) 'posix/posix_video.cpp'; else $(CYGPATH_W) '$(srcdir)/posix/posix_video.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

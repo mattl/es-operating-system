@@ -33,4 +33,5 @@ es.elf : makeScript
 EXTRA_DIST = fat32.img.gz makeScript 40-generic.conf fonts.conf fonts.dtd 1b68cf4fced22970e89022fed6868d03-x86.cache-2
 
 clean-local:
-	-rm -f es es.elf.map
+	-rm -f es es.elf.map fat32.img
+

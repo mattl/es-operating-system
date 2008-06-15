@@ -84,16 +84,26 @@ int main()
     Handle<IPageable> pageable(framebuffer);
 
     fill(framebuffer, 255, 0, 0);
+#ifndef __es__
     esSleep(10000000);
+#endif
     fill(framebuffer, 0, 255, 0);
+#ifndef __es__
     esSleep(10000000);
+#endif
     fill(framebuffer, 0, 0, 255);
+#ifndef __es__
     esSleep(10000000);
+#endif
     fill(framebuffer, 255, 255, 255);
+#ifndef __es__
     esSleep(10000000);
+#endif
 
     pattern(framebuffer);
+#ifndef __es__
     esSleep(10000000);
+#endif
 
     cursor->show();
 
