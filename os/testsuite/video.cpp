@@ -92,12 +92,11 @@ int main()
     Handle<IStream> mouse(root->lookup("device/mouse"));
     Handle<ICursor> cursor(root->lookup("device/cursor"));
     Handle<IStream> framebuffer(root->lookup("device/framebuffer"));
-    Handle<IPageable> pageable(framebuffer);
 
     void* mapping = System()->map(0, framebuffer->getSize(),
                                   ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
                                   ICurrentProcess::MAP_SHARED,
-                                  pageable, 0);
+                                  Handle<IPageable>(framebuffer), 0);
 
     fill(mapping, 255, 0, 0);
 #ifndef __es__
