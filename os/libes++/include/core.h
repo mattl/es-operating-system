@@ -22,6 +22,7 @@
 
 #ifdef __cplusplus
 
+#include <es/base/IMonitor.h>
 #include <es/base/IThread.h>
 
 void esInitThread();

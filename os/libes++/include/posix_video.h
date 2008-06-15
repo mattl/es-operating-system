@@ -22,6 +22,7 @@
 #include <es/interlocked.h>
 #include <es/ref.h>
 #include <es/types.h>
+#include <es/base/IMonitor.h>
 #include <es/base/IStream.h>
 #include <es/base/IPageable.h>
 #include <es/device/ICursor.h>
@@ -48,6 +49,7 @@ class VideoBuffer : public IStream, public ICursor, public IPageable
     int     fd; // shared memory descriptor
 
     // mouse cursor
+    IMonitor*   monitor;
     Interlocked count;
     static u32  data[32];
     static u32  mask[32];

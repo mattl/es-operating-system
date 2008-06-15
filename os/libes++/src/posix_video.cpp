@@ -23,10 +23,9 @@
 #include <es.h>
 #include <es/naming/IContext.h>
 
+#include "core.h"
 #include "posix_system.h"
 #include "posix_video.h"
-
-es::IThread* esCreateThread(void* (*start)(void* param), void* param);
 
 namespace es
 {
@@ -82,6 +81,8 @@ u16 VideoBuffer::yHotSpot(0);
 VideoBuffer::
 VideoBuffer(IContext* device)
 {
+    monitor = esCreateMonitor();
+
     xResolution = 1024;
     yResolution = 768;
     bitsPerPixel = 32;
@@ -103,11 +104,17 @@ VideoBuffer(IContext* device)
 VideoBuffer::
 ~VideoBuffer()
 {
+    if (monitor)
+    {
+        monitor->release();
+    }
 }
 
 int VideoBuffer::
 show()
 {
+    Synchronized<IMonitor*> method(monitor);
+
     int show = count.increment();
     if (show == 1)
     {
@@ -120,6 +127,8 @@ show()
 int VideoBuffer::
 hide()
 {
+    Synchronized<IMonitor*> method(monitor);
+
     int show = count.decrement();
     if (show == 0)
     {
@@ -137,6 +146,8 @@ move(int dx, int dy)
 void VideoBuffer::
 getPosition(int* x, int* y)
 {
+    Synchronized<IMonitor*> method(monitor);
+
     *x = xPosition;
     *y = yPosition;
 }
@@ -144,6 +155,8 @@ getPosition(int* x, int* y)
 void VideoBuffer::
 setPosition(int x, int y)
 {
+    Synchronized<IMonitor*> method(monitor);
+
     if (x == xPosition && y == yPosition)
     {
         return;
@@ -184,6 +197,8 @@ setPosition(int x, int y)
 void VideoBuffer::
 setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot)
 {
+    Synchronized<IMonitor*> method(monitor);
+
     if (0 < count)
     {
         restoreBackground();
