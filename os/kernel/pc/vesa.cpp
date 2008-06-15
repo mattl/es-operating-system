@@ -366,7 +366,7 @@ setPosition(long long pos)
 long long Vesa::
 getSize()
 {
-    return this->size;
+    return size;
 }
 
 void Vesa::
@@ -377,6 +377,7 @@ setSize(long long size)
 int Vesa::
 read(void* dst, int count)
 {
+    return -1;
 }
 
 int Vesa::
@@ -412,6 +413,7 @@ read(void* dst, int count, long long offset)
 int Vesa::
 write(const void* src, int count)
 {
+    return -1;
 }
 
 int Vesa::
@@ -496,13 +498,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Vesa::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Vesa::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
