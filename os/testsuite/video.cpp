@@ -37,13 +37,24 @@ void fill(IStream* fb, u8 r, u8 g, u8 b)
 {
     for (long offset = 0; offset < 1024 * 768 * BPP; offset += 1024 * 768)
     {
-        for (long j = offset; j < 1024 * 768; j+=BPP)
+        for (long j = offset; j < 1024 * 768; j += BPP)
         {
             pixels[j] = b;
             pixels[j + 1] = g;
             pixels[j + 2] = r;
         }
         fb->write(pixels, 1024 * 768, offset);
+    }
+}
+
+void fill(void* fb, u8 r, u8 g, u8 b)
+{
+    u32* fbp = static_cast<u32*>(fb);
+    u32 color = (r << 16) | (g << 8) | b;
+    for (int y = 0; y < 768; ++y) {
+        for (int x = 0; x < 1024; ++x) {
+            *fbp++ = color;
+        }
     }
 }
 
@@ -83,19 +94,24 @@ int main()
     Handle<IStream> framebuffer(root->lookup("device/framebuffer"));
     Handle<IPageable> pageable(framebuffer);
 
-    fill(framebuffer, 255, 0, 0);
+    void* mapping = System()->map(0, framebuffer->getSize(),
+                                  ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
+                                  ICurrentProcess::MAP_SHARED,
+                                  pageable, 0);
+
+    fill(mapping, 255, 0, 0);
 #ifndef __es__
     esSleep(10000000);
 #endif
-    fill(framebuffer, 0, 255, 0);
+    fill(mapping, 0, 255, 0);
 #ifndef __es__
     esSleep(10000000);
 #endif
-    fill(framebuffer, 0, 0, 255);
+    fill(mapping, 0, 0, 255);
 #ifndef __es__
     esSleep(10000000);
 #endif
-    fill(framebuffer, 255, 255, 255);
+    fill(mapping, 255, 255, 255);
 #ifndef __es__
     esSleep(10000000);
 #endif
@@ -139,13 +155,7 @@ int main()
 #endif
     }
 
-    // long long size;
-    // size = framebuffer->getSize();
-    // for (long long offset(0); offset < size; offset += 4096)
-    // {
-    //    unsigned long pte = pageable->get(offset);
-    //    esReport("%llx: %lx\n", offset, pte);
-    // }
+    System()->unmap(mapping, framebuffer->getSize());
 
     esReport("done.\n");    // for testing
     return 0;
