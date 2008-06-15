@@ -20,9 +20,9 @@ AM_CPPFLAGS = \
 	-I/usr/include/cairo
 
 if APPLE
-LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lX11 -lcairo
+LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo 
 else
-LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lX11 -lcairo
+LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
 endif
 
 endif

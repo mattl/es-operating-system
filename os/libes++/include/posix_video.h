@@ -1,7 +1,7 @@
 /*
- * Copyright 2008 Chis Dan Ionut
  * Copyright 2008 Google Inc.
- * Copyright 2007 Nintendo Co., Ltd.
+ * Copyright 2008 Chis Dan Ionut
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 #ifndef GOOGLE_ES_LIBES_POSIX_VIDEO_H_INCLUDED
 #define GOOGLE_ES_LIBES_POSIX_VIDEO_H_INCLUDED
 
+#include <es/interlocked.h>
+#include <es/ref.h>
 #include <es/types.h>
 #include <es/base/IStream.h>
 #include <es/base/IPageable.h>
@@ -33,24 +35,35 @@ namespace posix
 
 class VideoBuffer : public IStream, public ICursor, public IPageable
 {
-    u16 xResolution;
-    u16 yResolution;
-    u8 bitsPerPixel;
-    long size;
+    Ref     ref;
+    u16     xResolution;
+    u16     yResolution;
+    u8      bitsPerPixel;
+    u8      redFieldPosition;
+    u8      greenFieldPosition;
+    u8      blueFieldPosition;
+    u8*     base;
+    long    size;
+
+    int     fd; // shared memory descriptor
 
     // mouse cursor
-    static u32 data[32];
-    static u32 mask[32];
-    u16 xPosition;
-    u16 yPosition;
-    int showCursor;
-    char background[32][32 * 4];
+    Interlocked count;
+    static u32  data[32];
+    static u32  mask[32];
+    static u16  xHotSpot;
+    static u16  yHotSpot;
+    u16         xPosition;
+    u16         yPosition;
+    u32         background[32][32];
 
-    bool isInitialized;
-    void initX11();
+    void init();
+
     void drawCursor();
     void saveBackground();
     void restoreBackground();
+
+    void draw();
 
 public:
     VideoBuffer(IContext* device);
@@ -58,22 +71,14 @@ public:
 
     // IStream
     long long getPosition();
-    void setPosition(long long position);
-
+    void setPosition(long long pos);
     long long getSize();
     void setSize(long long size);
-
-    int read(void* buf, int bufLength);
-    int read(void* buf, int bufLength, long long offset);
-
-    int write(const void* src, int srcLength);
-    int write(const void* src, int srcLength, long long offset);
-
+    int read(void* dst, int count);
+    int read(void* dst, int count, long long offset);
+    int write(const void* src, int count);
+    int write(const void* src, int count, long long offset);
     void flush();
-
-    // IPageable
-    unsigned long long get(long long offset);
-    void put(long long offset, unsigned long long pte);
 
     // ICursor
     int show();
@@ -81,12 +86,19 @@ public:
     void move(int dx, int dy);
     void getPosition(int* x, int* y);
     void setPosition(int x, int y);
-    void setPattern(const u32 pattern[32], const u32 mask[32], unsigned short xHotSpot, unsigned short yHotSpot);
+    void setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot);
+
+    // IPageable
+    unsigned long long get(long long offset);
+    void put(long long offset, unsigned long long pte);
 
     // IInterface
     void* queryInterface(const Guid& riid);
-    unsigned int addRef();
-    unsigned int release();
+    unsigned int addRef(void);
+    unsigned int release(void);
+
+    static void* start(void* param);
+    static void display();
 };
 
 }   // namespace posix

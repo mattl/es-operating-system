@@ -236,8 +236,7 @@ cpp_source_files += \
 
 header_files += \
 	include/posix/core.h \
-	include/posix/tap.h \
-	include/posix/video.h
+	include/posix/tap.h
 
 endif POSIX
 

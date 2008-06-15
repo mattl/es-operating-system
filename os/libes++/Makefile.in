@@ -34,7 +34,8 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @ES_TRUE@am__append_1 = src/system.cpp
-@POSIX_TRUE@am__append_2 = src/posix_system.cpp src/posix_video.cpp
+@POSIX_TRUE@am__append_2 = -I/usr/include/GL
+@POSIX_TRUE@am__append_3 = src/posix_system.cpp src/posix_video.cpp
 subdir = libes++
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -60,7 +61,7 @@ am__libes___a_SOURCES_DIST = src/apply386.S src/md5.c src/rand48.c \
 	src/string.c src/utf.c src/apply.cpp src/color.cpp \
 	src/context.cpp src/dateTime.cpp src/dump.cpp src/inet.cpp \
 	src/interfaceStore.cpp src/throw.cpp src/formatter.cpp \
-	src/ring.cpp include/core.h inlcude/posix_system.h \
+	src/ring.cpp include/core.h include/posix_system.h \
 	include/posix_video.h base/IAlarm.c base/ICache.c \
 	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
 	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
@@ -259,12 +260,8 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . testsuite
 SUFFIXES = .ent
 lib_LIBRARIES = libessup++.a libes++.a
-AM_CPPFLAGS = \
-	-I $(srcdir)/include \
-	-I- \
-	-I../../include \
-	-I$(srcdir)/../../include
-
+AM_CPPFLAGS = -I $(srcdir)/include -I- -I../../include \
+	-I$(srcdir)/../../include $(am__append_2)
 c_source_files = \
 	src/apply386.S \
 	src/md5.c \
@@ -286,7 +283,7 @@ cpp_source_files = \
 
 header_files = \
 	include/core.h \
-	inlcude/posix_system.h \
+	include/posix_system.h \
 	include/posix_video.h
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
@@ -336,7 +333,7 @@ nodist_libessup___a_SOURCES = \
 
 libes___a_SOURCES = $(libessup___a_SOURCES) \
 	$(nodist_libessup___a_SOURCES) src/report.cpp $(am__append_1) \
-	$(am__append_2)
+	$(am__append_3)
 all: all-recursive
 
 .SUFFIXES:

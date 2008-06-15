@@ -93,8 +93,7 @@ target_triplet = @target@
 
 @POSIX_TRUE@am__append_5 = \
 @POSIX_TRUE@	include/posix/core.h \
-@POSIX_TRUE@	include/posix/tap.h \
-@POSIX_TRUE@	include/posix/video.h
+@POSIX_TRUE@	include/posix/tap.h
 
 @POSIX_TRUE@am__append_6 = -iquote $(srcdir)/include/posix
 subdir = kernel
@@ -151,7 +150,7 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/classStore.cpp \
 	include/i386/pci.h include/i386/rtc.h include/i386/sb16.h \
 	include/i386/es1370.h include/i386/vesa.h \
 	include/i386/dp8390d.h include/posix/core.h \
-	include/posix/tap.h include/posix/video.h
+	include/posix/tap.h
 @ES_TRUE@am__objects_1 = label.$(OBJEXT)
 am__objects_2 =
 @ES_TRUE@am__objects_3 = lock.$(OBJEXT) malloc.$(OBJEXT) map.$(OBJEXT) \

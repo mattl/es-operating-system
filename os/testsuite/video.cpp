@@ -110,21 +110,33 @@ int main()
     for (int y = 0; y < 768; ++y)
     {
         cursor->setPosition(512, y);
+#ifndef __es__
+        esSleep(10000);
+#endif
     }
 
     for (int x = 0; x < 1024; ++x)
     {
         cursor->setPosition(x, 768 / 2);
+#ifndef __es__
+        esSleep(10000);
+#endif
     }
 
     for (int y = 0; y < 768; ++y)
     {
         cursor->setPosition(1023, y);
+#ifndef __es__
+        esSleep(10000);
+#endif
     }
 
     for (int x = 0; x < 1024; ++x)
     {
         cursor->setPosition(x, 767);
+#ifndef __es__
+        esSleep(10000);
+#endif
     }
 
     // long long size;

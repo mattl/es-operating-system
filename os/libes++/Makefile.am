@@ -40,7 +40,7 @@ cpp_source_files = \
 
 header_files = \
 	include/core.h \
-	inlcude/posix_system.h \
+	include/posix_system.h \
 	include/posix_video.h
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
@@ -97,6 +97,8 @@ libes___a_SOURCES += src/system.cpp
 endif ES
 
 if POSIX
+
+AM_CPPFLAGS += -I/usr/include/GL
 
 libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp
 

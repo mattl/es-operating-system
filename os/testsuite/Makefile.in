@@ -216,8 +216,8 @@ top_srcdir = @top_srcdir@
 @ES_TRUE@	-I$(prefix)/include/cairo
 
 @ES_TRUE@AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
-@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lX11 -lcairo
-@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lX11 -lcairo
+@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
+@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo 
 @ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm
 client_SOURCES = client.cpp
 server_SOURCES = server.cpp
