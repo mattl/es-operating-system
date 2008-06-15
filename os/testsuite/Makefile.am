@@ -27,7 +27,7 @@ endif
 
 endif
 
-TESTS = client server video cairo
+TESTS = client server video cairo canvas
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -39,4 +39,7 @@ video_SOURCES = video.cpp
 
 cairo_SOURCES = cairo.cpp
 
+canvas_SOURCES = canvas.cpp canvas2d.cpp canvas2d.h
+
 TESTS : ../libes++/libes++.a ../kernel/libeskernel.a
+

@@ -33,7 +33,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-TESTS = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) cairo$(EXEEXT)
+TESTS = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) cairo$(EXEEXT) \
+	canvas$(EXEEXT)
 noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -44,7 +45,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 am__EXEEXT_1 = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) \
-	cairo$(EXEEXT)
+	cairo$(EXEEXT) canvas$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_cairo_OBJECTS = cairo.$(OBJEXT)
 cairo_OBJECTS = $(am_cairo_OBJECTS)
@@ -56,6 +57,16 @@ cairo_LDADD = $(LDADD)
 @APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
 @APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
 @ES_TRUE@cairo_DEPENDENCIES = ../libes++/libes++.a
+am_canvas_OBJECTS = canvas.$(OBJEXT) canvas2d.$(OBJEXT)
+canvas_OBJECTS = $(am_canvas_OBJECTS)
+canvas_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@canvas_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@canvas_DEPENDENCIES = ../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@canvas_DEPENDENCIES = ../libes++/libes++.a
 am_client_OBJECTS = client.$(OBJEXT)
 client_OBJECTS = $(am_client_OBJECTS)
 client_LDADD = $(LDADD)
@@ -94,10 +105,14 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(server_SOURCES) \
-	$(video_SOURCES)
-DIST_SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(server_SOURCES) \
-	$(video_SOURCES)
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(cairo_SOURCES) $(canvas_SOURCES) $(client_SOURCES) \
+	$(server_SOURCES) $(video_SOURCES)
+DIST_SOURCES = $(cairo_SOURCES) $(canvas_SOURCES) $(client_SOURCES) \
+	$(server_SOURCES) $(video_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -223,6 +238,7 @@ client_SOURCES = client.cpp
 server_SOURCES = server.cpp
 video_SOURCES = video.cpp
 cairo_SOURCES = cairo.cpp
+canvas_SOURCES = canvas.cpp canvas2d.cpp canvas2d.h
 all: all-am
 
 .SUFFIXES:
@@ -262,6 +278,9 @@ clean-noinstPROGRAMS:
 cairo$(EXEEXT): $(cairo_OBJECTS) $(cairo_DEPENDENCIES) 
 	@rm -f cairo$(EXEEXT)
 	$(CXXLINK) $(cairo_OBJECTS) $(cairo_LDADD) $(LIBS)
+canvas$(EXEEXT): $(canvas_OBJECTS) $(canvas_DEPENDENCIES) 
+	@rm -f canvas$(EXEEXT)
+	$(CXXLINK) $(canvas_OBJECTS) $(canvas_LDADD) $(LIBS)
 client$(EXEEXT): $(client_OBJECTS) $(client_DEPENDENCIES) 
 	@rm -f client$(EXEEXT)
 	$(CXXLINK) $(client_OBJECTS) $(client_LDADD) $(LIBS)
@@ -279,6 +298,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas2d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/video.Po@am__quote@
