@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+#include <string>
 #include <math.h>
 #include <es.h>
+#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/exception.h>
 #include <es/formatter.h>
@@ -200,12 +202,38 @@ int main(int argc, char* argv[])
     device->bind("canvas", static_cast<ICanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
-    esReport("start console.\n");
-    figure(canvas);
+    esReport("start canvas.\n");
 
+    if (argc < 2)
+    {
+        figure(canvas);
 #ifndef __es__
-    esSleep(20000000);
+        esSleep(20000000);
 #endif
+    }
+    else
+    {
+        // Create a child process.
+        Handle<IClassStore> classStore = nameSpace->lookup("class");
+        Handle<IProcess> child = reinterpret_cast<IProcess*>(
+                classStore->createInstance(CLSID_Process, child->iid()));
+        TEST(child);
+
+        // Start the child process.
+        std::string param;
+        for (int i = 1; i < argc; ++i) {
+            param += argv[i];
+            param += " ";
+        }
+        Handle<IFile> file = nameSpace->lookup(argv[1]);
+        if (file)
+        {
+            child->setRoot(nameSpace);
+            child->setCurrent(nameSpace);
+            child->start(file, param.c_str());
+            child->wait();
+        }
+    }
 
     System()->unmap(mapping, framebuffer->getSize());
 
