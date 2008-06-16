@@ -54,7 +54,7 @@
 #include "posix_system.h"
 #include "posix_video.h"
 
-#define VERBOSE
+// #define VERBOSE
 
 using namespace es;
 using namespace posix;
@@ -349,6 +349,14 @@ f32 retF32(f32 v)
 f64 retF64(f64 v)
 {
     return v;
+}
+
+void printGuid(const Guid& guid)
+{
+    printf("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+           guid.Data1, guid.Data2, guid.Data3,
+           guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
+           guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
 }
 
 long long callRemote(void* self, void* base, int m, va_list ap);
@@ -855,31 +863,43 @@ public:
         // posix implementation directory transfers Dir, File, and Stream file descriptors
         if (Dir* dir = dynamic_cast<Dir*>(object))
         {
-            cap->pid = getpid();
-            cap->object = dup(dir->getfd());
-            cap->check = 0; // i.e., local
-            return cap->object;
+            if (iid == IContext::iid() || iid == IFile::iid() || iid == IBinding::iid())
+            {
+                cap->pid = getpid();
+                cap->object = dup(dir->getfd());
+                cap->check = 0; // i.e., local
+                return cap->object;
+            }
         }
-        if (File* file = dynamic_cast<File*>(object))
+        else if (File* file = dynamic_cast<File*>(object))
         {
-            cap->pid = getpid();
-            cap->object = dup(file->getfd());
-            cap->check = 0; // i.e., local
-            return cap->object;
+            if (iid == IFile::iid() || iid == IBinding::iid())
+            {
+                cap->pid = getpid();
+                cap->object = dup(file->getfd());
+                cap->check = 0; // i.e., local
+                return cap->object;
+            }
         }
-        if (Stream* stream = dynamic_cast<Stream*>(object))
+        else if (Stream* stream = dynamic_cast<Stream*>(object))
         {
-            cap->pid = getpid();
-            cap->object = dup(stream->getfd());
-            cap->check = 0; // i.e., local
-            return cap->object;
+            if (iid == IStream::iid() || iid == IPageable::iid())
+            {
+                cap->pid = getpid();
+                cap->object = dup(stream->getfd());
+                cap->check = 0; // i.e., local
+                return cap->object;
+            }
         }
-        if (Iterator* iterator= dynamic_cast<Iterator*>(object))
+        else if (Iterator* iterator= dynamic_cast<Iterator*>(object))
         {
-            cap->pid = getpid();
-            cap->object = dup(iterator->getfd());
-            cap->check = 0; // i.e., local
-            return cap->object;
+            if (iid == IIterator::iid())
+            {
+                cap->pid = getpid();
+                cap->object = dup(iterator->getfd());
+                cap->check = 0; // i.e., local
+                return cap->object;
+            }
         }
 
         // If object has been exported, reuse the Exported entry by incrementing ref
@@ -900,6 +920,12 @@ public:
 
     IInterface* importObject(const Capability& cap, const Guid& iid, bool param)
     {
+#ifdef VERBOSE
+        printf("importObject: ");
+        printGuid(iid);
+        printf(" : %d\n", param);
+#endif
+
         if (cap.object < 0)
         {
             return 0;
@@ -2241,7 +2267,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             argp->cls = Param::S64;
             break;
         case Ent::SpecF32:
-            argp->f32 = va_arg(ap, u32);    // XXX work on X86 only probably
+            argp->s32 = va_arg(ap, s32);    // XXX work on X86 only probably
             argp->cls = Param::F32;
             break;
         case Ent::SpecF64:
