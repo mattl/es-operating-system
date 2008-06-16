@@ -1628,13 +1628,24 @@ public:
         ::current.exportObject(root, IContext::iid(), &cmd.root, false);
         cmd.report();
 
+        int pfd[2];
+        pipe(pfd);
+        char token;
+
         if (pid = fork())
         {
             // parent
+            close(pfd[0]);
+
             if (0 <= pid)
             {
-                ::current.addChild(pid, this); // TODO should sync. explicitly with the child...
+                ::current.addChild(pid, this);
             }
+
+            // Synchronize with the child
+            token = 0;
+            write(pfd[1], &token, sizeof token);
+            close(pfd[1]);
 
             if (cmd.in.check == 0)
             {
@@ -1660,6 +1671,11 @@ public:
         else
         {
             // child
+            close(pfd[1]);
+
+            // Synchronize with the parent
+            read(pfd[0], &token, sizeof token);
+            close(pfd[0]);
 
             // Unrelated files should be closed by the settings of fcntl FD_CLOEXEC after fexecve
             close(3);
