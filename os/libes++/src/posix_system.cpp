@@ -131,6 +131,9 @@ public:
     }
 };
 
+__thread u8 RpcStack::rpcStackBase[RPC_STACK_SIZE];
+__thread u8* RpcStack::rpcStack;
+
 struct ThreadCredential
 {
     pid_t       pid;
