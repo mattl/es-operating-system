@@ -2,7 +2,21 @@
 
 all : pc/init/fat32.img
 
-trunk :
+requisites :
+	if grep Ubuntu\ 8.04 /etc/issue; then \
+        echo "Ubuntu 8.04 detected"; \
+        sudo apt-get -qq update; \
+        sudo apt-get install subversion autoconf automake patch bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev; \
+	else \
+		if grep Fedora /etc/issue; then \
+            echo "Fedora detected"; \
+            yum -y install subversion autoconf automake patch bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel; \
+        else \
+            echo "Your OS is probably not a supported development environment"; \
+        fi; \
+    fi; \
+
+trunk : requisites
 	if [ -z $$GOOGLE_USERNAME ]; then \
 		svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk; \
 	else \
@@ -22,7 +36,7 @@ patches = \
 	trunk/patches/newlib-1.15.0.patch \
 	trunk/patches/pcre-7.2.patch
 
-$(patches) : trunk
+$(patches) : trunk 
 
 src/binutils-2.17 : trunk/patches/binutils-2.17.patch
 	if [ ! -f src/binutils-2.17.tar.bz2 ]; then \
@@ -96,7 +110,7 @@ src/pcre-7.2 : trunk/patches/pcre-7.2.patch
 	patch -p0 -d src < $<; \
 	touch $@
 
-local : trunk
+local : trunk 
 	if [ ! -d local ]; then \
 		mkdir local; \
 		cd local; \
