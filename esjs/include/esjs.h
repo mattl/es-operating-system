@@ -54,7 +54,7 @@ public:
         return CompletionType(CompletionType::Normal, 0, "");
     };
 
-    typedef List<SourceElement, &SourceElement::link>   List;
+    typedef ::List<SourceElement, &SourceElement::link>   List;
     friend class SourceElements;
 };
 
@@ -86,7 +86,7 @@ public:
         return "";
     }
 
-    typedef List<Expression, &Expression::link> List;
+    typedef ::List<Expression, &Expression::link> List;
     friend class ArgumentList;
     friend class FormalParameterList;
 };
@@ -1575,7 +1575,7 @@ public:
     }
 
     friend class ObjectLiteral;
-    typedef List<PropertyNameAndValue, &PropertyNameAndValue::link> List;
+    typedef ::List<PropertyNameAndValue, &PropertyNameAndValue::link> List;
 };
 
 class ObjectLiteral : public Expression
@@ -2047,7 +2047,7 @@ public:
         return new ReferenceValue(variableObject, name);    // for "for-in" statement
     };
 
-    typedef List<VariableDeclaration, &VariableDeclaration::link>   List;
+    typedef ::List<VariableDeclaration, &VariableDeclaration::link>   List;
     friend class VariableDeclarationList;
 };
 
@@ -2754,7 +2754,7 @@ public:
     }
 
     friend class CaseBlock;
-    typedef List<CaseClause, &CaseClause::link> List;
+    typedef ::List<CaseClause, &CaseClause::link> List;
 };
 
 class CaseBlock

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include "esjs.h"
 #include "parser.h"
 #include "interface.h"

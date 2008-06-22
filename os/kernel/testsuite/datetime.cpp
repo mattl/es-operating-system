@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <string.h>
 #include <es.h>
 #include <es/dateTime.h>
 #include <iostream>

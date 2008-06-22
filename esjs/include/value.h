@@ -22,6 +22,7 @@
 #define _ISOC99_SOURCE
 #endif
 #include <math.h>
+#include <stdlib.h>
 #include <vector>
 #include <string>
 #include <es.h>
@@ -71,7 +72,7 @@ private:
 
     Link<Value> link;
 
-    typedef List<Value, &Value::link>   List;
+    typedef ::List<Value, &Value::link>   List;
 
     int         age;
     bool        marking;

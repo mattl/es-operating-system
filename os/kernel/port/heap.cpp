@@ -17,6 +17,7 @@
 
 #include <new>
 #include <string.h>
+#include <stdlib.h>
 #include <es.h>
 #include "heap.h"
 

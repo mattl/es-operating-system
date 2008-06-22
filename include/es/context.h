@@ -59,7 +59,7 @@ public:
     void setObject(IInterface* object);
     int getName(char* name, int len);
 
-    typedef List<Binding, &Binding::link> List;
+    typedef ::List<Binding, &Binding::link> List;
 };
 
 // In Context, the first binding points to the Context itself named "".

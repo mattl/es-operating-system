@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <string.h>
 #include <new>
 #include "cache.h"
 

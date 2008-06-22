@@ -27,7 +27,7 @@ struct CollectionLink
 {
     Link<CollectionLink>  link;
 
-    typedef List<CollectionLink, &CollectionLink::link> List;
+    typedef ::List<CollectionLink, &CollectionLink::link> List;
 };
 
 template <class E>

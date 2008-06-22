@@ -93,7 +93,7 @@ private:
         size_t      size;       // Cell size
         Link<Cell>  linkCell;
 
-        typedef List<Cell, &Cell::linkCell> List;
+        typedef ::List<Cell, &Cell::linkCell> List;
 
         explicit Cell(size_t size) : size(size)
         {
@@ -114,7 +114,7 @@ private:
         Bucket*     bucket;
         Cell::List  listCell;
 
-        typedef List<Mass, &Mass::linkMass> List;
+        typedef ::List<Mass, &Mass::linkMass> List;
 
         explicit Mass(Bucket* bucket);
         Cell* getCell();

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <string.h>
 #include <es.h>
 #include <es/endian.h>
 #include <es/handle.h>

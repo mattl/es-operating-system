@@ -55,7 +55,7 @@ public:
     }
 
     friend class Socket;
-    typedef List<AddressFamily, &AddressFamily::link> List;
+    typedef ::List<AddressFamily, &AddressFamily::link> List;
 };
 
 class Socket :

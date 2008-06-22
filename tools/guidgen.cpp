@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <es/uuid.h>
 #include <es/dateTime.h>
 

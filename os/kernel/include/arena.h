@@ -68,7 +68,7 @@ public:
         Link<Cell>  link;
         size_t      size;
 
-        typedef List<Cell, &Cell::link> List;
+        typedef ::List<Cell, &Cell::link> List;
 
         Cell(size_t size) throw() :
             size(size)
