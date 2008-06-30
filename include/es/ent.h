@@ -628,6 +628,6 @@ namespace Ent
             return sizeof(Sequence);
         }
     };
-};
+}
 
 #endif  // #ifndef NINTENDO_ES_ENT_H_INCLUDED
