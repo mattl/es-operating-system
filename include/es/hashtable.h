@@ -84,6 +84,7 @@ public:
     Hashtable(int capacity, const H& hash = H(), const EQ& eq = EQ()) :
         free(0), capacity(capacity), hash(hash), eq(eq)
     {
+        ASSERT(0 < capacity);
         entries = new Element[size()];
         table = new Element*[size()];
         for (int i = 0; i < size(); ++i)
@@ -104,6 +105,7 @@ public:
 
     int size() const
     {
+        ASSERT(0 < capacity);
         return capacity;
     }
 
