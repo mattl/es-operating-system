@@ -21,6 +21,7 @@
 #include <functional>   // equal_to<>
 #include <errno.h>
 #include <es.h>
+#include <es/interlocked.h>
 #include <es/synchronized.h>
 #include <es/base/IMonitor.h>
 
@@ -167,11 +168,11 @@ class ObjectTable
 
 public:
     ObjectTable(es::IMonitor* monitor) :
-        free(-1),
-        monitor(monitor)
+        monitor(monitor),
+        free(-1)
     {
         ASSERT(monitor);
-        ASSERT((-1 << 1) | 1 == -1);
+        ASSERT(((-1 << 1) | 1) == -1);
         ASSERT((-1 >> 1) == -1);
         for (int i = size() - 1; 0 <= i; --i)
         {
