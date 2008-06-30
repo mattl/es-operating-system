@@ -109,6 +109,28 @@ module es
          * @param address the internet address of the DNS server to be removed.
          */
         void removeNameServer(in InternetAddress address);
+
+        /** Adds the specified domain with which non-FQDN hostnames are
+        * concatenated before being resolved by the DNS system.
+         * @param address domain name.
+         */
+        void addSearchDomain(in string address);
+
+        /** Gets the first search domain used by the DNS resolver.
+         * @return the first search domain of the DNS server.
+         */
+        string getSearchDomain();
+
+        /** Gets the nth search domain used by the DNS resolver.
+         * @param pos position of search domain in list.
+         * @return search domain in position pos used by the DNS server.
+         */
+        string getSearchDomain(in long pos);
+
+        /** Removes the specified search domain from use by the DNS resolver.
+         * @param address the search domain to be removed.
+         */
+        void removeSearchDomain(in string address);
     };
 };
 

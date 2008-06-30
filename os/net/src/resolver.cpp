@@ -113,6 +113,88 @@ Control::ptr(u16 id, InAddr addr)
     return opt - query;
 }
 
+IInternetAddress* Resolver::
+Control::resolve(const char* hostName)
+{
+    u16 xid = id.increment();
+    int len = a(xid, hostName);
+    if (len <= 0)
+    {
+        return 0;
+    }
+
+    for (int rxmitCount = 0; rxmitCount < MaxQuery; ++rxmitCount)
+    {
+        socket->write(query, len);
+        socket->setTimeout(TimeSpan(0, 0, MinWait << rxmitCount));
+        int rlen = socket->read(response, sizeof response);
+        if (rlen <= sizeof(DNSHdr))
+        {
+            continue;
+        }
+        DNSHdr* dns = reinterpret_cast<DNSHdr*>(response);
+        if (dns->getID() != xid ||
+            !dns->isResponse() ||
+            ntohs(dns->qdcount) != 1 )
+        {
+            continue;
+        }
+            
+        if (dns->getResponseCode() != DNSHdr::NoError)
+        {
+            // switch search domain / nameserver, do not retransmit
+            return 0;
+        }
+            
+        if (ntohs(dns->ancount) == 0)
+        {
+            continue;
+        }
+
+        u8* opt = response + sizeof(DNSHdr);
+        u8* end = response + rlen;
+        opt = skipName(opt, end);
+        if (end < opt + 4)
+        {
+            continue;
+        }
+        opt += 4;
+        if (len < opt - response ||
+            memcmp(query + sizeof(DNSHdr),
+               response + sizeof(DNSHdr),
+               opt - (response + sizeof(DNSHdr))) != 0)
+        {
+            continue;
+        }
+
+        for (int i = 0; i < ntohs(dns->ancount); ++i)
+        {
+            opt = skipName(opt, end);
+            if (end - opt < sizeof(DNSRR))
+            {
+                continue;
+            }
+            DNSRR* rr = reinterpret_cast<DNSRR*>(opt);
+            if (end < opt + DNSRR::Size + ntohs(rr->rdlength))
+            {
+                break;
+            }
+            if (ntohs(rr->type) != DNSType::A ||
+                ntohs(rr->cls) != DNSClass::IN ||
+                ntohs(rr->rdlength) != sizeof(InAddr))
+            {
+                // Realign opt with next RR
+                opt += DNSRR::Size + ntohs(rr->rdlength);
+                continue;
+            }
+            InAddr addr = *reinterpret_cast<InAddr*>(opt + DNSRR::Size);
+            IInternetAddress* host = Socket::resolver->getHostByAddress(&addr.addr, sizeof(InAddr), 0);
+            return host;
+        }
+    }
+    return 0;
+}
+
 u8* Resolver::
 Control::skipName(const u8* ptr, const u8* end)
 {
@@ -210,69 +292,38 @@ Control::getHostByName(const char* hostName, int addressFamily)
         return 0;
     }
 
-    u16 xid = id.increment();
-    int len = a(xid, hostName);
-    if (len <= 0)
+    // hostName is considered FQDN if any hierarchy present
+    bool FQDN = true;
+    if (!strchr(hostName,'.'))
     {
-        return 0;
+        FQDN = false;
+        if (!Socket::config->getSearchDomain(suffix,sizeof suffix))
+            return 0;
     }
 
-    for (int rxmitCount = 0; rxmitCount < MaxQuery; ++rxmitCount)
-    {
-        socket->write(query, len);
-        socket->setTimeout(TimeSpan(0, 0, MinWait << rxmitCount));
-        int rlen = socket->read(response, sizeof response);
-        if (rlen <= sizeof(DNSHdr))
-        {
-            continue;
-        }
-        DNSHdr* dns = reinterpret_cast<DNSHdr*>(response);
-        if (dns->getID() != xid ||
-            !dns->isResponse() ||
-            ntohs(dns->qdcount) != 1 ||
-            ntohs(dns->ancount) == 0)
-        {
-            continue;
-        }
-        u8* opt = response + sizeof(DNSHdr);
-        u8* end = response + rlen;
-        opt = skipName(opt, end);
-        if (end < opt + 4)
-        {
-            continue;
-        }
-        opt += 4;
-        if (len < opt - response ||
-            memcmp(query + sizeof(DNSHdr),
-                   response + sizeof(DNSHdr),
-                   opt - (response + sizeof(DNSHdr))) != 0)
-        {
-            continue;
-        }
+    IInternetAddress* host = 0;
 
-        for (int i = 0; i < ntohs(dns->ancount); ++i)
+    // XXX for each nameserver
+        // resolve fully qualified domain name
+        if (FQDN)
         {
-            opt = skipName(opt, end);
-            if (end - opt < sizeof(DNSRR))
+            if (host = resolve(hostName))
             {
-                continue;
+                return host;
             }
-            DNSRR* rr = reinterpret_cast<DNSRR*>(opt);
-            if (ntohs(rr->type) != DNSType::A ||
-                ntohs(rr->cls) != DNSClass::IN ||
-                ntohs(rr->rdlength) != sizeof(InAddr))
-            {
-                continue;
-            }
-            if (end < opt + DNSRR::Size + ntohs(rr->rdlength))
-            {
-                break;
-            }
-            InAddr addr = *reinterpret_cast<InAddr*>(opt + DNSRR::Size);
-            IInternetAddress* host = Socket::resolver->getHostByAddress(&addr.addr, sizeof(InAddr), 0);
-            return host;
         }
-    }
+        // or append each search domain to hostname
+        else
+        {
+            for (int domainCount=0; Socket::config->getSearchDomain(suffix,sizeof suffix,domainCount) &&
+                    domainCount < MaxSearch; domainCount++ )
+            {
+                if (host = resolve(hostName))
+                {
+                    return host;
+                }
+            }
+        }
 
     return 0;
 }

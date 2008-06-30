@@ -79,6 +79,25 @@ public:
         return true;
     }
 
+   void dump(const char* header, ...)
+   {
+        va_list list;
+        va_start(list,header);
+
+        esReport("---\n");
+        esReportv(header,list);
+        for (int i = 0; i < len && len > 0; i++)
+        {
+            if (i % 16 == 0)
+            {
+                esReport("\n");
+            }
+            esReport("%02x ", (u8)chunk[i]);
+        }
+        esReport("\n---\n");
+        return;
+    }
+
     long getSize() const
     {
         return len;
@@ -798,8 +817,7 @@ inline bool Visitor::at(ConduitFactory* f, Conduit* c)
 inline bool Visitor::toB(Mux* m)
 {
     void* key = m->getKey(getMessenger());
-    do
-    {
+    do {
         try
         {
             Conduit* b = m->getB(key);
@@ -851,10 +869,9 @@ public:
         void* key = m->getKey(getMessenger());
         ConduitFactory* factory = m->getFactory();
 
-esReport("transport: %p (%ld)\n", key, (long) key);
+        esReport("transport: %p (%ld)\n", key, (long) key);
 
-        do
-        {
+        do {
             try
             {
                 Conduit* b = m->getB(key);

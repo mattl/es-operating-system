@@ -157,6 +157,61 @@ removeNameServer(IInternetAddress* address)
     nameServers.removeAddress(address);
 }
 
+void InternetConfig::
+addSearchDomain(const char* address)
+{
+    // XXX sanity check name?
+    char* ptr = new char[DNSHdr::NameMax];
+    strcpy(ptr,address);
+    domains.addLast(ptr);
+    return;
+}
+
+int InternetConfig::
+getSearchDomain(char* address, int addressLength)
+{
+    return getSearchDomain(address,addressLength, 0);
+}
+
+int InternetConfig::
+getSearchDomain(char* address, int addressLength, int pos)
+{
+    Collection<char*>::Iterator domainIter = domains.begin();
+    char* ptr;
+
+    for (int i=0; i<=pos; i++, (ptr=domainIter.next()))
+    {
+        if (!domainIter.hasNext())
+        {
+            return 0;
+        }
+    }
+
+    if (addressLength < strlen(ptr))
+    {
+        return 0;
+    }
+
+    strcpy(address,ptr);
+    return 1;
+}
+
+void InternetConfig::
+removeSearchDomain(const char* address)
+{
+    Collection<char*>::Iterator domainIter = domains.begin();
+    char* ptr;
+
+    while (domainIter.hasNext())
+    {
+        if (!strcmp(domainIter.next(), address))
+        {
+            ptr = domainIter.remove();
+            delete ptr;
+        }
+    }
+}
+
 void* InternetConfig::
 queryInterface(const Guid& riid)
 {
@@ -189,6 +244,12 @@ release()
     unsigned int count = ref.release();
     if (count == 0)
     {
+        char* ptr;
+        while (!domains.isEmpty())
+        {
+            ptr = domains.removeFirst();
+            delete ptr;
+        }
         delete this;
         return 0;
     }

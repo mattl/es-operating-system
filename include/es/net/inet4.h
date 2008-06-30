@@ -18,6 +18,9 @@
 #ifndef NINTENDO_ES_NET_INET4_H_INCLUDED
 #define NINTENDO_ES_NET_INET4_H_INCLUDED
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 #include <es.h>
 #include <es/endian.h>
 #include <es/types.h>
@@ -48,6 +51,68 @@ static const u32 INADDR_MAX_LOCAL_GROUP = 0xe00000ff;   // 224.0.0.255
 struct InAddr
 {
     u32     addr;
+
+   int ntoa(char *out, int outsize) const
+    {
+        int err = snprintf(out, outsize, "%d.%d.%d.%d", (u8) addr, (u8) (addr >> 8), (u8) (addr >> 16), (u8) (addr >> 24));
+
+        if (outsize < err || err < 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return err;
+        }
+    }
+
+   int aton(const char* cp)
+    {
+        u32         total = 0;
+        int         base = 10;
+        u8          octets[3];
+        u8          *ptr = octets;
+
+        for (;;)
+        {
+            total = 0;
+
+            while (isdigit((unsigned char) *cp))
+            {
+                total = (total * base) + (*cp - '0');
+                cp++;
+            }
+
+            if (*cp == '.')
+            {
+                if (ptr >= octets + 3 || total > 0xff)
+               {
+                    return 0;
+               }
+                *ptr++ = total, cp++;
+            }
+            else
+           {
+                break;
+           }
+        }
+
+        /* accept addresses in A.B.C.D format only */
+        if (ptr - octets != 3)
+       {
+            return 0;
+       }
+
+       // verify if last octet is valid
+        if (total > 0xff)
+       {
+           return 0;
+       }
+
+        total |= (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8);
+        addr = htonl(total);
+        return 1;
+    }
 };
 
 inline int operator==(const InAddr& a1, const InAddr& a2)

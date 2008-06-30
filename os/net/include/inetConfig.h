@@ -22,6 +22,7 @@
 #include <es.h>
 #include <es/ref.h>
 #include <es/types.h>
+#include <es/net/dns.h>
 #include <es/net/IInternetConfig.h>
 #include "inet4.h"
 #include "socket.h"
@@ -30,6 +31,7 @@ class InternetConfig : public IInternetConfig
 {
     Ref                             ref;
     AddressSet<IInternetAddress>    nameServers;
+    Collection<char*>               domains;
 
 public:
     //
@@ -51,6 +53,11 @@ public:
     void addNameServer(IInternetAddress* address);
     IInternetAddress* getNameServer();
     void removeNameServer(IInternetAddress* address);
+
+    void addSearchDomain(const char* address);
+    int getSearchDomain(char* address, int addressLength);
+    int getSearchDomain(char* address, int addressLength, int pos);
+    void removeSearchDomain(const char* address);
 
     //
     // IInterface

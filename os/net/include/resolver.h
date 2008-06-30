@@ -38,6 +38,7 @@ class Resolver : public IResolver
         // the minimum retransmission interval should be 2-5 seconds [RFC 1035]
         static const int MinWait = 2;   // [sec]
         static const int MaxQuery = 3;
+        static const int MaxSearch = 3; // max search domains used
 
         Handle<IInternetAddress>    server;
         Handle<ISocket>             socket;
@@ -49,6 +50,7 @@ class Resolver : public IResolver
 
         int a(u16 id, const char* hostName);
         int ptr(u16 id, InAddr addr);
+        IInternetAddress* resolve(const char* hostName);
 
         static u8* skipName(const u8* ptr, const u8* end);
         static bool copyName(const u8* dns, const u8* ptr, const u8* end, char* name);

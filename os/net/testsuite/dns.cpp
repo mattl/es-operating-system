@@ -54,30 +54,37 @@ int main()
     int dixID = config->addInterface(ethernetInterface);
     esReport("dixID: %d\n", dixID);
 
+    InAddr addr, addrRouter, addrNameServer;
     // Register host address (192.168.2.40)
-    InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
+    addr.aton("192.168.1.199");
     Handle<IInternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof(InAddr), dixID);
     config->addAddress(host, 16);
     esSleep(90000000);  // Wait for the host address to be settled.
 
     // Register a default router (192.168.2.1)
-    InAddr addrRouter = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 1) };
+    addrRouter.aton("192.168.1.1");
     Handle<IInternetAddress> router = resolver->getHostByAddress(&addrRouter.addr, sizeof(InAddr), dixID);
     config->addRouter(router);
 
     // Register a domain name server (192.168.2.1)
-    InAddr addrNameServer = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 1) };
+    addrNameServer.aton("192.168.1.1");
     Handle<IInternetAddress> nameServer = resolver->getHostByAddress(&addrNameServer.addr, sizeof(InAddr), dixID);
     config->addNameServer(nameServer);
 
-    Handle<IInternetAddress> address = resolver->getHostByName("www.nintendo.com", AF_INET);
+    config->addSearchDomain("google.com");
+    config->addSearchDomain("nintendo.com");
+
+    Handle<IInternetAddress> address = resolver->getHostByName("code", AF_INET);
     if (address)
     {
         InAddr addr;
 
         address->getAddress(&addr, sizeof(InAddr));
-        u32 h = ntohl(addr.addr);
-        esReport("%d.%d.%d.%d\n", (u8) (h >> 24), (u8) (h >> 16), (u8) (h >> 8), (u8) h);
+        char addrString[16];
+        if (addr.ntoa(addrString, sizeof addrString))
+        {
+            esReport("%s\n", addrString);
+        }
 
         char hostName[DNSHdr::NameMax];
         if (address->getHostName(hostName, sizeof hostName))
@@ -87,6 +94,7 @@ int main()
     }
 
     esSleep(10000000);
+    config->removeSearchDomain("test");
     ethernetInterface->stop();
 
     esReport("done.\n");

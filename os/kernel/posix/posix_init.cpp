@@ -152,7 +152,7 @@ int esInit(IInterface** nameSpace)
     // Register the Ethernet interface
     try
     {
-        Tap* tap = new Tap("eth1");
+        Tap* tap = new Tap("wlan0");
         device->bind("ethernet", static_cast<IStream*>(tap));
     }
     catch (...)

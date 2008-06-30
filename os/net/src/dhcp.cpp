@@ -593,8 +593,7 @@ public:
             int len = requestRequest();
             socket->sendTo(heap, len, 0, limited, DHCPHdr::ServerPort);
             socket->setTimeout(TimeSpan(0, 0, MinWait << rxmitCount));
-            do
-            {
+            do {
                 len = socket->read(heap, sizeof heap);
                 type = reply(len);
             } while (type == DHCPType::Offer);
@@ -620,6 +619,7 @@ public:
         esReport("lease %u\n", info.lease);
         esReport("renewal %u\n", info.renewal);
         esReport("rebinding: %u\n", info.rebinding);
+        esReport("domain: %s\n", info.domain);
         esReport("prefix: %u\n", prefix);
 
         // Register host address (info.ipaddr)
@@ -648,6 +648,25 @@ public:
         {
             nameServer = resolver->getHostByAddress(&info.dns[0].addr, sizeof(InAddr), 0);
             config->addNameServer(nameServer);
+        }
+
+       // Register domain name
+        char *domains = NULL;
+        char separator[] = " ";
+
+        // multiple domains may be defined for search purposes
+        if (strchr(info.domain, separator[0]))
+        {
+            domains = strtok(info.domain, separator);
+            while (domains != NULL)
+            {
+                config->addSearchDomain(domains);
+                domains = strtok(NULL, separator);
+            }
+        }
+        else
+        {
+            config->addSearchDomain(info.domain);
         }
 
         socket->close();
