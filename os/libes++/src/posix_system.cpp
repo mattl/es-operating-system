@@ -47,6 +47,7 @@
 #include <es/classFactory.h>
 #include <es/clsid.h>
 #include <es/base/IProcess.h>
+#include <es/util/ICanvasRenderingContext2D.h>
 
 #include <sys/mman.h>
 
@@ -104,7 +105,9 @@ public:
         size &= ~(ALIGN - 1);
         if (size <= getFreeSize())
         {
-            return rpcStack += size;
+            void* p = rpcStack;
+            rpcStack += size;
+            return p;
         }
         return 0;
     }
@@ -221,6 +224,7 @@ struct CmdForkRes
     Capability          error;
     Capability          root;
     Capability          current;
+    Capability          document;
 
     void report()
     {
@@ -230,6 +234,7 @@ struct CmdForkRes
         error.report();
         root.report();
         current.report();
+        document.report();
     }
 };
 
@@ -356,7 +361,7 @@ f64 retF64(f64 v)
 
 void printGuid(const Guid& guid)
 {
-    printf("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+    fprintf(stderr, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
            guid.Data1, guid.Data2, guid.Data3,
            guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
            guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
@@ -424,13 +429,14 @@ class System : public ICurrentProcess
         Exported(const ExportKey& key) :
             object(key.object),
             iid(key.iid),
-            check(::getRandom())
+            check(::getRandom()),
+            doRelease(false)
         {
         }
 
         ~Exported()
         {
-            // Do elease if necessary on objectTable
+            // Do release if necessary on objectTable
             if (doRelease)
             {
                 object->release();
@@ -556,15 +562,41 @@ public:
 
         randfd = open("/dev/urandom", O_RDONLY);
 
-        CmdForkReq cmd = {
+        CmdForkReq forkReq = {
             CMD_FORK_REQ,
             getpid()
         };
-        ssize_t rc = sendto(sockfd, &cmd, sizeof cmd, MSG_DONTWAIT, getSocketAddress(getppid(), &sa), sizeof sa);
-        if (rc != sizeof cmd)
+        CmdUnion cmd;
+        ssize_t rc = sendto(sockfd, &forkReq, sizeof forkReq, MSG_DONTWAIT, getSocketAddress(getppid(), &sa), sizeof sa);
+        if (rc != sizeof forkReq)
+        {
+            cmd.forkRes.in.object = -1;
+            cmd.forkRes.out.object = -1;
+            cmd.forkRes.error.object = -1;
+            cmd.forkRes.root.object = -1;
+            cmd.forkRes.current.object = -1;
+            cmd.forkRes.document.object = -1;
+        }
+        else
+        {
+            struct sockaddr_un sa;
+            ssize_t rc = receiveCommand(&cmd, &sa);
+            if (rc == -1 || cmd.cmd != CMD_FORK_RES)
+            {
+                ::exit(EXIT_FAILURE);
+            }
+            cmd.forkRes.report();
+        }
+
+        // Import root and current
+        if (0 <= cmd.forkRes.root.object)
+        {
+            esInitThread();
+            root = static_cast<IContext*>(importObject(cmd.forkRes.root, IContext::iid(), false));
+        }
+        else
         {
             // Root
-            printf("Root %u\n", getpid());
             IInterface* unknown = 0;
             esInit(&unknown);
             root = reinterpret_cast<IContext*>(unknown->queryInterface(IContext::iid()));
@@ -584,17 +616,20 @@ public:
             {
             }
 
-            setCurrent(root);
-
-            in = new Stream(0);
-            out = new Stream(1);
-            error = new Stream(2);
-
             int fd = open(".", O_RDONLY);
             Dir* file = new Dir(fd, "");
             root->bind("file", static_cast<IContext*>(file));
             file->release();
+        }
 
+        // Import in, out, error
+        if (0 <= cmd.forkRes.in.object)
+        {
+            in = static_cast<IStream*>(importObject(cmd.forkRes.in, IStream::iid(), false));
+        }
+        else
+        {
+            in = new Stream(0);
 #ifdef __linux__
             struct termio tty;
             ioctl(0, TCGETA, &tty);
@@ -602,36 +637,44 @@ public:
             ioctl(0, TCSETAF, &tty);
 #endif
         }
+        if (0 <= cmd.forkRes.out.object)
+        {
+            out = static_cast<IStream*>(importObject(cmd.forkRes.out, IStream::iid(), false));
+        }
         else
         {
-            // Non-root
-            // XXX check sa
-            printf("Non-root %d\n", getpid());
-            esInitThread();
+            out = new Stream(1);
+        }
+        if (0 <= cmd.forkRes.error.object)
+        {
+            error = static_cast<IStream*>(importObject(cmd.forkRes.error, IStream::iid(), false));
+        }
+        else
+        {
+            error = new Stream(2);
+        }
 
-            for (int timeout = 3; 0 < timeout; --timeout)
+        if (0 <= cmd.forkRes.current.object)
+        {
+            current = static_cast<IContext*>(importObject(cmd.forkRes.current, IContext::iid(), false));
+        }
+        else
+        {
+            setCurrent(root);
+        }
+
+        // hack
+        if (0 <= cmd.forkRes.document.object)
+        {
+            try
             {
-                CmdUnion cmd;
-                struct sockaddr_un sa;
-
-                ssize_t rc = receiveCommand(&cmd, &sa);
-                if (rc == -1 || cmd.cmd != CMD_FORK_RES)
-                {
-                    // TODO maybe resend CMD_FORK_REQ?
-                    continue;
-                }
-
-                // Import in, out, error, root, current
-                cmd.forkRes.report();
-                in = static_cast<IStream*>(importObject(cmd.forkRes.in, IStream::iid(), false));
-                out = static_cast<IStream*>(importObject(cmd.forkRes.out, IStream::iid(), false));
-                error = static_cast<IStream*>(importObject(cmd.forkRes.error, IStream::iid(), false));
-                root = static_cast<IContext*>(importObject(cmd.forkRes.root, IContext::iid(), false));
-                current = static_cast<IContext*>(importObject(cmd.forkRes.current, IContext::iid(), false));
-
-                break;
+                ICanvasRenderingContext2D* canvas = static_cast<ICanvasRenderingContext2D*>(importObject(cmd.forkRes.document, ICanvasRenderingContext2D::iid(), false));
+                Handle<IContext> device = root->lookup("device");
+                device->bind("canvas", canvas);
             }
-
+            catch (...)
+            {
+            }
         }
 
         front = createThread((void*) focus, 0);
@@ -664,11 +707,11 @@ public:
         if (0 <= sockfd)
         {
             close(sockfd);
-        }
-        char sun_path[108]; // UNIX_PATH_MAX
-        sprintf(sun_path, "/tmp/es-socket-%u", getpid());
-        printf("unlink %s\n", sun_path);
-        unlink(sun_path);
+            char sun_path[108]; // UNIX_PATH_MAX
+            sprintf(sun_path, "/tmp/es-socket-%u", getpid());
+            printf("unlink %s\n", sun_path);
+            unlink(sun_path);
+            }
 
 #ifdef __linux__
         struct termio tty;
@@ -863,6 +906,14 @@ public:
 
     int exportObject(IInterface* object, const Guid& iid, Capability* cap, bool param)
     {
+        if (!object)
+        {
+            cap->pid = 0;
+            cap->object = -1;
+            cap->check = -1;
+            return -1;
+        }
+
         // posix implementation directory transfers Dir, File, and Stream file descriptors
         if (Dir* dir = dynamic_cast<Dir*>(object))
         {
@@ -1017,40 +1068,40 @@ public:
         {
             switch (cmd->cmd)
             {
-                case CMD_CHAN_REQ:
-                    if (sizeof(CmdChanReq) != rc)
-                    {
-                        errno = EBADMSG;
-                        rc = -1;
-                        break;
-                    }
-                    fds = &cmd->chanReq.sockfd;
-                    maxfds = 1;
+            case CMD_CHAN_REQ:
+                if (sizeof(CmdChanReq) != rc)
+                {
+                    errno = EBADMSG;
+                    rc = -1;
                     break;
-                case CMD_CHAN_RES:
-                    if (sizeof(CmdChanRes) != rc)
-                    {
-                        errno = EBADMSG;
-                        rc = -1;
-                        break;
-                    }
+                }
+                fds = &cmd->chanReq.sockfd;
+                maxfds = 1;
+                break;
+            case CMD_CHAN_RES:
+                if (sizeof(CmdChanRes) != rc)
+                {
+                    errno = EBADMSG;
+                    rc = -1;
                     break;
-                case CMD_FORK_REQ:
-                    if (sizeof(CmdForkReq) != rc)
-                    {
-                        errno = EBADMSG;
-                        rc = -1;
-                        break;
-                    }
+                }
+                break;
+            case CMD_FORK_REQ:
+                if (sizeof(CmdForkReq) != rc)
+                {
+                    errno = EBADMSG;
+                    rc = -1;
                     break;
-                case CMD_FORK_RES:
-                    if (sizeof(CmdForkRes) != rc)
-                    {
-                        errno = EBADMSG;
-                        rc = -1;
-                        break;
-                    }
+                }
+                break;
+            case CMD_FORK_RES:
+                if (sizeof(CmdForkRes) != rc)
+                {
+                    errno = EBADMSG;
+                    rc = -1;
                     break;
+                }
+                break;
             }
         }
 
@@ -1071,7 +1122,7 @@ public:
         {
             return 0;
         }
-        if (exported->check != cap.check)
+        if (exported->getCheck() != cap.check)
         {
             exportedTable.put(cap.object);
             return 0;
@@ -1137,12 +1188,13 @@ public:
             case 2: // release
                 count = exported->release();
                 exportedTable.put(hdr->capability.object);
-                if (0 <= count)
+                if (0 <= count) // TODO: ==?
                 {
                     exportedTable.put(hdr->capability.object);
                 }
                 res.result.s32 = count;
                 res.result.cls = Param::S32;
+                // TODO should return?
                 break;
             }
         }
@@ -1218,7 +1270,7 @@ public:
             {
             case Ent::TypeSequence:
                 // xxx* buf, int len, ...
-                size = returnType.getSize() * argp->size;
+                size = type.getSize() * argp->size;
                 argp->ptr = data;
                 argp->cls = Param::PTR;
                 data += size;
@@ -1258,7 +1310,7 @@ public:
                     {
                         cap->object = *fdv++;   // TODO check range
                     }
-                    IInterface* object = importObject(*cap, iid, true);
+                    IInterface* object = importObject(*cap, iid, true); // TODO false?
                     data += sizeof(Capability);
                 }
                 break;
@@ -1339,7 +1391,7 @@ public:
             if (res.result.ptr)
             {
                 Capability* cap = static_cast<Capability*>(resultPtr);
-                exportObject((IInterface*) res.result.ptr, iid, cap, false);   // TODO error check
+                exportObject((IInterface*) res.result.ptr, iid, cap, false);   // TODO error check, TODO true??
                 if (cap->check == 0)
                 {
                     *fdp++ = cap->object;
@@ -1426,7 +1478,14 @@ public:
         }
 
         // Determine the type of interface and which method is being invoked.
-        Reflect::Interface interface = getInterface(imported->iid);
+        Reflect::Interface interface;
+        try
+        {
+            interface = getInterface(imported->iid);
+        }
+        catch (...)
+        {
+        }
 
         // If this interface inherits another interface,
         // methodNumber is checked accordingly.
@@ -1549,9 +1608,13 @@ public:
         return pair[0];
     }
 
+    int getControlSocket()
+    {
+        return sockfd;
+    }
 };
 
-System current;
+System current __attribute__((init_priority(1001)));    // After InterfaceStore
 
 class Process : public IProcess
 {
@@ -1629,6 +1692,7 @@ public:
         ::current.exportObject(error, IStream::iid(), &cmd.error, false);
         ::current.exportObject(current, IContext::iid(), &cmd.current, false);
         ::current.exportObject(root, IContext::iid(), &cmd.root, false);
+        ::current.exportObject(0, IInterface::iid(), &cmd.document, false);
         cmd.report();
 
         int pfd[2];
@@ -1681,7 +1745,7 @@ public:
             close(pfd[0]);
 
             // Unrelated files should be closed by the settings of fcntl FD_CLOEXEC after fexecve
-            close(3);
+            close(::current.getControlSocket());
 
             printf("ppid: %d\n", getppid());
 
@@ -1958,11 +2022,6 @@ void* System::focus(void* param)
                 {
                     ::current.removeChild(cmd.forkReq.pid);
                 }
-            }
-            else
-            {
-                // TODO
-                printf("Oops %s %d\n", __FILE__, __LINE__);
             }
             break;
         }

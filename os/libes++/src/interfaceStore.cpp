@@ -168,7 +168,7 @@ InterfaceStore(int capacity) :
 
 namespace
 {
-    InterfaceStore  interfaceStore;
+    InterfaceStore  interfaceStore __attribute__((init_priority(1000)));    // Before System
 }
 
 Reflect::Interface& getInterface(const Guid& iid)
