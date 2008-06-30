@@ -34,6 +34,27 @@ using namespace es;
 extern int esInit(IInterface** nameSpace);
 extern void esRegisterInternetProtocol(IContext* context);
 
+void printAddress(IInternetAddress* address)
+{
+    if (address)
+    {
+        InAddr addr;
+
+        address->getAddress(&addr, sizeof(InAddr));
+        char addrString[16];
+        if (addr.ntoa(addrString, sizeof addrString))
+        {
+            esReport("%s\n", addrString);
+        }
+
+        char hostName[DNSHdr::NameMax];
+        if (address->getHostName(hostName, sizeof hostName))
+        {
+            esReport("'%s'\n", hostName);
+        }
+    }
+}
+
 int main()
 {
     IInterface* root = 0;
@@ -56,45 +77,35 @@ int main()
 
     InAddr addr, addrRouter, addrNameServer;
     // Register host address (192.168.2.40)
-    addr.aton("192.168.1.199");
+    addr.aton("192.168.2.40");
     Handle<IInternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof(InAddr), dixID);
     config->addAddress(host, 16);
     esSleep(90000000);  // Wait for the host address to be settled.
 
     // Register a default router (192.168.2.1)
-    addrRouter.aton("192.168.1.1");
+    addrRouter.aton("192.168.2.1");
     Handle<IInternetAddress> router = resolver->getHostByAddress(&addrRouter.addr, sizeof(InAddr), dixID);
     config->addRouter(router);
 
     // Register a domain name server (192.168.2.1)
-    addrNameServer.aton("192.168.1.1");
+    addrNameServer.aton("192.168.2.1");
     Handle<IInternetAddress> nameServer = resolver->getHostByAddress(&addrNameServer.addr, sizeof(InAddr), dixID);
     config->addNameServer(nameServer);
 
-    config->addSearchDomain("google.com");
     config->addSearchDomain("nintendo.com");
+    config->addSearchDomain("google.com");
 
-    Handle<IInternetAddress> address = resolver->getHostByName("code", AF_INET);
-    if (address)
-    {
-        InAddr addr;
+    Handle<IInternetAddress> address;
 
-        address->getAddress(&addr, sizeof(InAddr));
-        char addrString[16];
-        if (addr.ntoa(addrString, sizeof addrString))
-        {
-            esReport("%s\n", addrString);
-        }
+    // will resolve to www.nintendo.com
+    address = resolver->getHostByName("www", AF_INET);
+    printAddress(address);
 
-        char hostName[DNSHdr::NameMax];
-        if (address->getHostName(hostName, sizeof hostName))
-        {
-            esReport("'%s'\n", hostName);
-        }
-    }
+    // will resolve to code.l.google.com
+    address = resolver->getHostByName("code", AF_INET);
+    printAddress(address);
 
     esSleep(10000000);
-    config->removeSearchDomain("test");
     ethernetInterface->stop();
 
     esReport("done.\n");
