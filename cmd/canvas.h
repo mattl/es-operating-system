@@ -426,12 +426,12 @@ public:
     }
 
     // drawString enhancement
-    int getTextStyle(char* textStyle, int textStyleLength);
-    int setTextStyle(const char* textStyle);
-    void drawText(const char* textToDraw);
-    float measureText(const char* textToMeasure);
-    void pathText(const char* textToPath);
-    void textAlongPath(const char* textToDraw, bool stroke);
+    int getMozTextStyle(char* textStyle, int textStyleLength);
+    int setMozTextStyle(const char* textStyle);
+    void mozDrawText(const char* textToDraw);
+    float mozMeasureText(const char* textToMeasure);
+    void mozPathText(const char* textToPath);
+    void mozTextAlongPath(const char* textToDraw, bool stroke);
 
     void* queryInterface(const Guid& riid)
     {

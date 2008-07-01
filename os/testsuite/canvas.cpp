@@ -149,28 +149,28 @@ void figure(ICanvasRenderingContext2D* canvas)
     // Text enhancement
     canvas->setFillStyle("red");
     canvas->moveTo(512, 200);
-    canvas->setTextStyle("36pt Italic Liberation Serif");
-    canvas->drawText("Hello, world.");
+    canvas->setMozTextStyle("36pt Italic Liberation Serif");
+    canvas->mozDrawText("Hello, world.");
 
     canvas->setFillStyle("lime");
     canvas->moveTo(512, 250);
-    canvas->setTextStyle("40pt Bold Liberation Sans");
-    canvas->drawText("Hello, world.");
+    canvas->setMozTextStyle("40pt Bold Liberation Sans");
+    canvas->mozDrawText("Hello, world.");
 
     canvas->setFillStyle("blue");
     canvas->moveTo(512, 300);
-    canvas->setTextStyle("48pt Liberation Mono");
-    canvas->drawText("Hello, world.");
+    canvas->setMozTextStyle("48pt Liberation Mono");
+    canvas->mozDrawText("Hello, world.");
 
     canvas->setFillStyle("fuchsia");
     canvas->moveTo(512, 350);
-    canvas->setTextStyle("48pt Sazanami Gothic");
-    canvas->drawText("こんにちは、世界。");
+    canvas->setMozTextStyle("48pt Sazanami Gothic");
+    canvas->mozDrawText("こんにちは、世界。");
 
     canvas->setFillStyle("aqua");
     canvas->moveTo(512, 400);
-    canvas->setTextStyle("48pt Sazanami Mincho");
-    canvas->drawText("こんにちは、世界。");
+    canvas->setMozTextStyle("48pt Sazanami Mincho");
+    canvas->mozDrawText("こんにちは、世界。");
 
 }
 

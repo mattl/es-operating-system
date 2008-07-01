@@ -933,7 +933,7 @@ translate(float tx, float ty)
 }
 
 int Canvas::
-getTextStyle(char* style, int len)
+getMozTextStyle(char* style, int len)
 {
     if (textStyle.size() < len)
     {
@@ -945,7 +945,7 @@ getTextStyle(char* style, int len)
 }
 
 int Canvas::
-setTextStyle(const char* style)
+setMozTextStyle(const char* style)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -997,7 +997,7 @@ setTextStyle(const char* style)
 }
 
 void Canvas::
-drawText(const char* textToDraw)
+mozDrawText(const char* textToDraw)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -1008,7 +1008,7 @@ drawText(const char* textToDraw)
 }
 
 float Canvas::
-measureText(const char* textToMeasure)
+mozMeasureText(const char* textToMeasure)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -1018,7 +1018,7 @@ measureText(const char* textToMeasure)
 }
 
 void Canvas::
-pathText(const char* textToPath)
+mozPathText(const char* textToPath)
 {
     Synchronized<IMonitor*> method(monitor);
 
@@ -1026,7 +1026,7 @@ pathText(const char* textToPath)
 }
 
 void Canvas::
-textAlongPath(const char* textToDraw, bool stroke)
+mozTextAlongPath(const char* textToDraw, bool stroke)
 {
 }
 
