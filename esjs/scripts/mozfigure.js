@@ -9,6 +9,9 @@ var height;
 var x;
 var y;
 
+c.beginPath();
+c.closePath();
+
 c.strokeStyle = "rgb(0, 0, 0)";
 
 height = 100;
@@ -86,27 +89,41 @@ c.lineTo(cx, cy);
 c.closePath();
 c.fill();
 
+c.beginPath();
+c.closePath();
+
 c.fillStyle = "red";
-c.moveTo(512, 200);
-c.mozTextStyle = "36pt Italic Liberation Serif";
+c.translate(512, 200);
+c.mozTextStyle = "36px Italic Liberation Serif";
 c.mozDrawText("Hello, world.");
+c.translate(-512, -200);
+c.fill();
 
 c.fillStyle = "lime";
-c.moveTo(512, 250);
-c.mozTextStyle = "40pt Bold Liberation Sans";
+c.translate(512, 250);
+c.mozTextStyle = "40px Bold Liberation Sans";
 c.mozDrawText("Hello, world.");
+c.translate(-512, -250);
+c.fill();
 
 c.fillStyle = "blue";
-c.moveTo(512, 300);
-c.mozTextStyle = "48pt Liberation Mono";
+c.translate(512, 300);
+c.mozTextStyle = "48px Liberation Mono";
 c.mozDrawText("Hello, world.");
+c.translate(-512, -300);
+c.fill();
 
 c.fillStyle = "fuchsia";
-c.moveTo(512, 350);
-c.mozTextStyle = "48pt Sazanami Gothic";
+c.translate(512, 350);
+c.mozTextStyle = "48px Sazanami Gothic";
 c.mozDrawText("こんにちは、世界。");
+c.translate(-512, -350);
+c.fill();
 
 c.fillStyle = "aqua";
-c.moveTo(512, 400);
-c.mozTextStyle = "48pt Sazanami Mincho";
+c.translate(512, 400);
+c.mozTextStyle = "48px Sazanami Mincho";
 c.mozDrawText("こんにちは、世界。");
+c.translate(-512, -400);
+c.fill();
+
