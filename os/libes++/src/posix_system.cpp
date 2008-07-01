@@ -37,6 +37,7 @@
 
 #include <es/apply.h>
 #include <es/broker.h>
+#include <es/capability.h>
 #include <es/dateTime.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
@@ -143,43 +144,6 @@ struct ThreadCredential
     pthread_t   tid;
     u64         check;  // maybe optional
 };
-
-struct Capability
-{
-    pid_t   pid;
-    int     object;
-    u64     check;
-
-    size_t hash() const
-    {
-        return hash(pid, object, check);
-    }
-
-    Capability& copy(const Capability& other)
-    {
-        pid = other.pid;
-        object = other.object;
-        check = other.check;
-        return *this;
-    }
-
-    static size_t hash(pid_t pid, int object, u64 check)
-    {
-        return pid ^ object ^ check;
-    }
-
-    void report()
-    {
-        printf("Capability: <%d, %d, %llx>\n", pid, object, check);
-    }
-};
-
-inline int operator==(const Capability& c1, const Capability& c2)
-{
-   return (c1.pid == c2.pid &&
-           c1.object == c2.object &&
-           c1.check == c2.check) ? true : false;
-}
 
 // System Commands (even: request, odd: reply)
 static const int CMD_CHAN_REQ = 0;
