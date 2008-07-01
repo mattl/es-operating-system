@@ -21,7 +21,6 @@ cpp_source_files = \
 	src/launcher.cpp \
 	src/exportedObject.cpp \
 	src/importedObject.cpp \
-	src/rpc.cpp \
 	src/thread.cpp \
 	src/debug.cpp
 

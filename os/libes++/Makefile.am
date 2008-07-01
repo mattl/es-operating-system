@@ -11,7 +11,7 @@ vpath %.ent = ../../include/es
 	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
-lib_LIBRARIES = libessup++.a libes++.a libesrpc.a
+lib_LIBRARIES = libessup++.a libes++.a
 
 AM_CPPFLAGS = \
 	-I $(srcdir)/include \
@@ -38,7 +38,7 @@ cpp_source_files = \
 rpc_source_files = \
 	src/apply.cpp \
 	src/apply386.S \
-	src/interfaceStore.cpp	
+	src/interfaceStore.cpp
 
 header_files = \
 	include/core.h \
@@ -100,11 +100,21 @@ endif ES
 
 if POSIX
 
+# libesrpc is built for shared libraries
+lib_LIBRARIES += libesrpc.a
+
 AM_CPPFLAGS += -I/usr/include/GL
 
-libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp
+libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 
-libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) 
+libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) src/rpc.cpp
+
+# -fno-exceptions
+libesrpc_a_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	-fPIC -fno-rtti \
+	-Wall -Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
+	-pedantic -fno-strict-aliasing -fshort-wchar -pthread -pipe
 
 endif POSIX
 

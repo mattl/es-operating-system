@@ -34,8 +34,11 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @ES_TRUE@am__append_1 = src/system.cpp
-@POSIX_TRUE@am__append_2 = -I/usr/include/GL
-@POSIX_TRUE@am__append_3 = src/posix_system.cpp src/posix_video.cpp
+
+# libesrpc is built for shared libraries
+@POSIX_TRUE@am__append_2 = libesrpc.a
+@POSIX_TRUE@am__append_3 = -I/usr/include/GL
+@POSIX_TRUE@am__append_4 = src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 subdir = libes++
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -76,7 +79,7 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
 	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
 	src/report.cpp src/system.cpp src/posix_system.cpp \
-	src/posix_video.cpp
+	src/posix_video.cpp src/rpc.cpp
 am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
 	utf.$(OBJEXT)
 am__objects_2 = color.$(OBJEXT) context.$(OBJEXT) dateTime.$(OBJEXT) \
@@ -103,7 +106,7 @@ am__objects_6 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
 	ISet.$(OBJEXT) ICanvasRenderingContext2D.$(OBJEXT)
 @ES_TRUE@am__objects_7 = system.$(OBJEXT)
 @POSIX_TRUE@am__objects_8 = posix_system.$(OBJEXT) \
-@POSIX_TRUE@	posix_video.$(OBJEXT)
+@POSIX_TRUE@	posix_video.$(OBJEXT) rpc.$(OBJEXT)
 am_libes___a_OBJECTS = $(am__objects_5) $(am__objects_6) \
 	report.$(OBJEXT) $(am__objects_7) $(am__objects_8)
 libes___a_OBJECTS = $(am_libes___a_OBJECTS)
@@ -122,8 +125,37 @@ am__libesrpc_a_SOURCES_DIST = src/apply.cpp src/apply386.S \
 	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
 	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
-	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c
-@POSIX_TRUE@am_libesrpc_a_OBJECTS = $(am__objects_3) $(am__objects_6)
+	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
+	src/rpc.cpp
+am__objects_9 = libesrpc_a-apply.$(OBJEXT) \
+	libesrpc_a-apply386.$(OBJEXT) \
+	libesrpc_a-interfaceStore.$(OBJEXT)
+am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
+	libesrpc_a-ICache.$(OBJEXT) libesrpc_a-ICallback.$(OBJEXT) \
+	libesrpc_a-IClassFactory.$(OBJEXT) \
+	libesrpc_a-IClassStore.$(OBJEXT) libesrpc_a-IFile.$(OBJEXT) \
+	libesrpc_a-IInterface.$(OBJEXT) \
+	libesrpc_a-IInterfaceStore.$(OBJEXT) \
+	libesrpc_a-IMonitor.$(OBJEXT) libesrpc_a-IPageable.$(OBJEXT) \
+	libesrpc_a-IPageSet.$(OBJEXT) libesrpc_a-IProcess.$(OBJEXT) \
+	libesrpc_a-IRuntime.$(OBJEXT) libesrpc_a-ISelectable.$(OBJEXT) \
+	libesrpc_a-IService.$(OBJEXT) libesrpc_a-IStream.$(OBJEXT) \
+	libesrpc_a-IThread.$(OBJEXT) libesrpc_a-IAudioFormat.$(OBJEXT) \
+	libesrpc_a-IBeep.$(OBJEXT) libesrpc_a-ICursor.$(OBJEXT) \
+	libesrpc_a-IDevice.$(OBJEXT) \
+	libesrpc_a-IDiskManagement.$(OBJEXT) \
+	libesrpc_a-IDmac.$(OBJEXT) libesrpc_a-IFileSystem.$(OBJEXT) \
+	libesrpc_a-INetworkInterface.$(OBJEXT) \
+	libesrpc_a-IPic.$(OBJEXT) libesrpc_a-IRemovableMedia.$(OBJEXT) \
+	libesrpc_a-IRtc.$(OBJEXT) libesrpc_a-IPartition.$(OBJEXT) \
+	libesrpc_a-IBinding.$(OBJEXT) libesrpc_a-IContext.$(OBJEXT) \
+	libesrpc_a-IInternetAddress.$(OBJEXT) \
+	libesrpc_a-IInternetConfig.$(OBJEXT) \
+	libesrpc_a-IResolver.$(OBJEXT) libesrpc_a-ISocket.$(OBJEXT) \
+	libesrpc_a-IIterator.$(OBJEXT) libesrpc_a-ISet.$(OBJEXT) \
+	libesrpc_a-ICanvasRenderingContext2D.$(OBJEXT)
+@POSIX_TRUE@am_libesrpc_a_OBJECTS = $(am__objects_9) $(am__objects_10) \
+@POSIX_TRUE@	libesrpc_a-rpc.$(OBJEXT)
 libesrpc_a_OBJECTS = $(am_libesrpc_a_OBJECTS)
 libessup___a_AR = $(AR) $(ARFLAGS)
 libessup___a_LIBADD =
@@ -280,9 +312,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . testsuite
 SUFFIXES = .ent
-lib_LIBRARIES = libessup++.a libes++.a libesrpc.a
+lib_LIBRARIES = libessup++.a libes++.a $(am__append_2)
 AM_CPPFLAGS = -I $(srcdir)/include -I- -I../../include \
-	-I$(srcdir)/../../include $(am__append_2)
+	-I$(srcdir)/../../include $(am__append_3)
 c_source_files = \
 	src/md5.c \
 	src/rand48.c \
@@ -302,7 +334,7 @@ cpp_source_files = \
 rpc_source_files = \
 	src/apply.cpp \
 	src/apply386.S \
-	src/interfaceStore.cpp	
+	src/interfaceStore.cpp
 
 header_files = \
 	include/core.h \
@@ -356,8 +388,16 @@ nodist_libessup___a_SOURCES = \
 
 libes___a_SOURCES = $(libessup___a_SOURCES) \
 	$(nodist_libessup___a_SOURCES) src/report.cpp $(am__append_1) \
-	$(am__append_3)
-@POSIX_TRUE@libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) 
+	$(am__append_4)
+@POSIX_TRUE@libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) src/rpc.cpp
+
+# -fno-exceptions
+@POSIX_TRUE@libesrpc_a_CPPFLAGS = \
+@POSIX_TRUE@	$(AM_CPPFLAGS) \
+@POSIX_TRUE@	-fPIC -fno-rtti \
+@POSIX_TRUE@	-Wall -Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
+@POSIX_TRUE@	-pedantic -fno-strict-aliasing -fshort-wchar -pthread -pipe
+
 all: all-recursive
 
 .SUFFIXES:
@@ -486,12 +526,55 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formatter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interfaceStore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IAlarm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IAudioFormat.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IBeep.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IBinding.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICallback.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IClassFactory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IClassStore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IContext.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICursor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDevice.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDiskManagement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDmac.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFileSystem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInterfaceStore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInternetAddress.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInternetConfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IIterator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IMonitor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-INetworkInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPageSet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPageable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPartition.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IProcess.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IRemovableMedia.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IResolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IRtc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IRuntime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ISelectable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IService.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ISet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ISocket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IStream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IThread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-apply.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-apply386.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-interfaceStore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-rpc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rand48.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rpc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/throw.Po@am__quote@
@@ -524,6 +607,20 @@ apply386.obj: src/apply386.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='apply386.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
+
+libesrpc_a-apply386.o: src/apply386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-apply386.o -MD -MP -MF $(DEPDIR)/libesrpc_a-apply386.Tpo -c -o libesrpc_a-apply386.o `test -f 'src/apply386.S' || echo '$(srcdir)/'`src/apply386.S
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-apply386.Tpo $(DEPDIR)/libesrpc_a-apply386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='libesrpc_a-apply386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-apply386.o `test -f 'src/apply386.S' || echo '$(srcdir)/'`src/apply386.S
+
+libesrpc_a-apply386.obj: src/apply386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-apply386.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-apply386.Tpo -c -o libesrpc_a-apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-apply386.Tpo $(DEPDIR)/libesrpc_a-apply386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='libesrpc_a-apply386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1127,6 +1224,538 @@ ICanvasRenderingContext2D.obj: util/ICanvasRenderingContext2D.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
 
+libesrpc_a-IAlarm.o: base/IAlarm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IAlarm.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IAlarm.Tpo -c -o libesrpc_a-IAlarm.o `test -f 'base/IAlarm.c' || echo '$(srcdir)/'`base/IAlarm.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IAlarm.Tpo $(DEPDIR)/libesrpc_a-IAlarm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IAlarm.c' object='libesrpc_a-IAlarm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IAlarm.o `test -f 'base/IAlarm.c' || echo '$(srcdir)/'`base/IAlarm.c
+
+libesrpc_a-IAlarm.obj: base/IAlarm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IAlarm.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IAlarm.Tpo -c -o libesrpc_a-IAlarm.obj `if test -f 'base/IAlarm.c'; then $(CYGPATH_W) 'base/IAlarm.c'; else $(CYGPATH_W) '$(srcdir)/base/IAlarm.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IAlarm.Tpo $(DEPDIR)/libesrpc_a-IAlarm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IAlarm.c' object='libesrpc_a-IAlarm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IAlarm.obj `if test -f 'base/IAlarm.c'; then $(CYGPATH_W) 'base/IAlarm.c'; else $(CYGPATH_W) '$(srcdir)/base/IAlarm.c'; fi`
+
+libesrpc_a-ICache.o: base/ICache.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICache.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ICache.Tpo -c -o libesrpc_a-ICache.o `test -f 'base/ICache.c' || echo '$(srcdir)/'`base/ICache.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICache.Tpo $(DEPDIR)/libesrpc_a-ICache.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICache.c' object='libesrpc_a-ICache.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICache.o `test -f 'base/ICache.c' || echo '$(srcdir)/'`base/ICache.c
+
+libesrpc_a-ICache.obj: base/ICache.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICache.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ICache.Tpo -c -o libesrpc_a-ICache.obj `if test -f 'base/ICache.c'; then $(CYGPATH_W) 'base/ICache.c'; else $(CYGPATH_W) '$(srcdir)/base/ICache.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICache.Tpo $(DEPDIR)/libesrpc_a-ICache.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICache.c' object='libesrpc_a-ICache.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICache.obj `if test -f 'base/ICache.c'; then $(CYGPATH_W) 'base/ICache.c'; else $(CYGPATH_W) '$(srcdir)/base/ICache.c'; fi`
+
+libesrpc_a-ICallback.o: base/ICallback.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICallback.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ICallback.Tpo -c -o libesrpc_a-ICallback.o `test -f 'base/ICallback.c' || echo '$(srcdir)/'`base/ICallback.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICallback.Tpo $(DEPDIR)/libesrpc_a-ICallback.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICallback.c' object='libesrpc_a-ICallback.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICallback.o `test -f 'base/ICallback.c' || echo '$(srcdir)/'`base/ICallback.c
+
+libesrpc_a-ICallback.obj: base/ICallback.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICallback.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ICallback.Tpo -c -o libesrpc_a-ICallback.obj `if test -f 'base/ICallback.c'; then $(CYGPATH_W) 'base/ICallback.c'; else $(CYGPATH_W) '$(srcdir)/base/ICallback.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICallback.Tpo $(DEPDIR)/libesrpc_a-ICallback.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICallback.c' object='libesrpc_a-ICallback.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICallback.obj `if test -f 'base/ICallback.c'; then $(CYGPATH_W) 'base/ICallback.c'; else $(CYGPATH_W) '$(srcdir)/base/ICallback.c'; fi`
+
+libesrpc_a-IClassFactory.o: base/IClassFactory.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassFactory.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassFactory.Tpo -c -o libesrpc_a-IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassFactory.Tpo $(DEPDIR)/libesrpc_a-IClassFactory.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='libesrpc_a-IClassFactory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
+
+libesrpc_a-IClassFactory.obj: base/IClassFactory.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassFactory.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassFactory.Tpo -c -o libesrpc_a-IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassFactory.Tpo $(DEPDIR)/libesrpc_a-IClassFactory.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='libesrpc_a-IClassFactory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
+
+libesrpc_a-IClassStore.o: base/IClassStore.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassStore.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassStore.Tpo -c -o libesrpc_a-IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassStore.Tpo $(DEPDIR)/libesrpc_a-IClassStore.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='libesrpc_a-IClassStore.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
+
+libesrpc_a-IClassStore.obj: base/IClassStore.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassStore.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassStore.Tpo -c -o libesrpc_a-IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassStore.Tpo $(DEPDIR)/libesrpc_a-IClassStore.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='libesrpc_a-IClassStore.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
+
+libesrpc_a-IFile.o: base/IFile.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFile.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IFile.Tpo -c -o libesrpc_a-IFile.o `test -f 'base/IFile.c' || echo '$(srcdir)/'`base/IFile.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFile.Tpo $(DEPDIR)/libesrpc_a-IFile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IFile.c' object='libesrpc_a-IFile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFile.o `test -f 'base/IFile.c' || echo '$(srcdir)/'`base/IFile.c
+
+libesrpc_a-IFile.obj: base/IFile.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFile.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IFile.Tpo -c -o libesrpc_a-IFile.obj `if test -f 'base/IFile.c'; then $(CYGPATH_W) 'base/IFile.c'; else $(CYGPATH_W) '$(srcdir)/base/IFile.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFile.Tpo $(DEPDIR)/libesrpc_a-IFile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IFile.c' object='libesrpc_a-IFile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFile.obj `if test -f 'base/IFile.c'; then $(CYGPATH_W) 'base/IFile.c'; else $(CYGPATH_W) '$(srcdir)/base/IFile.c'; fi`
+
+libesrpc_a-IInterface.o: base/IInterface.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInterface.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IInterface.Tpo -c -o libesrpc_a-IInterface.o `test -f 'base/IInterface.c' || echo '$(srcdir)/'`base/IInterface.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInterface.Tpo $(DEPDIR)/libesrpc_a-IInterface.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IInterface.c' object='libesrpc_a-IInterface.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInterface.o `test -f 'base/IInterface.c' || echo '$(srcdir)/'`base/IInterface.c
+
+libesrpc_a-IInterface.obj: base/IInterface.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInterface.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IInterface.Tpo -c -o libesrpc_a-IInterface.obj `if test -f 'base/IInterface.c'; then $(CYGPATH_W) 'base/IInterface.c'; else $(CYGPATH_W) '$(srcdir)/base/IInterface.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInterface.Tpo $(DEPDIR)/libesrpc_a-IInterface.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IInterface.c' object='libesrpc_a-IInterface.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInterface.obj `if test -f 'base/IInterface.c'; then $(CYGPATH_W) 'base/IInterface.c'; else $(CYGPATH_W) '$(srcdir)/base/IInterface.c'; fi`
+
+libesrpc_a-IInterfaceStore.o: base/IInterfaceStore.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInterfaceStore.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IInterfaceStore.Tpo -c -o libesrpc_a-IInterfaceStore.o `test -f 'base/IInterfaceStore.c' || echo '$(srcdir)/'`base/IInterfaceStore.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInterfaceStore.Tpo $(DEPDIR)/libesrpc_a-IInterfaceStore.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IInterfaceStore.c' object='libesrpc_a-IInterfaceStore.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInterfaceStore.o `test -f 'base/IInterfaceStore.c' || echo '$(srcdir)/'`base/IInterfaceStore.c
+
+libesrpc_a-IInterfaceStore.obj: base/IInterfaceStore.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInterfaceStore.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IInterfaceStore.Tpo -c -o libesrpc_a-IInterfaceStore.obj `if test -f 'base/IInterfaceStore.c'; then $(CYGPATH_W) 'base/IInterfaceStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IInterfaceStore.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInterfaceStore.Tpo $(DEPDIR)/libesrpc_a-IInterfaceStore.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IInterfaceStore.c' object='libesrpc_a-IInterfaceStore.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInterfaceStore.obj `if test -f 'base/IInterfaceStore.c'; then $(CYGPATH_W) 'base/IInterfaceStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IInterfaceStore.c'; fi`
+
+libesrpc_a-IMonitor.o: base/IMonitor.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IMonitor.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IMonitor.Tpo -c -o libesrpc_a-IMonitor.o `test -f 'base/IMonitor.c' || echo '$(srcdir)/'`base/IMonitor.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IMonitor.Tpo $(DEPDIR)/libesrpc_a-IMonitor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IMonitor.c' object='libesrpc_a-IMonitor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IMonitor.o `test -f 'base/IMonitor.c' || echo '$(srcdir)/'`base/IMonitor.c
+
+libesrpc_a-IMonitor.obj: base/IMonitor.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IMonitor.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IMonitor.Tpo -c -o libesrpc_a-IMonitor.obj `if test -f 'base/IMonitor.c'; then $(CYGPATH_W) 'base/IMonitor.c'; else $(CYGPATH_W) '$(srcdir)/base/IMonitor.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IMonitor.Tpo $(DEPDIR)/libesrpc_a-IMonitor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IMonitor.c' object='libesrpc_a-IMonitor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IMonitor.obj `if test -f 'base/IMonitor.c'; then $(CYGPATH_W) 'base/IMonitor.c'; else $(CYGPATH_W) '$(srcdir)/base/IMonitor.c'; fi`
+
+libesrpc_a-IPageable.o: base/IPageable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPageable.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IPageable.Tpo -c -o libesrpc_a-IPageable.o `test -f 'base/IPageable.c' || echo '$(srcdir)/'`base/IPageable.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPageable.Tpo $(DEPDIR)/libesrpc_a-IPageable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IPageable.c' object='libesrpc_a-IPageable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPageable.o `test -f 'base/IPageable.c' || echo '$(srcdir)/'`base/IPageable.c
+
+libesrpc_a-IPageable.obj: base/IPageable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPageable.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IPageable.Tpo -c -o libesrpc_a-IPageable.obj `if test -f 'base/IPageable.c'; then $(CYGPATH_W) 'base/IPageable.c'; else $(CYGPATH_W) '$(srcdir)/base/IPageable.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPageable.Tpo $(DEPDIR)/libesrpc_a-IPageable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IPageable.c' object='libesrpc_a-IPageable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPageable.obj `if test -f 'base/IPageable.c'; then $(CYGPATH_W) 'base/IPageable.c'; else $(CYGPATH_W) '$(srcdir)/base/IPageable.c'; fi`
+
+libesrpc_a-IPageSet.o: base/IPageSet.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPageSet.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IPageSet.Tpo -c -o libesrpc_a-IPageSet.o `test -f 'base/IPageSet.c' || echo '$(srcdir)/'`base/IPageSet.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPageSet.Tpo $(DEPDIR)/libesrpc_a-IPageSet.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IPageSet.c' object='libesrpc_a-IPageSet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPageSet.o `test -f 'base/IPageSet.c' || echo '$(srcdir)/'`base/IPageSet.c
+
+libesrpc_a-IPageSet.obj: base/IPageSet.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPageSet.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IPageSet.Tpo -c -o libesrpc_a-IPageSet.obj `if test -f 'base/IPageSet.c'; then $(CYGPATH_W) 'base/IPageSet.c'; else $(CYGPATH_W) '$(srcdir)/base/IPageSet.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPageSet.Tpo $(DEPDIR)/libesrpc_a-IPageSet.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IPageSet.c' object='libesrpc_a-IPageSet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPageSet.obj `if test -f 'base/IPageSet.c'; then $(CYGPATH_W) 'base/IPageSet.c'; else $(CYGPATH_W) '$(srcdir)/base/IPageSet.c'; fi`
+
+libesrpc_a-IProcess.o: base/IProcess.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IProcess.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IProcess.Tpo -c -o libesrpc_a-IProcess.o `test -f 'base/IProcess.c' || echo '$(srcdir)/'`base/IProcess.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IProcess.Tpo $(DEPDIR)/libesrpc_a-IProcess.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IProcess.c' object='libesrpc_a-IProcess.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IProcess.o `test -f 'base/IProcess.c' || echo '$(srcdir)/'`base/IProcess.c
+
+libesrpc_a-IProcess.obj: base/IProcess.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IProcess.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IProcess.Tpo -c -o libesrpc_a-IProcess.obj `if test -f 'base/IProcess.c'; then $(CYGPATH_W) 'base/IProcess.c'; else $(CYGPATH_W) '$(srcdir)/base/IProcess.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IProcess.Tpo $(DEPDIR)/libesrpc_a-IProcess.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IProcess.c' object='libesrpc_a-IProcess.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IProcess.obj `if test -f 'base/IProcess.c'; then $(CYGPATH_W) 'base/IProcess.c'; else $(CYGPATH_W) '$(srcdir)/base/IProcess.c'; fi`
+
+libesrpc_a-IRuntime.o: base/IRuntime.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRuntime.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IRuntime.Tpo -c -o libesrpc_a-IRuntime.o `test -f 'base/IRuntime.c' || echo '$(srcdir)/'`base/IRuntime.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRuntime.Tpo $(DEPDIR)/libesrpc_a-IRuntime.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IRuntime.c' object='libesrpc_a-IRuntime.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRuntime.o `test -f 'base/IRuntime.c' || echo '$(srcdir)/'`base/IRuntime.c
+
+libesrpc_a-IRuntime.obj: base/IRuntime.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRuntime.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IRuntime.Tpo -c -o libesrpc_a-IRuntime.obj `if test -f 'base/IRuntime.c'; then $(CYGPATH_W) 'base/IRuntime.c'; else $(CYGPATH_W) '$(srcdir)/base/IRuntime.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRuntime.Tpo $(DEPDIR)/libesrpc_a-IRuntime.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IRuntime.c' object='libesrpc_a-IRuntime.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRuntime.obj `if test -f 'base/IRuntime.c'; then $(CYGPATH_W) 'base/IRuntime.c'; else $(CYGPATH_W) '$(srcdir)/base/IRuntime.c'; fi`
+
+libesrpc_a-ISelectable.o: base/ISelectable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISelectable.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ISelectable.Tpo -c -o libesrpc_a-ISelectable.o `test -f 'base/ISelectable.c' || echo '$(srcdir)/'`base/ISelectable.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISelectable.Tpo $(DEPDIR)/libesrpc_a-ISelectable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ISelectable.c' object='libesrpc_a-ISelectable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISelectable.o `test -f 'base/ISelectable.c' || echo '$(srcdir)/'`base/ISelectable.c
+
+libesrpc_a-ISelectable.obj: base/ISelectable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISelectable.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ISelectable.Tpo -c -o libesrpc_a-ISelectable.obj `if test -f 'base/ISelectable.c'; then $(CYGPATH_W) 'base/ISelectable.c'; else $(CYGPATH_W) '$(srcdir)/base/ISelectable.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISelectable.Tpo $(DEPDIR)/libesrpc_a-ISelectable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ISelectable.c' object='libesrpc_a-ISelectable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISelectable.obj `if test -f 'base/ISelectable.c'; then $(CYGPATH_W) 'base/ISelectable.c'; else $(CYGPATH_W) '$(srcdir)/base/ISelectable.c'; fi`
+
+libesrpc_a-IService.o: base/IService.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IService.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IService.Tpo -c -o libesrpc_a-IService.o `test -f 'base/IService.c' || echo '$(srcdir)/'`base/IService.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IService.Tpo $(DEPDIR)/libesrpc_a-IService.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IService.c' object='libesrpc_a-IService.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IService.o `test -f 'base/IService.c' || echo '$(srcdir)/'`base/IService.c
+
+libesrpc_a-IService.obj: base/IService.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IService.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IService.Tpo -c -o libesrpc_a-IService.obj `if test -f 'base/IService.c'; then $(CYGPATH_W) 'base/IService.c'; else $(CYGPATH_W) '$(srcdir)/base/IService.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IService.Tpo $(DEPDIR)/libesrpc_a-IService.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IService.c' object='libesrpc_a-IService.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IService.obj `if test -f 'base/IService.c'; then $(CYGPATH_W) 'base/IService.c'; else $(CYGPATH_W) '$(srcdir)/base/IService.c'; fi`
+
+libesrpc_a-IStream.o: base/IStream.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IStream.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IStream.Tpo -c -o libesrpc_a-IStream.o `test -f 'base/IStream.c' || echo '$(srcdir)/'`base/IStream.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IStream.Tpo $(DEPDIR)/libesrpc_a-IStream.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IStream.c' object='libesrpc_a-IStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IStream.o `test -f 'base/IStream.c' || echo '$(srcdir)/'`base/IStream.c
+
+libesrpc_a-IStream.obj: base/IStream.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IStream.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IStream.Tpo -c -o libesrpc_a-IStream.obj `if test -f 'base/IStream.c'; then $(CYGPATH_W) 'base/IStream.c'; else $(CYGPATH_W) '$(srcdir)/base/IStream.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IStream.Tpo $(DEPDIR)/libesrpc_a-IStream.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IStream.c' object='libesrpc_a-IStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IStream.obj `if test -f 'base/IStream.c'; then $(CYGPATH_W) 'base/IStream.c'; else $(CYGPATH_W) '$(srcdir)/base/IStream.c'; fi`
+
+libesrpc_a-IThread.o: base/IThread.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IThread.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IThread.Tpo -c -o libesrpc_a-IThread.o `test -f 'base/IThread.c' || echo '$(srcdir)/'`base/IThread.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IThread.Tpo $(DEPDIR)/libesrpc_a-IThread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IThread.c' object='libesrpc_a-IThread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IThread.o `test -f 'base/IThread.c' || echo '$(srcdir)/'`base/IThread.c
+
+libesrpc_a-IThread.obj: base/IThread.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IThread.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IThread.Tpo -c -o libesrpc_a-IThread.obj `if test -f 'base/IThread.c'; then $(CYGPATH_W) 'base/IThread.c'; else $(CYGPATH_W) '$(srcdir)/base/IThread.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IThread.Tpo $(DEPDIR)/libesrpc_a-IThread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IThread.c' object='libesrpc_a-IThread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IThread.obj `if test -f 'base/IThread.c'; then $(CYGPATH_W) 'base/IThread.c'; else $(CYGPATH_W) '$(srcdir)/base/IThread.c'; fi`
+
+libesrpc_a-IAudioFormat.o: device/IAudioFormat.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IAudioFormat.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IAudioFormat.Tpo -c -o libesrpc_a-IAudioFormat.o `test -f 'device/IAudioFormat.c' || echo '$(srcdir)/'`device/IAudioFormat.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IAudioFormat.Tpo $(DEPDIR)/libesrpc_a-IAudioFormat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IAudioFormat.c' object='libesrpc_a-IAudioFormat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IAudioFormat.o `test -f 'device/IAudioFormat.c' || echo '$(srcdir)/'`device/IAudioFormat.c
+
+libesrpc_a-IAudioFormat.obj: device/IAudioFormat.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IAudioFormat.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IAudioFormat.Tpo -c -o libesrpc_a-IAudioFormat.obj `if test -f 'device/IAudioFormat.c'; then $(CYGPATH_W) 'device/IAudioFormat.c'; else $(CYGPATH_W) '$(srcdir)/device/IAudioFormat.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IAudioFormat.Tpo $(DEPDIR)/libesrpc_a-IAudioFormat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IAudioFormat.c' object='libesrpc_a-IAudioFormat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IAudioFormat.obj `if test -f 'device/IAudioFormat.c'; then $(CYGPATH_W) 'device/IAudioFormat.c'; else $(CYGPATH_W) '$(srcdir)/device/IAudioFormat.c'; fi`
+
+libesrpc_a-IBeep.o: device/IBeep.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IBeep.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IBeep.Tpo -c -o libesrpc_a-IBeep.o `test -f 'device/IBeep.c' || echo '$(srcdir)/'`device/IBeep.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IBeep.Tpo $(DEPDIR)/libesrpc_a-IBeep.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IBeep.c' object='libesrpc_a-IBeep.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IBeep.o `test -f 'device/IBeep.c' || echo '$(srcdir)/'`device/IBeep.c
+
+libesrpc_a-IBeep.obj: device/IBeep.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IBeep.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IBeep.Tpo -c -o libesrpc_a-IBeep.obj `if test -f 'device/IBeep.c'; then $(CYGPATH_W) 'device/IBeep.c'; else $(CYGPATH_W) '$(srcdir)/device/IBeep.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IBeep.Tpo $(DEPDIR)/libesrpc_a-IBeep.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IBeep.c' object='libesrpc_a-IBeep.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IBeep.obj `if test -f 'device/IBeep.c'; then $(CYGPATH_W) 'device/IBeep.c'; else $(CYGPATH_W) '$(srcdir)/device/IBeep.c'; fi`
+
+libesrpc_a-ICursor.o: device/ICursor.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICursor.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ICursor.Tpo -c -o libesrpc_a-ICursor.o `test -f 'device/ICursor.c' || echo '$(srcdir)/'`device/ICursor.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICursor.Tpo $(DEPDIR)/libesrpc_a-ICursor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/ICursor.c' object='libesrpc_a-ICursor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICursor.o `test -f 'device/ICursor.c' || echo '$(srcdir)/'`device/ICursor.c
+
+libesrpc_a-ICursor.obj: device/ICursor.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICursor.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ICursor.Tpo -c -o libesrpc_a-ICursor.obj `if test -f 'device/ICursor.c'; then $(CYGPATH_W) 'device/ICursor.c'; else $(CYGPATH_W) '$(srcdir)/device/ICursor.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICursor.Tpo $(DEPDIR)/libesrpc_a-ICursor.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/ICursor.c' object='libesrpc_a-ICursor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICursor.obj `if test -f 'device/ICursor.c'; then $(CYGPATH_W) 'device/ICursor.c'; else $(CYGPATH_W) '$(srcdir)/device/ICursor.c'; fi`
+
+libesrpc_a-IDevice.o: device/IDevice.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDevice.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDevice.Tpo -c -o libesrpc_a-IDevice.o `test -f 'device/IDevice.c' || echo '$(srcdir)/'`device/IDevice.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDevice.Tpo $(DEPDIR)/libesrpc_a-IDevice.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDevice.c' object='libesrpc_a-IDevice.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDevice.o `test -f 'device/IDevice.c' || echo '$(srcdir)/'`device/IDevice.c
+
+libesrpc_a-IDevice.obj: device/IDevice.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDevice.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IDevice.Tpo -c -o libesrpc_a-IDevice.obj `if test -f 'device/IDevice.c'; then $(CYGPATH_W) 'device/IDevice.c'; else $(CYGPATH_W) '$(srcdir)/device/IDevice.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDevice.Tpo $(DEPDIR)/libesrpc_a-IDevice.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDevice.c' object='libesrpc_a-IDevice.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDevice.obj `if test -f 'device/IDevice.c'; then $(CYGPATH_W) 'device/IDevice.c'; else $(CYGPATH_W) '$(srcdir)/device/IDevice.c'; fi`
+
+libesrpc_a-IDiskManagement.o: device/IDiskManagement.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDiskManagement.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo -c -o libesrpc_a-IDiskManagement.o `test -f 'device/IDiskManagement.c' || echo '$(srcdir)/'`device/IDiskManagement.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo $(DEPDIR)/libesrpc_a-IDiskManagement.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDiskManagement.c' object='libesrpc_a-IDiskManagement.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDiskManagement.o `test -f 'device/IDiskManagement.c' || echo '$(srcdir)/'`device/IDiskManagement.c
+
+libesrpc_a-IDiskManagement.obj: device/IDiskManagement.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDiskManagement.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo -c -o libesrpc_a-IDiskManagement.obj `if test -f 'device/IDiskManagement.c'; then $(CYGPATH_W) 'device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/device/IDiskManagement.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo $(DEPDIR)/libesrpc_a-IDiskManagement.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDiskManagement.c' object='libesrpc_a-IDiskManagement.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDiskManagement.obj `if test -f 'device/IDiskManagement.c'; then $(CYGPATH_W) 'device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/device/IDiskManagement.c'; fi`
+
+libesrpc_a-IDmac.o: device/IDmac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDmac.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDmac.Tpo -c -o libesrpc_a-IDmac.o `test -f 'device/IDmac.c' || echo '$(srcdir)/'`device/IDmac.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDmac.Tpo $(DEPDIR)/libesrpc_a-IDmac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDmac.c' object='libesrpc_a-IDmac.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDmac.o `test -f 'device/IDmac.c' || echo '$(srcdir)/'`device/IDmac.c
+
+libesrpc_a-IDmac.obj: device/IDmac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDmac.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IDmac.Tpo -c -o libesrpc_a-IDmac.obj `if test -f 'device/IDmac.c'; then $(CYGPATH_W) 'device/IDmac.c'; else $(CYGPATH_W) '$(srcdir)/device/IDmac.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDmac.Tpo $(DEPDIR)/libesrpc_a-IDmac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IDmac.c' object='libesrpc_a-IDmac.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDmac.obj `if test -f 'device/IDmac.c'; then $(CYGPATH_W) 'device/IDmac.c'; else $(CYGPATH_W) '$(srcdir)/device/IDmac.c'; fi`
+
+libesrpc_a-IFileSystem.o: device/IFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFileSystem.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IFileSystem.Tpo -c -o libesrpc_a-IFileSystem.o `test -f 'device/IFileSystem.c' || echo '$(srcdir)/'`device/IFileSystem.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFileSystem.Tpo $(DEPDIR)/libesrpc_a-IFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFileSystem.c' object='libesrpc_a-IFileSystem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFileSystem.o `test -f 'device/IFileSystem.c' || echo '$(srcdir)/'`device/IFileSystem.c
+
+libesrpc_a-IFileSystem.obj: device/IFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFileSystem.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IFileSystem.Tpo -c -o libesrpc_a-IFileSystem.obj `if test -f 'device/IFileSystem.c'; then $(CYGPATH_W) 'device/IFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFileSystem.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFileSystem.Tpo $(DEPDIR)/libesrpc_a-IFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFileSystem.c' object='libesrpc_a-IFileSystem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFileSystem.obj `if test -f 'device/IFileSystem.c'; then $(CYGPATH_W) 'device/IFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFileSystem.c'; fi`
+
+libesrpc_a-INetworkInterface.o: device/INetworkInterface.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-INetworkInterface.o -MD -MP -MF $(DEPDIR)/libesrpc_a-INetworkInterface.Tpo -c -o libesrpc_a-INetworkInterface.o `test -f 'device/INetworkInterface.c' || echo '$(srcdir)/'`device/INetworkInterface.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-INetworkInterface.Tpo $(DEPDIR)/libesrpc_a-INetworkInterface.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/INetworkInterface.c' object='libesrpc_a-INetworkInterface.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-INetworkInterface.o `test -f 'device/INetworkInterface.c' || echo '$(srcdir)/'`device/INetworkInterface.c
+
+libesrpc_a-INetworkInterface.obj: device/INetworkInterface.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-INetworkInterface.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-INetworkInterface.Tpo -c -o libesrpc_a-INetworkInterface.obj `if test -f 'device/INetworkInterface.c'; then $(CYGPATH_W) 'device/INetworkInterface.c'; else $(CYGPATH_W) '$(srcdir)/device/INetworkInterface.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-INetworkInterface.Tpo $(DEPDIR)/libesrpc_a-INetworkInterface.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/INetworkInterface.c' object='libesrpc_a-INetworkInterface.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-INetworkInterface.obj `if test -f 'device/INetworkInterface.c'; then $(CYGPATH_W) 'device/INetworkInterface.c'; else $(CYGPATH_W) '$(srcdir)/device/INetworkInterface.c'; fi`
+
+libesrpc_a-IPic.o: device/IPic.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPic.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IPic.Tpo -c -o libesrpc_a-IPic.o `test -f 'device/IPic.c' || echo '$(srcdir)/'`device/IPic.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPic.Tpo $(DEPDIR)/libesrpc_a-IPic.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IPic.c' object='libesrpc_a-IPic.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPic.o `test -f 'device/IPic.c' || echo '$(srcdir)/'`device/IPic.c
+
+libesrpc_a-IPic.obj: device/IPic.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPic.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IPic.Tpo -c -o libesrpc_a-IPic.obj `if test -f 'device/IPic.c'; then $(CYGPATH_W) 'device/IPic.c'; else $(CYGPATH_W) '$(srcdir)/device/IPic.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPic.Tpo $(DEPDIR)/libesrpc_a-IPic.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IPic.c' object='libesrpc_a-IPic.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPic.obj `if test -f 'device/IPic.c'; then $(CYGPATH_W) 'device/IPic.c'; else $(CYGPATH_W) '$(srcdir)/device/IPic.c'; fi`
+
+libesrpc_a-IRemovableMedia.o: device/IRemovableMedia.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRemovableMedia.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IRemovableMedia.Tpo -c -o libesrpc_a-IRemovableMedia.o `test -f 'device/IRemovableMedia.c' || echo '$(srcdir)/'`device/IRemovableMedia.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRemovableMedia.Tpo $(DEPDIR)/libesrpc_a-IRemovableMedia.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IRemovableMedia.c' object='libesrpc_a-IRemovableMedia.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRemovableMedia.o `test -f 'device/IRemovableMedia.c' || echo '$(srcdir)/'`device/IRemovableMedia.c
+
+libesrpc_a-IRemovableMedia.obj: device/IRemovableMedia.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRemovableMedia.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IRemovableMedia.Tpo -c -o libesrpc_a-IRemovableMedia.obj `if test -f 'device/IRemovableMedia.c'; then $(CYGPATH_W) 'device/IRemovableMedia.c'; else $(CYGPATH_W) '$(srcdir)/device/IRemovableMedia.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRemovableMedia.Tpo $(DEPDIR)/libesrpc_a-IRemovableMedia.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IRemovableMedia.c' object='libesrpc_a-IRemovableMedia.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRemovableMedia.obj `if test -f 'device/IRemovableMedia.c'; then $(CYGPATH_W) 'device/IRemovableMedia.c'; else $(CYGPATH_W) '$(srcdir)/device/IRemovableMedia.c'; fi`
+
+libesrpc_a-IRtc.o: device/IRtc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRtc.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IRtc.Tpo -c -o libesrpc_a-IRtc.o `test -f 'device/IRtc.c' || echo '$(srcdir)/'`device/IRtc.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRtc.Tpo $(DEPDIR)/libesrpc_a-IRtc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IRtc.c' object='libesrpc_a-IRtc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRtc.o `test -f 'device/IRtc.c' || echo '$(srcdir)/'`device/IRtc.c
+
+libesrpc_a-IRtc.obj: device/IRtc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IRtc.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IRtc.Tpo -c -o libesrpc_a-IRtc.obj `if test -f 'device/IRtc.c'; then $(CYGPATH_W) 'device/IRtc.c'; else $(CYGPATH_W) '$(srcdir)/device/IRtc.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IRtc.Tpo $(DEPDIR)/libesrpc_a-IRtc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IRtc.c' object='libesrpc_a-IRtc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRtc.obj `if test -f 'device/IRtc.c'; then $(CYGPATH_W) 'device/IRtc.c'; else $(CYGPATH_W) '$(srcdir)/device/IRtc.c'; fi`
+
+libesrpc_a-IPartition.o: device/IPartition.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPartition.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IPartition.Tpo -c -o libesrpc_a-IPartition.o `test -f 'device/IPartition.c' || echo '$(srcdir)/'`device/IPartition.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPartition.Tpo $(DEPDIR)/libesrpc_a-IPartition.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IPartition.c' object='libesrpc_a-IPartition.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPartition.o `test -f 'device/IPartition.c' || echo '$(srcdir)/'`device/IPartition.c
+
+libesrpc_a-IPartition.obj: device/IPartition.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPartition.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IPartition.Tpo -c -o libesrpc_a-IPartition.obj `if test -f 'device/IPartition.c'; then $(CYGPATH_W) 'device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/device/IPartition.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPartition.Tpo $(DEPDIR)/libesrpc_a-IPartition.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IPartition.c' object='libesrpc_a-IPartition.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPartition.obj `if test -f 'device/IPartition.c'; then $(CYGPATH_W) 'device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/device/IPartition.c'; fi`
+
+libesrpc_a-IBinding.o: naming/IBinding.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IBinding.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IBinding.Tpo -c -o libesrpc_a-IBinding.o `test -f 'naming/IBinding.c' || echo '$(srcdir)/'`naming/IBinding.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IBinding.Tpo $(DEPDIR)/libesrpc_a-IBinding.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='naming/IBinding.c' object='libesrpc_a-IBinding.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IBinding.o `test -f 'naming/IBinding.c' || echo '$(srcdir)/'`naming/IBinding.c
+
+libesrpc_a-IBinding.obj: naming/IBinding.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IBinding.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IBinding.Tpo -c -o libesrpc_a-IBinding.obj `if test -f 'naming/IBinding.c'; then $(CYGPATH_W) 'naming/IBinding.c'; else $(CYGPATH_W) '$(srcdir)/naming/IBinding.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IBinding.Tpo $(DEPDIR)/libesrpc_a-IBinding.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='naming/IBinding.c' object='libesrpc_a-IBinding.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IBinding.obj `if test -f 'naming/IBinding.c'; then $(CYGPATH_W) 'naming/IBinding.c'; else $(CYGPATH_W) '$(srcdir)/naming/IBinding.c'; fi`
+
+libesrpc_a-IContext.o: naming/IContext.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IContext.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IContext.Tpo -c -o libesrpc_a-IContext.o `test -f 'naming/IContext.c' || echo '$(srcdir)/'`naming/IContext.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IContext.Tpo $(DEPDIR)/libesrpc_a-IContext.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='naming/IContext.c' object='libesrpc_a-IContext.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IContext.o `test -f 'naming/IContext.c' || echo '$(srcdir)/'`naming/IContext.c
+
+libesrpc_a-IContext.obj: naming/IContext.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IContext.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IContext.Tpo -c -o libesrpc_a-IContext.obj `if test -f 'naming/IContext.c'; then $(CYGPATH_W) 'naming/IContext.c'; else $(CYGPATH_W) '$(srcdir)/naming/IContext.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IContext.Tpo $(DEPDIR)/libesrpc_a-IContext.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='naming/IContext.c' object='libesrpc_a-IContext.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IContext.obj `if test -f 'naming/IContext.c'; then $(CYGPATH_W) 'naming/IContext.c'; else $(CYGPATH_W) '$(srcdir)/naming/IContext.c'; fi`
+
+libesrpc_a-IInternetAddress.o: net/IInternetAddress.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInternetAddress.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IInternetAddress.Tpo -c -o libesrpc_a-IInternetAddress.o `test -f 'net/IInternetAddress.c' || echo '$(srcdir)/'`net/IInternetAddress.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInternetAddress.Tpo $(DEPDIR)/libesrpc_a-IInternetAddress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IInternetAddress.c' object='libesrpc_a-IInternetAddress.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInternetAddress.o `test -f 'net/IInternetAddress.c' || echo '$(srcdir)/'`net/IInternetAddress.c
+
+libesrpc_a-IInternetAddress.obj: net/IInternetAddress.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInternetAddress.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IInternetAddress.Tpo -c -o libesrpc_a-IInternetAddress.obj `if test -f 'net/IInternetAddress.c'; then $(CYGPATH_W) 'net/IInternetAddress.c'; else $(CYGPATH_W) '$(srcdir)/net/IInternetAddress.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInternetAddress.Tpo $(DEPDIR)/libesrpc_a-IInternetAddress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IInternetAddress.c' object='libesrpc_a-IInternetAddress.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInternetAddress.obj `if test -f 'net/IInternetAddress.c'; then $(CYGPATH_W) 'net/IInternetAddress.c'; else $(CYGPATH_W) '$(srcdir)/net/IInternetAddress.c'; fi`
+
+libesrpc_a-IInternetConfig.o: net/IInternetConfig.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInternetConfig.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IInternetConfig.Tpo -c -o libesrpc_a-IInternetConfig.o `test -f 'net/IInternetConfig.c' || echo '$(srcdir)/'`net/IInternetConfig.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInternetConfig.Tpo $(DEPDIR)/libesrpc_a-IInternetConfig.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IInternetConfig.c' object='libesrpc_a-IInternetConfig.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInternetConfig.o `test -f 'net/IInternetConfig.c' || echo '$(srcdir)/'`net/IInternetConfig.c
+
+libesrpc_a-IInternetConfig.obj: net/IInternetConfig.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IInternetConfig.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IInternetConfig.Tpo -c -o libesrpc_a-IInternetConfig.obj `if test -f 'net/IInternetConfig.c'; then $(CYGPATH_W) 'net/IInternetConfig.c'; else $(CYGPATH_W) '$(srcdir)/net/IInternetConfig.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IInternetConfig.Tpo $(DEPDIR)/libesrpc_a-IInternetConfig.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IInternetConfig.c' object='libesrpc_a-IInternetConfig.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IInternetConfig.obj `if test -f 'net/IInternetConfig.c'; then $(CYGPATH_W) 'net/IInternetConfig.c'; else $(CYGPATH_W) '$(srcdir)/net/IInternetConfig.c'; fi`
+
+libesrpc_a-IResolver.o: net/IResolver.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IResolver.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IResolver.Tpo -c -o libesrpc_a-IResolver.o `test -f 'net/IResolver.c' || echo '$(srcdir)/'`net/IResolver.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IResolver.Tpo $(DEPDIR)/libesrpc_a-IResolver.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IResolver.c' object='libesrpc_a-IResolver.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IResolver.o `test -f 'net/IResolver.c' || echo '$(srcdir)/'`net/IResolver.c
+
+libesrpc_a-IResolver.obj: net/IResolver.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IResolver.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IResolver.Tpo -c -o libesrpc_a-IResolver.obj `if test -f 'net/IResolver.c'; then $(CYGPATH_W) 'net/IResolver.c'; else $(CYGPATH_W) '$(srcdir)/net/IResolver.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IResolver.Tpo $(DEPDIR)/libesrpc_a-IResolver.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/IResolver.c' object='libesrpc_a-IResolver.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IResolver.obj `if test -f 'net/IResolver.c'; then $(CYGPATH_W) 'net/IResolver.c'; else $(CYGPATH_W) '$(srcdir)/net/IResolver.c'; fi`
+
+libesrpc_a-ISocket.o: net/ISocket.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISocket.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ISocket.Tpo -c -o libesrpc_a-ISocket.o `test -f 'net/ISocket.c' || echo '$(srcdir)/'`net/ISocket.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISocket.Tpo $(DEPDIR)/libesrpc_a-ISocket.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/ISocket.c' object='libesrpc_a-ISocket.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISocket.o `test -f 'net/ISocket.c' || echo '$(srcdir)/'`net/ISocket.c
+
+libesrpc_a-ISocket.obj: net/ISocket.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISocket.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ISocket.Tpo -c -o libesrpc_a-ISocket.obj `if test -f 'net/ISocket.c'; then $(CYGPATH_W) 'net/ISocket.c'; else $(CYGPATH_W) '$(srcdir)/net/ISocket.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISocket.Tpo $(DEPDIR)/libesrpc_a-ISocket.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='net/ISocket.c' object='libesrpc_a-ISocket.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISocket.obj `if test -f 'net/ISocket.c'; then $(CYGPATH_W) 'net/ISocket.c'; else $(CYGPATH_W) '$(srcdir)/net/ISocket.c'; fi`
+
+libesrpc_a-IIterator.o: util/IIterator.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IIterator.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IIterator.Tpo -c -o libesrpc_a-IIterator.o `test -f 'util/IIterator.c' || echo '$(srcdir)/'`util/IIterator.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IIterator.Tpo $(DEPDIR)/libesrpc_a-IIterator.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/IIterator.c' object='libesrpc_a-IIterator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IIterator.o `test -f 'util/IIterator.c' || echo '$(srcdir)/'`util/IIterator.c
+
+libesrpc_a-IIterator.obj: util/IIterator.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IIterator.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IIterator.Tpo -c -o libesrpc_a-IIterator.obj `if test -f 'util/IIterator.c'; then $(CYGPATH_W) 'util/IIterator.c'; else $(CYGPATH_W) '$(srcdir)/util/IIterator.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IIterator.Tpo $(DEPDIR)/libesrpc_a-IIterator.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/IIterator.c' object='libesrpc_a-IIterator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IIterator.obj `if test -f 'util/IIterator.c'; then $(CYGPATH_W) 'util/IIterator.c'; else $(CYGPATH_W) '$(srcdir)/util/IIterator.c'; fi`
+
+libesrpc_a-ISet.o: util/ISet.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISet.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ISet.Tpo -c -o libesrpc_a-ISet.o `test -f 'util/ISet.c' || echo '$(srcdir)/'`util/ISet.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISet.Tpo $(DEPDIR)/libesrpc_a-ISet.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ISet.c' object='libesrpc_a-ISet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISet.o `test -f 'util/ISet.c' || echo '$(srcdir)/'`util/ISet.c
+
+libesrpc_a-ISet.obj: util/ISet.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ISet.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ISet.Tpo -c -o libesrpc_a-ISet.obj `if test -f 'util/ISet.c'; then $(CYGPATH_W) 'util/ISet.c'; else $(CYGPATH_W) '$(srcdir)/util/ISet.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ISet.Tpo $(DEPDIR)/libesrpc_a-ISet.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ISet.c' object='libesrpc_a-ISet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ISet.obj `if test -f 'util/ISet.c'; then $(CYGPATH_W) 'util/ISet.c'; else $(CYGPATH_W) '$(srcdir)/util/ISet.c'; fi`
+
+libesrpc_a-ICanvasRenderingContext2D.o: util/ICanvasRenderingContext2D.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICanvasRenderingContext2D.o -MD -MP -MF $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Tpo -c -o libesrpc_a-ICanvasRenderingContext2D.o `test -f 'util/ICanvasRenderingContext2D.c' || echo '$(srcdir)/'`util/ICanvasRenderingContext2D.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Tpo $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ICanvasRenderingContext2D.c' object='libesrpc_a-ICanvasRenderingContext2D.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICanvasRenderingContext2D.o `test -f 'util/ICanvasRenderingContext2D.c' || echo '$(srcdir)/'`util/ICanvasRenderingContext2D.c
+
+libesrpc_a-ICanvasRenderingContext2D.obj: util/ICanvasRenderingContext2D.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-ICanvasRenderingContext2D.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Tpo -c -o libesrpc_a-ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Tpo $(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ICanvasRenderingContext2D.c' object='libesrpc_a-ICanvasRenderingContext2D.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
+
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
@@ -1336,6 +1965,62 @@ posix_video.obj: src/posix_video.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/posix_video.cpp' object='posix_video.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o posix_video.obj `if test -f 'src/posix_video.cpp'; then $(CYGPATH_W) 'src/posix_video.cpp'; else $(CYGPATH_W) '$(srcdir)/src/posix_video.cpp'; fi`
+
+rpc.o: src/rpc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rpc.o -MD -MP -MF $(DEPDIR)/rpc.Tpo -c -o rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/rpc.Tpo $(DEPDIR)/rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/rpc.cpp' object='rpc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp
+
+rpc.obj: src/rpc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rpc.obj -MD -MP -MF $(DEPDIR)/rpc.Tpo -c -o rpc.obj `if test -f 'src/rpc.cpp'; then $(CYGPATH_W) 'src/rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/rpc.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/rpc.Tpo $(DEPDIR)/rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/rpc.cpp' object='rpc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rpc.obj `if test -f 'src/rpc.cpp'; then $(CYGPATH_W) 'src/rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/rpc.cpp'; fi`
+
+libesrpc_a-apply.o: src/apply.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-apply.o -MD -MP -MF $(DEPDIR)/libesrpc_a-apply.Tpo -c -o libesrpc_a-apply.o `test -f 'src/apply.cpp' || echo '$(srcdir)/'`src/apply.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-apply.Tpo $(DEPDIR)/libesrpc_a-apply.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/apply.cpp' object='libesrpc_a-apply.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-apply.o `test -f 'src/apply.cpp' || echo '$(srcdir)/'`src/apply.cpp
+
+libesrpc_a-apply.obj: src/apply.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-apply.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-apply.Tpo -c -o libesrpc_a-apply.obj `if test -f 'src/apply.cpp'; then $(CYGPATH_W) 'src/apply.cpp'; else $(CYGPATH_W) '$(srcdir)/src/apply.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-apply.Tpo $(DEPDIR)/libesrpc_a-apply.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/apply.cpp' object='libesrpc_a-apply.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-apply.obj `if test -f 'src/apply.cpp'; then $(CYGPATH_W) 'src/apply.cpp'; else $(CYGPATH_W) '$(srcdir)/src/apply.cpp'; fi`
+
+libesrpc_a-interfaceStore.o: src/interfaceStore.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-interfaceStore.o -MD -MP -MF $(DEPDIR)/libesrpc_a-interfaceStore.Tpo -c -o libesrpc_a-interfaceStore.o `test -f 'src/interfaceStore.cpp' || echo '$(srcdir)/'`src/interfaceStore.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-interfaceStore.Tpo $(DEPDIR)/libesrpc_a-interfaceStore.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/interfaceStore.cpp' object='libesrpc_a-interfaceStore.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceStore.o `test -f 'src/interfaceStore.cpp' || echo '$(srcdir)/'`src/interfaceStore.cpp
+
+libesrpc_a-interfaceStore.obj: src/interfaceStore.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-interfaceStore.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-interfaceStore.Tpo -c -o libesrpc_a-interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-interfaceStore.Tpo $(DEPDIR)/libesrpc_a-interfaceStore.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/interfaceStore.cpp' object='libesrpc_a-interfaceStore.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
+
+libesrpc_a-rpc.o: src/rpc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-rpc.o -MD -MP -MF $(DEPDIR)/libesrpc_a-rpc.Tpo -c -o libesrpc_a-rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-rpc.Tpo $(DEPDIR)/libesrpc_a-rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/rpc.cpp' object='libesrpc_a-rpc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp
+
+libesrpc_a-rpc.obj: src/rpc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-rpc.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-rpc.Tpo -c -o libesrpc_a-rpc.obj `if test -f 'src/rpc.cpp'; then $(CYGPATH_W) 'src/rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/rpc.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-rpc.Tpo $(DEPDIR)/libesrpc_a-rpc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/rpc.cpp' object='libesrpc_a-rpc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-rpc.obj `if test -f 'src/rpc.cpp'; then $(CYGPATH_W) 'src/rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/rpc.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

@@ -59,14 +59,6 @@
 
 // #define VERBOSE
 
-namespace es
-{
-
-__thread u8 RpcStack::rpcStackBase[RPC_STACK_SIZE];
-__thread u8* RpcStack::rpcStack;
-
-}   // namespace es
-
 using namespace es;
 using namespace posix;
 
@@ -86,46 +78,6 @@ __thread std::map<pid_t, int>* socketMap;
 //
 // Misc.
 //
-
-struct sockaddr* getSocketAddress(pid_t pid, struct sockaddr_un* sa)
-{
-    sa->sun_family = AF_UNIX;
-    sprintf(sa->sun_path, "/tmp/es-socket-%u", pid);
-    return reinterpret_cast<sockaddr*>(sa);
-}
-
-bool isMatch(pid_t pid, const struct sockaddr_un* sa)
-{
-    char sun_path[108]; // UNIX_PATH_MAX
-
-    sprintf(sun_path, "/tmp/es-socket-%u", pid);
-    return (strcmp(sun_path, sa->sun_path) == 0) ? true : false;
-}
-
-int* getRights(struct msghdr* msg, int* fdv, int maxfds)
-{
-    for (struct cmsghdr* cmsg = CMSG_FIRSTHDR(msg);
-         cmsg != 0;
-         cmsg = CMSG_NXTHDR(msg, cmsg))
-    {
-        if (cmsg->cmsg_level == SOL_SOCKET && cmsg->cmsg_type == SCM_RIGHTS)
-        {
-            for (int i = 1; CMSG_LEN(i * sizeof(int)) <= cmsg->cmsg_len; ++i)
-            {
-                int fd = *((int*) CMSG_DATA(cmsg) + i - 1);
-                if (i <= maxfds)
-                {
-                    *fdv++ = fd;
-                }
-                else
-                {
-                    close(fd);
-                }
-            }
-        }
-    }
-    return fdv;
-}
 
 long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method);
 u64 getRandom();
@@ -364,8 +316,7 @@ public:
         }
         else
         {
-            struct sockaddr_un sa;
-            ssize_t rc = receiveCommand(&cmd, &sa);
+            ssize_t rc = receiveCommand(sockfd, &cmd);
             if (rc == -1 || cmd.cmd != CMD_FORK_RES)
             {
                 ::exit(EXIT_FAILURE);
@@ -818,82 +769,6 @@ public:
     void addChild(pid_t pid, Process* child);
     Process* getChild(pid_t pid);
     void removeChild(pid_t pid);
-
-    ssize_t receiveCommand(CmdUnion* cmd, struct sockaddr_un* sa, int flags = 0)
-    {
-        struct msghdr       msg;
-        struct iovec        iov;
-        struct cmsghdr*     cmsg;
-        int                 maxfds = 0; // max. # of file descriptors to receive
-        int*                fds;
-        unsigned char       buf[CMSG_SPACE(8 * sizeof(int))];
-
-        msg.msg_name = sa;
-        msg.msg_namelen = sizeof(struct sockaddr_un);
-        iov.iov_base = cmd;
-        iov.iov_len = sizeof(CmdUnion);
-        msg.msg_iov = &iov;
-        msg.msg_iovlen = 1;
-        msg.msg_control = buf;
-        msg.msg_controllen = CMSG_LEN(8 * sizeof(int));
-        msg.msg_flags = 0;
-
-        ssize_t rc = recvmsg(sockfd, &msg, flags);
-        if (rc == -1)
-        {
-            return -1;
-        }
-
-        if (rc < sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, sa))
-        {
-            errno = EBADMSG;
-            rc = -1;
-        }
-        else
-        {
-            switch (cmd->cmd)
-            {
-            case CMD_CHAN_REQ:
-                if (sizeof(CmdChanReq) != rc)
-                {
-                    errno = EBADMSG;
-                    rc = -1;
-                    break;
-                }
-                fds = &cmd->chanReq.sockfd;
-                maxfds = 1;
-                break;
-            case CMD_CHAN_RES:
-                if (sizeof(CmdChanRes) != rc)
-                {
-                    errno = EBADMSG;
-                    rc = -1;
-                    break;
-                }
-                break;
-            case CMD_FORK_REQ:
-                if (sizeof(CmdForkReq) != rc)
-                {
-                    errno = EBADMSG;
-                    rc = -1;
-                    break;
-                }
-                break;
-            case CMD_FORK_RES:
-                if (sizeof(CmdForkRes) != rc)
-                {
-                    errno = EBADMSG;
-                    rc = -1;
-                    break;
-                }
-                break;
-            }
-        }
-
-        getRights(&msg, fds, maxfds);
-
-        return rc;
-    }
 
     // Look up the exportedTable
     Exported* getExported(Capability& cap)
@@ -1762,9 +1637,7 @@ void* System::focus(void* param)
     for (;;)
     {
         CmdUnion cmd;
-        struct sockaddr_un sa;
-
-        ssize_t rc = ::current.receiveCommand(&cmd, &sa);
+        ssize_t rc = receiveCommand(::current.sockfd, &cmd);
         if (rc == -1)
         {
             ::exit(EXIT_FAILURE);
@@ -1801,6 +1674,7 @@ void* System::focus(void* param)
             if (Process* child = ::current.getChild(cmd.forkReq.pid))
             {
                 // Send CmdForkRes
+                struct sockaddr_un sa;
                 ssize_t rc = sendto(::current.sockfd, &child->getCmdForkRes(), sizeof(CmdForkRes),
                                     MSG_DONTWAIT, getSocketAddress(cmd.forkReq.pid, &sa), sizeof sa);
                 if (rc == sizeof(CmdForkRes))
@@ -1851,84 +1725,6 @@ void System::removeChild(pid_t pid)
 u64 getRandom()
 {
     return current.getRandom();
-}
-
-RpcHdr* receiveMessage(struct msghdr* msg, int* fdv, int*& fdmax, int* s)
-{
-    RpcHdr* hdr;
-    unsigned char buf[CMSG_SPACE(8 * sizeof(int))];
-    struct epoll_event event;
-
-    // wait for the reply. note the thread might receive another request by recursive call, etc.
-    for (;;)
-    {
-        int fdCount = epoll_wait(epfd, &event, 1, -1);
-        if (fdCount == -1)
-        {
-            perror("epoll_wait");
-            exit(EXIT_FAILURE);
-        }
-        if (fdCount != 1)
-        {
-            continue;
-        }
-
-        struct iovec iov;
-        msg->msg_name = 0;
-        msg->msg_namelen = 0;
-        iov.iov_base = RpcStack::top();
-        iov.iov_len = RpcStack::getFreeSize();
-        msg->msg_iov = &iov;
-        msg->msg_iovlen = 1;
-        msg->msg_control = buf;
-        msg->msg_controllen = sizeof buf;
-        msg->msg_flags = 0;
-        int rc = recvmsg(event.data.fd, msg, 0);
-
-        if (0 <= rc)
-        {
-#ifdef VERBOSE
-            printf("Recv RpcMsg: %d\n", rc);
-            esDump(RpcStack::top(), rc);
-#endif
-            fdmax = getRights(msg, fdv, 8);
-        }
-        else
-        {
-            fdmax = fdv;
-        }
-
-        if (sizeof(RpcHdr) <= rc)
-        {
-            // TODO check trunk etc.
-            hdr = reinterpret_cast<RpcHdr*>(iov.iov_base);
-            if (hdr->cmd == RPC_REQ && sizeof(RpcReq) <= rc)
-            {
-                RpcStack::alloc(rc);
-                break;
-            }
-            else if (hdr->cmd == RPC_RES && sizeof(RpcReq) <= rc)
-            {
-                RpcStack::alloc(rc);
-                break;
-            }
-        }
-
-        // Close unused rights
-        for (int* p = fdv; p < fdmax; ++p)
-        {
-            close(*p);
-        }
-    }
-
-    std::map<pid_t, int>::iterator it = socketMap->find(hdr->pid);
-    if (it == socketMap->end())
-    {
-        (*socketMap)[hdr->pid] = event.data.fd;
-    }
-
-    *s = event.data.fd;
-    return hdr;
 }
 
 long long callRemote(void* self, void* base, int methodNumber, va_list ap)
@@ -2204,7 +2000,12 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     {
         RpcStack stackBase;
 
-        hdr = receiveMessage(&msg, fdv, fdmax, &s);
+        hdr = receiveMessage(epfd, fdv, fdmax, &s);
+        std::map<pid_t, int>::iterator it = socketMap->find(hdr->pid);
+        if (it == socketMap->end())
+        {
+            (*socketMap)[hdr->pid] = s;
+        }
         if (hdr->cmd == RPC_REQ)
         {
             current.callLocal(reinterpret_cast<RpcReq*>(hdr), fdv, s);
@@ -2323,7 +2124,12 @@ void* System::servant(void* param)
     for (;;)
     {
         RpcStack stackBase;
-        RpcHdr* hdr = receiveMessage(&msg, fdv, fdmax, &s); // TODO check message length msg.msg_iov[0].iov_len
+        RpcHdr* hdr = receiveMessage(epfd, fdv, fdmax, &s); // TODO check message length msg.msg_iov[0].iov_len
+        std::map<pid_t, int>::iterator it = socketMap->find(hdr->pid);
+        if (it == socketMap->end())
+        {
+            (*socketMap)[hdr->pid] = s;
+        }
         if (hdr->cmd == RPC_REQ)
         {
             // Look up the exportedTable and invoke method internally
