@@ -11,7 +11,7 @@ vpath %.ent = ../../include/es
 	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
 	echo "};" >> $@
 
-lib_LIBRARIES = libessup++.a libes++.a
+lib_LIBRARIES = libessup++.a libes++.a libesrpc.a
 
 AM_CPPFLAGS = \
 	-I $(srcdir)/include \
@@ -20,30 +20,32 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/../../include
 
 c_source_files = \
-	src/apply386.S \
 	src/md5.c \
 	src/rand48.c \
 	src/string.c \
 	src/utf.c
 
 cpp_source_files = \
-	src/apply.cpp \
 	src/color.cpp \
 	src/context.cpp \
 	src/dateTime.cpp \
 	src/dump.cpp \
 	src/inet.cpp \
-	src/interfaceStore.cpp \
 	src/throw.cpp \
 	src/formatter.cpp \
 	src/ring.cpp
+
+rpc_source_files = \
+	src/apply.cpp \
+	src/apply386.S \
+	src/interfaceStore.cpp	
 
 header_files = \
 	include/core.h \
 	include/posix_system.h \
 	include/posix_video.h
 
-libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
+libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(rpc_source_files) $(header_files)
 
 #
 # default interface descriptions
@@ -101,6 +103,8 @@ if POSIX
 AM_CPPFLAGS += -I/usr/include/GL
 
 libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp
+
+libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) 
 
 endif POSIX
 
