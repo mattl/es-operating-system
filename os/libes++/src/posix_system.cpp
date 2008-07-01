@@ -44,6 +44,7 @@
 #include <es/objectTable.h>
 #include <es/ref.h>
 #include <es/reflect.h>
+#include <es/rpc.h>
 #include <es/timeSpan.h>
 #include <es/classFactory.h>
 #include <es/clsid.h>
@@ -57,6 +58,14 @@
 #include "posix_video.h"
 
 // #define VERBOSE
+
+namespace es
+{
+
+__thread u8 RpcStack::rpcStackBase[RPC_STACK_SIZE];
+__thread u8* RpcStack::rpcStack;
+
+}   // namespace es
 
 using namespace es;
 using namespace posix;
@@ -73,194 +82,6 @@ static const int MAX_IMPORT = 100;
 __thread int epfd = -1;
 __thread int rpctag;
 __thread std::map<pid_t, int>* socketMap;
-
-class RpcStack
-{
-    static const int RPC_STACK_SIZE = 1024 * 1024;
-    static const int ALIGN = 1 << 3;
-    static __thread u8 rpcStackBase[RPC_STACK_SIZE];
-    static __thread u8* rpcStack;
-
-    u8* base;
-
-public:
-    RpcStack()
-    {
-        base = rpcStack;
-    }
-
-    ~RpcStack()
-    {
-        // Restore rpcStack
-        rpcStack = base;
-    }
-
-    static void init()
-    {
-        rpcStack = rpcStackBase;
-    }
-
-    static void* alloc(size_t size)
-    {
-        size += ALIGN - 1;
-        size &= ~(ALIGN - 1);
-        if (size <= getFreeSize())
-        {
-            void* p = rpcStack;
-            rpcStack += size;
-            return p;
-        }
-        return 0;
-    }
-
-    static void* free(size_t size)
-    {
-        size += ALIGN - 1;
-        size &= ~(ALIGN - 1);
-        if (rpcStackBase <= (rpcStack - size))
-        {
-            return rpcStack -= size;
-        }
-        return rpcStackBase;
-    }
-
-    static void* top()
-    {
-        return rpcStack;
-    }
-
-    static size_t getFreeSize()
-    {
-        return rpcStackBase + RPC_STACK_SIZE - rpcStack;
-    }
-};
-
-__thread u8 RpcStack::rpcStackBase[RPC_STACK_SIZE];
-__thread u8* RpcStack::rpcStack;
-
-struct ThreadCredential
-{
-    pid_t       pid;
-    pthread_t   tid;
-    u64         check;  // maybe optional
-};
-
-// System Commands (even: request, odd: reply)
-static const int CMD_CHAN_REQ = 0;
-static const int CMD_CHAN_RES = 1;
-static const int CMD_FORK_REQ = 2;
-static const int CMD_FORK_RES = 3;
-
-struct CmdHdr
-{
-    int                 cmd;
-    pid_t               pid;
-};
-
-struct CmdChanReq
-{
-    int                 cmd;     // CMD_CHAN_REQ
-    pid_t               pid;
-    int                 sockfd;
-    Capability          cap;
-    ThreadCredential    tc;
-};
-
-struct CmdChanRes
-{
-    int                 cmd;     // CMD_CHAN_RES
-    pid_t               pid;
-    ThreadCredential    tc;
-};
-
-struct CmdForkReq
-{
-    int                 cmd;     // CMD_FORK_REQ
-    pid_t               pid;
-};
-
-struct CmdForkRes
-{
-    int                 cmd;     // CMD_FORK_RES
-    pid_t               pid;
-    Capability          in;
-    Capability          out;
-    Capability          error;
-    Capability          root;
-    Capability          current;
-    Capability          document;
-
-    void report()
-    {
-        printf("CmdForkRes:\n");
-        in.report();
-        out.report();
-        error.report();
-        root.report();
-        current.report();
-        document.report();
-    }
-};
-
-union CmdUnion
-{
-    int         cmd;
-    CmdHdr      hdr;
-    CmdChanReq  chanReq;
-    CmdChanRes  chanRes;
-    CmdForkReq  forkReq;
-    CmdForkRes  forkRes;
-};
-
-static const int RPC_REQ = 0;
-static const int RPC_RES = 1;
-
-// RPC request header
-
-struct RpcHdr
-{
-    int         cmd;
-    int         tag;
-    pid_t       pid;
-};
-
-struct RpcReq
-{
-    int         cmd;
-    int         tag;
-    pid_t       pid;
-    Capability  capability;
-    unsigned    methodNumber;
-    unsigned    paramCount;
-    // Param    argv[];
-    // Data
-
-    Param* getArgv()
-    {
-        return reinterpret_cast<Param*>(this + 1);
-    }
-
-    void* getData()
-    {
-        return reinterpret_cast<void*>(getArgv() + paramCount);
-    }
-};
-
-// RPC response header
-struct RpcRes
-{
-    int         cmd;
-    int         tag;
-    pid_t       pid;
-    unsigned    exceptionCode;
-    Param       result;
-    // Data
-
-    void* getData()
-    {
-        return reinterpret_cast<void*>(this + 1);
-    }
-};
 
 //
 // Misc.
