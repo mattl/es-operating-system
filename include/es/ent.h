@@ -57,7 +57,8 @@ namespace Ent
     static const Spec SpecObject = SpecPrimitive | 19u;
     static const Spec SpecFixed = SpecPrimitive | 20u;
     static const Spec SpecValue = SpecPrimitive | 21u;
-    static const int MaxSpec = 22;
+    static const Spec SpecVariant = SpecPrimitive | 22u;
+    static const int MaxSpec = 23;
 
     // Non-primitive types
     typedef u32 Type;

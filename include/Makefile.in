@@ -159,12 +159,13 @@ nobase_include_HEADERS = es.h es/apply.h es/broker.h es/classFactory.h \
 	es/types.h es/usage.h es/utf.h es/uuid.h es/net/arp.h \
 	es/net/dhcp.h es/net/dns.h es/net/dix.h es/net/icmp.h \
 	es/net/igmp.h es/net/inet4.h es/net/inet6.h es/net/tcp.h \
-	es/net/udp.h es/base/IAlarm.idl es/base/ICache.idl \
-	es/base/ICallback.idl es/base/IClassFactory.idl \
-	es/base/IClassStore.idl es/base/IFile.idl \
-	es/base/IInterface.idl es/base/IInterfaceStore.idl \
-	es/base/IMonitor.idl es/base/IPageable.idl \
-	es/base/IPageSet.idl es/base/IProcess.idl es/base/IRuntime.idl \
+	es/net/udp.h es/variant.h es/base/IAlarm.idl \
+	es/base/ICache.idl es/base/ICallback.idl \
+	es/base/IClassFactory.idl es/base/IClassStore.idl \
+	es/base/IFile.idl es/base/IInterface.idl \
+	es/base/IInterfaceStore.idl es/base/IMonitor.idl \
+	es/base/IPageable.idl es/base/IPageSet.idl \
+	es/base/IProcess.idl es/base/IRuntime.idl \
 	es/base/ISelectable.idl es/base/IService.idl \
 	es/base/IStream.idl es/base/IThread.idl \
 	es/device/IAudioFormat.idl es/device/IBeep.idl \
@@ -226,9 +227,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  include/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  include/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  include/Makefile
+	  $(AUTOMAKE) --gnu  include/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

@@ -53,7 +53,8 @@ nobase_include_HEADERS = \
 	es/net/inet4.h \
 	es/net/inet6.h \
 	es/net/tcp.h \
-	es/net/udp.h
+	es/net/udp.h \
+  es/variant.h
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = \
