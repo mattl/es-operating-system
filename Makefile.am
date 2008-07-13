@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	patches/automake-1.10.patch \
 	patches/binutils-2.16.1.patch \
 	patches/binutils-2.17.patch \
+	patches/binutils-2.18.patch \
 	patches/gcc-4.1.0.patch \
 	patches/gcc-4.1.1.patch \
 	patches/gcc-4.2.1.patch \
@@ -21,3 +22,4 @@ EXTRA_DIST = \
 	patches/expat-2.0.1.patch \
 	patches/fontconfig-2.4.2.patch \
 	patches/cairo-1.4.10.patch
+
