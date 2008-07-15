@@ -190,7 +190,7 @@ class Map
     unsigned    prot;
     unsigned    flags;
 
-    typedef List<Map, &Map::link>   List;
+    typedef ::List<Map, &Map::link>   List;
 
     Map(Process* proc, const void* start, const void* end, long length,
         unsigned prot, unsigned flags,

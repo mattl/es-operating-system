@@ -157,11 +157,14 @@ enum regnames
 
 /* GDB stores segment registers in 32-bit words (that's just the way
    m-i386v.h is written).  So zero the appropriate areas in registers.  */
-static int registers[NUMREGS];
+extern "C" {
+int registers[NUMREGS];
 
 #define STACKSIZE 10000
 int remcomStack[STACKSIZE/sizeof(int)] __attribute__ ((aligned (16)));
-static int* stackPtr = &remcomStack[STACKSIZE/sizeof(int) - 1];
+int* stackPtr = &remcomStack[STACKSIZE/sizeof(int) - 1];
+
+}
 
 /***************************  ASSEMBLY CODE MACROS *************************/
 /*                                     */

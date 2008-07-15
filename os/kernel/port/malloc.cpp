@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-#include <new>
 #include <stdlib.h>
+#include <string.h>
+#include <new>
 #include "heap.h"
 
 namespace

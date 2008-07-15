@@ -17,6 +17,7 @@
 
 #include <errno.h>
 #include <stddef.h>
+#include <string.h>
 #include <new>
 #include <es.h>
 #include <es/broker.h>
