@@ -13,8 +13,10 @@ EXTRA_DIST = \
 	patches/gcc-4.1.0.patch \
 	patches/gcc-4.1.1.patch \
 	patches/gcc-4.2.1.patch \
+	patches/gcc-4.3.1.patch \
 	patches/newlib-1.14.0.patch \
 	patches/newlib-1.15.0.patch \
+	patches/newlib-1.16.0.patch \
 	patches/pcre-7.1.patch \
 	patches/pcre-7.2.patch \
 	patches/freetype-2.3.4.patch \
