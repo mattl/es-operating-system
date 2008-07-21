@@ -15,15 +15,15 @@ original software.
     usage: $ tar -jxvf binutils-2.18.tar.bz2
            $ patch -p0 -d . < binutils-2.18.patch
 
-- GCC, the GNU Compiler Collection 4.2.1 (gcc-4.2.1.patch)
+- GCC, the GNU Compiler Collection 4.3.1 (gcc-4.3.1.patch)
     http://gcc.gnu.org/
-    usage: $ tar -jxvf gcc-4.2.1.tar.bz2
-           $ patch -p0 -d . < gcc-4.2.1.patch
+    usage: $ tar -jxvf gcc-4.3.1.tar.bz2
+           $ patch -p0 -d . < gcc-4.3.1.patch
 
-- Newlib 1.15.0 (newlib-1.15.0.patch)
+- Newlib 1.16.0 (newlib-1.16.0.patch)
     http://sources.redhat.com/newlib/
-    usage: $ tar -zxvf newlib-1.15.0.tar.gz
-           $ patch -p0 -d . < newlib-1.15.0.patch
+    usage: $ tar -zxvf newlib-1.16.0.tar.gz
+           $ patch -p0 -d . < newlib-1.16.0.patch
 
 - PCRE - Perl Compatible Regular Expressions library 7.2 (pcre-7.2.patch)
     http://www.pcre.org/
