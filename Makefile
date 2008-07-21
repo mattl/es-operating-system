@@ -2,29 +2,34 @@
 
 all : pc/init/fat32.img
 
-requisites :
+prerequisites :
 	if grep Ubuntu\ 8.04 /etc/issue; then \
-        echo "Ubuntu 8.04 detected"; \
-        sudo apt-get -qq update; \
-        sudo apt-get install subversion autoconf automake patch bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev; \
+		echo "Ubuntu 8.04 detected"; \
+		sudo apt-get -qq update; \
+		sudo apt-get install subversion autoconf automake patch bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev; \
 	else \
-		if grep Fedora /etc/issue; then \
-            echo "Fedora detected"; \
-            sudo yum -y install subversion autoconf automake patch bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic; \
+	if grep Fedora /etc/issue; then \
+		echo "Fedora detected"; \
+		sudo yum -y install subversion autoconf automake patch bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel; \
         else \
             echo "Your OS is probably not a supported development environment"; \
         fi; \
-    fi; \
+	fi;
 
-trunk : requisites
-	if [ -z $$GOOGLE_USERNAME ]; then \
-		svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk; \
+trunk : prerequisites
+	if [ ! -d $@ ]; then \
+		if [ -z $$GOOGLE_USERNAME ]; then \
+			svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk; \
+		else \
+			svn checkout https://es-operating-system.googlecode.com/svn/trunk/ trunk --username $$GOOGLE_USERNAME; \
+		fi; \
+		for i in trunk trunk/esidl trunk/tools trunk/os trunk/init trunk/cmd trunk/esjs; \
+		do (cd $$i; aclocal; autoconf; automake -a --foreign;); \
+		done; \
 	else \
-		svn checkout https://es-operating-system.googlecode.com/svn/trunk/ trunk --username $$GOOGLE_USERNAME; \
-	fi; \
-	for i in trunk trunk/esidl trunk/tools trunk/os trunk/init trunk/cmd trunk/esjs; \
-	do (cd $$i; aclocal; autoconf; automake -a --foreign;); \
-	done
+		cd $@; \
+		svn update; \
+	fi;
 
 patches = \
 	trunk/patches/binutils-2.18.patch \
@@ -32,8 +37,8 @@ patches = \
 	trunk/patches/expat-2.0.1.patch \
 	trunk/patches/fontconfig-2.4.2.patch \
 	trunk/patches/freetype-2.3.5.patch \
-	trunk/patches/gcc-4.2.1.patch \
-	trunk/patches/newlib-1.15.0.patch \
+	trunk/patches/gcc-4.3.1.patch \
+	trunk/patches/newlib-1.16.0.patch \
 	trunk/patches/pcre-7.2.patch
 
 $(patches) : trunk 
@@ -83,21 +88,21 @@ src/freetype-2.3.5 : trunk/patches/freetype-2.3.5.patch
 	patch -p0 -d src < $<; \
 	touch $@
 
-src/gcc-4.2.1 : trunk/patches/gcc-4.2.1.patch
-	if [ ! -f src/gcc-4.2.1.tar.bz2 ]; then \
-		wget -P src ftp://ftp.gnu.org/gnu/gcc/gcc-4.2.1/gcc-4.2.1.tar.bz2; \
+src/gcc-4.3.1 : trunk/patches/gcc-4.3.1.patch
+	if [ ! -f src/gcc-4.3.1.tar.bz2 ]; then \
+		wget -P src ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2; \
 	fi; \
 	rm -rf $@; \
-	tar -C src -jxf src/gcc-4.2.1.tar.bz2; \
+	tar -C src -jxf src/gcc-4.3.1.tar.bz2; \
 	patch -p0 -d src < $<; \
 	touch $@
 
-src/newlib-1.15.0 : trunk/patches/newlib-1.15.0.patch
-	if [ ! -f src/newlib-1.15.0.tar.gz ]; then \
-		wget -P src ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz; \
+src/newlib-1.16.0 : trunk/patches/newlib-1.16.0.patch
+	if [ ! -f src/newlib-1.16.0.tar.gz ]; then \
+		wget -P src ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz; \
 	fi; \
 	rm -rf $@; \
-	tar -C src -zxf src/newlib-1.15.0.tar.gz; \
+	tar -C src -zxf src/newlib-1.16.0.tar.gz; \
 	patch -p0 -d src < $<; \
 	touch $@
 
@@ -111,9 +116,9 @@ src/pcre-7.2 : trunk/patches/pcre-7.2.patch
 	touch $@
 
 local : trunk 
-	if [ ! -d local ]; then \
-		mkdir local; \
-		cd local; \
+	if [ ! -d $@ ]; then \
+		mkdir $@; \
+		cd $@; \
 		CFLAGS=-g CXXFLAGS=-g ../trunk/configure; \
 		cd ..; \
 	fi; \
@@ -121,82 +126,96 @@ local : trunk
 	make; \
 	sudo make install
 
-opt/binutils : src/binutils-2.18 local
+opt/binutils : src/binutils-2.18
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	../../src/binutils-2.18/configure --target=i386-pc-es --prefix=/opt/es ; \
 	make; \
-	make install
+	make install; \
+	touch .
 
-opt/gcc : src/gcc-4.2.1 src/newlib-1.15.0 opt/binutils
-	if [ ! -e src/gcc-4.2.1/newlib ]; then \
-		ln -s ../newlib-1.15.0/newlib src/gcc-4.2.1; \
+opt/gcc : src/gcc-4.3.1 src/newlib-1.16.0 opt/binutils
+	if [ ! -e src/gcc-4.3.1/newlib ]; then \
+		ln -s ../newlib-1.16.0/newlib src/gcc-4.3.1; \
 	fi; \
-	if [ ! -e src/gcc-4.2.1/libgloss ]; then \
-		ln -s ../newlib-1.15.0/libgloss src/gcc-4.2.1; \
+	if [ ! -e src/gcc-4.3.1/libgloss ]; then \
+		ln -s ../newlib-1.16.0/libgloss src/gcc-4.3.1; \
 	fi; \
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
-	../../src/gcc-4.2.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --prefix=/opt/es ; \
+	../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=/opt/es ; \
 	make; \
-	make install
+	make install; \
+	touch .
 
 opt/pcre : src/pcre-7.2 opt/gcc
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
 	../../src/pcre-7.2/configure --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --prefix=/opt/es ; \
 	make; \
-	make install
+	make install; \
+	touch .
 
 opt/freetype : src/freetype-2.3.5 opt/gcc
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
 	../../src/freetype-2.3.5/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es; \
 	make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
-	-cd $@; make install
+	-cd $@; make install; \
+	touch .
 
 opt/expat : src/expat-2.0.1 opt/gcc
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
 	../../src/expat-2.0.1/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es; \
 	make; \
-	make installlib
+	make installlib; \
+	touch .
 
 opt/fontconfig : src/fontconfig-2.4.2 opt/expat opt/freetype
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
 	../../src/fontconfig-2.4.2/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=/opt/es/include --with-expat-lib=/opt/es/lib --with-freetype-config=/opt/es/bin/freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file; \
 	make
-	-cd $@; make install
+	-cd $@; make install; \
+	touch .
 
 opt/cairo : src/cairo-1.4.10 opt/fontconfig
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
+	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
 	../../src/cairo-1.4.10/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg FREETYPE_CFLAGS='-I/opt/es/include/freetype2 -I/opt/es/include' FREETYPE_LIBS='-L/opt/es/lib -lfreetype' FONTCONFIG_CFLAGS=-I/opt/es/include FONTCONFIG_LIBS='-L/opt/es/lib -lfontconfig'; \
 	make; \
-	make install
+	make install; \
+	touch .
 
-pc : opt/pcre opt/cairo
+pc : opt/pcre opt/cairo local
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
