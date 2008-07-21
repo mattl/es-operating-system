@@ -5,8 +5,16 @@ Copyright 2006, 2007 Nintendo Co., Ltd.
 This product includes software developed at Google Inc. Portions of this
 software were developed at Nintendo Co., Ltd.
 
+This product includes software developed by the following students
+participating the Google Summer of Code 2008 for ES operating system:
+    João Diogo Taveira Araújo
+    Kenichi Ishibashi
+    Santosh G Vattam
+    Chis Dan Ionut
+
 This software contains security software derived from the RSA Data Security
 Inc. MD5 Message-Digest Algorithm.
+    http://www.rsa.com/
 
 Newlib is used for the C library. Newlib is covered by several licenses,
 please read the code of each particular package in the source distribution
