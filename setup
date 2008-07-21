@@ -18,34 +18,34 @@ sudo make install
 cd ..
 mkdir src
 cd src
-wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.17.tar.bz2
-tar -jxvf binutils-2.17.tar.bz2
-patch -p0 -d . < ../trunk/patches/binutils-2.17.patch
+wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.18.tar.bz2
+tar -jxvf binutils-2.18.tar.bz2
+patch -p0 -d . < ../trunk/patches/binutils-2.18.patch
 cd ..
 mkdir opt
 cd opt
 mkdir binutils
 cd binutils
-../../src/binutils-2.17/configure --target=i386-pc-es --prefix=/opt/es
+../../src/binutils-2.18/configure --target=i386-pc-es --prefix=/opt/es
 make
 make install
 export PATH=/opt/es/bin:$PATH
 
 # GCC and Newlib
 cd ../../src/
-wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.2.1/gcc-4.2.1.tar.bz2
-tar -jxvf gcc-4.2.1.tar.bz2
-patch -p0 -d . < ../trunk/patches/gcc-4.2.1.patch
-wget ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
-tar -zxvf newlib-1.15.0.tar.gz
-patch -p0 -d . < ../trunk/patches/newlib-1.15.0.patch
-cd gcc-4.2.1
-ln -s ../newlib-1.15.0/newlib .
-ln -s ../newlib-1.15.0/libgloss .
+wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
+tar -jxvf gcc-4.3.1.tar.bz2
+patch -p0 -d . < ../trunk/patches/gcc-4.3.1.patch
+wget ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
+tar -zxvf newlib-1.16.0.tar.gz
+patch -p0 -d . < ../trunk/patches/newlib-1.16.0.patch
+cd gcc-4.3.1
+ln -s ../newlib-1.16.0/newlib .
+ln -s ../newlib-1.16.0/libgloss .
 cd ../../opt
 mkdir gcc
 cd gcc
-../../src/gcc-4.2.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --prefix=/opt/es
+../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=/opt/es
 make
 make install
 
