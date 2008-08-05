@@ -1,5 +1,6 @@
 /*
  * Copyright 2008 Google Inc.
+ * Copyright 2008 Kenichi Ishibashi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +15,23 @@
  * limitations under the License.
  */
 
+#include <assert.h>
+#include <cmath>
+#include <cstring>
+#include <locale.h>
 #include <stdio.h>
 #include <wchar.h>
-#include <locale.h>
-#include <cstring>
-#include <cmath>
 #include <algorithm>
-#include <assert.h>
 #include <es/variant.h>
-
-#define BUFLENMAX 128
 
 class VariantHolder
 {
+    static const int STRING_CHAR_MAX = 128;
+
     Variant var;
+    char* string;
+    int length;
+
 public:
     VariantHolder()
     {
@@ -35,75 +39,60 @@ public:
 
     ~VariantHolder()
     {
-        if (var.getType() == Variant::VTypeString && stringBuf)
+        if (var.getType() == Variant::TypeString && string)
         {
-            delete stringBuf;
-        }
-        else if (var.getType() == Variant::VTypeWString && wstringBuf)
-        {
-            delete wstringBuf;
+            delete string;
         }
     }
 
     Variant getVar(void* value, int valueLength)
     {
-        Variant::VariantType vType = var.getType();
-        if (vType == Variant::VTypeString)
+        int type = var.getType();
+        if (type == Variant::TypeString)
         {
-            int length = std::min(buflen, valueLength);
-            strncpy(reinterpret_cast<char*>(value), stringBuf, length);
-            return stringBuf;
-        }
-        else if (vType == Variant::VTypeWString)
-        {
-            int length = std::min(buflen, valueLength);
-            wcsncpy(reinterpret_cast<wchar_t*>(value), wstringBuf, length);
-            return wstringBuf;
+            strncpy(static_cast<char*>(value), string, valueLength);
+            return static_cast<char*>(value);
         }
         return var;
     }
 
     int setVar(Variant value)
     {
-        Variant::VariantType vType = value.getType();
-        if (vType == Variant::VTypeString)
+        int type = value.getType();
+        if (type == Variant::TypeString)
         {
-            char* ptr = static_cast<char*>(value);
-            buflen = std::min((int)strlen(ptr)+1, BUFLENMAX);
-            stringBuf = new char[buflen];
-            strncpy(stringBuf, ptr, buflen);
-            var = stringBuf;
-        }
-        else if (vType == Variant::VTypeWString)
-        {
-            wchar_t* ptr = static_cast<wchar_t*>(value);
-            for (buflen = 0; buflen < BUFLENMAX; ++buflen)
-            {
-                if (ptr[buflen] == L'\0')
-                {
-                    break;
-                }
-            }
-            buflen++;
-            wstringBuf = new wchar_t[buflen];
-            wcsncpy(wstringBuf, ptr, buflen);
-            var = wstringBuf;
+            const char* ptr = static_cast<const char*>(value);
+            length = std::min(static_cast<int>(strlen(ptr)) + 1, STRING_CHAR_MAX);
+            string = new char[length];
+            strncpy(string, ptr, length);
+            var = string;
         }
         else
         {
             var = value;
-            buflen = 0;
+            length = 0;
         }
-        return buflen;
+        return length;
     }
-
-private:
-    union {
-        char* stringBuf;
-        wchar_t* wstringBuf;
-    };
-    int buflen;
 };
+
+const int VariantHolder::STRING_CHAR_MAX;
+
+Variant returnVariant()
+{
+    return Variant(10);
+}
+
+float returnFloat()
+{
+    return Variant(10.0f);
+}
+
+long long returnLongLong(int a, double b, const char* c, unsigned long long d)
+{
+    printf("returnLongLong(%d, %g, %s, %llu)\n", a, b, c, d);
+    return 200LL;
+}
 
 int main()
 {
@@ -111,14 +100,37 @@ int main()
     char buf[128];
     Variant value;
 
+    vh.setVar(200LL);
+    value = vh.getVar(buf, sizeof buf);
+    assert(value.getType() == Variant::TypeLongLong);
+    printf("int64 value: %lld\n", static_cast<int64_t>(value));
+
     vh.setVar(100);
-    value = vh.getVar(buf, sizeof(buf));
-    printf("int value: %d\n", static_cast<int>(value));
+    value = vh.getVar(buf, sizeof buf);
+    assert(value.getType() == Variant::TypeLong);
+    printf("int32 value: %d\n", static_cast<int32_t>(value));
+
     vh.setVar("rgb(255,255,255)");
-    value = vh.getVar(buf, sizeof(buf));
-    printf("string value: %s\n", buf);
-    vh.setVar(L"abc");
-    value = vh.getVar(buf, sizeof(buf));
-    printf("wstring value: %ls\n", reinterpret_cast<wchar_t*>(buf));
+    value = vh.getVar(buf, sizeof buf);
+    assert(value.getType() == Variant::TypeString);
+    printf("string value: %s\n", static_cast<const char*>(value));
+
+    value = apply(0, NULL, returnVariant);
+    assert(value.getType() == Variant::TypeLong);
+    printf("int32 value: %d\n", static_cast<int32_t>(value));
+
+    value = apply(0, NULL, returnFloat);
+    assert(value.getType() == Variant::TypeFloat);
+    printf("float value: %g\n", static_cast<float>(value));
+
+    Variant param[4];
+    param[0] = Variant(10);
+    param[1] = Variant(20.0);
+    param[2] = Variant("hello");
+    param[3] = Variant(500LLu);
+    value = apply(sizeof param / sizeof param[0], param, reinterpret_cast<int64_t (*)()>(returnLongLong));
+    assert(value.getType() == Variant::TypeLongLong);
+    printf("int64 value: %lld\n", static_cast<int64_t>(value));
+
     printf("done.\n");
 }

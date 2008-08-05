@@ -38,7 +38,9 @@ cpp_source_files = \
 rpc_source_files = \
 	src/apply.cpp \
 	src/apply386.S \
-	src/interfaceStore.cpp
+	src/interfaceStore.cpp \
+	src/variant.cpp \
+	src/variant386.S
 
 header_files = \
 	include/core.h \

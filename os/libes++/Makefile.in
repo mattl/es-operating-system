@@ -64,16 +64,17 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/utf.c src/color.cpp src/context.cpp src/dateTime.cpp \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
 	src/ring.cpp src/apply.cpp src/apply386.S \
-	src/interfaceStore.cpp include/core.h include/posix_system.h \
-	include/posix_video.h base/IAlarm.c base/ICache.c \
-	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
-	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
-	base/IMonitor.c base/IPageable.c base/IPageSet.c \
-	base/IProcess.c base/IRuntime.c base/ISelectable.c \
-	base/IService.c base/IStream.c base/IThread.c \
-	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
-	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
-	device/IFileSystem.c device/INetworkInterface.c device/IPic.c \
+	src/interfaceStore.cpp src/variant.cpp src/variant386.S \
+	include/core.h include/posix_system.h include/posix_video.h \
+	base/IAlarm.c base/ICache.c base/ICallback.c \
+	base/IClassFactory.c base/IClassStore.c base/IFile.c \
+	base/IInterface.c base/IInterfaceStore.c base/IMonitor.c \
+	base/IPageable.c base/IPageSet.c base/IProcess.c \
+	base/IRuntime.c base/ISelectable.c base/IService.c \
+	base/IStream.c base/IThread.c device/IAudioFormat.c \
+	device/IBeep.c device/ICursor.c device/IDevice.c \
+	device/IDiskManagement.c device/IDmac.c device/IFileSystem.c \
+	device/INetworkInterface.c device/IPic.c \
 	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
 	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
@@ -86,7 +87,8 @@ am__objects_2 = color.$(OBJEXT) context.$(OBJEXT) dateTime.$(OBJEXT) \
 	dump.$(OBJEXT) inet.$(OBJEXT) throw.$(OBJEXT) \
 	formatter.$(OBJEXT) ring.$(OBJEXT)
 am__objects_3 = apply.$(OBJEXT) apply386.$(OBJEXT) \
-	interfaceStore.$(OBJEXT)
+	interfaceStore.$(OBJEXT) variant.$(OBJEXT) \
+	variant386.$(OBJEXT)
 am__objects_4 =
 am__objects_5 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4)
@@ -113,15 +115,16 @@ libes___a_OBJECTS = $(am_libes___a_OBJECTS)
 libesrpc_a_AR = $(AR) $(ARFLAGS)
 libesrpc_a_LIBADD =
 am__libesrpc_a_SOURCES_DIST = src/apply.cpp src/apply386.S \
-	src/interfaceStore.cpp base/IAlarm.c base/ICache.c \
-	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
-	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
-	base/IMonitor.c base/IPageable.c base/IPageSet.c \
-	base/IProcess.c base/IRuntime.c base/ISelectable.c \
-	base/IService.c base/IStream.c base/IThread.c \
-	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
-	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
-	device/IFileSystem.c device/INetworkInterface.c device/IPic.c \
+	src/interfaceStore.cpp src/variant.cpp src/variant386.S \
+	base/IAlarm.c base/ICache.c base/ICallback.c \
+	base/IClassFactory.c base/IClassStore.c base/IFile.c \
+	base/IInterface.c base/IInterfaceStore.c base/IMonitor.c \
+	base/IPageable.c base/IPageSet.c base/IProcess.c \
+	base/IRuntime.c base/ISelectable.c base/IService.c \
+	base/IStream.c base/IThread.c device/IAudioFormat.c \
+	device/IBeep.c device/ICursor.c device/IDevice.c \
+	device/IDiskManagement.c device/IDmac.c device/IFileSystem.c \
+	device/INetworkInterface.c device/IPic.c \
 	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
 	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
@@ -129,7 +132,8 @@ am__libesrpc_a_SOURCES_DIST = src/apply.cpp src/apply386.S \
 	src/rpc.cpp
 am__objects_9 = libesrpc_a-apply.$(OBJEXT) \
 	libesrpc_a-apply386.$(OBJEXT) \
-	libesrpc_a-interfaceStore.$(OBJEXT)
+	libesrpc_a-interfaceStore.$(OBJEXT) \
+	libesrpc_a-variant.$(OBJEXT) libesrpc_a-variant386.$(OBJEXT)
 am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-ICache.$(OBJEXT) libesrpc_a-ICallback.$(OBJEXT) \
 	libesrpc_a-IClassFactory.$(OBJEXT) \
@@ -334,7 +338,9 @@ cpp_source_files = \
 rpc_source_files = \
 	src/apply.cpp \
 	src/apply386.S \
-	src/interfaceStore.cpp
+	src/interfaceStore.cpp \
+	src/variant.cpp \
+	src/variant386.S
 
 header_files = \
 	include/core.h \
@@ -568,6 +574,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-apply386.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-interfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-rpc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-variant.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-variant386.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
@@ -579,6 +587,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/throw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant386.Po@am__quote@
 
 .S.o:
 @am__fastdepCCAS_TRUE@	$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -608,6 +618,20 @@ apply386.obj: src/apply386.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
 
+variant386.o: src/variant386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT variant386.o -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='variant386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
+
+variant386.obj: src/variant386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT variant386.obj -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='variant386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
+
 libesrpc_a-apply386.o: src/apply386.S
 @am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-apply386.o -MD -MP -MF $(DEPDIR)/libesrpc_a-apply386.Tpo -c -o libesrpc_a-apply386.o `test -f 'src/apply386.S' || echo '$(srcdir)/'`src/apply386.S
 @am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-apply386.Tpo $(DEPDIR)/libesrpc_a-apply386.Po
@@ -621,6 +645,20 @@ libesrpc_a-apply386.obj: src/apply386.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/apply386.S' object='libesrpc_a-apply386.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-apply386.obj `if test -f 'src/apply386.S'; then $(CYGPATH_W) 'src/apply386.S'; else $(CYGPATH_W) '$(srcdir)/src/apply386.S'; fi`
+
+libesrpc_a-variant386.o: src/variant386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variant386.o -MD -MP -MF $(DEPDIR)/libesrpc_a-variant386.Tpo -c -o libesrpc_a-variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant386.Tpo $(DEPDIR)/libesrpc_a-variant386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='libesrpc_a-variant386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
+
+libesrpc_a-variant386.obj: src/variant386.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variant386.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-variant386.Tpo -c -o libesrpc_a-variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
+@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant386.Tpo $(DEPDIR)/libesrpc_a-variant386.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='libesrpc_a-variant386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1910,6 +1948,20 @@ interfaceStore.obj: src/interfaceStore.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
 
+variant.o: src/variant.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT variant.o -MD -MP -MF $(DEPDIR)/variant.Tpo -c -o variant.o `test -f 'src/variant.cpp' || echo '$(srcdir)/'`src/variant.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/variant.Tpo $(DEPDIR)/variant.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant.cpp' object='variant.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o variant.o `test -f 'src/variant.cpp' || echo '$(srcdir)/'`src/variant.cpp
+
+variant.obj: src/variant.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT variant.obj -MD -MP -MF $(DEPDIR)/variant.Tpo -c -o variant.obj `if test -f 'src/variant.cpp'; then $(CYGPATH_W) 'src/variant.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/variant.Tpo $(DEPDIR)/variant.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant.cpp' object='variant.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o variant.obj `if test -f 'src/variant.cpp'; then $(CYGPATH_W) 'src/variant.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant.cpp'; fi`
+
 report.o: src/report.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT report.o -MD -MP -MF $(DEPDIR)/report.Tpo -c -o report.o `test -f 'src/report.cpp' || echo '$(srcdir)/'`src/report.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/report.Tpo $(DEPDIR)/report.Po
@@ -2007,6 +2059,20 @@ libesrpc_a-interfaceStore.obj: src/interfaceStore.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/interfaceStore.cpp' object='libesrpc_a-interfaceStore.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
+
+libesrpc_a-variant.o: src/variant.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-variant.o -MD -MP -MF $(DEPDIR)/libesrpc_a-variant.Tpo -c -o libesrpc_a-variant.o `test -f 'src/variant.cpp' || echo '$(srcdir)/'`src/variant.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant.Tpo $(DEPDIR)/libesrpc_a-variant.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant.cpp' object='libesrpc_a-variant.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-variant.o `test -f 'src/variant.cpp' || echo '$(srcdir)/'`src/variant.cpp
+
+libesrpc_a-variant.obj: src/variant.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-variant.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-variant.Tpo -c -o libesrpc_a-variant.obj `if test -f 'src/variant.cpp'; then $(CYGPATH_W) 'src/variant.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant.Tpo $(DEPDIR)/libesrpc_a-variant.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant.cpp' object='libesrpc_a-variant.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-variant.obj `if test -f 'src/variant.cpp'; then $(CYGPATH_W) 'src/variant.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant.cpp'; fi`
 
 libesrpc_a-rpc.o: src/rpc.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-rpc.o -MD -MP -MF $(DEPDIR)/libesrpc_a-rpc.Tpo -c -o libesrpc_a-rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp

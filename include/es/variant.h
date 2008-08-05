@@ -18,258 +18,251 @@
 #ifndef GOOGLE_ES_VARIANT_H_INCLUDED
 #define GOOGLE_ES_VARIANT_H_INCLUDED
 
+#include <errno.h>
+#include <inttypes.h>
 #include <es/exception.h>
+#include <es/uuid.h>
+#include <es/base/IInterface.h>
 
-class VariantException : public Exception
-{
-public:
-    virtual int getResult() const
-    {
-        return 0; // XXX: any error code ?
-    }
-};
-
+// The any type for Web IDL
 class Variant
 {
-public:
-    typedef int VariantType;
-    static const VariantType VTypeOctet = 1;
-    static const VariantType VTypeChar = 2;
-    static const VariantType VTypeWChar = 3;
-    static const VariantType VTypeString = 4;
-    static const VariantType VTypeWString = 5;
-    static const VariantType VTypeShort = 6;
-    static const VariantType VTypeLong = 7;
-    static const VariantType VTypeLongLong = 8;
-    static const VariantType VTypeBool = 9;
-    static const VariantType VTypeFloat = 10;
-    static const VariantType VTypeDouble = 11;
-    static const VariantType VTypeLongDouble = 12;
-    static const VariantType VTypeObject = 13;
-
-    Variant() :
-        type(VTypeOctet),
-        octetValue(0)
-        {
-        }
-
-    Variant(unsigned char value) :
-        type(VTypeOctet),
-        octetValue(value)
-        {
-        }
-
-    Variant(char value) :
-        type(VTypeChar),
-        charValue(value)
-        {
-        }
-
-    Variant(wchar_t value) :
-        type(VTypeWChar),
-        wcharValue(value)
-        {
-        }
-
-    Variant(char* value) :
-        type(VTypeString),
-        stringValue(value)
-        {
-        }
-
-    Variant(wchar_t* value) :
-        type(VTypeWString),
-        wstringValue(value)
-        {
-        }
-
-    Variant(short value) :
-        type(VTypeShort),
-        shortValue(value)
-        {
-        }
-
-    Variant(int value) :
-        type(VTypeLong),
-        longValue(value)
-        {
-        }
-
-    Variant(long long value) :
-        type(VTypeLongLong),
-        longLongValue(value)
-        {
-        }
-
-    Variant(bool value) :
-        type(VTypeBool),
-        boolValue(value)
-        {
-        }
-
-    Variant(float value) :
-        type(VTypeFloat),
-        floatValue(value)
-        {
-        }
-
-    Variant(double value) :
-        type(VTypeDouble),
-        doubleValue(value)
-        {
-        }
-
-    Variant(long double value) :
-        type(VTypeLongDouble),
-        longDoubleValue(value)
-        {
-        }
-
-    Variant(void* value) :
-        type(VTypeObject),
-        objectValue(value)
-        {
-        }
-
-    VariantType getType() const
+    union
     {
-        return type;
+        bool            boolValue;
+        uint8_t         octetValue;
+        int16_t         shortValue;
+        uint16_t        unsignedShortValue;
+        int32_t         longValue;
+        uint32_t        unsignedLongValue;
+        int64_t         longLongValue;
+        uint64_t        unsignedLongLongValue;
+        float           floatValue;
+        double          doubleValue;  // ES extension
+        const char*     stringValue;  // DOMString in UTF-8
+        es::IInterface* objectValue;
+
+        const Guid*     guid;         // ES extension
+    };
+    int type;
+
+public:
+    enum
+    {
+        TypeVoid,
+        TypeBool,
+        TypeOctet,
+        TypeShort,
+        TypeUnsignedShort,
+        TypeLong,
+        TypeUnsignedLong,
+        TypeLongLong,
+        TypeUnsignedLongLong,
+        TypeFloat,
+        TypeDouble,
+        TypeString,
+        TypeObject,
+        TypeGuid
+    };
+
+    inline Variant() :
+        longLongValue(0),
+        type(TypeVoid)
+    {
     }
 
-    operator unsigned char()
+    Variant(uint8_t value) :
+        octetValue(value),
+        type(TypeOctet)
     {
-        if (type != VTypeOctet)
+    }
+
+    Variant(int16_t value) :
+        shortValue(value),
+        type(TypeShort)
+    {
+    }
+
+    Variant(uint16_t value) :
+        unsignedShortValue(value),
+        type(TypeUnsignedShort)
+    {
+    }
+
+    Variant(int32_t value) :
+        longValue(value),
+        type(TypeLong)
+    {
+    }
+
+    Variant(uint32_t value) :
+        unsignedLongValue(value),
+        type(TypeUnsignedLong)
+    {
+    }
+
+    Variant(int64_t value) :
+        longLongValue(value),
+        type(TypeLongLong)
+    {
+    }
+
+    Variant(uint64_t value) :
+        unsignedLongLongValue(value),
+        type(TypeUnsignedLongLong)
+    {
+    }
+
+    Variant(float value) :
+        floatValue(value),
+        type(TypeFloat)
+    {
+    }
+
+    Variant(double value) :
+        doubleValue(value),
+        type(TypeDouble)
+    {
+    }
+
+    Variant(const char* value) :
+        stringValue(value),
+        type(TypeString)
+    {
+    }
+
+    Variant(es::IInterface* value) :
+        objectValue(value),
+        type(TypeObject)
+    {
+    }
+
+    operator uint8_t()
+    {
+        if (type != TypeOctet)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return octetValue;
     }
 
-    operator char()
+    operator int16_t()
     {
-        if (type != VTypeChar)
+        if (type != TypeShort)
         {
-            throw VariantException();
-        }
-        return charValue;
-    }
-
-    operator wchar_t()
-    {
-        if (type != VTypeWChar)
-        {
-            throw VariantException();
-        }
-        return wcharValue;
-    }
-
-    operator char*()
-    {
-        if (type != VTypeString)
-        {
-            throw VariantException();
-        }
-        return stringValue;
-    }
-
-    operator wchar_t*()
-    {
-        if (type != VTypeWString)
-        {
-            throw VariantException();
-        }
-        return wstringValue;
-    }
-
-    operator short()
-    {
-        if (type != VTypeShort)
-        {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return shortValue;
     }
 
-    operator int()
+    operator uint16_t()
     {
-        if (type != VTypeLong)
+        if (type != TypeUnsignedShort)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
+        }
+        return unsignedShortValue;
+    }
+
+    operator int32_t()
+    {
+        if (type != TypeLong)
+        {
+            throw SystemException<EACCES>();
         }
         return longValue;
     }
 
-    operator long long()
+    operator uint32_t()
     {
-        if (type != VTypeLongLong)
+        if (type != TypeUnsignedLong)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
+        }
+        return unsignedLongValue;
+    }
+
+    operator int64_t()
+    {
+        if (type != TypeLongLong)
+        {
+            throw SystemException<EACCES>();
         }
         return longLongValue;
     }
 
+    operator uint64_t()
+    {
+        if (type != TypeUnsignedLongLong)
+        {
+            throw SystemException<EACCES>();
+        }
+        return unsignedLongLongValue;
+    }
+
     operator bool()
     {
-        if (type != VTypeBool)
+        if (type != TypeBool)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return boolValue;
     }
 
     operator float()
     {
-        if (type != VTypeFloat)
+        if (type != TypeFloat)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return floatValue;
     }
 
     operator double()
     {
-        if (type != VTypeDouble)
+        if (type != TypeDouble)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return doubleValue;
     }
 
-    operator long double()
+    operator const char*()
     {
-        if (type != VTypeLongDouble)
+        if (type != TypeString)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
-        return longDoubleValue;
+        return stringValue;
     }
 
-    operator void*()
+    operator es::IInterface*()
     {
-        if (type != VTypeObject)
+        if (type != TypeObject)
         {
-            throw VariantException();
+            throw SystemException<EACCES>();
         }
         return objectValue;
     }
 
-private:
-    union {
-        unsigned char octetValue;
-        char charValue;
-        wchar_t wcharValue;
-        char* stringValue;
-        wchar_t* wstringValue;
-        short shortValue;
-        int longValue;
-        long long longLongValue;
-        bool boolValue;
-        float floatValue;
-        double doubleValue;
-        long double longDoubleValue;
-        void* objectValue;
-    };
-    VariantType type;
+    int getType() const
+    {
+        return type;
+    }
 };
+
+Variant apply(int argc, Variant* argv, Variant (*function)());
+Variant apply(int argc, Variant* argv, bool (*function)());
+Variant apply(int argc, Variant* argv, uint8_t (*function)());
+Variant apply(int argc, Variant* argv, int16_t (*function)());
+Variant apply(int argc, Variant* argv, uint16_t (*function)());
+Variant apply(int argc, Variant* argv, int32_t (*function)());
+Variant apply(int argc, Variant* argv, uint32_t (*function)());
+Variant apply(int argc, Variant* argv, int64_t (*function)());
+Variant apply(int argc, Variant* argv, uint64_t (*function)());
+Variant apply(int argc, Variant* argv, float (*function)());
+Variant apply(int argc, Variant* argv, double (*function)());
+Variant apply(int argc, Variant* argv, const char* (*function)());
+Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
 
 #endif // GOOGLE_ES_VARIANT_H_INCLUDED
