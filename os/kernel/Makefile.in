@@ -197,7 +197,7 @@ nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) ICanvasRenderingContext2D.$(OBJEXT) \
-	mbr.$(OBJEXT)
+	IOrderedMap.$(OBJEXT) mbr.$(OBJEXT)
 libeskernel_a_OBJECTS = $(am_libeskernel_a_OBJECTS) \
 	$(nodist_libeskernel_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -354,7 +354,7 @@ nodist_libeskernel_a_SOURCES = base/IAlarm.c base/ICache.c \
 	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
 	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
 	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
-	mbr.c
+	util/IOrderedMap.c mbr.c
 
 #
 # port
@@ -494,6 +494,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IIterator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IMonitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/INetworkInterface.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IOrderedMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPartition.Po@am__quote@
@@ -1144,6 +1145,20 @@ ICanvasRenderingContext2D.obj: util/ICanvasRenderingContext2D.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/ICanvasRenderingContext2D.c' object='ICanvasRenderingContext2D.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICanvasRenderingContext2D.obj `if test -f 'util/ICanvasRenderingContext2D.c'; then $(CYGPATH_W) 'util/ICanvasRenderingContext2D.c'; else $(CYGPATH_W) '$(srcdir)/util/ICanvasRenderingContext2D.c'; fi`
+
+IOrderedMap.o: util/IOrderedMap.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IOrderedMap.o -MD -MP -MF $(DEPDIR)/IOrderedMap.Tpo -c -o IOrderedMap.o `test -f 'util/IOrderedMap.c' || echo '$(srcdir)/'`util/IOrderedMap.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IOrderedMap.Tpo $(DEPDIR)/IOrderedMap.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/IOrderedMap.c' object='IOrderedMap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IOrderedMap.o `test -f 'util/IOrderedMap.c' || echo '$(srcdir)/'`util/IOrderedMap.c
+
+IOrderedMap.obj: util/IOrderedMap.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IOrderedMap.obj -MD -MP -MF $(DEPDIR)/IOrderedMap.Tpo -c -o IOrderedMap.obj `if test -f 'util/IOrderedMap.c'; then $(CYGPATH_W) 'util/IOrderedMap.c'; else $(CYGPATH_W) '$(srcdir)/util/IOrderedMap.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IOrderedMap.Tpo $(DEPDIR)/IOrderedMap.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util/IOrderedMap.c' object='IOrderedMap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IOrderedMap.obj `if test -f 'util/IOrderedMap.c'; then $(CYGPATH_W) 'util/IOrderedMap.c'; else $(CYGPATH_W) '$(srcdir)/util/IOrderedMap.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -90,7 +90,8 @@ nodist_libessup___a_SOURCES = \
 	net/ISocket.c \
 	util/IIterator.c \
 	util/ISet.c \
-	util/ICanvasRenderingContext2D.c
+	util/ICanvasRenderingContext2D.c \
+	util/IOrderedMap.c
 
 libes___a_SOURCES = $(libessup___a_SOURCES) $(nodist_libessup___a_SOURCES) src/report.cpp
 

@@ -511,19 +511,124 @@ public:
 };
 
 //
+// AttributeSetterValue
+//
+
+class AttributeSetterValue : public ObjectValue
+{
+    Guid iid;
+    int number; // Method number
+
+public:
+    AttributeSetterValue(const Guid& iid, int number) :
+        iid(iid),
+        number(number)
+    {
+    }
+
+    ~AttributeSetterValue()
+    {
+    }
+
+    void put(Value* self, const std::string& name, Value* value)
+    {
+        Register<ListValue> list = new ListValue;
+        Register<StringValue> ident = new StringValue(name);
+        list->push(ident);
+        list->push(value);
+        invoke(iid, number, static_cast<InterfacePointerValue*>(self), list);
+        return;
+    }
+};
+
+//
+// AttributeGetterValue
+//
+
+class AttributeGetterValue : public ObjectValue
+{
+    Guid iid;
+    int number; // Method number
+
+public:
+    AttributeGetterValue(const Guid& iid, int number) :
+        iid(iid),
+        number(number)
+    {
+    }
+
+    ~AttributeGetterValue()
+    {
+    }
+
+    Value* get(Value* self, const std::string& name)
+    {
+        Register<ListValue> list = new ListValue;
+        Register<StringValue> ident = new StringValue(name);
+        list->push(ident);
+        return invoke(iid, number, static_cast<InterfacePointerValue*>(self), list);
+    }
+};
+
+//
+// InterfacePrototypeValue
+//
+
+class InterfacePrototypeValue : public ObjectValue
+{
+    enum OpObject {
+        IndexGetter,
+        IndexSetter,
+        NameGetter,
+        NameSetter,
+        ObjectCount
+    };
+
+    ObjectValue* opObjects[ObjectCount];
+
+public:
+    InterfacePrototypeValue()
+    {
+        for (int i = 0; i < ObjectCount; ++i)
+        {
+            opObjects[i] = 0;
+        }
+    }
+
+    ~InterfacePrototypeValue()
+    {
+    }
+
+    void setOpObject(int op, ObjectValue* object)
+    {
+        ASSERT(op >= 0 && op < ObjectCount);
+        opObjects[op] = object;
+    }
+
+    ObjectValue* getOpObject(int op)
+    {
+        ASSERT(op >= 0 && op < ObjectCount);
+        return opObjects[op];
+    }
+
+    friend class InterfaceConstructor;
+    friend class InterfacePointerValue;
+};
+
+//
 // InterfaceConstructor
 //
 
 class InterfaceConstructor : public Code
 {
-    FormalParameterList*    arguments;
-    ObjectValue*            prototype;
-    Guid                    iid;
-
+    FormalParameterList*      arguments;
+    InterfacePrototypeValue*  prototype;
+    Guid                      iid;
+    
 public:
     InterfaceConstructor(ObjectValue* object, const Guid& iid) :
         arguments(new FormalParameterList),
-        prototype(new ObjectValue),
+        prototype(new InterfacePrototypeValue),
         iid(iid)
     {
         arguments->add(new Identifier("object"));
@@ -563,6 +668,26 @@ public:
                     ObjectValue* function = new ObjectValue;
                     function->setCode(new InterfaceMethodCode(function, iid, i));
                     prototype->put(method.getName(), function);
+                    if (method.isIndexGetter())
+                    {
+                        AttributeGetterValue* getter = new AttributeGetterValue(iid, i);
+                        prototype->setOpObject(InterfacePrototypeValue::IndexGetter, getter);
+                    }
+                    else if (method.isIndexSetter())
+                    {
+                        AttributeSetterValue* setter = new AttributeSetterValue(iid, i);
+                        prototype->setOpObject(InterfacePrototypeValue::IndexSetter, setter);
+                    }
+                    else if (method.isNameGetter())
+                    {
+                        AttributeGetterValue* getter = new AttributeGetterValue(iid, i);
+                        prototype->setOpObject(InterfacePrototypeValue::NameGetter, getter);
+                    }
+                    else if (method.isNameSetter())
+                    {
+                        AttributeSetterValue* setter = new AttributeSetterValue(iid, i);
+                        prototype->setOpObject(InterfacePrototypeValue::NameSetter, setter);
+                    }
                 }
                 else
                 {
@@ -687,6 +812,87 @@ public:
         return CompletionType(CompletionType::Return, object, "");
     }
 };
+
+static bool isIndexAccessor(const std::string& name)
+{
+    const char* ptr = name.c_str();
+    bool hex = false;
+    if (strncasecmp(ptr, "0x", 2) == 0)
+    {
+        ptr += 2;
+        hex = true;
+    }
+    while(*ptr)
+    {
+        if (hex)
+        {
+            if (!isxdigit(*ptr))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!isdigit(*ptr))
+            {
+                return false;
+            }
+        }
+        ptr++;
+    }
+    return true;
+}
+
+Value* InterfacePointerValue::get(const std::string& name)
+{
+    InterfacePrototypeValue* proto = static_cast<InterfacePrototypeValue*>(prototype);
+    AttributeGetterValue* getter;
+
+    if (hasProperty(name))
+    {
+        return ObjectValue::get(name);
+    }
+    else if ((getter = static_cast<AttributeGetterValue*>(proto->getOpObject(InterfacePrototypeValue::IndexGetter)))
+             && isIndexAccessor(name))
+    {
+        return getter->get(this, name);
+    }
+    else if ((getter = static_cast<AttributeGetterValue*>(proto->getOpObject(InterfacePrototypeValue::NameGetter))))
+    {
+        return getter->get(this, name);
+    }
+    else {
+        return ObjectValue::get(name);
+    }
+}
+
+void InterfacePointerValue::put(const std::string& name, Value* value, int attributes)
+{
+    InterfacePrototypeValue* proto = static_cast<InterfacePrototypeValue*>(prototype);
+    AttributeSetterValue* setter;
+
+    if (!canPut(name))
+    {
+        return;
+    }
+    if (hasProperty(name))
+    {
+        ObjectValue::put(name, value, attributes);
+    }
+    else if ((setter = static_cast<AttributeSetterValue*>(proto->getOpObject(InterfacePrototypeValue::IndexSetter)))
+             && isIndexAccessor(name))
+    {
+        setter->put(this, name, value);
+    }
+    else if ((setter = static_cast<AttributeSetterValue*>(proto->getOpObject(InterfacePrototypeValue::NameSetter))))
+    {
+        setter->put(this, name, value);
+    }
+    else
+    {
+        ObjectValue::put(name, value, attributes);
+    }
+}
 
 ObjectValue* constructInterfaceObject()
 {

@@ -349,6 +349,10 @@ namespace Ent
         static const u32 AttrNone = 0u;
         static const u32 AttrGetter = 1u;
         static const u32 AttrSetter = 2u;
+        static const u32 IndexGetter = 3u;
+        static const u32 IndexSetter = 4u;
+        static const u32 NameGetter = 5u;
+        static const u32 NameSetter = 6u;
 
         Spec spec;          // return type
         u32  name;
@@ -425,7 +429,15 @@ namespace Ent
 
         bool isOperation() const
         {
-            return (attr == AttrNone) ? true : false;
+            if ((attr == AttrNone)
+                || (attr == IndexGetter)
+                || (attr == IndexSetter)
+                || (attr == NameGetter)
+                || (attr == NameSetter))
+            {
+                return true;
+            }
+            return false;
         }
 
         bool isGetter() const
@@ -437,6 +449,27 @@ namespace Ent
         {
             return (attr == AttrSetter) ? true : false;
         }
+
+        bool isIndexGetter() const
+        {
+            return (attr == IndexGetter) ? true : false;
+        }
+
+        bool isIndexSetter() const
+        {
+            return (attr == IndexSetter) ? true : false;
+        }
+
+        bool isNameGetter() const
+        {
+            return (attr == NameGetter) ? true : false;
+        }
+
+        bool isNameSetter() const
+        {
+            return (attr == NameSetter) ? true : false;
+        }
+
     };
 
     struct Member

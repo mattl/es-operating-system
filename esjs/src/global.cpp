@@ -23,6 +23,9 @@
 #include "parser.h"
 #include "interface.h"
 
+#include <es/util/IOrderedMap.h>
+#include <es/orderedMap.h>
+
 //
 // yacc declarations
 //
@@ -216,6 +219,22 @@ Value* getErrorInstance(const char* name, const char* message)
     return function->call(NullValue::getInstance(), list);
 }
 
+// TODO(ishibashi.kenichi): remove later. Temporary test code.
+Value* createOrderedMap()
+{
+    IOrderedMap* map = new OrderedMap;
+    Register<Value> value = new InterfacePointerValue(map);
+    Register<ListValue> list = new ListValue;
+    list->push(value);
+
+    Register<ObjectValue> function = dynamic_cast<ObjectValue*>(global->get("OrderedMap"));
+    if (!function || !function->getCode())
+    {
+        return UndefinedValue::getInstance();
+    }
+    return function->call(NullValue::getInstance(), list);
+}
+
 //
 // Global Ojbect
 //
@@ -233,6 +252,7 @@ class GlobalMethod : public Code
         EncodeURI,
         EncodeURIComponent,
         DecodeURIComponent,
+        GetOrderedMap,
         MethodCount
     };
 
@@ -565,6 +585,10 @@ public:
             s = getScopeChain()->get("uriComponent")->toString();
             value = new StringValue(encode(s, unescapedURIComponentSet));
             break;
+        case GetOrderedMap:
+            // TODO(ishibashi.kenichi): remove later. Temporary test code.
+            value = createOrderedMap();
+            break;
         }
         return CompletionType(CompletionType::Return, value, "");
     }
@@ -590,7 +614,8 @@ const char* GlobalMethod::names[] =
     "decodeURI",
     "encodeURI",
     "encodeURIComponent",
-    "decodeURIComponent"
+    "decodeURIComponent",
+    "getOrderedMap"
 };
 
 const std::string GlobalMethod::reservedURISet(";/?:@&=+$,");

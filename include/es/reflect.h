@@ -472,6 +472,26 @@ public:
         {
             return method->isSetter();
         }
+
+        bool isIndexGetter() const
+        {
+            return method->isIndexGetter();
+        }
+
+        bool isIndexSetter() const
+        {
+            return method->isIndexSetter();
+        }
+
+        bool isNameGetter() const
+        {
+            return method->isNameGetter();
+        }
+
+        bool isNameSetter() const
+        {
+            return method->isNameSetter();
+        }
     };
 
     /**

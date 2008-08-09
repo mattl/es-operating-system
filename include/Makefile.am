@@ -54,7 +54,8 @@ nobase_include_HEADERS = \
 	es/net/inet6.h \
 	es/net/tcp.h \
 	es/net/udp.h \
-  es/variant.h
+  es/variant.h \
+  es/orderedMap.h
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = \
@@ -95,7 +96,8 @@ nobase_nodist_include_HEADERS = \
 	es/net/ISocket.h \
 	es/util/IIterator.h \
 	es/util/ISet.h \
-	es/util/ICanvasRenderingContext2D.h
+	es/util/ICanvasRenderingContext2D.h \
+  es/util/IOrderedMap.h
 
 nobase_nodist_include_HEADERS += \
 	es/base/IAlarm.ent \
@@ -135,7 +137,8 @@ nobase_nodist_include_HEADERS += \
 	es/net/ISocket.ent \
 	es/util/IIterator.ent \
 	es/util/ISet.ent \
-	es/util/ICanvasRenderingContext2D.ent
+	es/util/ICanvasRenderingContext2D.ent \
+  es/util/IOrderedMap.ent
 
 nobase_include_HEADERS += \
 	es/base/IAlarm.idl \
@@ -175,7 +178,8 @@ nobase_include_HEADERS += \
 	es/net/ISocket.idl \
 	es/util/IIterator.idl \
 	es/util/ISet.idl \
-	es/util/ICanvasRenderingContext2D.idl
+	es/util/ICanvasRenderingContext2D.idl \
+	es/util/IOrderedMap.idl
 
 clean-local:
 	-rm -rf es

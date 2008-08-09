@@ -61,6 +61,9 @@ class InterfacePointerValue : public ObjectValue
         {
             object = 0;
         }
+
+    Value* get(const std::string& name);
+    void put(const std::string& name, Value* value, int attributes = 0);
 };
 
 #endif // NINTENDO_ESJS_INTERFACE_H_INCLUDED

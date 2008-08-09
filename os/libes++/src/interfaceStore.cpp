@@ -88,6 +88,8 @@ extern unsigned char ISetInfo[];
 
 extern unsigned char ICanvasRenderingContext2DInfo[];
 
+extern unsigned char IOrderedMapInfo[];
+
 unsigned char* defaultInterfaceInfo[] =
 {
     // Base classes first
@@ -134,6 +136,8 @@ unsigned char* defaultInterfaceInfo[] =
     ISetInfo,
 
     ICanvasRenderingContext2DInfo,
+
+    IOrderedMapInfo,
 };
 
 size_t defaultInterfaceCount = sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];

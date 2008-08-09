@@ -17,6 +17,7 @@ TESTS = 1.js 2.js 3.js 4.js 5.js 6.js 7.js 8.js 9.js 10.js \
 	1048.js 1049.js 1050.js 1051.js 1052.js 1053.js 1054.js 1055.js \
 	1056.js 1057.js 1058.js 1059.js 1060.js 1061.js 1062.js 1063.js \
 	1064.js 1065.js 1066.js 1067.js 1068.js 1069.js 1070.js 1071.js \
-	1072.js 1073.js 1074.js 1075.js 1076.js 1077.js
+	1072.js 1073.js 1074.js 1075.js 1076.js 1077.js \
+	2000.js
 
 EXTRA_DIST = $(TESTS) 65.js
