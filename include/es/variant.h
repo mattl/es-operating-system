@@ -24,8 +24,7 @@
 #include <es/uuid.h>
 #include <es/base/IInterface.h>
 
-// The any type for Web IDL
-class Variant
+struct VariantBase
 {
     union
     {
@@ -45,7 +44,11 @@ class Variant
         const Guid*     guid;         // ES extension
     };
     int type;
+};
 
+// The any type for Web IDL
+class Variant : private VariantBase
+{
 public:
     enum
     {
@@ -62,82 +65,89 @@ public:
         TypeDouble,
         TypeString,
         TypeObject,
-        TypeGuid
+        TypeGuid,
+        FlagVariant = 0x80000000
     };
 
-    inline Variant() :
-        longLongValue(0),
-        type(TypeVoid)
+    Variant()
     {
+        longLongValue = 0;
+        type = TypeVoid;
     }
 
-    Variant(uint8_t value) :
-        octetValue(value),
-        type(TypeOctet)
+    Variant(const VariantBase& v) :
+        VariantBase(v)
     {
+        type |= FlagVariant;
     }
 
-    Variant(int16_t value) :
-        shortValue(value),
-        type(TypeShort)
+    Variant(uint8_t value)
     {
+        octetValue = value;
+        type = TypeOctet;
     }
 
-    Variant(uint16_t value) :
-        unsignedShortValue(value),
-        type(TypeUnsignedShort)
+    Variant(int16_t value)
     {
+        shortValue = value;
+        type = TypeShort;
     }
 
-    Variant(int32_t value) :
-        longValue(value),
-        type(TypeLong)
+    Variant(uint16_t value)
     {
+        unsignedShortValue = value;
+        type = TypeUnsignedShort;
     }
 
-    Variant(uint32_t value) :
-        unsignedLongValue(value),
-        type(TypeUnsignedLong)
+    Variant(int32_t value)
     {
+        longValue = value;
+        type = TypeLong;
     }
 
-    Variant(int64_t value) :
-        longLongValue(value),
-        type(TypeLongLong)
+    Variant(uint32_t value)
     {
+        unsignedLongValue = value;
+        type = TypeUnsignedLong;
     }
 
-    Variant(uint64_t value) :
-        unsignedLongLongValue(value),
-        type(TypeUnsignedLongLong)
+    Variant(int64_t value)
     {
+        longLongValue = value;
+        type = TypeLongLong;
     }
 
-    Variant(float value) :
-        floatValue(value),
-        type(TypeFloat)
+    Variant(uint64_t value)
     {
+        unsignedLongLongValue = value;
+        type = TypeUnsignedLongLong;
     }
 
-    Variant(double value) :
-        doubleValue(value),
-        type(TypeDouble)
+    Variant(float value)
     {
+        floatValue = value;
+        type = TypeFloat;
     }
 
-    Variant(const char* value) :
-        stringValue(value),
-        type(TypeString)
+    Variant(double value)
     {
+        doubleValue = value;
+        type = TypeDouble;
     }
 
-    Variant(es::IInterface* value) :
-        objectValue(value),
-        type(TypeObject)
+    Variant(const char* value)
     {
+        stringValue = value;
+        type = TypeString;
     }
 
-    operator uint8_t()
+    Variant(es::IInterface* value)
+    {
+        objectValue = value;
+        type = TypeObject;
+    }
+
+    operator uint8_t() const
     {
         if (type != TypeOctet)
         {
@@ -146,7 +156,7 @@ public:
         return octetValue;
     }
 
-    operator int16_t()
+    operator int16_t() const
     {
         if (type != TypeShort)
         {
@@ -155,7 +165,7 @@ public:
         return shortValue;
     }
 
-    operator uint16_t()
+    operator uint16_t() const
     {
         if (type != TypeUnsignedShort)
         {
@@ -164,7 +174,7 @@ public:
         return unsignedShortValue;
     }
 
-    operator int32_t()
+    operator int32_t() const
     {
         if (type != TypeLong)
         {
@@ -173,7 +183,7 @@ public:
         return longValue;
     }
 
-    operator uint32_t()
+    operator uint32_t() const
     {
         if (type != TypeUnsignedLong)
         {
@@ -182,7 +192,7 @@ public:
         return unsignedLongValue;
     }
 
-    operator int64_t()
+    operator int64_t() const
     {
         if (type != TypeLongLong)
         {
@@ -191,7 +201,7 @@ public:
         return longLongValue;
     }
 
-    operator uint64_t()
+    operator uint64_t() const
     {
         if (type != TypeUnsignedLongLong)
         {
@@ -200,7 +210,7 @@ public:
         return unsignedLongLongValue;
     }
 
-    operator bool()
+    operator bool() const
     {
         if (type != TypeBool)
         {
@@ -209,7 +219,7 @@ public:
         return boolValue;
     }
 
-    operator float()
+    operator float() const
     {
         if (type != TypeFloat)
         {
@@ -218,7 +228,7 @@ public:
         return floatValue;
     }
 
-    operator double()
+    operator double() const
     {
         if (type != TypeDouble)
         {
@@ -227,7 +237,7 @@ public:
         return doubleValue;
     }
 
-    operator const char*()
+    operator const char*() const
     {
         if (type != TypeString)
         {
@@ -264,5 +274,7 @@ Variant apply(int argc, Variant* argv, float (*function)());
 Variant apply(int argc, Variant* argv, double (*function)());
 Variant apply(int argc, Variant* argv, const char* (*function)());
 Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
+
+long long evaluate(const Variant& variant);
 
 #endif // GOOGLE_ES_VARIANT_H_INCLUDED

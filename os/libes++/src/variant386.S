@@ -33,6 +33,8 @@
 #define VOBJECT $12
 #define VGUID   $13
 
+#define VVARIANT    $0x80000000
+
         .text
 
 // Variant apply(int argc, Variant* argv, Variant (*function)());
@@ -53,6 +55,18 @@ _Z5applyiP7VariantPFS_vE:
         subl    VSIZE, %eax
         movl    VTYPE(%eax), %edx
 
+        testl   %edx, %edx
+        jns     3f
+        // push Variatn as it is
+        andl    $0x7ffffff, %edx
+        pushl   %edx
+        pushl   4(%eax)
+        pushl   0(%eax)
+
+        loop    0b
+        jmp     2f
+
+3:
         cmpl    VS64, %edx
         je      1f
         cmpl    VU64, %edx
@@ -61,6 +75,7 @@ _Z5applyiP7VariantPFS_vE:
         je      1f
         pushl   0(%eax)
         loop    0b
+        jmp     2f
 1:
         pushl   4(%eax)
         pushl   0(%eax)
@@ -175,7 +190,7 @@ _Z5applyiP7VariantPFPKcvE:
         jmp     apply
 
 // Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
-        .globl _Z5applyiP7VariantPFPN2es10IInterfaceEvE_Z5applyiP7VariantPFPN2es10IInterfaceEvE
+        .globl _Z5applyiP7VariantPFPN2es10IInterfaceEvE
 _Z5applyiP7VariantPFPN2es10IInterfaceEvE:
         pushl   %ebp
         movl    %esp, %ebp
@@ -196,6 +211,18 @@ apply:
         subl    VSIZE, %eax
         movl    VTYPE(%eax), %edx
 
+        testl   %edx, %edx
+        jns     3f
+        // push Variatn as it is
+        andl    $0x7ffffff, %edx
+        pushl   %edx
+        pushl   4(%eax)
+        pushl   0(%eax)
+
+        loop    0b
+        jmp     2f
+
+3:
         cmpl    VS64, %edx
         je      1f
         cmpl    VU64, %edx
@@ -228,6 +255,54 @@ apply:
         fstpl   (%ecx)
 2:
         movl    %ecx, %eax
+        movl    %ebp, %esp
+        popl    %ebp
+        ret
+
+// long long evaluate(const Variant& variant);
+_Z8evaluateRK7Variant:
+        .globl _Z8evaluateRK7Variant
+        pushl   %ebp
+        movl    %esp, %ebp
+        movl    0x8(%ebp),%eax
+
+        movl    VTYPE(%eax), %edx
+        cmpl    VBOOL, %edx
+        je      1f
+        cmpl    VU8, %edx
+        je      1f
+        cmpl    VS16, %edx
+        je      2f
+        cmpl    VU16, %edx
+        je      2f
+        cmpl    VFLT, %edx
+        je      3f
+        cmpl    VDBL, %edx
+        je      4f
+        cmpl    VS64, %edx
+        je      5f
+        cmpl    VU64, %edx
+        je      5f
+        jmp     6f
+
+1:      // return bool, uint8_t
+        movzbl  (%eax), %eax
+        jmp     return
+2:      // return int16_t, uint16_t
+        movzwl  (%eax), %eax
+        jmp     return
+3:      // return float
+        flds    (%eax)
+        jmp     return
+4:      // return double
+        fldl    (%eax)
+        jmp     return
+5:      // return int64_t, uint64_t
+        movl    0x4(%eax), %edx
+6:      // return int32_t, uint32_t, *
+        movl    (%eax), %eax
+
+return:
         movl    %ebp, %esp
         popl    %ebp
         ret

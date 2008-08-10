@@ -31,5 +31,6 @@ Variant apply(int argc, Variant* argv, float (*function)()){}
 Variant apply(int argc, Variant* argv, double (*function)()){}
 Variant apply(int argc, Variant* argv, const char* (*function)()){}
 Variant apply(int argc, Variant* argv, es::IInterface* (*function)()){}
+long long evaluate(const Variant& variant) {}
 
 #endif  // __x86_64__

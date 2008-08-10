@@ -33,9 +33,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@POSIX_TRUE@TESTS = collection$(EXEEXT) colorTest$(EXEEXT) \
-@POSIX_TRUE@	list$(EXEEXT) hashtable$(EXEEXT) tree$(EXEEXT) \
-@POSIX_TRUE@	rand$(EXEEXT) smartptr$(EXEEXT) formatter$(EXEEXT) \
+@POSIX_TRUE@TESTS = broker$(EXEEXT) collection$(EXEEXT) \
+@POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
+@POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
+@POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
 @POSIX_TRUE@	variant$(EXEEXT)
 @POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = libes++/testsuite
@@ -46,11 +47,17 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
-@POSIX_TRUE@am__EXEEXT_1 = collection$(EXEEXT) colorTest$(EXEEXT) \
-@POSIX_TRUE@	list$(EXEEXT) hashtable$(EXEEXT) tree$(EXEEXT) \
-@POSIX_TRUE@	rand$(EXEEXT) smartptr$(EXEEXT) formatter$(EXEEXT) \
+@POSIX_TRUE@am__EXEEXT_1 = broker$(EXEEXT) collection$(EXEEXT) \
+@POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
+@POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
+@POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
 @POSIX_TRUE@	variant$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
+am__broker_SOURCES_DIST = broker.cpp
+@POSIX_TRUE@am_broker_OBJECTS = broker.$(OBJEXT)
+broker_OBJECTS = $(am_broker_OBJECTS)
+broker_LDADD = $(LDADD)
+broker_DEPENDENCIES = ../libessup++.a
 am__collection_SOURCES_DIST = collection.cpp
 @POSIX_TRUE@am_collection_OBJECTS = collection.$(OBJEXT)
 collection_OBJECTS = $(am_collection_OBJECTS)
@@ -104,15 +111,16 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(collection_SOURCES) $(colorTest_SOURCES) \
+SOURCES = $(broker_SOURCES) $(collection_SOURCES) $(colorTest_SOURCES) \
 	$(formatter_SOURCES) $(hashtable_SOURCES) $(list_SOURCES) \
 	$(rand_SOURCES) $(smartptr_SOURCES) $(tree_SOURCES) \
 	$(variant_SOURCES)
-DIST_SOURCES = $(am__collection_SOURCES_DIST) \
-	$(am__colorTest_SOURCES_DIST) $(am__formatter_SOURCES_DIST) \
-	$(am__hashtable_SOURCES_DIST) $(am__list_SOURCES_DIST) \
-	$(am__rand_SOURCES_DIST) $(am__smartptr_SOURCES_DIST) \
-	$(am__tree_SOURCES_DIST) $(am__variant_SOURCES_DIST)
+DIST_SOURCES = $(am__broker_SOURCES_DIST) \
+	$(am__collection_SOURCES_DIST) $(am__colorTest_SOURCES_DIST) \
+	$(am__formatter_SOURCES_DIST) $(am__hashtable_SOURCES_DIST) \
+	$(am__list_SOURCES_DIST) $(am__rand_SOURCES_DIST) \
+	$(am__smartptr_SOURCES_DIST) $(am__tree_SOURCES_DIST) \
+	$(am__variant_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -224,6 +232,7 @@ AM_CPPFLAGS = \
 	-I ../../../include \
 	-I $(srcdir)/../../../include
 
+@POSIX_TRUE@broker_SOURCES = broker.cpp
 @POSIX_TRUE@collection_SOURCES = collection.cpp
 @POSIX_TRUE@colorTest_SOURCES = colorTest.cpp
 @POSIX_TRUE@list_SOURCES = list.cpp
@@ -269,6 +278,9 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+broker$(EXEEXT): $(broker_OBJECTS) $(broker_DEPENDENCIES) 
+	@rm -f broker$(EXEEXT)
+	$(CXXLINK) $(broker_OBJECTS) $(broker_LDADD) $(LIBS)
 collection$(EXEEXT): $(collection_OBJECTS) $(collection_DEPENDENCIES) 
 	@rm -f collection$(EXEEXT)
 	$(CXXLINK) $(collection_OBJECTS) $(collection_LDADD) $(LIBS)
@@ -303,6 +315,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/broker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/collection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colorTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formatter.Po@am__quote@

@@ -83,9 +83,14 @@ Variant returnVariant()
     return Variant(10);
 }
 
+uint8_t returnOctet()
+{
+    return 'c';
+}
+
 float returnFloat()
 {
-    return Variant(10.0f);
+    return 10.0f;
 }
 
 long long returnLongLong(int a, double b, const char* c, unsigned long long d)
@@ -122,6 +127,10 @@ int main()
     value = apply(0, NULL, returnFloat);
     assert(value.getType() == Variant::TypeFloat);
     printf("float value: %g\n", static_cast<float>(value));
+
+    value = apply(0, NULL, returnOctet);
+    assert(value.getType() == Variant::TypeOctet);
+    printf("octet value: %c\n", static_cast<uint8_t>(value));
 
     Variant param[4];
     param[0] = Variant(10);

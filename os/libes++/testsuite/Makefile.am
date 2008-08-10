@@ -8,9 +8,11 @@ AM_CPPFLAGS = \
 
 if POSIX
 
-TESTS = collection colorTest list hashtable tree rand smartptr formatter variant
+TESTS = broker collection colorTest list hashtable tree rand smartptr formatter variant
 
 noinst_PROGRAMS = $(TESTS)
+
+broker_SOURCES = broker.cpp
 
 collection_SOURCES = collection.cpp
 
