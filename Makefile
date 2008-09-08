@@ -39,7 +39,7 @@ patches = \
 	trunk/patches/freetype-2.3.5.patch \
 	trunk/patches/gcc-4.3.1.patch \
 	trunk/patches/newlib-1.16.0.patch \
-	trunk/patches/pcre-7.2.patch
+	trunk/patches/pcre-7.8.patch
 
 $(patches) : trunk 
 
@@ -106,12 +106,12 @@ src/newlib-1.16.0 : trunk/patches/newlib-1.16.0.patch
 	patch -p0 -d src < $<; \
 	touch $@
 
-src/pcre-7.2 : trunk/patches/pcre-7.2.patch
-	if [ ! -f src/pcre-7.2.tar.bz2 ]; then \
-		wget -P src ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.2.tar.bz2; \
+src/pcre-7.8 : trunk/patches/pcre-7.8.patch
+	if [ ! -f src/pcre-7.8.tar.bz2 ]; then \
+		wget -P src ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2; \
 	fi; \
 	rm -rf $@; \
-	tar -C src -jxf src/pcre-7.2.tar.bz2; \
+	tar -C src -jxf src/pcre-7.8.tar.bz2; \
 	patch -p0 -d src < $<; \
 	touch $@
 
@@ -155,14 +155,14 @@ opt/gcc : src/gcc-4.3.1 src/newlib-1.16.0 opt/binutils
 	make install; \
 	touch .
 
-opt/pcre : src/pcre-7.2 opt/gcc
+opt/pcre : src/pcre-7.8 opt/gcc
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
 	rm -rf *; \
 	PATH=/opt/es/bin:$$PATH; \
-	../../src/pcre-7.2/configure --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --prefix=/opt/es ; \
+	../../src/pcre-7.8/configure --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --prefix=/opt/es ; \
 	make; \
 	make install; \
 	touch .

@@ -51,13 +51,13 @@ make install
 
 # PCRE
 cd ../../src/
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.2.tar.bz2
-tar -jxvf pcre-7.2.tar.bz2
-patch -p0 -d . < ../trunk/patches/pcre-7.2.patch
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2
+tar -jxvf pcre-7.8.tar.bz2
+patch -p0 -d . < ../trunk/patches/pcre-7.8.patch
 cd ../opt
 mkdir pcre
 cd pcre
-../../src/pcre-7.2/configure --prefix=/opt/es --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es
+../../src/pcre-7.8/configure --prefix=/opt/es --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es
 make
 make install
 
