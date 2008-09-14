@@ -36,6 +36,7 @@ nobase_include_HEADERS = \
 	es/ref.h \
 	es/reflect.h \
 	es/ring.h \
+	es/rpc.h \
 	es/synchronized.h \
 	es/timer.h \
 	es/timeSpan.h \
