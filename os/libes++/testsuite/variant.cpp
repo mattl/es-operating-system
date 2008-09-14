@@ -51,7 +51,7 @@ public:
         if (type == Variant::TypeString)
         {
             strncpy(static_cast<char*>(value), string, valueLength);
-            return static_cast<char*>(value);
+            return static_cast<const char*>(value);
         }
         return var;
     }

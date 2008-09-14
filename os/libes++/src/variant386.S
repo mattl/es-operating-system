@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// cf. http://www.codesourcery.com/cxx-abi/abi.html#mangling
+
 #ifdef __i386__
 
 #define VSIZE   $12     // sizeof(Variant)
@@ -129,6 +131,8 @@ _Z5applyiP7VariantPFtvE:
 // Variant apply(int argc, Variant* argv, int32_t (*function)());
         .globl _Z5applyiP7VariantPFivE
 _Z5applyiP7VariantPFivE:
+        .globl _Z5applyiP7VariantPFlvE
+_Z5applyiP7VariantPFlvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
@@ -138,6 +142,8 @@ _Z5applyiP7VariantPFivE:
 // Variant apply(int argc, Variant* argv, uint32_t (*function)());
         .globl _Z5applyiP7VariantPFjvE
 _Z5applyiP7VariantPFjvE:
+        .globl _Z5applyiP7VariantPFmvE
+_Z5applyiP7VariantPFmvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value

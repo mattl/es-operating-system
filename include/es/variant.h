@@ -20,6 +20,8 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <es/exception.h>
 #include <es/uuid.h>
 #include <es/base/IInterface.h>
@@ -41,7 +43,7 @@ struct VariantBase
         const char*     stringValue;  // DOMString in UTF-8
         es::IInterface* objectValue;
 
-        const Guid*     guid;         // ES extension
+        const Guid*     guidValue;    // ES extension
     };
     int type;
 };
@@ -66,6 +68,7 @@ public:
         TypeString,
         TypeObject,
         TypeGuid,
+        TypeSize,
         FlagVariant = 0x80000000
     };
 
@@ -79,6 +82,12 @@ public:
         VariantBase(v)
     {
         type |= FlagVariant;
+    }
+
+    Variant(bool value)
+    {
+        boolValue = value;
+        type = TypeBool;
     }
 
     Variant(uint8_t value)
@@ -147,9 +156,15 @@ public:
         type = TypeObject;
     }
 
+    Variant(const Guid* value)
+    {
+        guidValue = value;
+        type = TypeGuid;
+    }
+
     operator uint8_t() const
     {
-        if (type != TypeOctet)
+        if (getType() != TypeOctet)
         {
             throw SystemException<EACCES>();
         }
@@ -158,7 +173,7 @@ public:
 
     operator int16_t() const
     {
-        if (type != TypeShort)
+        if (getType() != TypeShort)
         {
             throw SystemException<EACCES>();
         }
@@ -167,7 +182,7 @@ public:
 
     operator uint16_t() const
     {
-        if (type != TypeUnsignedShort)
+        if (getType() != TypeUnsignedShort)
         {
             throw SystemException<EACCES>();
         }
@@ -176,7 +191,7 @@ public:
 
     operator int32_t() const
     {
-        if (type != TypeLong)
+        if (getType() != TypeLong)
         {
             throw SystemException<EACCES>();
         }
@@ -185,7 +200,7 @@ public:
 
     operator uint32_t() const
     {
-        if (type != TypeUnsignedLong)
+        if (getType() != TypeUnsignedLong)
         {
             throw SystemException<EACCES>();
         }
@@ -194,7 +209,7 @@ public:
 
     operator int64_t() const
     {
-        if (type != TypeLongLong)
+        if (getType() != TypeLongLong)
         {
             throw SystemException<EACCES>();
         }
@@ -203,7 +218,7 @@ public:
 
     operator uint64_t() const
     {
-        if (type != TypeUnsignedLongLong)
+        if (getType() != TypeUnsignedLongLong)
         {
             throw SystemException<EACCES>();
         }
@@ -212,7 +227,7 @@ public:
 
     operator bool() const
     {
-        if (type != TypeBool)
+        if (getType() != TypeBool)
         {
             throw SystemException<EACCES>();
         }
@@ -221,7 +236,7 @@ public:
 
     operator float() const
     {
-        if (type != TypeFloat)
+        if (getType() != TypeFloat)
         {
             throw SystemException<EACCES>();
         }
@@ -230,7 +245,7 @@ public:
 
     operator double() const
     {
-        if (type != TypeDouble)
+        if (getType() != TypeDouble)
         {
             throw SystemException<EACCES>();
         }
@@ -239,25 +254,44 @@ public:
 
     operator const char*() const
     {
-        if (type != TypeString)
+        if (getType() != TypeString)
         {
             throw SystemException<EACCES>();
         }
         return stringValue;
     }
 
-    operator es::IInterface*()
+    operator es::IInterface*() const
     {
-        if (type != TypeObject)
+        if (getType() != TypeObject)
         {
             throw SystemException<EACCES>();
         }
         return objectValue;
     }
 
+    operator const Guid*() const
+    {
+        if (getType() != TypeGuid)
+        {
+            throw SystemException<EACCES>();
+        }
+        return guidValue;
+    }
+
     int getType() const
     {
-        return type;
+        return (type & ~FlagVariant);
+    }
+
+    void makeVariant()
+    {
+        type |= FlagVariant;
+    }
+
+    bool isVariant() const
+    {
+        return (type & FlagVariant) ? true : false;
     }
 };
 
