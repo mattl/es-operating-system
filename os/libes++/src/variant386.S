@@ -207,42 +207,59 @@ _Z5applyiP7VariantPFPN2es10IInterfaceEvE:
 apply:
         movl    12(%ebp), %ecx  // argc
         andl    %ecx, %ecx
-        jz      2f
+        jz      break
         movl    %ecx, %eax
         movl    VSIZE, %edx
         mull    %edx
         movl    16(%ebp), %edx  // argv
         addl    %edx, %eax
-0:                              // while
+while:
         subl    VSIZE, %eax
         movl    VTYPE(%eax), %edx
 
         testl   %edx, %edx
-        jns     3f
+        jns     0f
         // push Variatn as it is
         andl    $0x7ffffff, %edx
         pushl   %edx
         pushl   4(%eax)
         pushl   0(%eax)
+        loop    while
+        jmp     break
 
-        loop    0b
-        jmp     2f
-
-3:
+0:
+        cmpl    VBOOL, %edx
+        je      1f
+        cmpl    VU8, %edx
+        je      1f
+        cmpl    VS16, %edx
+        je      2f
+        cmpl    VU16, %edx
+        je      2f
         cmpl    VS64, %edx
-        je      1f
+        je      3f
         cmpl    VU64, %edx
-        je      1f
+        je      3f
         cmpl    VDBL, %edx
-        je      1f
-        pushl   0(%eax)
-        loop    0b
-        jmp     2f
+        je      3f
+        jmp     4f
 1:
+        movzbl  (%eax), %edx
+        pushl   %edx
+        loop    while
+        jmp     break
+2:
+        movzwl  (%eax), %edx
+        pushl   %edx
+        loop    while
+        jmp     break
+3:
         pushl   4(%eax)
+4:
         pushl   0(%eax)
-        loop    0b
-2:                              // break
+        loop    while
+break:
+
         movl    20(%ebp), %edx
         call    *%edx
 
