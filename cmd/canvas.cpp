@@ -106,14 +106,14 @@ Canvas::Canvas(cairo_surface_t* surface, int screenWidth, int screenHeight) :
     ContextState* state = new ContextState;
     styleStack.addLast(state);
 
-    for (int i = 0; i < STYLE_MAX; i++)
+    for (int i = 0; i < STYLE_MAX; ++i)
     {
         state->colorStyles[i] = Rgb(0,0,0);
     }
     lastStyle = -1;
     dirtyAllStyles();
 
-    cairo_set_source_rgba (cr, 255, 255, 255, 1); // white
+    cairo_set_source_rgba(cr, 255, 255, 255, 1); // white
     cairo_rectangle(cr, 0, 0, screenWidth, screenHeight);
     cairo_fill(cr);
 
@@ -151,7 +151,7 @@ getData()
         return NULL;
     }
     updated = false;
-    return cairo_image_surface_get_data (surface);
+    return cairo_image_surface_get_data(surface);
 }
 
 void Canvas::
@@ -167,17 +167,15 @@ applyStyle(u32 aWhichStyle)
     dirtyStyle[aWhichStyle] = false;
     lastStyle = aWhichStyle;
 
-    ICanvasPattern* pattern = currentState()->patternStyles[aWhichStyle];
-    if (pattern)
+    if (CanvasPattern* pattern = currentState()->patternStyles[aWhichStyle])
     {
         pattern->apply(cr);
         return;
     }
 
-    if (currentState()->gradientStyles[aWhichStyle])
+    if (CanvasGradient* gradient = currentState()->gradientStyles[aWhichStyle])
     {
-        ICanvasGradient* grad = currentState()->gradientStyles[aWhichStyle];
-        grad->apply(cr);
+        gradient->apply(cr);
         return;
     }
 
@@ -187,85 +185,74 @@ applyStyle(u32 aWhichStyle)
 void Canvas::
 dirtyAllStyles()
 {
-    for (int i = 0; i < STYLE_MAX; i++)
+    for (int i = 0; i < STYLE_MAX; ++i)
     {
         dirtyStyle[i] = true;
     }
 }
 
-int Canvas::
-getStyle(u32 aWhichStyle, char* color, unsigned int len)
+Variant Canvas::
+getStrokeStyle(void* strokeStyle, int strokeStyleLength)
 {
     Synchronized<IMonitor*> method(monitor);
-    if (len < 8)
+    return currentState()->getStyle(STYLE_STROKE, strokeStyle, strokeStyleLength);
+}
+
+int Canvas::
+setStrokeStyle(Variant strokeStyle)
+{
+    Synchronized<IMonitor*> method(monitor);
+    currentState()->setStyle(STYLE_STROKE, strokeStyle);
+    dirtyStyle[STYLE_STROKE] = true;
+    return 0;
+}
+
+Variant Canvas::
+getFillStyle(void* fillStyle, int fillStyleLength)
+{
+    Synchronized<IMonitor*> method(monitor);
+    return currentState()->getStyle(STYLE_FILL, fillStyle, fillStyleLength);
+}
+
+int Canvas::
+setFillStyle(Variant fillStyle)
+{
+    Synchronized<IMonitor*> method(monitor);
+    currentState()->setStyle(STYLE_FILL, fillStyle);
+    dirtyStyle[STYLE_FILL] = true;
+    return 0;
+}
+
+ICanvasGradient* Canvas::
+createLinearGradient(float x0, float y0, float x1, float y1)
+{
+    Synchronized<IMonitor*> method(monitor);
+
+    cairo_pattern_t* pattern = NULL;
+    pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
+    ICanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    if (!gradient)
     {
+        cairo_pattern_destroy(pattern);
         return 0;
     }
-
-    Rgb value = currentState()->colorStyles[aWhichStyle];
-    if (value.getA() == 255)
-    {
-        sprintf(color, "#%02x%02x%02x", value.getR(), value.getG(), value.getB());
-    }
-    else
-    {
-        char buf[22];
-        sprintf(buf, "rgba(%d,%d,%d,%1.2f)",
-            value.getR(), value.getG(), value.getB(), static_cast<float>(value.getA()) / 255.0);
-
-        if (len < strlen(buf))
-        {
-            *color = 0;
-            return 0;
-        }
-        memmove(color, buf, strlen(buf) + 1);
-    }
-    return strlen(color);
+    return gradient;
 }
 
-void Canvas::
-setCairoColor(Rgb color)
-{
-    double r = static_cast<double>(color.getR()) / 255.0;
-    double g = static_cast<double>(color.getG()) / 255.0;
-    double b = static_cast<double>(color.getB()) / 255.0;
-    double a = static_cast<double>(color.getA()) / 255.0 * currentState()->globalAlpha;
-
-    cairo_set_source_rgba (cr, r, g, b, a);
-}
-
-void Canvas::
-setStyle(u32 aWhichStyle, const char* color)
+ICanvasGradient* Canvas::
+createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
     Synchronized<IMonitor*> method(monitor);
 
-    Rgb rgba;
-    try
+    cairo_pattern_t* pattern = 0;
+    pattern = cairo_pattern_create_radial(x0, y0, r0, x1, y1, r1);
+    ICanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    if (!gradient)
     {
-        rgba = Rgb(color);
+        cairo_pattern_destroy(pattern);
+        return 0;
     }
-    catch (...)
-    {
-        return; // [check]
-    }
-    currentState()->setColorStyle(aWhichStyle, rgba);
-    dirtyStyle[aWhichStyle] = true;
-}
-
-void Canvas::
-setStyle(u32 aWhichStyle, ICanvasGradient* grad)
-{
-    Synchronized<IMonitor*> method(monitor);
-    currentState()->setGradientStyle(aWhichStyle, grad);
-    dirtyStyle[aWhichStyle] = true;
-}
-
-void Canvas::
-setStyle(u32 aWhichStyle, ICanvasPattern* pat)
-{
-    Synchronized<IMonitor*> method(monitor);
-    currentState()->setPatternStyle(aWhichStyle, pat);
-    dirtyStyle[aWhichStyle] = true;
+    return gradient;
 }
 
 void Canvas::
@@ -332,107 +319,6 @@ closePath()
     cairo_close_path(cr);
 }
 
-ICanvasGradient* Canvas::
-createLinearGradient(float x0, float y0, float x1, float y1)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    cairo_pattern_t* gradpat = NULL;
-
-    gradpat = cairo_pattern_create_linear ((double) x0, (double) y0, (double) x1, (double) y1);
-    ICanvasGradient* grad = new CanvasGradient(gradpat);
-    if (!grad)
-    {
-        cairo_pattern_destroy(gradpat);
-        esReport("createLinearGradient() unable to allocate.\n"); // [check]
-        return 0;
-    }
-
-    grad->addRef(); // [check] should increment the count?
-    return grad;
-}
-
-ICanvasGradient* Canvas::
-createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    cairo_pattern_t* gradpat = 0;
-    gradpat = cairo_pattern_create_radial ((double) x0, (double) y0, (double) r0,
-                                           (double) x1, (double) y1, (double) r1);
-    ICanvasGradient* grad = new CanvasGradient(gradpat);
-    if (!grad)
-    {
-        cairo_pattern_destroy(gradpat);
-        esReport("createRadialGradient() allocation error.\n");
-        return 0;
-    }
-
-    grad->addRef();
-    return grad;
-}
-
-ICanvasPattern* Canvas::
-createPattern(IFile* image, const char* repeat)
-{
-    Synchronized<IMonitor*> method(monitor);
-    cairo_extend_t extend;
-    if (strcmp(repeat, "repeat") == 0)
-    {
-        extend = CAIRO_EXTEND_REPEAT;
-    }
-    else if (strcmp(repeat, "repeat-x") == 0)
-    {
-        extend = CAIRO_EXTEND_REPEAT;
-    }
-    else if (strcmp(repeat, "repeat-y") == 0)
-    {
-        extend = CAIRO_EXTEND_REPEAT;
-    }
-    else if (strcmp(repeat, "no-repeat") == 0)
-    {
-        extend = CAIRO_EXTEND_NONE;
-    }
-    else
-    {
-        esReport("createPattern(): error\n");
-        return 0; // [check] should report the error.
-    }
-
-    cairo_surface_t* imgSurf = 0;
-    u8* imgData = 0;
-    u32 imgWidth;
-    u32 imgHeight;
-
-    imgData = allocateBitmapData(image, &imgWidth, &imgHeight);
-    ASSERT(imgData);
-
-    cairo_surface_t* imageSurface = cairo_image_surface_create_for_data(imgData, surfaceFormat, imgWidth, imgHeight, imgWidth * 4);
-    if (!imageSurface)
-    {
-        delete [] imgData;
-        esReport("createPattern() error\n");
-        return 0;
-    }
-
-    cairo_pattern_t* cairopat = cairo_pattern_create_for_surface(imgSurf);
-    cairo_surface_destroy(imgSurf);
-
-    cairo_pattern_set_extend (cairopat, extend);
-
-    ICanvasPattern* pat = new CanvasPattern(cairopat, imgData);
-    if (!pat)
-    {
-        cairo_pattern_destroy(cairopat);
-        delete [] imgData;
-        esReport("createPattern(): error\n");
-        return 0;
-    }
-
-    pat->addRef(); // [check]
-    return pat;
-}
-
 void Canvas::
 fill()
 {
@@ -455,7 +341,6 @@ fillRect(float x, float y, float width, float height)
     cairo_fill(cr);
     updated = true;
 }
-
 
 u8* Canvas::
 allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight)
@@ -526,94 +411,6 @@ allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight)
     return data;
 }
 
-void Canvas::
-drawImage(IFile* image, float dx, float dy, float dw, float dh)
-{
-    Synchronized<IMonitor*> method(monitor);
-
-    int width = static_cast<int>(dw);
-    int height = static_cast<int>(dh);
-    if (width <= 0 || height <= 0 || !image)
-    {
-        return;
-    }
-
-    u32 imageWidth;
-    u32 imageHeight;
-    u8* data = allocateBitmapData(image, &imageWidth, &imageHeight);
-    ASSERT(data);
-
-    cairo_surface_t* imageSurface = cairo_image_surface_create_for_data(data, surfaceFormat, width, height, width * 4);
-    if (!imageSurface)
-    {
-        delete [] data;
-        esReport("drawImage() error\n");
-        return;
-    }
-    cairo_surface_reference(imageSurface); // [check]
-    delete [] data;
-
-    cairo_matrix_t flipVertical; // flip this image.
-    cairo_matrix_init(&flipVertical, 1, 0, 0, -1, 0, imageHeight);
-
-    float sx = 0.0;
-    float sy = 0.0; // [check]
-    float sw = static_cast<float>(imageWidth); // [check]
-    float sh = static_cast<float>(imageHeight); // [check]
-
-    cairo_matrix_t surfMat; // move and scale the image.
-    cairo_matrix_init_translate(&surfMat, sx, sy);
-    cairo_matrix_scale(&surfMat, sw/dw, sh/dh); // [check]
-
-    cairo_matrix_t matrix;
-    cairo_matrix_multiply(&matrix, &flipVertical, &surfMat);
-
-    // imageSurface
-    cairo_pattern_t* pat;
-    pat = cairo_pattern_create_for_surface(imageSurface);
-    ASSERT(cairo_pattern_status(pat) == CAIRO_STATUS_SUCCESS);
-    cairo_pattern_set_matrix(pat, &matrix);
-
-    cairo_save(cr);
-    cairo_translate(cr, dx, dy);
-    cairo_new_path(cr);
-    cairo_rectangle(cr, 0, 0, dw, dh);
-    cairo_set_source(cr, pat);
-    cairo_clip(cr);
-    cairo_paint_with_alpha(cr, currentState()->globalAlpha);
-    cairo_restore(cr);
-
-    /* [check] workaround?
-    cairo_new_path(cr);
-    cairo_rectangle(cr, 0, 0, 0, 0);
-    cairo_fill(cr);
-    */
-
-    cairo_pattern_destroy(pat);
-    cairo_surface_destroy(imageSurface);
-    updated = true;
-}
-
-ICanvasGradient* Canvas::
-getFillGradient()
-{
-    Synchronized<IMonitor*> method(monitor);
-    return currentState()->gradientStyles[STYLE_FILL];
-}
-
-ICanvasPattern* Canvas::
-getFillPattern()
-{
-    Synchronized<IMonitor*> method(monitor);
-    return currentState()->patternStyles[STYLE_FILL];
-}
-
-int Canvas::
-getFillStyle(char* color, int len)
-{
-    return getStyle(STYLE_FILL, color, len);
-}
-
 float Canvas::
 getGlobalAlpha()
 {
@@ -650,7 +447,7 @@ getGlobalCompositeOperation(char* operation, int len)
 
 #undef CANVAS_OP_TO_CAIRO_OP
 
-return strlen(operation);
+    return strlen(operation);
 }
 
 float Canvas::
@@ -701,12 +498,6 @@ getLineWidth()
 {
     Synchronized<IMonitor*> method(monitor);
     return cairo_get_line_width(cr);
-}
-
-int Canvas::
-getStrokeStyle(char* color, int len)
-{
-    return getStyle(STYLE_STROKE, color, len);
 }
 
 void Canvas::
@@ -782,27 +573,6 @@ scale(float scaleW, float scaleH)
     cairo_scale(cr, scaleW, scaleH);
 }
 
-int Canvas::
-setFillStyle(const char* color)
-{
-    setStyle(STYLE_FILL, color);
-    return 0;
-}
-
-void Canvas::
-setFillGradient(ICanvasGradient* gradient)
-{
-    ASSERT(gradient);
-    setStyle(STYLE_FILL, gradient);
-}
-
-void Canvas::
-setFillPattern(ICanvasPattern* pattern)
-{
-    ASSERT(pattern);
-    setStyle(STYLE_FILL, pattern);
-}
-
 void Canvas::
 setGlobalAlpha(float alpha)
 {
@@ -843,13 +613,6 @@ setGlobalCompositeOperation(const char* operation)
     }
 
     cairo_set_operator(cr, cairo_op);
-    return 0;
-}
-
-int Canvas::
-setStrokeStyle(const char* color)
-{
-    setStyle(STYLE_STROKE, color);
     return 0;
 }
 

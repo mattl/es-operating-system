@@ -22,6 +22,7 @@
 #include <es/base/IProcess.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
+#include <es/variant.h>
 
 using namespace es;
 
@@ -141,15 +142,15 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
 
     // Set up parameters
-    Param  argv[9];
-    Param* argp = argv;
-    int    ext = 0;
-    Guid   riid = IInterface::iid();
+    Variant argv[9];
+    Variant* argp = argv;
+    Guid iidv[9];
+    Guid* iidp = iidv;
+    int ext = 0;    // extra parameter count
+    Guid riid = IInterface::iid();
 
     // Set this
-    argp->ptr = self;
-    argp->cls = Param::PTR;
-    ++argp;
+    *argp++ = Variant(reinterpret_cast<intptr_t>(self));
 
     // In the following implementation, we assume no out or inout attribute is
     // used for parameters.
@@ -157,38 +158,28 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        // Variant op(void* buf, int len, ...);
+        break;
     case Ent::TypeSequence:
         // int op(xxx* buf, int len, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
         ++ext;
-        argp->s32 = (long) ((*list)[0])->toNumber();
-        argp->cls = Param::S32;
-        ++argp;
+        *argp++ = Variant(static_cast<int32_t>(((*list)[0])->toNumber()));
         break;
     case Ent::SpecString:
-    case Ent::SpecWString:
         // int op(xxx* buf, int len, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
-        argp->s32 = sizeof(heap);
-        argp->cls = Param::S32;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Variant(sizeof(heap));
         break;
     case Ent::SpecUuid:
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
         break;
     case Ent::TypeArray:
         // void op(xxx[x] buf, ...);
-        argp->ptr = heap;
-        argp->cls = Param::PTR;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
         break;
     }
 
@@ -202,30 +193,52 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
 
         switch (type.getType())
         {
+        case Ent::SpecVariant:
+            // Variant variant, ...
+            switch (value->getType()) {
+            case Value::BoolType:
+                *argp = Variant(static_cast<bool>(value->toBoolean()));
+                break;
+            case Value::StringType:
+                *argp = Variant(value->toString().c_str());
+                break;
+            case Value::NumberType:
+                *argp = Variant(static_cast<double>(value->toNumber()));
+                break;
+            case Value::ObjectType:
+                if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
+                {
+                    *argp = Variant(unknown->getObject());
+                }
+                else
+                {
+                    // XXX expose ECMAScript object
+                    *argp = Variant(static_cast<IInterface*>(0));
+                }
+                break;
+            default:
+                *argp = Variant();
+                break;
+            }
+            argp->makeVariant();
+            break;
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             // XXX Assume sequence<octet> now...
-            argp->ptr = value->toString().c_str();
-            argp->cls = Param::PTR;
-            ++argp;
+            *argp++ = Variant(reinterpret_cast<intptr_t>(value->toString().c_str()));
             value = (*list)[++i];
-            argp->s32 = (s32) value->toNumber();
-            argp->cls = Param::S32;
+            *argp = Variant(static_cast<int32_t>(value->toNumber()));
             break;
         case Ent::SpecString:
-            argp->ptr = value->toString().c_str();
-            argp->cls = Param::PTR;
-            break;
-        case Ent::SpecWString:
-            // XXX
+            *argp = Variant(value->toString().c_str());
             break;
         case Ent::SpecUuid:
-            if (!parseGuid(value->toString().c_str(), &argp->guid))
+            if (!parseGuid(value->toString().c_str(), iidp))
             {
                 throw getErrorInstance("TypeError");
             }
-            argp->cls = Param::REF;
-            riid = argp->guid;
+            *argp = Variant(iidp);
+            ++iidp;
             break;
         case Ent::TypeStructure:
             // void op(struct* buf, ...);
@@ -237,55 +250,48 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
             break;
         case Ent::SpecObject:
         case Ent::TypeInterface:
+            if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
             {
-                if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
-                {
-                    argp->ptr = unknown->getObject();
-                }
-                else
-                {
-                    argp->ptr = 0;
-                }
-                argp->cls = Param::PTR;
-            }
-            break;
-        case Ent::SpecBool:
-            argp->s32 = (bool) value->toBoolean();
-            argp->cls = Param::S32;
-            break;
-        case Ent::SpecAny:
-            if (sizeof(s32) < sizeof(void*))
-            {
-                argp->s64 = (long long) value->toNumber();
-                argp->cls = Param::S64;
+                *argp = Variant(unknown->getObject());
             }
             else
             {
-                argp->s32 = (long) value->toNumber();
-                argp->cls = Param::S32;
+                *argp = Variant(static_cast<IInterface*>(0));
             }
             break;
-        case Ent::SpecS8:
+        case Ent::SpecBool:
+            *argp = Variant(static_cast<bool>(value->toBoolean()));
+            break;
+        case Ent::SpecAny:
+            *argp = Variant(static_cast<intptr_t>(value->toNumber()));
+            break;
         case Ent::SpecS16:
+            *argp = Variant(static_cast<int16_t>(value->toNumber()));
+            break;
         case Ent::SpecS32:
+            *argp = Variant(static_cast<int32_t>(value->toNumber()));
+            break;
+        case Ent::SpecS8:
         case Ent::SpecU8:
+            *argp = Variant(static_cast<uint8_t>(value->toNumber()));
+            break;
         case Ent::SpecU16:
+            *argp = Variant(static_cast<uint16_t>(value->toNumber()));
+            break;
         case Ent::SpecU32:
-            argp->s32 = (long) value->toNumber();
-            argp->cls = Param::S32;
+            *argp = Variant(static_cast<uint32_t>(value->toNumber()));
             break;
         case Ent::SpecS64:
+            *argp = Variant(static_cast<int64_t>(value->toNumber()));
+            break;
         case Ent::SpecU64:
-            argp->s64 = (long long) value->toNumber();
-            argp->cls = Param::S64;
+            *argp = Variant(static_cast<uint64_t>(value->toNumber()));
             break;
         case Ent::SpecF32:
-            argp->f32 = (float) value->toNumber();
-            argp->cls = Param::F32;
+            *argp = Variant(static_cast<float>(value->toNumber()));
             break;
         case Ent::SpecF64:
-            argp->f64 = (double) value->toNumber();
-            argp->cls = Param::F64;
+            *argp = Variant(static_cast<double>(value->toNumber()));
             break;
         default:
             break;
@@ -299,52 +305,57 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     switch (returnType.getType())
     {
     case Ent::SpecBool:
-        value = BoolValue::getInstance(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])) ? true : false);
+        value = BoolValue::getInstance(static_cast<bool>(apply(argc, argv, (bool (*)()) ((*self)[methodNumber]))));
         break;
     case Ent::SpecChar:
-    case Ent::SpecWChar:
     case Ent::SpecS8:
-    case Ent::SpecS16:
-    case Ent::SpecS32:
     case Ent::SpecU8:
+        value = new NumberValue(static_cast<uint8_t>(apply(argc, argv, (uint8_t (*)()) ((*self)[methodNumber]))));
+        break;
+    case Ent::SpecWChar:
+    case Ent::SpecS16:
+        value = new NumberValue(static_cast<int16_t>(apply(argc, argv, (int16_t (*)()) ((*self)[methodNumber]))));
+        break;
     case Ent::SpecU16:
+        value = new NumberValue(static_cast<uint16_t>(apply(argc, argv, (uint16_t (*)()) ((*self)[methodNumber]))));
+        break;
+    case Ent::SpecS32:
+        value = new NumberValue(static_cast<int32_t>(apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]))));
+        break;
     case Ent::SpecU32:
-        value = new NumberValue(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])));
+        value = new NumberValue(static_cast<uint32_t>(apply(argc, argv, (uint32_t (*)()) ((*self)[methodNumber]))));
         break;
     case Ent::SpecS64:
+        value = new NumberValue(static_cast<int64_t>(apply(argc, argv, (int64_t (*)()) ((*self)[methodNumber]))));
+        break;
     case Ent::SpecU64:
-        value = new NumberValue(applyS64(argc, argv, (s64 (*)()) ((*self)[methodNumber])));
+        value = new NumberValue(static_cast<uint64_t>(apply(argc, argv, (uint64_t (*)()) ((*self)[methodNumber]))));
+        break;
+    case Ent::SpecF32:
+        value = new NumberValue(static_cast<float>(apply(argc, argv, (float (*)()) ((*self)[methodNumber]))));
+        break;
+    case Ent::SpecF64:
+        value = new NumberValue(apply(argc, argv, (double (*)()) ((*self)[methodNumber])));
         break;
     case Ent::SpecAny:
-        if (sizeof(s32) < sizeof(void*))
+        if (sizeof(uint32_t) < sizeof(void*))
         {
-            value = new NumberValue(applyS64(argc, argv, (s64 (*)()) ((*self)[methodNumber])));
+            value = new NumberValue(static_cast<uint64_t>(apply(argc, argv, (uint64_t (*)()) ((*self)[methodNumber]))));
         }
         else
         {
-            value = new NumberValue(applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber])));
+            value = new NumberValue(static_cast<uint32_t>(apply(argc, argv, (uint32_t (*)()) ((*self)[methodNumber]))));
         }
-        break;
-    case Ent::SpecF32:
-        value = new NumberValue(applyF32(argc, argv, (f32 (*)()) ((*self)[methodNumber])));
-        break;
-    case Ent::SpecF64:
-        value = new NumberValue(applyF64(argc, argv, (f64 (*)()) ((*self)[methodNumber])));
         break;
     case Ent::SpecString:
-        {
-            int result = applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
-            if (result < 0)
-            {
-                heap[0] = '\0';
-            }
-            value = new StringValue(heap);
-        }
+        heap[0] = '\0';
+        apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
+        value = new StringValue(heap);
         break;
     case Ent::TypeSequence:
         {
             // XXX Assume sequence<octet> now...
-            int count = applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
+            int32_t count = apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
             if (count < 0)
             {
                 count = 0;
@@ -358,7 +369,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         // FALL THROUGH
     case Ent::SpecObject:
         {
-            IInterface* unknown = (IInterface*) applyPTR(argc, argv, (const void* (*)()) ((*self)[methodNumber]));
+            IInterface* unknown = apply(argc, argv, (IInterface* (*)()) ((*self)[methodNumber]));
             if (unknown)
             {
                 ObjectValue* instance = new InterfacePointerValue(unknown);
@@ -372,7 +383,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         }
         break;
     case Ent::SpecVoid:
-        applyS32(argc, argv, (s32 (*)()) ((*self)[methodNumber]));
+        apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
         value = NullValue::getInstance();
         break;
     }
@@ -624,7 +635,7 @@ class InterfaceConstructor : public Code
     FormalParameterList*      arguments;
     InterfacePrototypeValue*  prototype;
     Guid                      iid;
-    
+
 public:
     InterfaceConstructor(ObjectValue* object, const Guid& iid) :
         arguments(new FormalParameterList),

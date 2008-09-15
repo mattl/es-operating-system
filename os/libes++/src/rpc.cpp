@@ -28,6 +28,7 @@
 #include <map>
 #include <new>
 
+#include <es.h>
 #include <es/rpc.h>
 
 namespace es
@@ -190,6 +191,7 @@ RpcHdr* receiveMessage(int epfd, int* fdv, int*& fdmax, int* s)
         if (0 <= rc)
         {
             fdmax = getRights(&msg, fdv, 8);
+//            esDump(iov.iov_base, rc);
         }
         else
         {
@@ -200,9 +202,10 @@ RpcHdr* receiveMessage(int epfd, int* fdv, int*& fdmax, int* s)
 
         if (sizeof(RpcHdr) <= rc)
         {
-//            fprintf(stderr, "%s:\n", __func__);
-//            dump(iov.iov_base, rc);
-
+#if 0
+            fprintf(stderr, "%s:\n", __func__);
+            esDump(iov.iov_base, rc);
+#endif
             // TODO check trunk etc.
             hdr = reinterpret_cast<RpcHdr*>(iov.iov_base);
             if (hdr->cmd == RPC_REQ && sizeof(RpcReq) <= rc)
@@ -210,7 +213,7 @@ RpcHdr* receiveMessage(int epfd, int* fdv, int*& fdmax, int* s)
                 RpcStack::alloc(rc);
                 break;
             }
-            else if (hdr->cmd == RPC_RES && sizeof(RpcReq) <= rc)
+            else if (hdr->cmd == RPC_RES && sizeof(RpcRes) <= rc)
             {
                 RpcStack::alloc(rc);
                 break;

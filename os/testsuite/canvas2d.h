@@ -61,12 +61,13 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/color.h>
 #include <es/classFactory.h>
+#include <es/color.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
+#include <es/variant.h>
 #include <es/base/IClassStore.h>
 #include <es/base/IFile.h>
 #include <es/base/IInterfaceStore.h>
@@ -110,7 +111,7 @@ public:
         }
         if (imageData)
         {
-            delete [] imageData;
+            delete[] imageData;
         }
         if (monitor)
         {
@@ -140,19 +141,19 @@ public:
         }
         else
         {
-            return NULL;
+            return 0;
         }
         static_cast<IInterface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         int count = ref.addRef();
         return count;
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         if (count == 0)
@@ -213,19 +214,19 @@ public:
         }
         else
         {
-            return NULL;
+            return 0;
         }
         static_cast<IInterface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         int count = ref.addRef();
         return count;
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         if (count == 0)
@@ -264,21 +265,49 @@ class Canvas : public ICanvasRenderingContext2D
     // state stack handling
     class ContextState
     {
-    public:
-        ContextState() : globalAlpha(1.0)
+        friend class Canvas;
+        Link<ContextState> link;
+
+        float globalAlpha;
+        u32 colorStyles[STYLE_MAX];
+        CanvasGradient* gradientStyles[STYLE_MAX];
+        CanvasPattern* patternStyles[STYLE_MAX];
+
+        void setColorStyle(int whichStyle, u32 color)
         {
-            for (int i = 0; i < STYLE_MAX; i++)
+            colorStyles[whichStyle] = color;
+            gradientStyles[whichStyle] = 0;
+            patternStyles[whichStyle] = 0;
+        }
+
+        void setGradientStyle(int whichStyle, CanvasGradient* gradient)
+        {
+            gradientStyles[whichStyle] = gradient;
+            patternStyles[whichStyle] = 0;
+        }
+
+        void setPatternStyle(int whichStyle, CanvasPattern* pattern)
+        {
+            gradientStyles[whichStyle] = 0;
+            patternStyles[whichStyle] = pattern;
+        }
+
+    public:
+        ContextState() :
+            globalAlpha(1.0f)
+        {
+            for (int i = 0; i < STYLE_MAX; ++i)
             {
                 colorStyles[i] = 0xff000000;
-                gradientStyles[i] = NULL;
-                patternStyles[i] = NULL;
+                gradientStyles[i] = 0;
+                patternStyles[i] = 0;
             }
         }
 
-        ContextState(const ContextState* other)
-            : globalAlpha(other->globalAlpha)
+        ContextState(const ContextState* other) :
+            globalAlpha(other->globalAlpha)
         {
-            for (int i = 0; i < STYLE_MAX; i++)
+            for (int i = 0; i < STYLE_MAX; ++i)
             {
                 colorStyles[i] = other->colorStyles[i];
                 gradientStyles[i] = other->gradientStyles[i];
@@ -286,34 +315,65 @@ class Canvas : public ICanvasRenderingContext2D
             }
         }
 
-        inline void setColorStyle(int whichStyle, u32 color)
+        int setStyle(int whichStyle, Variant style)
         {
-            colorStyles[whichStyle] = color;
-            gradientStyles[whichStyle] = NULL;
-            patternStyles[whichStyle] = NULL;
+            if (style.getType() == Variant::TypeObject)
+            {
+                // TODO
+            }
+
+            if (style.getType() == Variant::TypeString)
+            {
+                Rgb rgba;
+                try
+                {
+                    rgba = Rgb(static_cast<const char*>(style));
+                }
+                catch (...)
+                {
+                    return -1;
+                }
+                setColorStyle(whichStyle, rgba);
+                return 0;
+            }
+            return -1;
         }
 
-        inline void setPatternStyle(int whichStyle, ICanvasPattern* pat)
+        Variant getStyle(int whichStyle, void* style, int styleLength)
         {
-            gradientStyles[whichStyle] = NULL;
-            patternStyles[whichStyle] = pat;
+            if (ICanvasGradient* gradient = gradientStyles[whichStyle])
+            {
+                gradient->addRef();
+                return Variant(gradient);
+            }
+
+            if (ICanvasPattern* pattern = patternStyles[whichStyle])
+            {
+                pattern->addRef();
+                return Variant(pattern);
+            }
+
+            char color[22];
+            Rgb value = colorStyles[whichStyle];
+            if (value.getA() == 255)
+            {
+                sprintf(color, "#%02x%02x%02x", value.getR(), value.getG(), value.getB());
+            }
+            else
+            {
+                sprintf(color, "rgba(%d,%d,%d,%1.2f)",
+                        value.getR(), value.getG(), value.getB(), value.getA() / 255.0f);
+            }
+            if (strlen(color) + 1 <= styleLength)
+            {
+                strcpy(static_cast<char*>(style), color);
+                return Variant(static_cast<const char*>(style));
+            }
+            return Variant("");
         }
-
-        inline void setGradientStyle(int whichStyle, ICanvasGradient* grad)
-        {
-            gradientStyles[whichStyle] = grad;
-            patternStyles[whichStyle] = NULL;
-        }
-
-        float globalAlpha;
-        u32 colorStyles[STYLE_MAX];
-        Link<ContextState>   link;
-        ICanvasGradient* gradientStyles[STYLE_MAX];
-        ICanvasPattern* patternStyles[STYLE_MAX];
-
     };
 
-    typedef List<ContextState, &ContextState::link> StyleStack;
+    typedef ::List<ContextState, &ContextState::link> StyleStack;
     StyleStack styleStack;
 
     std::string textStyle;
@@ -325,15 +385,19 @@ class Canvas : public ICanvasRenderingContext2D
     u8* allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight);
     void applyStyle(u32 aWhichStyle);
     void dirtyAllStyles();
-    int getStyle(u32 aWhichStyle, char* color, unsigned int len);
-    void setCairoColor(Rgb color);
-    void setStyle(u32 aWhichStyle, const char* color);
-    void setStyle(u32 aWhichStyle, ICanvasGradient* grad);
-    void setStyle(u32 aWhichStyle, ICanvasPattern* pat);
 
-    inline ContextState* currentState()
+    ContextState* currentState()
     {
         return styleStack.getLast();
+    }
+
+    void setCairoColor(Rgb color)
+    {
+        double r = color.getR() / 255.0;
+        double g = color.getG() / 255.0;
+        double b = color.getB() / 255.0;
+        double a = color.getA() / 255.0 * currentState()->globalAlpha;
+        cairo_set_source_rgba(cr, r, g, b, a);
     }
 
 public:
@@ -345,89 +409,61 @@ public:
     //
     // ICanvasRenderingContext2D
     //
-    void arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise);
-    void arcTo(float x1, float y1, float x2, float y2, float radius);
-    void beginPath();
-    void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
-    void clearRect(float x, float y, float width, float height);
-    void closePath();
-    void clip();
+    void save();
+    void restore();
+    void scale(float x, float y);
+    void rotate(float angle);
+    void translate(float x, float y);
+    void transform(float m11, float m12, float m21, float m22, float dx, float dy);
+    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
+    float getGlobalAlpha();
+    void setGlobalAlpha(float globalAlpha);
+    int getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
+    int setGlobalCompositeOperation(const char* globalCompositeOperation);
+    Variant getStrokeStyle(void* strokeStyle, int strokeStyleLength);
+    int setStrokeStyle(Variant strokeStyle);
+    Variant getFillStyle(void* fillStyle, int fillStyleLength);
+    int setFillStyle(Variant fillStyle);
     ICanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
     ICanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    ICanvasPattern* createPattern(IFile* image, const char* repeat);
-    void drawImage(IFile* image, float dx, float dy, float dw, float dh);
-    void fill();
-    void fillRect(float x, float y, float width, float height);
-    ICanvasGradient* getFillGradient();
-    ICanvasPattern* getFillPattern();
-    int getFillStyle(char* color, int len);
-    float getGlobalAlpha();
-    int getGlobalCompositeOperation(char* operation, int len);
-    float getMiterLimit();
-    int getLineCap(char* capStyle, int len);
-    int getLineJoin(char* joinStyle, int len);
     float getLineWidth();
-    int getStrokeStyle(char* color, int len);
-    void lineTo(float x, float y);
-    void moveTo(float x, float y);
-    void quadraticCurveTo(float cpx, float cpy, float x, float y);
-    void rect(float x, float y, float width, float height);
-    void restore();
-    void rotate(float angle);
-    void save();
-    void scale(float scaleW, float scaleH);
-    int setFillStyle(const char* color);
-    void setFillGradient(ICanvasGradient* gradient);
-    void setFillPattern(ICanvasPattern* pattern);
-    void setGlobalAlpha(float alpha);
-    int setGlobalCompositeOperation(const char* operation);
-    void setMiterLimit(float limit);
-    void setLineWidth(float width);
-    int setLineCap(const char* capStyle);
-    int setLineJoin(const char* joinStyle);
-    int setStrokeStyle(const char* color);
-    void stroke();
+    void setLineWidth(float lineWidth);
+    int getLineCap(char* lineCap, int lineCapLength);
+    int setLineCap(const char* lineCap);
+    int getLineJoin(char* lineJoin, int lineJoinLength);
+    int setLineJoin(const char* lineJoin);
+    float getMiterLimit();
+    void setMiterLimit(float miterLimit);
+
+    float getShadowOffsetX() {}
+    void setShadowOffsetX(float shadowOffsetX) {}
+    float getShadowOffsetY() {}
+    void setShadowOffsetY(float shadowOffsetY) {}
+    float getShadowBlur() {}
+    void setShadowBlur(float shadowBlur) {}
+    int getShadowColor(char* shadowColor, int shadowColorLength) {}
+    int setShadowColor(const char* shadowColor) {}
+
+    void clearRect(float x, float y, float width, float height);
+    void fillRect(float x, float y, float width, float height);
     void strokeRect(float x, float y, float width, float height);
-    void translate(float tx, float ty);
+    void beginPath();
+    void closePath();
+    void moveTo(float x, float y);
+    void lineTo(float x, float y);
+    void quadraticCurveTo(float cpx, float cpy, float x, float y);
+    void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
+    void arcTo(float x1, float y1, float x2, float y2, float radius);
+    void rect(float x, float y, float width, float height);
+    void arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise);
+    void fill();
+    void stroke();
+    void clip();
 
-    // unsupported.
-    void setShadowBlur(float blur)
-    {
-    }
-    int setShadowColor(const char* color)
-    {
-        return -1;
-    }
-    void setShadowOffsetX(float x)
-    {
-    }
-    void setShadowOffsetY(float y)
-    {
-    }
-    float getShadowBlur()
-    {
-        return 0.0;
-    }
-    int getShadowColor(char* color, int len)
-    {
-        if (0 < len && !color)
-        {
-            *color = 0;
-        }
-        return 0;
-    }
-    float getShadowOffsetX()
-    {
-        return 0.0;
-    }
-    float getShadowOffsetY()
-    {
-        return 0.0;
-    }
+    bool isPointInPath(float x, float y) {}
 
-    // drawString enhancement
-    int getMozTextStyle(char* textStyle, int textStyleLength);
-    int setMozTextStyle(const char* textStyle);
+    int getMozTextStyle(char* mozTextStyle, int mozTextStyleLength);
+    int setMozTextStyle(const char* mozTextStyle);
     void mozDrawText(const char* textToDraw);
     float mozMeasureText(const char* textToMeasure);
     void mozPathText(const char* textToPath);
@@ -446,19 +482,19 @@ public:
         }
         else
         {
-            return NULL;
+            return 0;
         }
         static_cast<IInterface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         int count = ref.addRef();
         return count;
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         if (count == 0)

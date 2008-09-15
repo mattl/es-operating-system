@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -36,6 +37,7 @@ int main()
     int stop = 0;
     while (stop)
     {
+        fprintf(stderr, ".");
         sleep(1);
     }
 
@@ -43,6 +45,13 @@ int main()
     output->write("hello!\n", 7);
 
     Handle<IContext> nameSpace = System()->getRoot();
+
+#if 1
+    IInterface* unknown = nameSpace->lookup("class");
+    Handle<IClassStore> classStore = unknown;
+    assert(classStore);
+#endif
+
     Handle<IIterator> iterator = nameSpace->list("");
     while (iterator->hasNext())
     {

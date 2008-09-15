@@ -39,7 +39,6 @@
 #include <sys/un.h>
 #include <sys/wait.h>
 
-#include <es/apply.h>
 #include <es/broker.h>
 #include <es/dateTime.h>
 #include <es/handle.h>

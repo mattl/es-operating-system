@@ -19,10 +19,10 @@
 
 #include <dirent.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <termios.h>
 #include <time.h>
-#include <pthread.h>
 #include <unistd.h>
 #include <wchar.h>
 
@@ -35,9 +35,10 @@
 #include <sys/un.h>
 #include <sys/wait.h>
 
-#include <es/apply.h>
 #include <es/broker.h>
 #include <es/capability.h>
+#include <es/classFactory.h>
+#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
@@ -46,8 +47,7 @@
 #include <es/reflect.h>
 #include <es/rpc.h>
 #include <es/timeSpan.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
+#include <es/variant.h>
 #include <es/base/IProcess.h>
 #include <es/util/ICanvasRenderingContext2D.h>
 
@@ -83,18 +83,6 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
 u64 getRandom();
 
 typedef long long (*Method)(void* self, ...);
-
-// XXX
-f32 retF32(f32 v)
-{
-    return v;
-}
-
-// XXX
-f64 retF64(f64 v)
-{
-    return v;
-}
 
 void printGuid(const Guid& guid)
 {
@@ -831,7 +819,7 @@ public:
         // TODO Review later. Probably wrong...
         if (super.getIid() == IInterface::iid())
         {
-            int count;
+            unsigned int count;
 
             switch (methodNumber - baseMethodCount)
             {
@@ -839,8 +827,7 @@ public:
                 count = exported->addRef();
                 if (1 != count)
                 {
-                    res.result.s32 = count;
-                    res.result.cls = Param::S32;
+                    res.result = Variant(static_cast<uint32_t>(count));
                     return 0;
                 }
                 exportedTable.get(hdr->capability.object);
@@ -852,8 +839,7 @@ public:
                 {
                     exportedTable.put(hdr->capability.object);
                 }
-                res.result.s32 = count;
-                res.result.cls = Param::S32;
+                res.result = Variant(static_cast<uint32_t>(count));
                 // TODO should return?
                 break;
             }
@@ -862,12 +848,11 @@ public:
         Guid iid = IInterface::iid();
         Method** object = reinterpret_cast<Method**>(exported->object);
         int argc = hdr->paramCount;
-        Param* argv = hdr->getArgv();
-        Param* argp = argv;
+        Variant* argv = hdr->getArgv();
+        Variant* argp = argv;
 
         // Set this
-        argp->ptr = exported->object;
-        ++argp;
+        *argp++ = Variant(exported->object);
 
         // Reserve space from rpcStack to store result
         void* resultPtr = 0;
@@ -876,39 +861,28 @@ public:
         {
         case Ent::TypeSequence:
             // int op(xxx* buf, int len, ...);
-            argp->ptr = resultPtr = RpcStack::alloc(returnType.getSize() * argp[1].s32);
-            argp->cls = Param::PTR;
-            ++argp;
+            resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
+            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::SpecString:
             // int op(char* buf, int len, ...);
-            argp->ptr = resultPtr = RpcStack::alloc(argp[1].s32);
-            argp->cls = Param::PTR;
-            ++argp;
-            ++argp;
-            break;
-        case Ent::SpecWString:
-            // int op(wchar_t* buf, int len, ...);
-            argp->ptr = resultPtr = RpcStack::alloc(sizeof(wchar_t) * argp[1].s32);
-            argp->cls = Param::PTR;
-            ++argp;
+            resultPtr = RpcStack::alloc(static_cast<int32_t>(argp[1]));
+            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::SpecUuid:
         case Ent::TypeStructure:
             // void op(struct* buf, ...);
             resultSize = returnType.getSize();
-            argp->ptr = resultPtr = RpcStack::alloc(resultSize);
-            argp->cls = Param::PTR;
-            ++argp;
+            resultPtr = RpcStack::alloc(resultSize);
+            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             break;
         case Ent::TypeArray:
             // void op(xxx[x] buf, ...);
             resultSize = returnType.getSize();
-            argp->ptr = resultPtr = RpcStack::alloc(resultSize);
-            argp->cls = Param::PTR;
-            ++argp;
+            resultPtr = RpcStack::alloc(resultSize);
+            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             break;
         case Ent::TypeInterface:
         case Ent::SpecObject:
@@ -928,41 +902,68 @@ public:
 
             switch (type.getType())
             {
+            case Ent::SpecVariant:
+                switch (argp->getType())
+                {
+                case Variant::TypeString:
+                    if (static_cast<const char*>(*argp))
+                    {
+                        *argp = Variant(reinterpret_cast<const char*>(data));
+                        size = strlen(reinterpret_cast<const char*>(data)) + 1;
+                        data += size;
+                    }
+                    break;
+                case Variant::TypeObject:
+                    if (static_cast<IInterface*>(*argp))
+                    {
+                        // Import object
+                        Capability* cap = reinterpret_cast<Capability*>(data);
+                        if (cap->check == 0)
+                        {
+                            cap->object = *fdv++;   // TODO check range
+                        }
+                        IInterface* object = importObject(*cap, iid, true); // TODO false?
+                        *argp = Variant(object);
+                        data += sizeof(Capability);
+                    }
+                    break;
+                }
+                argp->makeVariant();
+                break;
             case Ent::TypeSequence:
                 // xxx* buf, int len, ...
-                size = type.getSize() * argp->size;
-                argp->ptr = data;
-                argp->cls = Param::PTR;
+                size = type.getSize() * static_cast<uint32_t>(argp[1]);
+                *argp++ = Variant(reinterpret_cast<intptr_t>(data));
                 data += size;
-                ++argp;
                 break;
             case Ent::SpecString:
-                size = argp->size;
-                argp->ptr = data;
-                argp->cls = Param::PTR;
-                data += size;
-                break;
-            case Ent::SpecWString:
-                size = sizeof(wchar_t) * argp->size;
-                argp->ptr = data;
-                argp->cls = Param::PTR;
-                data += size;
+                if (static_cast<const char*>(*argp))
+                {
+                    *argp = Variant(reinterpret_cast<const char*>(data));
+                    size = strlen(reinterpret_cast<const char*>(data)) + 1;
+                    data += size;
+                }
                 break;
             case Ent::SpecUuid:
-                iid = argp->guid;
+                if (static_cast<const Guid*>(*argp))
+                {
+                    *argp = Variant(reinterpret_cast<const Guid*>(data));
+                    size = sizeof(Guid);
+                    data += size;
+                    iid = *static_cast<const Guid*>(*argp);
+                }
                 break;
             case Ent::TypeStructure:
             case Ent::TypeArray:
-                size = argp->size;
-                argp->ptr = data;
-                argp->cls = Param::PTR;
+                size = type.getSize();
+                *argp = Variant(reinterpret_cast<intptr_t>(data));
                 data += size;
                 break;
             case Ent::TypeInterface:
                 iid = type.getInterface().getIid();
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (argp->ptr)
+                if (static_cast<IInterface*>(*argp))
                 {
                     // Import object
                     Capability* cap = reinterpret_cast<Capability*>(data);
@@ -971,6 +972,7 @@ public:
                         cap->object = *fdv++;   // TODO check range
                     }
                     IInterface* object = importObject(*cap, iid, true); // TODO false?
+                    *argp = Variant(object);
                     data += sizeof(Capability);
                 }
                 break;
@@ -1001,57 +1003,63 @@ public:
         // TODO catch exception while applying
         switch (returnType.getType())
         {
-        case Ent::SpecAny:  // XXX x86 specific
         case Ent::SpecBool:
+            res.result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
+            break;
         case Ent::SpecChar:
-        case Ent::SpecWChar:
         case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
         case Ent::SpecU8:
+            res.result = apply(argc, argv, (uint8_t (*)()) ((*object)[methodNumber]));
+            break;
+        case Ent::SpecWChar:
+        case Ent::SpecS16:
+            res.result = apply(argc, argv, (int16_t (*)()) ((*object)[methodNumber]));
+            break;
         case Ent::SpecU16:
+            res.result = apply(argc, argv, (uint16_t (*)()) ((*object)[methodNumber]));
+            break;
+        case Ent::SpecS32:
+            res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
+            break;
+        case Ent::SpecAny:  // XXX x86 specific
         case Ent::SpecU32:
-            res.result.s32 = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::S32;
+            res.result = apply(argc, argv, (uint32_t (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecS64:
+            res.result = apply(argc, argv, (int64_t (*)()) ((*object)[methodNumber]));
+            break;
         case Ent::SpecU64:
-            res.result.s64 = applyS64(argc, argv, (s64 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::S64;
+            res.result = apply(argc, argv, (uint64_t (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecF32:
-            res.result.f32 = applyF32(argc, argv, (f32 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::F32;
+            res.result = apply(argc, argv, (float (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecF64:
-            res.result.f64 = applyF64(argc, argv, (f64 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::F64;
+            res.result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecString:
-            res.result.s32 = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::S32;
-            resultSize = 1 + res.result.s32;
-            break;
-        case Ent::SpecWString:
-            res.result.s32 = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::S32;
-            resultSize = sizeof(wchar_t) * (1 + res.result.s32);
+            res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
+            if (0 <= static_cast<int32_t>(res.result)) {
+                resultSize = 1 + static_cast<int32_t>(res.result);
+            }
+            else
+            {
+                resultSize = 0;
+            }
             break;
         case Ent::TypeSequence:
-            res.result.s32 = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::S32;
-            resultSize = sizeof(returnType.getSize() * res.result.s32);
+            res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
+            resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));   // XXX maybe set just the # of elements
             break;
         case Ent::TypeInterface:
             iid = returnType.getInterface().getIid();
             // FALL THROUGH
         case Ent::SpecObject:
-            res.result.ptr = applyPTR(argc, argv, (const void* (*)()) ((*object)[methodNumber]));
-            res.result.cls = Param::PTR;
-            if (res.result.ptr)
+            res.result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
+            if (static_cast<IInterface*>(res.result))
             {
                 Capability* cap = static_cast<Capability*>(resultPtr);
-                exportObject((IInterface*) res.result.ptr, iid, cap, false);   // TODO error check, TODO true??
+                exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
                 if (cap->check == 0)
                 {
                     *fdp++ = cap->object;
@@ -1064,9 +1072,7 @@ public:
             break;
         case Ent::TypeArray:
         case Ent::SpecVoid:
-            applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-            res.result.s32 = 0;
-            res.result.cls = Param::S32;
+            apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
             break;
         }
 
@@ -1767,9 +1773,9 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     struct
     {
         RpcReq  req;
-        Param   argv[9];
+        Variant argv[9];
     } rpcmsg = { RPC_REQ, tag, getpid(), cap, methodNumber };
-    Param* argp = rpcmsg.argv;
+    Variant* argp = rpcmsg.argv;
     Capability caps[8];
     Capability* capp = caps;
 
@@ -1784,47 +1790,32 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     Guid iid = IInterface::iid();
 
     // Set this
-    argp->ptr = 0;      // to be filled by the server
-    argp->cls = Param::PTR;
-    ++argp;
+    *argp++ = Variant(static_cast<intptr_t>(0));  // to be filled by the server
 
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
-    case Ent::TypeSequence:
-        // int op(xxx* buf, int len, ...);
-        argp->ptr = va_arg(ap, void*);
-        argp->cls = Param::PTR;
-        ++argp;
-        argp->s32 = va_arg(ap, int);
-        argp->cls = Param::S32;
-        ++argp;
+    case Ent::SpecVariant:
+        // Variant op(void* buf, int len, ...);
         break;
+    case Ent::TypeSequence:
     case Ent::SpecString:
-    case Ent::SpecWString:
         // int op(xxx* buf, int len, ...);
-        argp->ptr = va_arg(ap, void*);
-        argp->cls = Param::PTR;
-        ++argp;
-        argp->s32 = va_arg(ap, int);
-        argp->cls = Param::S32;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+        *argp++ = Variant(va_arg(ap, int));
         break;
     case Ent::SpecUuid:
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
-        argp->ptr = va_arg(ap, void*);
-        argp->cls = Param::PTR;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         break;
     case Ent::TypeArray:
         // void op(xxx[x] buf, ...);
-        argp->ptr = va_arg(ap, void*);
-        argp->cls = Param::PTR;
-        ++argp;
+        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         break;
     }
 
+    // TODO: padding
     for (int i = 0; i < method.getParameterCount(); ++i, ++argp)
     {
         Reflect::Parameter param(method.getParameter(i));
@@ -1833,105 +1824,130 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
 
         switch (type.getType())
         {
+        case Ent::SpecVariant:
+            // Variant variant, ...
+            *argp = Variant(va_arg(ap, VariantBase));
+            switch (argp->getType())
+            {
+            case Variant::TypeString:
+                if (static_cast<const char*>(*argp))
+                {
+                    iop->iov_base = const_cast<char*>(static_cast<const char*>(*argp));
+                    iop->iov_len = strlen(static_cast<const char*>(iop->iov_base)) + 1;
+                    ++iop;
+                }
+                break;
+            case Variant::TypeObject:
+                if (static_cast<IInterface*>(*argp))
+                {
+                    IInterface* object = static_cast<IInterface*>(*argp);
+                    current.exportObject(object, iid, capp, true);  // TODO check error
+                    iop->iov_base = capp;
+                    iop->iov_len = sizeof(Capability);
+                    if (capp->check == 0)
+                    {
+                        *fdp++ = capp->object;
+                    }
+                    ++capp;
+                    ++iop;
+                }
+                break;
+            }
+            break;
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             iop->iov_base = va_arg(ap, void*);
-            argp->cls = Param::PTR;
-            ++argp;
-            argp->s32 = va_arg(ap, int);
-            argp->cls = Param::S32;
-            (argp - 1)->size = iop->iov_len = type.getSize() * argp->s32;
+            *argp++ = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
+            *argp = Variant(va_arg(ap, int32_t));
+            iop->iov_len = type.getSize() * static_cast<int32_t>(*argp);
             ++iop;
             break;
         case Ent::SpecString:
             iop->iov_base = va_arg(ap, char*);
+            *argp = Variant(reinterpret_cast<const char*>(iop->iov_base));
             if (iop->iov_base)
             {
-                argp->size = iop->iov_len = strlen(static_cast<char*>(iop->iov_base)) + sizeof(char);
+                iop->iov_len = strlen(static_cast<const char*>(iop->iov_base)) + 1;
                 ++iop;
             }
-            else
-            {
-                argp->size = 0;
-            }
-            argp->cls = Param::PTR;
-            break;
-        case Ent::SpecWString:
-            iop->iov_base = va_arg(ap, wchar_t*);
-            if (iop->iov_base)
-            {
-                argp->size = iop->iov_len = sizeof(wchar_t) * (wcslen(static_cast<wchar_t*>(iop->iov_base)) + 1);
-                ++iop;
-            }
-            else
-            {
-                argp->size = 0;
-            }
-            argp->cls = Param::PTR;
             break;
         case Ent::SpecUuid:
-            memcpy(&argp->guid, va_arg(ap, Guid*), sizeof(Guid));
-            argp->cls = Param::REF;
-            iid = argp->guid;
+            iop->iov_base = va_arg(ap, Guid*);
+            if (iop->iov_base)
+            {
+                iop->iov_len = sizeof(Guid);
+                iid = *static_cast<const Guid*>(iop->iov_base);
+                *argp = Variant(reinterpret_cast<Guid*>(iop->iov_base));
+                ++iop;
+            } else {
+                *argp = Variant(reinterpret_cast<Guid*>(0));
+            }
             break;
         case Ent::TypeStructure:
             iop->iov_base = va_arg(ap, void*);
-            argp->size = iop->iov_len = type.getSize();
+            *argp = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
+            iop->iov_len = type.getSize();
             ++iop;
-            argp->cls = Param::PTR;
             break;
         case Ent::TypeArray:
             iop->iov_base = va_arg(ap, void*);
-            argp->size = iop->iov_len = type.getSize();
+            *argp = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
+            iop->iov_len = type.getSize();
             ++iop;
-            argp->cls = Param::PTR;
             break;
         case Ent::TypeInterface:
             iid = type.getInterface().getIid();
             // FALL THROUGH
         case Ent::SpecObject: {
             IInterface* object = va_arg(ap, IInterface*);
-            current.exportObject(object, iid, capp, true);  // TODO check error
-            iop->iov_base = capp;
-            argp->size = iop->iov_len = sizeof(Capability);
-            if (capp->check == 0)
+            *argp = Variant(object);
+            if (object)
             {
-                *fdp++ = capp->object;
+                current.exportObject(object, iid, capp, true);  // TODO check error
+                iop->iov_base = capp;
+                iop->iov_len = sizeof(Capability);
+                if (capp->check == 0)
+                {
+                    *fdp++ = capp->object;
+                }
+                ++capp;
+                ++iop;
             }
-            ++capp;
-            ++iop;
-            argp->cls = Param::PTR;
             break;
         }
         case Ent::SpecBool:
-            argp->s32 = va_arg(ap, int);
-            argp->cls = Param::S32;
+            *argp = Variant(static_cast<bool>(va_arg(ap, int)));
             break;
         case Ent::SpecAny:
-            argp->ptr = va_arg(ap, void*);
-            argp->cls = Param::PTR;
+            *argp = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+            break;
+        case Ent::SpecS16:
+            *argp = Variant(static_cast<int16_t>(va_arg(ap, int)));
+            break;
+        case Ent::SpecS32:
+            *argp = Variant(va_arg(ap, int32_t));
             break;
         case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
         case Ent::SpecU8:
+            *argp = Variant(static_cast<uint8_t>(va_arg(ap, int)));
+            break;
         case Ent::SpecU16:
+            *argp = Variant(static_cast<uint16_t>(va_arg(ap, int)));
+            break;
         case Ent::SpecU32:
-            argp->s32 = va_arg(ap, u32);
-            argp->cls = Param::S32;
+            *argp = Variant(va_arg(ap, uint32_t));
             break;
         case Ent::SpecS64:
+            *argp = Variant(va_arg(ap, int64_t));
+            break;
         case Ent::SpecU64:
-            argp->s64 = va_arg(ap, u64);
-            argp->cls = Param::S64;
+            *argp = Variant(va_arg(ap, uint64_t));
             break;
         case Ent::SpecF32:
-            argp->s32 = va_arg(ap, s32);    // XXX work on X86 only probably
-            argp->cls = Param::F32;
+            *argp = Variant(va_arg(ap, uint32_t));  // XXX work on X86 only probably
             break;
         case Ent::SpecF64:
-            argp->f64 = va_arg(ap, double);
-            argp->cls = Param::F64;
+            *argp = Variant(va_arg(ap, double));
             break;
         default:
             break;
@@ -1941,11 +1957,14 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     int argc = argp - rpcmsg.argv;
     rpcmsg.req.paramCount = argc;
     iov[0].iov_base = &rpcmsg;
-    iov[0].iov_len = sizeof(RpcReq) + sizeof(Param) * argc;
+    iov[0].iov_len = sizeof(RpcReq) + sizeof(Variant) * argc;
 
 #ifdef VERBOSE
     printf("Send RpcReq: %d %d\n", s, argc);
-    esDump(&rpcmsg, sizeof(RpcReq) + sizeof(Param) * argc);
+    esDump(&rpcmsg, sizeof(RpcReq));
+    for (int i = 0; i < argc; ++i) {
+        esDump((char*) &rpcmsg + sizeof(RpcReq) + sizeof(Variant) * i, sizeof(Variant));
+    }
 #endif
 
     // Invoke method
@@ -2027,53 +2046,27 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             long long rc;
             switch (returnType.getType())
             {
-            case Ent::SpecAny:  // XXX x86 specific
-                rc = res->result.s64;
-                break;
-            case Ent::SpecBool:
-            case Ent::SpecChar:
-            case Ent::SpecWChar:
-            case Ent::SpecS8:
-            case Ent::SpecS16:
-            case Ent::SpecS32:
-            case Ent::SpecU8:
-            case Ent::SpecU16:
-            case Ent::SpecU32:
-                rc = res->result.s32;
-                break;
-            case Ent::SpecS64:
-            case Ent::SpecU64:
-                rc = res->result.s64;
-                break;
-            case Ent::SpecF32:  // XXX
-                retF32(res->result.f32);
-                break;
-            case Ent::SpecF64:  // XXX
-                retF64(res->result.f64);
-                break;
             case Ent::SpecString:
-                rc = res->result.s32;
+                rc = static_cast<int32_t>(res->result);
                 if (0 < rc)
                 {
-                    memcpy(const_cast<void*>(rpcmsg.argv[1].ptr), res->getData(), rc + 1);
-                }
-                break;
-            case Ent::SpecWString:
-                rc = res->result.s32;
-                if (0 < rc)
-                {
-                    memcpy(const_cast<void*>(rpcmsg.argv[1].ptr), res->getData(), sizeof(wchar_t) * (rc + 1));
+                    memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
+                            rc + 1);
                 }
                 break;
             case Ent::TypeSequence:
-                rc = res->result.s32;
-                memcpy(const_cast<void*>(rpcmsg.argv[1].ptr), res->getData(), returnType.getSize() * rc);
+                rc = static_cast<int32_t>(res->result);
+                if (0 < rc)
+                {
+                    memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
+                            returnType.getSize() * rc);
+                }
                 break;
             case Ent::TypeInterface:
                 iid = returnType.getInterface().getIid();
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (const_cast<void*>(res->result.ptr))
+                if (static_cast<IInterface*>(res->result))
                 {
                     Capability* cap = static_cast<Capability*>(res->getData());
                     if (cap->check == 0 && (fdmax - fdp) == 1)
@@ -2086,26 +2079,25 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     printf(">> ");
                     cap->report();
 #endif
-                    rc = reinterpret_cast<long>(current.importObject(*cap, iid, false));
+                    res->result = current.importObject(*cap, iid, false);
                 }
                 else
                 {
-                    rc = 0;
+                    res->result = Variant(static_cast<IInterface*>(0));
                 }
                 break;
             case Ent::TypeArray:
-                memcpy(const_cast<void*>(rpcmsg.argv[1].ptr), res->getData(), returnType.getSize());
-                rc = 0;
+                memcpy(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
+                       returnType.getSize());
                 break;
             case Ent::SpecVoid:
-                rc = 0;
                 break;
             }
             while (fdp < fdmax)
             {
                 close(*fdp++);
             }
-            return rc;
+            return evaluate(res->result);
             break;
         }
     }

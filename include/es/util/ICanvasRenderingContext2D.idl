@@ -19,25 +19,24 @@
 #define NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
 
 #include "es/base/IInterface.idl"
-#include "es/base/IFile.idl"
 
 module es
 {
     /**
      */
-    interface CanvasPattern : Interface
+    interface CanvasGradient : Interface
     {
-        #pragma ID CanvasPattern = "DCE:f323a595-46fe-11dd-8100-0009bf000001";
-        void apply(in any cr); // [check] how to pass the context?
+        #pragma ID CanvasGradient = "DCE:f45e927e-46fe-11dd-8100-0009bf000001";
+        // opaque object
+        void addColorStop(in float offset, in string color);
     };
 
     /**
      */
-    interface CanvasGradient : Interface
+    interface CanvasPattern : Interface
     {
-        #pragma ID CanvasGradient = "DCE:f45e927e-46fe-11dd-8100-0009bf000001";
-        void addColorStop(in float offset, in string color);
-        void apply(in any cr); // [check] how to pass the context?
+        #pragma ID CanvasPattern = "DCE:f323a595-46fe-11dd-8100-0009bf000001";
+        // opaque object
     };
 
     /**
@@ -49,13 +48,39 @@ module es
         #pragma ID CanvasRenderingContext2D = "DCE:f49e00dd-46fe-11dd-8100-0009bf000001";
 
         // state
-        void restore();
-        void save();
+        void save(); // push state on state stack
+        void restore(); // pop state stack and restore state
 
-        // transformation
-        void scale(in float scaleW, in float scaleH);
+        // transformations (default transform is the identity matrix)
+        void scale(in float x, in float y);
         void rotate(in float angle);
-        void translate(in float tx, in float ty);
+        void translate(in float x, in float y);
+        // void transform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy);
+        // void setTransform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy);
+
+        // compositing
+        attribute float globalAlpha;
+        attribute string globalCompositeOperation;
+
+        // colors and styles
+        attribute Variant strokeStyle;  // (default black)
+        attribute Variant fillStyle;	// (default black)
+        CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
+        CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
+        // CanvasPattern createPattern(in HTMLImageElement image, in DOMString repetition);
+        // CanvasPattern createPattern(in HTMLCanvasElement image, in DOMString repetition);
+
+        // line caps/joins
+        attribute float lineWidth; // (default 1)
+        attribute string lineCap; // "butt", "round", "square" (default "butt")
+        attribute string lineJoin; // "round", "bevel", "miter" (default "miter")
+        attribute float miterLimit; // (default 10)
+
+        // Shadow
+        attribute float shadowOffsetX; // (default 0)
+        attribute float shadowOffsetY; // (default 0)
+        attribute float shadowBlur; // (default 0)
+        attribute string shadowColor; // (default transparent black)
 
         // rects
         void clearRect(in float x, in float y, in float width, in float height);
@@ -75,36 +100,7 @@ module es
         void fill();
         void stroke();
         void clip();
-
-        // drawing images
-        void drawImage(in File image, in float dx, in float dy, in float dw, in float dh);
-
-        // creating gradient and pattern styles
-        CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
-        CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
-        CanvasPattern createPattern(in File image, in string repeat);
-
-        // compositing
-        attribute float globalAlpha;
-        attribute string globalCompositeOperation;
-
-        // colors and styles
-        attribute string strokeStyle;
-        attribute string fillStyle;
-        attribute CanvasGradient fillGradient;
-        attribute CanvasPattern fillPattern;
-
-        // line caps/joins
-        attribute float lineWidth;
-        attribute string lineCap;
-        attribute string lineJoin;
-        attribute float miterLimit;
-
-        // Shadow
-        attribute float shadowOffsetX;
-        attribute float shadowOffsetY;
-        attribute float shadowBlur;
-        attribute string shadowColor;
+        boolean isPointInPath(in float x, in float y);
 
         // Text (drawString enhancement as in mozilla1.9 M7)
         attribute string mozTextStyle;

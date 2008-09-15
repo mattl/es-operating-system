@@ -56,8 +56,7 @@ int main(int argc, char* argv[])
     eventQueue->getMousePoint(&x0, &y0);
     for (;;)
     {
-        int stroke;
-        if (eventQueue->getKeystroke(&stroke))
+        if (int stroke = eventQueue->getKeystroke())
         {
             esReport("0x%x\n", stroke);
         }

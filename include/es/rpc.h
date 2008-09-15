@@ -19,9 +19,9 @@
 
 #include <stdio.h>
 
-#include <es/apply.h>
-#include <es/types.h>
 #include <es/capability.h>
+#include <es/types.h>
+#include <es/variant.h>
 
 namespace es
 {
@@ -135,9 +135,9 @@ struct RpcReq
     // Param    argv[];
     // Data
 
-    Param* getArgv()
+    Variant* getArgv()
     {
-        return reinterpret_cast<Param*>(this + 1);
+        return reinterpret_cast<Variant*>(this + 1);
     }
 
     void* getData()
@@ -153,7 +153,7 @@ struct RpcRes
     int         tag;
     int         pid;
     unsigned    exceptionCode;
-    Param       result;
+    Variant     result;
     // Data
 
     void* getData()

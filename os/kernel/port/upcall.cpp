@@ -24,6 +24,7 @@
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/reflect.h>
+#include <es/variant.h>
 #include "core.h"
 #include "interfaceStore.h"
 #include "process.h"
@@ -436,6 +437,61 @@ putUpcallRecord(UpcallRecord* record)
     upcallList.addLast(record);
 }
 
+u8* Process::
+copyInString(const char* string, u8* esp)
+{
+    // Check zero termination
+    const char* ptr = string;
+    int count = 0;
+    do
+    {
+        if (!isValid(ptr, 1))
+        {
+            return NULL;
+        }
+        ++count;
+    } while (*ptr++);
+    esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+    write(string, count, reinterpret_cast<long long>(esp));
+    return esp;
+}
+
+IInterface* Process::
+copyInObject(IInterface* object, Guid& iid)
+{
+    if (!object)
+    {
+        return object;
+    }
+
+    void** ip = reinterpret_cast<void**>(object);
+    int n = broker.getInterfaceNo(reinterpret_cast<void*>(ip));
+    if (0 <= n)
+    {
+        UpcallProxy* proxy = &upcallTable[n];
+        if (proxy->process == this)
+        {
+            return static_cast<IInterface*>(proxy->object);
+        }
+    }
+
+    // Set up a new system call proxy.
+    n = set(syscallTable, object, iid);
+    if (0 <= n)
+    {
+        // Set ip to proxy ip
+        ip = &ipt[n];
+        object->addRef();
+    }
+    else
+    {
+        ip = 0; // XXX should raise an exception
+    }
+    // Note the reference count to the created syscall proxy must
+    // be decremented by one at the end of this upcall.
+    return reinterpret_cast<IInterface*>(ip); // XXX
+}
+
 // Note copyIn() is called against the server process, so that
 // copyIn() can be called from the kernel thread to make an upcall,
 int Process::
@@ -511,6 +567,29 @@ copyIn(UpcallRecord* record)
 
         switch (type.getType())
         {
+        case Ent::SpecVariant:
+            {
+                memcpy(argp, paramp, sizeof(VariantBase));
+                Variant* var = reinterpret_cast<Variant*>(argp);
+                switch (var->getType())
+                {
+                case Variant::TypeString:
+                    esp = copyInString(static_cast<const char*>(*var), esp);
+                    if (!esp)
+                    {
+                        return EFAULT;
+                    }
+                    *var = Variant(reinterpret_cast<const char*>(esp));
+                    break;
+                case Variant::TypeObject:
+                    *var = Variant(reinterpret_cast<IInterface*>(copyInObject(static_cast<IInterface*>(*var), iid)));
+                    break;
+                }
+                argp += sizeof(VariantBase) / sizeof(int);
+                paramp += sizeof(VariantBase) / sizeof(int);
+                var->makeVariant();
+            }
+            break;
         case Ent::SpecAny:  // XXX x86 specific
         case Ent::SpecBool:
         case Ent::SpecChar:
@@ -522,124 +601,40 @@ copyIn(UpcallRecord* record)
         case Ent::SpecU16:
         case Ent::SpecU32:
         case Ent::SpecF32:
-            if (param.isInput())
-            {
-                *argp++ = *paramp++;
-            }
-            else
-            {
-                count = sizeof(int);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                *argp++ = (int) esp;
-                ++paramp;
-            }
+            *argp++ = *paramp++;
             break;
         case Ent::SpecS64:
         case Ent::SpecU64:
         case Ent::SpecF64:
-            if (param.isInput())
-            {
-                *argp++ = *paramp++;
-                *argp++ = *paramp++;
-            }
-            else
-            {
-                count = sizeof(long long);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                *argp++ = (int) esp;
-                ++paramp;
-            }
+            *argp++ = *paramp++;
+            *argp++ = *paramp++;
             break;
         case Ent::SpecString:
-            if (param.isInput())
+            esp = copyInString(*reinterpret_cast<char**>(paramp), esp);
+            if (!esp)
             {
-                // Check zero termination
-                char* ptr = *reinterpret_cast<char**>(paramp);
-                count = 0;
-                do
-                {
-                    if (!isValid(ptr, 1))
-                    {
-                        return EFAULT;
-                    }
-                    ++count;
-                } while (*ptr++);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                *argp++ = (int) esp;
-                ++paramp;
+                return EFAULT;
             }
-            else
-            {
-                count = paramp[1];              // XXX check count
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                if (!param.isOutput())
-                {
-                    write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                }
-                *argp++ = (int) esp;
-                *argp++ = count;
-                paramp += 2;
-            }
-            break;
-        case Ent::SpecWString:
-            if (param.isInput())
-            {
-                // Check zero termination
-                wchar_t* ptr = *reinterpret_cast<wchar_t**>(paramp);
-                count = 0;
-                do
-                {
-                    if (!isValid(ptr, sizeof(wchar_t)))
-                    {
-                        return EFAULT;
-                    }
-                    count += sizeof(wchar_t);
-                } while (*ptr++);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                *argp++ = (int) esp;
-                ++paramp;
-            }
-            else
-            {
-                count = sizeof(wchar_t) * paramp[1];
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                if (!param.isOutput())
-                {
-                    write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                }
-                *argp++ = (int) esp;
-                *argp++ = paramp[1];
-                paramp += 2;
-            }
+            *argp++ = (int) esp;
+            ++paramp;
             break;
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             count = type.getSize() * paramp[1]; // XXX check count
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            if (!param.isOutput())
-            {
-                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-            }
+            write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
             *argp++ = (int) esp;
             *argp++ = paramp[1];
             paramp += 2;
             break;
         case Ent::SpecUuid:         // Guid* guid, ...
-            if (param.isInput())
-            {
-                iid = **reinterpret_cast<Guid**>(paramp);
-            }
+            iid = **reinterpret_cast<Guid**>(paramp);
             // FALL THROUGH
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             count = type.getSize();
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            if (!param.isOutput())
-            {
-                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-            }
+            write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
             *argp++ = (int) esp;
             ++paramp;
             break;
@@ -647,52 +642,44 @@ copyIn(UpcallRecord* record)
             iid = type.getInterface().getIid();
             // FALL THROUGH
         case Ent::SpecObject:
-            if (param.isInput())
+            *argp++ = (int) copyInObject(*reinterpret_cast<IInterface**>(paramp++), iid);
+            if (void** ip = *reinterpret_cast<void***>(paramp))
             {
-                if (void** ip = *reinterpret_cast<void***>(paramp))
+                int n;
+
+                n = broker.getInterfaceNo(reinterpret_cast<void*>(ip));
+                if (0 <= n)
                 {
-                    int n;
+                    UpcallProxy* proxy = &upcallTable[n];
+                    if (proxy->process == this)
+                    {
+                        *paramp = 0;
+                        *argp++ = (int) proxy->object;
+                        break;
+                    }
+                }
 
-                    n = broker.getInterfaceNo(reinterpret_cast<void*>(ip));
-                    if (0 <= n)
-                    {
-                        UpcallProxy* proxy = &upcallTable[n];
-                        if (proxy->process == this)
-                        {
-                            *paramp = 0;
-                            *argp++ = (int) proxy->object;
-                            break;
-                        }
-                    }
-
-                    // Set up a new system call proxy.
-                    IInterface* object(reinterpret_cast<IInterface*>(ip));
-                    n = set(syscallTable, object, iid);
-                    if (0 <= n)
-                    {
-                        // Set ip to proxy ip
-                        ip = &ipt[n];
-                        object->addRef();
-                    }
-                    else
-                    {
-                        ip = 0; // XXX should raise an exception
-                    }
-                    *argp++ = *paramp = (int) ip;   // XXX
+                // Set up a new system call proxy.
+                IInterface* object(reinterpret_cast<IInterface*>(ip));
+                n = set(syscallTable, object, iid);
+                if (0 <= n)
+                {
+                    // Set ip to proxy ip
+                    ip = &ipt[n];
+                    object->addRef();
                 }
                 else
                 {
-                    *argp++ = *paramp;
+                    ip = 0; // XXX should raise an exception
                 }
-
-                // Note the reference count to the created syscall proxy must
-                // be decremented by one at the end of this upcall.
+                *argp++ = *paramp = (int) ip;   // XXX
             }
             else
             {
-                // The output interface pointer parameter is no longer supported.
-                throw SystemException<EINVAL>();
+                *argp++ = *paramp;
             }
+            // Note the reference count to the created syscall proxy must
+            // be decremented by one at the end of this upcall.
             ++paramp;
             break;
         default:
@@ -794,7 +781,7 @@ copyOut(UpcallRecord* record, Guid& iid)
         break;
     }
 
-    int argc(0);
+    int argc = 0;
     for (int i = 0; i < record->method.getParameterCount(); ++i)
     {
         Reflect::Parameter param(record->method.getParameter(i));
@@ -806,6 +793,9 @@ copyOut(UpcallRecord* record, Guid& iid)
 
         switch (type.getType())
         {
+        case Ent::SpecVariant:
+            paramp += sizeof(VariantBase) / sizeof(int);
+            break;
         case Ent::SpecAny:  // XXX x86 specific
         case Ent::SpecBool:
         case Ent::SpecChar:
@@ -817,108 +807,46 @@ copyOut(UpcallRecord* record, Guid& iid)
         case Ent::SpecU16:
         case Ent::SpecU32:
         case Ent::SpecF32:
-            if (param.isInput())
-            {
-                ++paramp;
-            }
-            else
-            {
-                count = sizeof(int);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                ++paramp;
-            }
+            ++paramp;
             break;
         case Ent::SpecS64:
         case Ent::SpecU64:
         case Ent::SpecF64:
-            if (param.isInput())
-            {
-                paramp += 2;
-            }
-            else
-            {
-                count = sizeof(long long);
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                ++paramp;
-            }
+            paramp += 2;
             break;
         case Ent::SpecString:
-            if (param.isInput())
-            {
-                ++paramp;
-            }
-            else
-            {
-                count = paramp[1];
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                if (0 < rc)
-                {
-                    // XXX check string length
-                    read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                }
-                paramp += 2;
-            }
+            ++paramp;
             break;
         case Ent::SpecWString:
-            if (param.isInput())
-            {
-                ++paramp;
-            }
-            else
-            {
-                count = sizeof(wchar_t) * paramp[1];
-                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-                if (0 < rc)
-                {
-                    // XXX check string length
-                    read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-                }
-                paramp += 2;
-            }
+            ++paramp;
             break;
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             count = type.getSize() * paramp[1];
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            if (!param.isInput())
-            {
-                if (0 < rc && rc <= paramp[1])
-                {
-                    read(*reinterpret_cast<void**>(paramp), type.getSize() * rc, reinterpret_cast<long long>(esp));
-                }
-            }
             paramp += 2;
             break;
         case Ent::SpecUuid:         // Guid* guid, ...
-            if (param.isInput())
-            {
-                iid = **reinterpret_cast<Guid**>(paramp);
-            }
+            iid = **reinterpret_cast<Guid**>(paramp);
             // FALL THROUGH
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             count = type.getSize();
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            if (!param.isInput())
-            {
-                read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-            }
             ++paramp;
             break;
         case Ent::SpecObject:
         case Ent::TypeInterface:
-            if (param.isInput())
             {
-                if (void** ip = *reinterpret_cast<void***>(paramp))
+                void** ip = *reinterpret_cast<void***>(paramp);
+                if (ip && ipt <= ip && ip < ipt + INTERFACE_POINTER_MAX)
                 {
                     // Release the created syscall proxy.
                     SyscallProxy* proxy(&syscallTable[ip - ipt]);
                     proxy->release();
                 }
+                ++paramp;
             }
-            ++paramp;
             break;
         default:
             break;

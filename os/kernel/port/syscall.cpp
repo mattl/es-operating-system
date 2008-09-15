@@ -18,11 +18,11 @@
 #include <errno.h>
 #include <stddef.h>
 #include <es.h>
-#include <es/apply.h>
 #include <es/broker.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/reflect.h>
+#include <es/variant.h>
 #include <es/base/ISelectable.h>
 #include <es/net/IInternetAddress.h>
 #include <es/net/IInternetConfig.h>
@@ -31,6 +31,8 @@
 #include "core.h"
 #include "interfaceStore.h"
 #include "process.h"
+
+// #define VERBOSE
 
 extern IStream* esReportStream();
 
@@ -198,8 +200,8 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     // Set up parameters
     //
     int* paramp = reinterpret_cast<int*>(paramv);
-    Param argv[9];
-    Param* argp = argv;
+    Variant argv[9];
+    Variant* argp = argv;
 
     void* ptr;
     int count;
@@ -211,9 +213,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     // Set this
     Method** object = reinterpret_cast<Method**>(proxy->getObject());
-    argp->ptr = object;
-    argp->cls = Param::PTR;
-    ++argp;
+    *argp++ = Variant(reinterpret_cast<intptr_t>(object));
 
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
@@ -224,38 +224,15 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             throw SystemException<EFAULT>();
         }
-        argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-        argp->cls = Param::PTR;
-        ++argp;
+        ptr = *reinterpret_cast<void**>(paramp);
+        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
         ++paramp;
-        if (!isValid(paramp, sizeof(int)))
+        if (!isValid(paramp, sizeof(int32_t)))
         {
             throw SystemException<EFAULT>();
         }
-        argp->s32 = *paramp;
-        argp->cls = Param::S32;
-        count = argp->s32;
-        ++argp;
-        ++paramp;
-        break;
-    case Ent::SpecWString:
-        // int op(wchar_t* buf, int len, ...);
-        if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
-        {
-            throw SystemException<EFAULT>();
-        }
-        argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-        argp->cls = Param::PTR;
-        ++argp;
-        ++paramp;
-        if (!isValid(paramp, sizeof(int)))
-        {
-            throw SystemException<EFAULT>();
-        }
-        argp->s32 = *paramp;
-        argp->cls = Param::S32;
-        count = argp->s32 * sizeof(wchar_t);
-        ++argp;
+        count = *paramp;
+        *argp++ = Variant(static_cast<int32_t>(count));
         ++paramp;
         break;
     case Ent::TypeSequence:
@@ -264,18 +241,15 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             throw SystemException<EFAULT>();
         }
-        argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-        argp->cls = Param::PTR;
-        ++argp;
+        ptr = *reinterpret_cast<void**>(paramp);
+        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
         ++paramp;
-        if (!isValid(paramp, sizeof(int)))
+        if (!isValid(paramp, sizeof(int32_t)))
         {
             throw SystemException<EFAULT>();
         }
-        argp->s32 = *paramp;
-        argp->cls = Param::S32;
-        count = argp->s32 * returnType.getSize();
-        ++argp;
+        *argp++ = Variant(static_cast<int32_t>(*paramp));
+        count = *paramp * returnType.getSize();
         ++paramp;
         break;
     case Ent::SpecUuid:
@@ -285,10 +259,9 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             throw SystemException<EFAULT>();
         }
-        argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-        argp->cls = Param::PTR;
+        ptr = *reinterpret_cast<void**>(paramp);
+        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
         count = returnType.getSize();
-        ++argp;
         ++paramp;
         break;
     case Ent::TypeArray:
@@ -297,10 +270,9 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             throw SystemException<EFAULT>();
         }
-        argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-        argp->cls = Param::PTR;
+        ptr = *reinterpret_cast<void**>(paramp);
+        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
         count = returnType.getSize();
-        ++argp;
         ++paramp;
         break;
     default:
@@ -317,202 +289,46 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     {
         Reflect::Parameter param(method.getParameter(i));
         Reflect::Type type(param.getType());
+        assert(param.isInput());
 
-        ptr = 0;
-        count = 0;
+        const void* ptr = 0;
+        int count = 0;
 
-        switch (type.getType())
+        u32 entType = type.getType();
+        u32 stackBytes;
+        switch (entType)
         {
-        case Ent::SpecAny:  // XXX x86 specific
-        case Ent::SpecBool:
-        case Ent::SpecChar:
-        case Ent::SpecWChar:
-        case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
-        case Ent::SpecU8:
-        case Ent::SpecU16:
-        case Ent::SpecU32:
-            if (param.isInput())
-            {
-                if (!isValid(paramp, sizeof(int)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->s32 = *paramp;
-                argp->cls = Param::S32;
-                ++paramp;
-            }
-            else
-            {
-                if (!isValid(reinterpret_cast<int**>(paramp), sizeof(int**)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->ptr = ptr = *reinterpret_cast<int**>(paramp);
-                argp->cls = Param::PTR;
-                ++paramp;
-            }
-            break;
         case Ent::SpecS64:
         case Ent::SpecU64:
-            if (param.isInput())
-            {
-                if (!isValid(reinterpret_cast<long long*>(paramp), sizeof(long long)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->s64 = *reinterpret_cast<long long*>(paramp);
-                argp->cls = Param::S64;
-                paramp += 2;
-            }
-            else
-            {
-                if (!isValid(reinterpret_cast<long long**>(paramp), sizeof(long long**)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->ptr = ptr = *reinterpret_cast<long long**>(paramp);
-                argp->cls = Param::PTR;
-                ++paramp;
-            }
-            break;
-        case Ent::SpecF32:
-            if (param.isInput())
-            {
-                if (!isValid(reinterpret_cast<float*>(paramp), sizeof(float)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->f32 = *reinterpret_cast<float*>(paramp);
-                argp->cls = Param::F32;
-                ++paramp;
-            }
-            else
-            {
-                if (!isValid(reinterpret_cast<float**>(paramp), sizeof(float**)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->ptr = ptr = *reinterpret_cast<float**>(paramp);
-                argp->cls = Param::PTR;
-                ++paramp;
-            }
-            break;
         case Ent::SpecF64:
-            if (param.isInput())
-            {
-                if (!isValid(reinterpret_cast<double*>(paramp), sizeof(double)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->f64 = *reinterpret_cast<double*>(paramp);
-                argp->cls = Param::F64;
-                paramp += 2;
-            }
-            else
-            {
-                if (!isValid(reinterpret_cast<double**>(paramp), sizeof(double**)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->ptr = ptr = *reinterpret_cast<double**>(paramp);
-                argp->cls = Param::PTR;
-                ++paramp;
-            }
-            break;
-        case Ent::SpecString:
-            if (!isValid(reinterpret_cast<char**>(paramp), sizeof(char*)))
-            {
-                throw SystemException<EFAULT>();
-            }
-            argp->ptr = ptr = *reinterpret_cast<char**>(paramp);
-            argp->cls = Param::PTR;
-            ++paramp;
-            if (param.isInput())
-            {
-                count = sizeof(char);       // XXX check string length?
-            }
-            else
-            {
-                if (!isValid(paramp, sizeof(int)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->s32 = count = *paramp;
-                argp->cls = Param::S32;
-                ++paramp;
-            }
-            break;
-        case Ent::SpecWString:
-            if (!isValid(reinterpret_cast<wchar_t**>(paramp), sizeof(wchar_t*)))
-            {
-                throw SystemException<EFAULT>();
-            }
-            argp->ptr = ptr = *reinterpret_cast<wchar_t**>(paramp);
-            argp->cls = Param::PTR;
-            ++paramp;
-            if (param.isInput())
-            {
-                count = sizeof(wchar_t);    // XXX check string length?
-            }
-            else
-            {
-                if (!isValid(paramp, sizeof(int)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->s32 = *paramp;
-                argp->cls = Param::S32;
-                count = sizeof(wchar_t) * argp->s32;
-                ++paramp;
-            }
-            break;
         case Ent::TypeSequence:
-            // xxx* buf, int len, ...
-            if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
-            {
-                throw SystemException<EFAULT>();
-            }
-            argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-            argp->cls = Param::PTR;
-            ++argp;
-            ++paramp;
-            if (!isValid(paramp, sizeof(int)))
-            {
-                throw SystemException<EFAULT>();
-            }
-            argp->s32 = *paramp;
-            argp->cls = Param::S32;
-            count = type.getSize() * argp->s32;
-            ++paramp;
+            stackBytes = 8;
             break;
-        case Ent::SpecUuid:         // Guid* guid, ...
-        case Ent::TypeStructure:    // struct* buf, ...
-        case Ent::TypeArray:        // xxx[x] buf, ...
-            if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
-            {
-                throw SystemException<EFAULT>();
-            }
-            argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-            argp->cls = Param::PTR;
-            count = type.getSize();
-            ++paramp;
+        case Ent::SpecVariant:
+            stackBytes = sizeof(VariantBase);
             break;
-        case Ent::TypeInterface:
-            iid = type.getInterface().getIid();
-            // FALL THROUGH
-        case Ent::SpecObject:
-            if (param.isInput())
+        default:
+            stackBytes = 4;
+            break;
+        }
+        if (!isValid(paramp, stackBytes))
+        {
+            throw SystemException<EFAULT>();
+        }
+
+        switch (entType)
+        {
+        case Ent::SpecVariant:
+            *argp = Variant(*reinterpret_cast<VariantBase*>(paramp));
+            paramp += sizeof(VariantBase) / sizeof(int);
+            switch (argp->getType())
             {
-                if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
-                {
-                    throw SystemException<EFAULT>();
-                }
-                argp->ptr = ptr = *reinterpret_cast<void**>(paramp);
-                argp->cls = Param::PTR;
-                ++paramp;
-                if (void** ip = reinterpret_cast<void**>(ptr))
+            case Variant::TypeString:
+                ptr = static_cast<const char*>(*argp);
+                count = sizeof(char);       // XXX check string length?
+                break;
+            case Variant::TypeObject:
+                if (void** ip = *reinterpret_cast<void***>(static_cast<IInterface*>(*argp)))
                 {
                     if (base <= ip && ip < base + INTERFACE_POINTER_MAX)
                     {
@@ -523,7 +339,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                             throw SystemException<EINVAL>();
                         }
                         inputProxies[i] = proxy;
-                        argp->ptr = reinterpret_cast<void*>(inputProxies[i]->getObject());
+                        *argp = Variant(static_cast<IInterface*>(inputProxies[i]->getObject()));
                     }
                     else    // XXX Check range
                     {
@@ -537,19 +353,112 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         // Note the reference count of the created upcall proxy must
                         // be decremented by one at the end of this system call.
                         upcallProxies[i] = &upcallTable[n];
-                        argp->ptr = &(broker.getInterfaceTable())[n];
-                        if (log)
-                        {
-                            esReport(" = %p", ip);
-                        }
+                        *argp = Variant(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
                     }
                 }
-                ptr = 0;
+                else
+                {
+                    *argp = Variant(static_cast<IInterface*>(0));
+                }
+                argp->makeVariant();
+                break;
+            }
+            break;
+        case Ent::SpecBool:
+            *argp = Variant(static_cast<bool>(*paramp++));
+            break;
+        case Ent::SpecAny:
+            *argp = Variant(static_cast<uint32_t>(*paramp++)); // x86 only
+            break;
+        case Ent::SpecS16:
+            *argp = Variant(static_cast<int16_t>(*paramp++));
+            break;
+        case Ent::SpecS32:
+            *argp = Variant(static_cast<int32_t>(*paramp++));
+            break;
+        case Ent::SpecS8:
+        case Ent::SpecU8:
+            *argp = Variant(static_cast<uint8_t>(*paramp++));
+            break;
+        case Ent::SpecU16:
+            *argp = Variant(static_cast<uint16_t>(*paramp++));
+            break;
+        case Ent::SpecU32:
+            *argp = Variant(static_cast<uint32_t>(*paramp++));
+            break;
+        case Ent::SpecS64:
+            *argp = Variant(*reinterpret_cast<int64_t*>(paramp));
+            paramp += 2;
+            break;
+        case Ent::SpecU64:
+            *argp = Variant(*reinterpret_cast<uint64_t*>(paramp));
+            paramp += 2;
+            break;
+        case Ent::SpecF32:
+            *argp = Variant(*reinterpret_cast<float*>(paramp++));
+            break;
+        case Ent::SpecF64:
+            *argp = Variant(*reinterpret_cast<double*>(paramp));
+            paramp += 2;
+            break;
+        case Ent::SpecString:
+            ptr = *reinterpret_cast<void**>(paramp);
+            *argp = Variant(static_cast<const char*>(ptr));
+            ++paramp;
+            count = sizeof(char);       // XXX check string length?
+            break;
+        case Ent::TypeSequence:
+            // xxx* buf, int len, ...
+            ptr = *reinterpret_cast<void**>(paramp);
+            *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+            ++paramp;
+            *argp = Variant(static_cast<int32_t>(*paramp));
+            count = *paramp * type.getSize();
+            ++paramp;
+            break;
+        case Ent::SpecUuid:         // Guid* guid, ...
+        case Ent::TypeStructure:    // struct* buf, ...
+        case Ent::TypeArray:        // xxx[x] buf, ...
+            ptr = *reinterpret_cast<void**>(paramp);
+            *argp = Variant(reinterpret_cast<intptr_t>(ptr));
+            count = type.getSize();
+            ++paramp;
+            break;
+        case Ent::TypeInterface:
+            iid = type.getInterface().getIid();
+            // FALL THROUGH
+        case Ent::SpecObject:
+            if (void** ip = *reinterpret_cast<void***>(paramp++))
+            {
+                if (base <= ip && ip < base + INTERFACE_POINTER_MAX)
+                {
+                    unsigned interfaceNumber(ip - base);
+                    Handle<SyscallProxy> proxy(&syscallTable[interfaceNumber], true);
+                    if (!proxy->isValid())
+                    {
+                        throw SystemException<EINVAL>();
+                    }
+                    inputProxies[i] = proxy;
+                    *argp = Variant(static_cast<IInterface*>(inputProxies[i]->getObject()));
+                }
+                else    // XXX Check range
+                {
+                    // Allocate an entry in the upcall table and set the
+                    // interface pointer to the broker for the upcall table.
+                    int n = set(this, (IInterface*) ip, iid, false);
+                    if (n < 0)
+                    {
+                        throw SystemException<ENFILE>();
+                    }
+                    // Note the reference count of the created upcall proxy must
+                    // be decremented by one at the end of this system call.
+                    upcallProxies[i] = &upcallTable[n];
+                    *argp = Variant(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
+                }
             }
             else
             {
-                // The output interface pointer parameter is no longer supported.
-                throw SystemException<EINVAL>();
+                *argp = Variant(static_cast<IInterface*>(0));
             }
             break;
         default:
@@ -562,9 +471,9 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             throw SystemException<EFAULT>();
         }
 
-        if (type.getType() == Ent::SpecUuid && param.isInput())
+        if (type.getType() == Ent::SpecUuid)
         {
-            iid = *static_cast<Guid*>(ptr);
+            iid = *static_cast<const Guid*>(ptr);
         }
 
         if (log && i + 1 < method.getParameterCount())
@@ -580,61 +489,71 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     // Invoke method
     int argc = argp - argv;
-    long long rc;
+    Variant result;
     switch (returnType.getType())
     {
-    case Ent::SpecAny:  // XXX x86 specific
     case Ent::SpecBool:
+        result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
+        break;
     case Ent::SpecChar:
-    case Ent::SpecWChar:
     case Ent::SpecS8:
-    case Ent::SpecS16:
-    case Ent::SpecS32:
     case Ent::SpecU8:
+        result = apply(argc, argv, (uint8_t (*)()) ((*object)[methodNumber]));
+        break;
+    case Ent::SpecWChar:
+    case Ent::SpecS16:
+        result = apply(argc, argv, (int16_t (*)()) ((*object)[methodNumber]));
+        break;
     case Ent::SpecU16:
+        result = apply(argc, argv, (uint16_t (*)()) ((*object)[methodNumber]));
+        break;
+    case Ent::SpecS32:
+        result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
+        break;
+    case Ent::SpecAny:  // XXX x86 specific
     case Ent::SpecU32:
-        rc = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
+        result = apply(argc, argv, (uint32_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::SpecS64:
+        result = apply(argc, argv, (int64_t (*)()) ((*object)[methodNumber]));
+        break;
     case Ent::SpecU64:
-        rc = applyS64(argc, argv, (s64 (*)()) ((*object)[methodNumber]));
+        result = apply(argc, argv, (uint64_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::SpecF32:
-        applyF32(argc, argv, (f32 (*)()) ((*object)[methodNumber]));    // XXX
+        result = apply(argc, argv, (float (*)()) ((*object)[methodNumber]));
         break;
     case Ent::SpecF64:
-        applyF64(argc, argv, (f64 (*)()) ((*object)[methodNumber]));    // XXX
+        result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
         break;
     case Ent::SpecString:
-    case Ent::SpecWString:
     case Ent::TypeSequence:
-        rc = applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
+        result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
+        break;
+    case Ent::TypeArray:
+    case Ent::SpecVoid:
+        apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::TypeInterface:
         iid = returnType.getInterface().getIid();
         // FALL THROUGH
     case Ent::SpecObject:
-        rc = (long) applyPTR(argc, argv, (const void* (*)()) ((*object)[methodNumber]));
-        if (void* ip = reinterpret_cast<void*>(rc))
+        result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
+        if (void* ip = static_cast<IInterface*>(result))
         {
             int n = set(syscallTable, ip, iid, true);
             if (0 <= n)
             {
-                rc = reinterpret_cast<long>(&base[n]);
+                result = Variant(reinterpret_cast<IInterface*>(&base[n]));
             }
             else
             {
                 IInterface* object(static_cast<IInterface*>(ip));
                 object->release();
-                rc = 0;
+                result = Variant(static_cast<IInterface*>(0));
                 throw SystemException<EMFILE>();
             }
         }
-        break;
-    case Ent::TypeArray:
-    case Ent::SpecVoid:
-        applyS32(argc, argv, (s32 (*)()) ((*object)[methodNumber]));
-        rc = 0;
         break;
     }
 
@@ -648,7 +567,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             count = proxy->addUser();
             break;
         case 4: // tryLock
-            if (rc)
+            if (static_cast<bool>(result))
             {
                 count = proxy->addUser();
             }
@@ -659,5 +578,5 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         }
     }
 
-    return rc;
+    return evaluate(result);
 }

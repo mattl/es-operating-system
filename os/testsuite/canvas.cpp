@@ -238,4 +238,6 @@ int main(int argc, char* argv[])
     System()->unmap(mapping, framebuffer->getSize());
 
     canvas->release();
+
+    esReport("quit canvas.\n");
 }

@@ -20,7 +20,7 @@
 
 #include <es.h>
 #include <es/reflect.h>
-#include <es/apply.h>
+#include <es/variant.h>
 #include <es/base/IInterface.h>
 
 #include "esjs.h"

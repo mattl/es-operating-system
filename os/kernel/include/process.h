@@ -363,6 +363,8 @@ public:
      * @return  error number
      */
     int copyIn(UpcallRecord* record);
+    u8* copyInString(const char* string, u8* esp);
+    IInterface* copyInObject(IInterface* object, Guid& iid);
 
     /** Copies back the input parameters from the server user stack.
      * @return  error number

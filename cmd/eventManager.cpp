@@ -504,17 +504,19 @@ public:
         return (count == sizeof(InputEvent)) ? true : false;
     }
 
-    bool getKeystroke(int* stroke)
+    int getKeystroke()
     {
+        int stroke;
+
         if (!registered)
         {
-            return false;
+            return 0;
         }
 
         Synchronized<IMonitor*> method(monitor);
 
-        int count = keyRing.read(stroke, sizeof(int));
-        return (count == sizeof(int)) ? true : false;
+        int count = keyRing.read(&stroke, sizeof(int));
+        return (count == sizeof(int)) ? stroke : 0;
     }
 
     bool peekKeystroke(int* stroke)

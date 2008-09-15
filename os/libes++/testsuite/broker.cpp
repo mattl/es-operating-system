@@ -101,7 +101,7 @@ long long invoke(void* self, void* base, int method, va_list ap)
         variant = static_cast<Variant*>(self);
         self = va_arg(ap, void*);
         param[0] = Variant(reinterpret_cast<intptr_t>(self));
-        param[1] = va_arg(ap, VariantBase);
+        param[1] = Variant(va_arg(ap, VariantBase));
         *variant = apply(2, param, reinterpret_cast<Variant (*)()>(vptr[method]));
         result = Variant(reinterpret_cast<intptr_t>(variant));
         break;

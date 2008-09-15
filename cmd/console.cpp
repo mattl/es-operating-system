@@ -851,6 +851,7 @@ initializeFreeType(Handle<IFile> font)
 {
     ASSERT(font);
     fontMap = font->getPageable();
+    ASSERT(fontMap);
     long long size = font->getSize();
     fontBuffer = System()->map(0, size,
                              ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
@@ -1249,7 +1250,7 @@ int main(int argc, char* argv[])
         if (console->isAvailable())
         {
             console->displayCursor();
-            if (eventQueue->getKeystroke(&stroke))
+            if (stroke = eventQueue->getKeystroke())
             {
                 letter = stroke & 0xff;
                 console->keyInput(letter); // save a character into the buffer.

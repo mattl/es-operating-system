@@ -244,7 +244,6 @@ int main(int argc, char* argv[])
         report("usage: %s filename\n", argv[0]);
         return EXIT_FAILURE;
     }
-
     report("%s %s\n", argv[0], argv[1]);
 
 #ifdef __es__
