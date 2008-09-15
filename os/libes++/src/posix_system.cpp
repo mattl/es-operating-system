@@ -1944,7 +1944,11 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             *argp = Variant(va_arg(ap, uint64_t));
             break;
         case Ent::SpecF32:
-            *argp = Variant(va_arg(ap, uint32_t));  // XXX work on X86 only probably
+            {
+                // XXX works on X86 only probably
+                uint32_t value = va_arg(ap, uint32_t);
+                *argp = Variant(*reinterpret_cast<float*>(&value));
+            }
             break;
         case Ent::SpecF64:
             *argp = Variant(va_arg(ap, double));
