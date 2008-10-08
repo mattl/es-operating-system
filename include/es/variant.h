@@ -108,25 +108,53 @@ public:
         type = TypeUnsignedShort;
     }
 
-    Variant(int32_t value)
+    // Since int32_t can be either long or int, use int so as not to conflict with constructor for long
+    Variant(int value)
     {
         longValue = value;
         type = TypeLong;
     }
 
-    Variant(uint32_t value)
+    // Since uint32_t can be either long or int, use int so as not to conflict with constructor for unsigned long
+    Variant(unsigned int value)
     {
         unsignedLongValue = value;
         type = TypeUnsignedLong;
     }
 
-    Variant(int64_t value)
+    // To support constants declared with intptr_t, constructor for long is necessary.
+    Variant(long value)
+    {
+#if 2147483647L < LONG_MAX    
+        longLongValue = value;
+        type = TypeLongLong;
+#else
+        longValue = value;
+        type = TypeLong;
+#endif
+    }
+
+    // To support constants declared with uintptr_t, constructor for long is necessary.
+    Variant(unsigned long value)
+    {
+#if 4294967295UL < ULONG_MAX
+        unsignedLongValue = value;
+        type = TypeUnsignedLong;
+#else
+        unsignedLongValue = value;
+        type = TypeUnsignedLong;
+#endif
+    }
+
+    // To support constants declared with LL, long long variant cannot be int64_t.
+    Variant(long long value)
     {
         longLongValue = value;
         type = TypeLongLong;
     }
 
-    Variant(uint64_t value)
+    // To support constants declared with LLu, long long variant cannot be uint64_t.
+    Variant(unsigned long long value)
     {
         unsignedLongLongValue = value;
         type = TypeUnsignedLongLong;

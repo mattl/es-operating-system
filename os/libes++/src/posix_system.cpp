@@ -2114,7 +2114,7 @@ void* System::servant(void* param)
     int* fdmax;
     int s;
 
-    epfd = (int) param;
+    epfd = reinterpret_cast<intptr_t>(param);
     socketMap = new std::map<pid_t, int>;   // TODO clean up after thread termination
     RpcStack::init();
     for (;;)
