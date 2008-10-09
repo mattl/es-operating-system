@@ -44,53 +44,9 @@
 _Z5applyiP7VariantPFS_vE:
         pushl   %ebp
         movl    %esp, %ebp
-        movl    12(%ebp), %ecx  // argc
-
-        andl    %ecx, %ecx
-        jz      2f
-        movl    %ecx, %eax
-        movl    VSIZE, %edx
-        mull    %edx
-        movl    16(%ebp), %edx  // argv
-        addl    %edx, %eax
-0:                              // while
-        subl    VSIZE, %eax
-        movl    VTYPE(%eax), %edx
-
-        testl   %edx, %edx
-        jns     3f
-        // push Variatn as it is
-        andl    $0x7ffffff, %edx
-        pushl   %edx
-        pushl   4(%eax)
-        pushl   0(%eax)
-
-        loop    0b
-        jmp     2f
-
-3:
-        cmpl    VS64, %edx
-        je      1f
-        cmpl    VU64, %edx
-        je      1f
-        cmpl    VDBL, %edx
-        je      1f
-        pushl   0(%eax)
-        loop    0b
-        jmp     2f
-1:
-        pushl   4(%eax)
-        pushl   0(%eax)
-        loop    0b
-2:                              // break
-        pushl   8(%ebp)         // pointer to the return value
-        movl    20(%ebp), %edx
-        call    *%edx
-
         movl    8(%ebp), %eax   // pointer to the return value
-        movl    %ebp, %esp
-        popl    %ebp
-        ret
+        movl    VVARIANT, VTYPE(%eax)
+        jmp     apply
 
 // Variant apply(int argc, Variant* argv, bool (*function)());
         .globl _Z5applyiP7VariantPFbvE
@@ -208,41 +164,43 @@ apply:
         movl    12(%ebp), %ecx  // argc
         andl    %ecx, %ecx
         jz      break
-        movl    %ecx, %eax
-        movl    VSIZE, %edx
-        mull    %edx
-        movl    16(%ebp), %edx  // argv
-        addl    %edx, %eax
+        leal    (%ecx, %ecx, 2), %eax   // %eax = 3 * %ecx
+        sall    $2, %eax                // %eax = VSIZE(3 * 4) * %ecx
+        addl    16(%ebp), %eax          // %eax = argv + VSIZE(12) * %ecx
 while:
         subl    VSIZE, %eax
         movl    VTYPE(%eax), %edx
-
         testl   %edx, %edx
         jns     0f
-        // push Variatn as it is
-        andl    $0x7ffffff, %edx
+        // Push Variant as it is
+        andl    $0x7fffffff, %edx
         pushl   %edx
         pushl   4(%eax)
         pushl   0(%eax)
         loop    while
         jmp     break
-
 0:
-        cmpl    VBOOL, %edx
-        je      1f
-        cmpl    VU8, %edx
-        je      1f
-        cmpl    VS16, %edx
-        je      2f
-        cmpl    VU16, %edx
-        je      2f
-        cmpl    VS64, %edx
-        je      3f
-        cmpl    VU64, %edx
-        je      3f
-        cmpl    VDBL, %edx
-        je      3f
-        jmp     4f
+        cmpl    VGUID, %edx
+        ja      4f
+        jmp     *0f(,%edx,4)
+        .section        .rodata
+        .align 4
+0:
+        .long   4f      // any XXX
+        .long   1f      // bool
+        .long   1f      // u8
+        .long   2f      // s16
+        .long   2f      // u16
+        .long   4f      // s32
+        .long   4f      // u32
+        .long   3f      // s64
+        .long   3f      // u64
+        .long   4f      // flt
+        .long   3f      // dbl
+        .long   4f      // string
+        .long   4f      // object
+        .long   4f      // guid
+        .text
 1:
         movzbl  (%eax), %edx
         pushl   %edx
@@ -260,14 +218,23 @@ while:
         loop    while
 break:
 
-        movl    20(%ebp), %edx
-        call    *%edx
+        movl    8(%ebp), %eax   // pointer to the return value
+        movl    20(%ebp), %edx  // pointer to the function
+        cmpl    VVARIANT, VTYPE(%eax)
+        jne     0f
 
+        // variant function
+        pushl   %eax
+        call    *%edx
+        leave
+        ret
+
+0:      // non-variant function
+        call    *%edx
         movl    8(%ebp), %ecx   // pointer to the return value
         movl    %eax, 0(%ecx)
         movl    %edx, 4(%ecx)
         movl    VTYPE(%ecx), %edx
-
         cmpl    VFLT, %edx
         jne     1f
         fstps   (%ecx)
@@ -278,8 +245,7 @@ break:
         fstpl   (%ecx)
 2:
         movl    %ecx, %eax
-        movl    %ebp, %esp
-        popl    %ebp
+        leave
         ret
 
 // long long evaluate(const Variant& variant);
@@ -288,46 +254,48 @@ _Z8evaluateRK7Variant:
         pushl   %ebp
         movl    %esp, %ebp
         movl    0x8(%ebp),%eax
-
         movl    VTYPE(%eax), %edx
-        cmpl    VBOOL, %edx
-        je      1f
-        cmpl    VU8, %edx
-        je      1f
-        cmpl    VS16, %edx
-        je      2f
-        cmpl    VU16, %edx
-        je      2f
-        cmpl    VFLT, %edx
-        je      3f
-        cmpl    VDBL, %edx
-        je      4f
-        cmpl    VS64, %edx
-        je      5f
-        cmpl    VU64, %edx
-        je      5f
-        jmp     6f
-
+        cmpl    VGUID, %edx
+        ja      6f
+        jmp     *0f(,%edx,4)
+        .section        .rodata
+        .align 4
+0:
+        .long   6f      // any XXX
+        .long   1f      // bool
+        .long   1f      // u8
+        .long   2f      // s16
+        .long   2f      // u16
+        .long   6f      // s32
+        .long   6f      // u32
+        .long   5f      // s64
+        .long   5f      // u64
+        .long   3f      // flt
+        .long   4f      // dbl
+        .long   6f      // string
+        .long   6f      // object
+        .text
 1:      // return bool, uint8_t
         movzbl  (%eax), %eax
-        jmp     return
+        leave
+        ret
 2:      // return int16_t, uint16_t
         movzwl  (%eax), %eax
-        jmp     return
+        leave
+        ret
 3:      // return float
         flds    (%eax)
-        jmp     return
+        leave
+        ret
 4:      // return double
         fldl    (%eax)
-        jmp     return
+        leave
+        ret
 5:      // return int64_t, uint64_t
         movl    0x4(%eax), %edx
 6:      // return int32_t, uint32_t, *
         movl    (%eax), %eax
-
-return:
-        movl    %ebp, %esp
-        popl    %ebp
+        leave
         ret
 
 #endif  // __i386__

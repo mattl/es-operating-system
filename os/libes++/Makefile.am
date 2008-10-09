@@ -36,8 +36,6 @@ cpp_source_files = \
 	src/ring.cpp
 
 rpc_source_files = \
-	src/apply.cpp \
-	src/apply386.S \
 	src/interfaceStore.cpp
 	
 if I386
