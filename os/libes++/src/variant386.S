@@ -171,7 +171,7 @@ while:
         subl    VSIZE, %eax
         movl    VTYPE(%eax), %edx
         testl   %edx, %edx
-        jns     0f
+        jns     0f                      // Test VVARIANT flag
         // Push Variant as it is
         andl    $0x7fffffff, %edx
         pushl   %edx

@@ -125,7 +125,7 @@ public:
     // To support constants declared with intptr_t, constructor for long is necessary.
     Variant(long value)
     {
-#if 2147483647L < LONG_MAX    
+#if 2147483647L < LONG_MAX
         longLongValue = value;
         type = TypeLongLong;
 #else

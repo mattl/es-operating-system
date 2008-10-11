@@ -83,14 +83,15 @@ Variant returnVariant(int x, int y)
     return Variant(x * y);
 }
 
-uint8_t returnOctet()
+uint8_t returnOctet(int n1, int n2, int n3, int n4, int n5, Variant v)
 {
+    printf("v: type = %d (%d)\n", v.getType(), static_cast<int32_t>(v));
     return 'c';
 }
 
-float returnFloat()
+float returnFloat(bool x)
 {
-    return 10.0f;
+    return !x ? 10.0f : 20.0f;
 }
 
 long long returnLongLong(int a, double x0, int b, int c,
@@ -150,11 +151,19 @@ int main()
     assert(value.getType() == Variant::TypeLongLong);
     printf("int64 value: %lld\n", static_cast<int64_t>(value));
 
-    value = apply(0, NULL, returnFloat);
+    param[0] = false;
+    value = apply(1, param, reinterpret_cast<float (*)()>(returnFloat));
     assert(value.getType() == Variant::TypeFloat);
     printf("float value: %g\n", static_cast<float>(value));
 
-    value = apply(0, NULL, returnOctet);
+    param[0] = Variant(1);
+    param[1] = Variant(2);
+    param[2] = Variant(3);
+    param[3] = Variant(4);
+    param[4] = Variant(5);
+    param[5] = Variant(37);
+    param[5].makeVariant();
+    value = apply(6, param, reinterpret_cast<uint8_t (*)()>(returnOctet));
     assert(value.getType() == Variant::TypeOctet);
     printf("octet value: %c\n", static_cast<uint8_t>(value));
 

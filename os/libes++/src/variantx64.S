@@ -43,11 +43,12 @@
 // INTEGER: %edi, %rsi, %rdx, %rcx, %r8, %r9
 // SSE: %xmm0 to %xmm7
 // Return value (Variant): %rax, %rdx
-// temporary registers: %r10, %r11, %xmm8-%xmm15
+// temporary registers: %rax, %r10, %r11, %xmm8-%xmm15
 // callee-saved registers: %rbx, %rbp, %r12-%r15
 // %r10: gpr count
 // %r11: fpr count
 // %r12: argc
+// %r13: type
 
 // Variant apply(int argc, Variant* argv, Variant (*function)());
         .globl  _Z5applyiP7VariantPFS_vE
@@ -55,6 +56,8 @@ _Z5applyiP7VariantPFS_vE:
 
 apply:
         pushq   %r12
+        pushq   %r13
+        pushq   %r14
         pushq   %rbp
         movq    %rsp, %rbp
 
@@ -69,15 +72,22 @@ apply:
 
 while:
         // Check parameter class
-        cmpl    VFLT, VTYPE(%rax)
+        movl    VTYPE(%rax), %r13d
+        testl   %r13d, %r13d
+        js      variant         // Test VVARIANT flag
+        cmpl    VFLT, %r13d
         jz      fpr32
-        cmpl    VDBL, VTYPE(%rax)
+        cmpl    VDBL, %r13d
         jz      fpr64
-
 gpr:
         incl    %r10d
         cmpl    $6, %r10d
-        jg      next           // Push the argument on the stack later
+        jg      next            // Push the argument on the stack later
+        cmpl    VBOOL, %r13d
+        jz      bv
+        movq    (%rax), %r13
+        jmp     *0f(,%r10,8)
+bv:     movzbq  (%rax), %r13
         jmp     *0f(,%r10,8)
 0:
         .quad   0
@@ -87,23 +97,53 @@ gpr:
         .quad   4f
         .quad   5f
         .quad   6f
+1:      movq    %r13, %rdi
+        jmp     next
+2:      movq    %r13, %rsi
+        jmp     next
+3:      movq    %r13, %rdx
+        jmp     next
+4:      movq    %r13, %rcx
+        jmp     next
+5:      movq    %r13, %r8
+        jmp	next
+6:      movq    %r13, %r9
+        jmp     next
+
+variant:
+        addl    $2, %r10d
+        cmpl    $6, %r10d
+        jg      next            // Push the argument on the stack later
+        andl    $0x7fffffff, %r13d
+        jmp     *0f(,%r10,8)
+0:
+        .quad   0
+        .quad   0
+        .quad   1f
+        .quad   2f
+        .quad   3f
+        .quad   4f
+        .quad   5f
 1:      movq    (%rax), %rdi
+        movl    %r13d, %esi
         jmp     next
 2:      movq    (%rax), %rsi
+        movl    %r13d, %edx
         jmp     next
 3:      movq    (%rax), %rdx
+        movl    %r13d, %ecx
         jmp     next
 4:      movq    (%rax), %rcx
+        movl    %r13d, %r8d
         jmp     next
 5:      movq    (%rax), %r8
-        jmp	next
-6:      movq    (%rax), %r9
+        movl    %r13d, %r9d
         jmp     next
 
 fpr32:
         incl    %r11d
         cmpl    $8, %r11d
-        jg      next           // Push the argument on the stack later
+        jg      next            // Push the argument on the stack later
         jmp     *0f(,%r11,8)
 0:
         .quad   0
@@ -135,7 +175,7 @@ fpr32:
 fpr64:
         incl    %r11d
         cmpl    $8, %r11d
-        jg      next           // Push the argument on the stack later
+        jg      next            // Push the argument on the stack later
         jmp     *0f(,%r11,8)
 0:
         .quad   0
@@ -193,9 +233,12 @@ push_argments:
         jmp     invoke
 0:
         // Check parameter class
-        cmpl    VFLT, VTYPE(%rax)
+        movl    VTYPE(%rax), %r13d
+        testl   %r13d, %r13d
+        js      2f                      // Test VVARIANT flag
+        cmpl    VFLT, %r13d
         jz      1f
-        cmpl    VDBL, VTYPE(%rax)
+        cmpl    VDBL, %r13d
         jz      1f
         // GPR
         testl   %r10d, %r10d
@@ -208,6 +251,16 @@ push_argments:
         jle     skip
         pushq   (%rax)
         decl    %r11d
+        jmp     skip
+2:      // variant
+        testl   %r10d, %r10d
+        jle     skip
+        andl    $0x7fffffff, %r13d
+        // At this point, %r10d must be greater than one
+        pushq   %r13
+        pushq   (%rax)
+        subl    $2, %r10d
+
 skip:
         subq    VSIZE, %rax
         jmp     push_argments
@@ -216,6 +269,8 @@ invoke:
         movq    -8(%rbp), %rax
         call    *%rax
         leave
+        popq    %r14
+        popq    %r13
         popq    %r12
         ret
         // End of apply
@@ -372,11 +427,11 @@ _Z8evaluateRK7Variant:
         .quad   4f      // string
         .quad   4f      // object
 1:      // return bool, uint8_t
-        movzbl  (%rdi), %eax
+        movzbq  (%rdi), %rax
         leave
         ret
 2:      // return int16_t, uint16_t
-        movzwl  (%rdi), %eax
+        movzwq  (%rdi), %rax
         leave
         ret
 3:      // return int32_t, uint32_t, *
