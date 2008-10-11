@@ -238,6 +238,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
                 throw getErrorInstance("TypeError");
             }
             *argp = Variant(iidp);
+            riid = *iidp;
             ++iidp;
             break;
         case Ent::TypeStructure:
