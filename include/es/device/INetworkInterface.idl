@@ -65,7 +65,7 @@ module es
         /** Gets the MAC address of this network interface.
          * @param mac the MAC address.
          */
-        void getMacAddress(out Mac mac);
+        readonly attribute Mac macAddress;
 
         /** Forbids this network interface to receive Ethernet frames sent to the
          * specified multicast MAC address.
