@@ -67,8 +67,7 @@ void* test1(void*)
     monitor[0]->notify();
     monitor[0]->unlock();
 
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
     TEST(thread->getState() == IThread::TERMINATED);
     thread->release();
     TEST(val == 0);
@@ -88,8 +87,7 @@ int main()
                                   0,                // argument to thread function
                                   IThread::Normal); // priority
     thread1->start();
-    void* val;
-    thread1->join(&val);
+    void* val = thread1->join();
     TEST(val == 0);
     long count;
     count = thread1->release();

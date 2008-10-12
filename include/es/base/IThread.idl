@@ -56,7 +56,7 @@ module es
 
         /** Waits for this thread to die.
          */
-        boolean join(out any rval);
+        any join();
 
         /** Cancels this thread.
          */

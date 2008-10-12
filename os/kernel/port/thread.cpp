@@ -258,20 +258,16 @@ condJoin(int)
     return (state == TERMINATED) ? true : false;
 }
 
-bool Thread::
-join(void** rval)
+void* Thread::
+join()
 {
     DelegateTemplate<Thread> d(this, &Thread::condJoin);
     joinPoint.sleep(&d);
     if (state == TERMINATED)
     {
-        if (rval)
-        {
-            *rval = const_cast<void*>(val); // Copy exit value
-        }
-        return true;
+        return const_cast<void*>(val);
     }
-    return false;
+    return NULL;
 }
 
 int Thread::

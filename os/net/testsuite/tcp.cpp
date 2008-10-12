@@ -149,8 +149,7 @@ int main()
     esReport("close() by main()\n");
     visualize();
 
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
 
     esReport("done.\n");
 }

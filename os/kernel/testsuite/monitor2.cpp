@@ -80,7 +80,7 @@ void* test2(void* id)
                         IThread::Normal); // priority
     thread->start();
 
-    thread->join(&val);
+    val = thread->join();
     thread->release();
     TEST(val == 0);
     count = monitor[0]->release();
@@ -108,7 +108,7 @@ void* test2(void* id)
     monitor[0]->unlock();
     monitor[1]->unlock();
 
-    thread->join(&val);
+    val = thread->join();
     thread->release();
     TEST(val == 0);
     count = monitor[0]->release();
@@ -131,8 +131,7 @@ int main()
                                   id,               // argument to thread function
                                   IThread::Normal); // priority
     thread2->start();
-    void* val;
-    thread2->join(&val);
+    void* val = thread2->join();
     TEST(val == 0);
     long count;
     count = thread2->release();

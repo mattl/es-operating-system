@@ -118,28 +118,25 @@ setPriority(int priority)
     this->priority = priority;
 }
 
-bool Thread::
-join(void** rval)
+void* Thread::
+join()
 {
     Thread* current = Thread::getCurrentThread();
+    void* rval;
 
     switch (getState())
     {
       case NEW:
-        return false;
+        return NULL;
       case TERMINATED:
-        if (rval)
-        {
-            *rval = const_cast<void*>(errorCode);
-        }
-        return true;
+        return const_cast<void*>(errorCode);
       default:
         addRef();
         current->state = IThread::WAITING;
-        int err = pthread_join(thread, rval);
+        int err = pthread_join(thread, &rval);
         current->state = IThread::RUNNABLE;
         release();
-        return (!err) ? true : false;
+        return (!err) ? rval : NULL;
     }
 }
 

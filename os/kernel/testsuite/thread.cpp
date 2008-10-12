@@ -40,8 +40,7 @@ void* test0(void*)
 
     thread->start();
     //TEST(thread->getState() == IThread::RUNNABLE);
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
     TEST(val == 0);
     TEST(thread->getState() == IThread::TERMINATED);
     thread->release();
@@ -71,8 +70,7 @@ int main()
     thread->start();
     thread->setPriority(IThread::Normal + 1);
     TEST(thread->getPriority() == IThread::Normal + 1);
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
     TEST(val == 0);
     TEST(thread->getState() == IThread::TERMINATED);
     thread->release();
@@ -84,7 +82,7 @@ int main()
                         IThread::Lowest); // priority
     thread->start();
     TEST(thread->getState() == IThread::RUNNABLE);
-    thread->join(&val);
+    val = thread->join();
     TEST(val == (void*) &param && *((int*) val) == 11);
     thread->release();
 

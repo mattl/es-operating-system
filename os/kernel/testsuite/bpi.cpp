@@ -97,8 +97,8 @@ int main()
     Lo(0);
 
     void* val;
-    ThreadHi->join(&val);
-    ThreadMid->join(&val);
+    val = ThreadHi->join();
+    val = ThreadMid->join();
 
     ThreadHi->release();
     ThreadMid->release();

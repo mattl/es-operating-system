@@ -57,9 +57,9 @@ int main()
     thread3->start();
     thread4->start();
 
-    thread3->join(&val);
+    val = thread3->join();
     TEST(val == 0);
-    thread4->join(&val);
+    val = thread4->join();
     TEST(val == 0);
 
     long count;

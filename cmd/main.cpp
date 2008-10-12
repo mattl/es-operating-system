@@ -105,8 +105,7 @@ int main(int argc, char* argv[])
     m->notify();
     current->sleep(30000000);
 
-    void* rval;
-    thread->join(&rval);
+    void* rval = thread->join();
     thread->release();
 
     esReport("main(): %x %x %x\n", testA, testB, &testA);

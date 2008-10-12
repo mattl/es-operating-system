@@ -48,8 +48,7 @@ int main()
         esReport("0:[%d]\n", Apic::getLocalApicID());
     }
 
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
     TEST(val == 0);
     thread->release();
 

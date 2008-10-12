@@ -82,8 +82,7 @@ int main()
 
     TEST(memcmp(Buf, Data, 1) == 0);
 
-    void* val;
-    thread->join(&val);
+    void* val = thread->join();
     thread->release();
 
     // fill the buffer.
@@ -114,7 +113,7 @@ int main()
     ret = stream->write(Data, size1 + 1);
     TEST(ret == size1 + 1);
 
-    thread->join(&val);
+    val = thread->join();
     thread->release();
 
     // read all data.

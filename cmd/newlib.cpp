@@ -117,8 +117,7 @@ int main(int argc, char* argv[])
     printf("main: got lock.\n");
     pthread_mutex_unlock(&mutex);
 
-    void* rval;
-    thread->join(&rval);
+    void* rval = thread->join();
     thread->release();
     printf("rval : %p : %p\n", pthread_self(), rval);
 

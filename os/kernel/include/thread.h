@@ -357,7 +357,7 @@ public:
     void start();
     int getPriority();
     void setPriority(int priority);
-    bool join(void** rval);
+    void* join();
     void cancel();
 
     //
