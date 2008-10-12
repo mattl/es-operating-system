@@ -50,12 +50,6 @@ module es
          * @param dx the x-coordinate of this cursor.
          * @param dy the y-coordinate of this cursor.
          */
-        void getPosition(out long x, out long y);
-        /**
-         * Sets the position of this cursor.
-         * @param dx the new x-coordinate of this cursor.
-         * @param dy the new y-coordinate of this cursor.
-         */
         void setPosition(in long x, in long y);
         /**
          * Sets the pattern of this cursor.

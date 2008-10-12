@@ -491,23 +491,26 @@ public:
     //
     // IEventQueue
     //
-    bool getEvent(InputEvent* event)
+    void getEvent(InputEvent* event)
     {
         if (!registered)
         {
-            return false;
+            event->type = EventTypeNone;
+            return;
         }
 
         Synchronized<IMonitor*> method(monitor);
 
         int count = eventRing.read(event, sizeof(InputEvent));
-        return (count == sizeof(InputEvent)) ? true : false;
+        if (count != sizeof(InputEvent))
+        {
+            event->type = EventTypeNone;
+            return;
+        }
     }
 
     int getKeystroke()
     {
-        int stroke;
-
         if (!registered)
         {
             return 0;
@@ -515,21 +518,23 @@ public:
 
         Synchronized<IMonitor*> method(monitor);
 
+        int stroke;
         int count = keyRing.read(&stroke, sizeof(int));
         return (count == sizeof(int)) ? stroke : 0;
     }
 
-    bool peekKeystroke(int* stroke)
+    int peekKeystroke()
     {
         if (!registered)
         {
-            return false;
+            return 0;
         }
 
         Synchronized<IMonitor*> method(monitor);
 
-        int count = keyRing.peek(stroke, sizeof(int));
-        return (count == sizeof(int)) ? true : false;
+        int stroke;
+        int count = keyRing.peek(&stroke, sizeof(int));
+        return (count == sizeof(int)) ? stroke : 0;
     }
 
     unsigned int getButtonState()
@@ -547,15 +552,15 @@ public:
                ((button & 4) ? YellowButtonBit : 0);
     }
 
-    void getMousePoint(int* x, int *y)
+    unsigned int getMousePoint()
     {
-        if (registered)
+        if (!registered)
         {
-            Synchronized<IMonitor*> method(monitor);
-
-            *x = this->x;
-            *y = this->y;
+            return 0;
         }
+
+        Synchronized<IMonitor*> method(monitor);
+        return (x << 16) | y;
     }
 
     bool keyEvent(const void* data, int size)

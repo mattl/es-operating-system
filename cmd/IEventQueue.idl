@@ -95,12 +95,11 @@ module es
             long reserved3; /* reserved for future use */
         };
 
+        readonly attribute InputEvent event;
         readonly attribute long keystroke;
-
-        boolean getEvent(out InputEvent event);
-        boolean peekKeystroke(out long stroke);
-        unsigned long getButtonState();
-        void getMousePoint(out long x, out long y);
+        long peekKeystroke();
+        readonly attribute unsigned long buttonState;
+        readonly attribute unsigned long mousePoint;
         boolean keyEvent(in Buf data);
         boolean mouseEvent(in Buf data);
         boolean wait(in long long timeout);

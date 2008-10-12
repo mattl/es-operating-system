@@ -49,18 +49,23 @@ int main(int argc, char* argv[])
 
     esReport("start client loop.\n");
 
+    unsigned int point;
     int x0;
     int y0;
     int x;
     int y;
-    eventQueue->getMousePoint(&x0, &y0);
+    point = eventQueue->getMousePoint();
+    x0 = point >> 16;
+    y0 = point & 0xffff;
     for (;;)
     {
         if (int stroke = eventQueue->getKeystroke())
         {
             esReport("0x%x\n", stroke);
         }
-        eventQueue->getMousePoint(&x, &y);
+        point = eventQueue->getMousePoint();
+        x = point >> 16;
+        y = point & 0xffff;
         if (x != x0 || y != y0)
         {
             x0 = x;

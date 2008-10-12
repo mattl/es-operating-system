@@ -122,26 +122,24 @@ int synchronizedSignalSemaphoreWithIndex(int semaIndex)
    without event support.
 */
 
-int ioGetKeystroke(void)
+int ioGetKeystroke()
 {
     ioProcessEvents();  // process all pending events
 
     ASSERT(gEventQueue);
-    int stroke;
-    if (gEventQueue->getKeystroke(&stroke))
+    if (int stroke = gEventQueue->getKeystroke())
     {
         return stroke;
     }
     return -1;  // keystroke buffer is empty
 }
 
-int ioPeekKeystroke(void)
+int ioPeekKeystroke()
 {
     ioProcessEvents();  // process all pending events
 
     ASSERT(gEventQueue);
-    int stroke;
-    if (gEventQueue->peekKeystroke(&stroke))
+    if (int stroke = gEventQueue->peekKeystroke())
     {
         return stroke;
     }
@@ -149,7 +147,7 @@ int ioPeekKeystroke(void)
 }
 
 // Return the state of the mouse and modifier buttons
-int ioGetButtonState(void)
+int ioGetButtonState()
 {
     ioProcessEvents();  // process all pending events
 
@@ -158,15 +156,13 @@ int ioGetButtonState(void)
 }
 
 // Return the mouse point two 16-bit positive integers packed into a 32-bit integer
-int ioMousePoint(void)
+// x is high 16 bits; y is low 16 bits
+int ioMousePoint()
 {
     ioProcessEvents();  // process all pending events
 
-    int x;
-    int y;
     ASSERT(gEventQueue);
-    gEventQueue->getMousePoint(&x, &y);
-    return (x << 16) | y;   // x is high 16 bits; y is low 16 bits */
+    return gEventQueue->getMousePoint();
 }
 
 /****************************************************************************/
@@ -176,7 +172,7 @@ int ioMousePoint(void)
 /* Note: In an event driven architecture, ioProcessEvents is obsolete.
    It can be implemented as a no-op since the image will check for
    events in regular intervals. */
-int ioProcessEvents(void)
+int ioProcessEvents()
 {
     /* process Macintosh events, checking for the interrupt key. Return
        true if the interrupt key was pressed. This might simply do nothing
@@ -201,7 +197,8 @@ int ioGetNextEvent(sqInputEvent* event)
     ASSERT(gEventQueue);
 
     IEventQueue::InputEvent inputEvent;
-    if (gEventQueue->getEvent(&inputEvent))
+    gEventQueue->getEvent(&inputEvent);
+    if (inputEvent.type)
     {
         event->type = inputEvent.type;
         event->timeStamp = inputEvent.timeStamp;
@@ -211,7 +208,6 @@ int ioGetNextEvent(sqInputEvent* event)
         event->unused4 = inputEvent.unused4;
         event->unused5 = inputEvent.unused5;
         event->unused6 = inputEvent.unused6;
-
         return 1;
     }
     return -1;
@@ -272,12 +268,12 @@ int ioRelinquishProcessorForMicroseconds(int microSeconds)
     return microSeconds;
 }
 
-int ioForceDisplayUpdate(void)
+int ioForceDisplayUpdate()
 {
     /* does nothing on a Mac */
 }
 
-int ioScreenSize(void)
+int ioScreenSize()
 {
     /* return the screen size as two positive 16-bit integers packed into a 32-bit integer */
     int w = WIDTH, h = HEIGHT;
@@ -285,7 +281,7 @@ int ioScreenSize(void)
     return (w << 16) | (h & 0xFFFF);  /* w is high 16 bits; h is low 16 bits */
 }
 
-int ioScreenDepth(void)
+int ioScreenDepth()
 {
     /* returns the depth of the OS display */
     return 32;
@@ -295,7 +291,6 @@ int ioShowDisplay(
     int dispBitsIndex, int width, int height, int depth,
     int affectedL, int affectedR, int affectedT, int affectedB)
 {
-    int x, y;
     unsigned *dst, *src;
     int offset;
 
@@ -309,8 +304,6 @@ int ioShowDisplay(
     {
         return 1;
     }
-
-    gEventQueue->getMousePoint(&x, &y);
 
     cursor->hide();
     switch (bpp)
@@ -394,18 +387,15 @@ void initInputProcess()
 
     gEventQueue = root->lookup("device/event");
     ASSERT(gEventQueue);
-
-    int x;
-    int y;
-    gEventQueue->getMousePoint(&x, &y);
+    gEventQueue->getMousePoint();
 
     framebuffer = root->lookup("device/framebuffer");
     long long size;
     size = framebuffer->getSize();
     framebufferPtr = System()->map(0, size,
-                                 ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                                 ICurrentProcess::MAP_SHARED,
-                                 framebuffer, 0);
+                                   ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
+                                   ICurrentProcess::MAP_SHARED,
+                                   framebuffer, 0);
     bpp = 8 * (size / (WIDTH * HEIGHT));
 
     cursor = root->lookup("device/cursor");
