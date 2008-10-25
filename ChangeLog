@@ -1,3 +1,14 @@
+2008-10-25 11:49  shiki.okasaka
+
+	* ChangeLog, cmd/configure, cmd/configure.ac,
+	  cmd/squeak-3.7.1/ChangeLog, cmd/squeak-3.7.1/Makefile.in,
+	  cmd/squeak-3.7.1/aclocal.m4, cmd/squeak-3.7.1/configure,
+	  cmd/squeak-3.7.1/configure.ac, configure, configure.ac,
+	  esidl/configure, esidl/configure.ac, esjs/configure,
+	  esjs/configure.ac, init/configure, init/configure.ac,
+	  os/configure, os/configure.ac, os/npapi/configure.ac,
+	  tools/configure, tools/configure.ac: Set version to 0.1.3.
+
 2008-10-25 10:30  shiki.okasaka
 
 	* esjs/src/interface.cpp, os/kernel/include/thread.h,
