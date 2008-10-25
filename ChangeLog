@@ -1,3 +1,507 @@
+2008-10-25 10:30  shiki.okasaka
+
+	* esjs/src/interface.cpp, os/kernel/include/thread.h,
+	  os/kernel/port/syscall.cpp, os/kernel/port/upcall.cpp,
+	  os/libes++/src/posix_system.cpp: Support system call/upcall
+	  methods that return a Variant value.
+
+2008-10-12 12:35  Shiki.Okasaka
+
+	* include/es/device/INetworkInterface.idl:
+	  (NetworkInterface::macAddress) : Revise without using the
+	  deprecated out attribute.
+
+2008-10-12 12:20  Shiki.Okasaka
+
+	* cmd/main.cpp, cmd/newlib.cpp, include/es/base/IThread.idl,
+	  os/kernel/include/posix/core.h, os/kernel/include/thread.h,
+	  os/kernel/port/thread.cpp, os/kernel/posix/posix_thread.cpp,
+	  os/kernel/testsuite/bpi.cpp, os/kernel/testsuite/loopback.cpp,
+	  os/kernel/testsuite/monitor0.cpp,
+	  os/kernel/testsuite/monitor1.cpp,
+	  os/kernel/testsuite/monitor2.cpp,
+	  os/kernel/testsuite/monitor3.cpp, os/kernel/testsuite/thread.cpp,
+	  os/kernel/testsuite/thread_smp.cpp, os/net/testsuite/tcp.cpp:
+	  (Thread::join) : Revise without using the deprecated out
+	  attribute.
+
+2008-10-12 05:35  Shiki.Okasaka
+
+	* cmd/IEventQueue.idl, cmd/eventManager.cpp,
+	  cmd/eventManagerClient.cpp, cmd/squeak-3.7.1/es/vm/sqEsInput.cpp,
+	  include/es/device/ICursor.idl: (Squeak) : Rebuild interface
+	  methods not to use the deprecated out attribute.
+
+2008-10-11 15:24  Shiki.Okasaka
+
+	* esjs/src/interface.cpp: (invoke) : Fix to set the prototype
+	  object specified by the interface ID parameter.
+
+2008-10-11 03:35  Shiki.Okasaka
+
+	* include/es/variant.h, os/libes++/src/variant386.S,
+	  os/libes++/src/variantx64.S, os/libes++/testsuite/variant.cpp:
+	  (apply, evaluate) : Refine x64 version.
+
+2008-10-09 10:56  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/src/apply.cpp, os/libes++/src/apply386.S,
+	  os/libes++/src/variant386.S: (apply, evaluate) : Refine.
+
+2008-10-08 14:14  Shiki.Okasaka
+
+	* include/es/variant.h, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/src/posix_system.cpp,
+	  os/libes++/src/variant.cpp, os/libes++/src/variantx64.S,
+	  os/libes++/testsuite/variant.cpp: (Variant) : Add x86_64 support.
+
+2008-09-15 15:38  shiki.okasaka
+
+	* os/libes++/src/variant386.S: Fix 8-bit and 16-bit parameter
+	  handling.
+
+2008-09-15 14:29  shiki.okasaka
+
+	* os/libes++/src/posix_system.cpp: (callRemote) : Fix SpecF32
+	  parameter handling.
+
+2008-09-15 12:37  shiki.okasaka
+
+	* cmd/IEventQueue.idl, cmd/canvas.cpp, cmd/canvas.h,
+	  cmd/console.cpp, cmd/eventManager.cpp,
+	  cmd/eventManagerClient.cpp, esjs/include/interface.h,
+	  esjs/src/esjs.cpp, esjs/src/interface.cpp, include/es/rpc.h,
+	  include/es/util/ICanvasRenderingContext2D.idl,
+	  os/kernel/include/process.h, os/kernel/port/syscall.cpp,
+	  os/kernel/port/upcall.cpp, os/libes++/include/posix_system.h,
+	  os/libes++/src/posix_system.cpp, os/libes++/src/rpc.cpp,
+	  os/libes++/testsuite/broker.cpp, os/testsuite/canvas.cpp,
+	  os/testsuite/canvas2d.cpp, os/testsuite/canvas2d.h,
+	  os/testsuite/client.cpp: Switch over to Variant from Param.
+	  Revoke the support for the IDL 'out' attribute.
+
+2008-09-14 02:41  shiki.okasaka
+
+	* include/es/variant.h, os/libes++/src/variant386.S,
+	  os/libes++/testsuite/variant.cpp: (Variant) : Add missing
+	  methods.
+
+2008-09-14 01:37  shiki.okasaka
+
+	* include/Makefile.am, include/Makefile.in:
+	  (nobase_include_HEADERS) : Add es/rpc.h.
+
+2008-09-08 08:11  shiki.okasaka
+
+	* Makefile, Makefile.am, Makefile.in, patches/README, setup:
+	  Upgrade to PCRE 7.8
+
+2008-09-08 07:31  shiki.okasaka
+
+	* patches/pcre-7.8.patch: (pcre-7.8.patch) : New.
+
+2008-08-10 16:05  shiki.okasaka
+
+	* include/es/variant.h, os/libes++/src/variant.cpp,
+	  os/libes++/src/variant386.S, os/libes++/testsuite/Makefile.am,
+	  os/libes++/testsuite/Makefile.in,
+	  os/libes++/testsuite/broker.cpp,
+	  os/libes++/testsuite/variant.cpp: (evaluate) : New function for
+	  Variant.
+
+2008-08-10 05:50  Ishibashi.Kenichi
+
+	* esidl/testsuite/23.idl, esidl/testsuite/24.idl,
+	  esjs/testsuite/2000.js: Add test code.
+
+2008-08-10 05:46  Ishibashi.Kenichi
+
+	* include/es/orderedMap.h, include/es/util/IOrderedMap.idl: Add
+	  OrderedMap interface.
+
+2008-08-09 05:33  Ishibashi.Kenichi
+
+	* esidl/include/esidl.h, esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  esidl/src/parser.yy, esidl/src/print.cpp,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  esjs/include/interface.h, esjs/src/global.cpp,
+	  esjs/src/interface.cpp, esjs/testsuite/Makefile.am,
+	  esjs/testsuite/Makefile.in, include/Makefile.am,
+	  include/Makefile.in, include/es/ent.h, include/es/reflect.h,
+	  os/kernel/Makefile.am, os/kernel/Makefile.in,
+	  os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/src/interfaceStore.cpp: Add Index/Name Getter/Setter
+	  support.
+
+2008-08-05 11:15  shiki.okasaka
+
+	* include/es/variant.h, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/src/variant.cpp,
+	  os/libes++/src/variant386.S, os/libes++/testsuite/variant.cpp:
+	  (Variant): Add apply() functions.
+
+2008-07-21 13:53  shiki.okasaka
+
+	* NOTICE: Add a notice about GSoC 2008 students.
+
+2008-07-21 13:24  shiki.okasaka
+
+	* Makefile: Use gcc-4.3.1 and newlib-1.16.0.patch.
+
+2008-07-21 00:46  shiki.okasaka
+
+	* patches/README: (gcc-4.3.1.patch, newlib-1.16.0.patch) : New.
+
+2008-07-21 00:44  shiki.okasaka
+
+	* setup: Build gcc-4.3.1 with newlib-1.16.0.
+
+2008-07-20 22:35  shiki.okasaka
+
+	* Makefile.am, Makefile.in: (gcc-4.3.1.patch, newlib-1.16.0.patch)
+	  : New.
+
+2008-07-20 07:18  vattam.santosh
+
+	* patches/newlib-1.16.0.patch: Newlib 1.16.0 patch
+
+2008-07-15 02:45  shiki.okasaka
+
+	* os/kernel/include/process.h, os/kernel/pc/gdbstub.cpp,
+	  os/kernel/port/malloc.cpp, os/kernel/port/pageTable.cpp,
+	  os/kernel/port/process.cpp, os/kernel/port/upcall.cpp: Fix errors
+	  detected by gcc-4.3.1.
+
+2008-07-15 02:40  shiki.okasaka
+
+	* patches/gcc-4.3.1.patch: New.
+
+2008-07-13 11:36  shiki.okasaka
+
+	* cmd/Makefile.in, cmd/aclocal.m4, cmd/configure,
+	  cmd/testsuite/Makefile.in, configure, esidl/Makefile.in,
+	  esidl/aclocal.m4, esidl/configure, esidl/testsuite/Makefile.in,
+	  esjs/Makefile.in, esjs/aclocal.m4, esjs/configure,
+	  esjs/testsuite/Makefile.in, include/Makefile.in,
+	  init/Makefile.in, init/aclocal.m4, init/configure, os/aclocal.m4,
+	  os/libes++/testsuite/Makefile.in, tools/Makefile.in,
+	  tools/aclocal.m4, tools/configure: Regenerate by autoconf 2.61
+	  and automake 1.10.1.
+
+2008-07-13 11:33  shiki.okasaka
+
+	* Makefile: Support Fedora 9.
+
+2008-07-13 11:30  shiki.okasaka
+
+	* Makefile.am, Makefile.in, aclocal.m4, patches/README: (Binutils)
+	  : Upgrade to version 2.18.
+
+2008-07-13 10:58  shiki.okasaka
+
+	* patches/binutils-2.18.patch: New.
+
+2008-07-05 12:24  ishibashi.kenichi
+
+	* Makefile.in, esidl/include/esidl.h, esidl/src/cxx.cpp,
+	  esidl/src/ent.cpp, esidl/src/lexer.ll, esidl/src/parser.yy,
+	  esidl/src/reflect.cpp, esidl/testsuite/22.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/Makefile.am, include/Makefile.in, include/es/ent.h,
+	  include/es/variant.h, os/aclocal.m4,
+	  os/libes++/testsuite/Makefile.am,
+	  os/libes++/testsuite/Makefile.in,
+	  os/libes++/testsuite/variant.cpp: Added Variant support to esidl.
+
+2008-07-01 07:20  Shiki.Okasaka
+
+	* os/npapi/src/exportedObject.cpp: Clean up.
+
+2008-07-01 06:41  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/src/posix_system.cpp, os/libes++/src/rpc.cpp,
+	  os/npapi/Makefile.am, os/npapi/src/rpc.cpp: Refactoring.
+
+2008-07-01 04:21  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp: Include <es/rpc.h>.
+
+2008-07-01 04:16  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp: Include <es/capability.h>.
+
+2008-07-01 04:06  Shiki.Okasaka
+
+	* include/es/capability.h, include/es/rpc.h, os/npapi,
+	  os/npapi/Makefile.am, os/npapi/configure.ac, os/npapi/hello,
+	  os/npapi/include, os/npapi/include/bridge.h,
+	  os/npapi/include/exportedObject.h,
+	  os/npapi/include/importedObject.h, os/npapi/include/monitor.h,
+	  os/npapi/src, os/npapi/src/bridge.cpp, os/npapi/src/debug.cpp,
+	  os/npapi/src/exportedObject.cpp, os/npapi/src/importedObject.cpp,
+	  os/npapi/src/launcher.cpp, os/npapi/src/np_entry.cpp,
+	  os/npapi/src/npn_gate.cpp, os/npapi/src/npp_gate.cpp,
+	  os/npapi/src/rpc.cpp, os/npapi/src/thread.cpp,
+	  os/npapi/test.html: (libesnpapi.so) : New.
+
+2008-07-01 03:48  Shiki.Okasaka
+
+	* os/Makefile.in, os/aclocal.m4, os/bootsect/Makefile.in,
+	  os/configure, os/fs/Makefile.in, os/fs/fat/Makefile.in,
+	  os/fs/fat/testsuite/Makefile.in, os/fs/iso9660/Makefile.in,
+	  os/fs/iso9660/testsuite/Makefile.in, os/kernel/Makefile.in,
+	  os/kernel/testsuite/Makefile.in, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/testsuite/Makefile.in,
+	  os/net/Makefile.in, os/net/posix/Makefile.in,
+	  os/net/testsuite/Makefile.in, os/testsuite/Makefile.in: Add
+	  libesrpc.a.
+
+2008-07-01 03:39  Shiki.Okasaka
+
+	* esjs/scripts/figure.js, esjs/scripts/mozfigure.js: Add "moz"
+	  prefix to Mozilla-specific APIs.
+
+2008-07-01 03:18  Shiki.Okasaka
+
+	* cmd/canvas.cpp, cmd/canvas.h,
+	  include/es/util/ICanvasRenderingContext2D.idl,
+	  os/testsuite/canvas.cpp, os/testsuite/canvas2d.cpp,
+	  os/testsuite/canvas2d.h: Add "moz" prefix to Mozilla-specific
+	  APIs.
+
+2008-06-30 23:16  joao.taveira
+
+	* os/net/testsuite/dns.cpp: Updated DNS testsuite.
+
+2008-06-30 22:42  joao.taveira
+
+	* os/kernel/posix/posix_init.cpp: Accidentally commited wlan0 as
+	  default interface.
+
+2008-06-30 22:40  joao.taveira
+
+	* include/es/net/IInternetConfig.idl, include/es/net/inet4.h,
+	  os/kernel/posix/posix_init.cpp, os/net/include/conduit.h,
+	  os/net/include/inetConfig.h, os/net/include/resolver.h,
+	  os/net/src/dhcp.cpp, os/net/src/inetConfig.cpp,
+	  os/net/src/resolver.cpp, os/net/testsuite/dns.cpp: Added multiple
+	  search domain support. Corrected resolver bug which caused
+	  segmentation fault when receiving CNAME resource record from DNS
+	  server.
+
+2008-06-30 20:06  Shiki.Okasaka
+
+	* os/libes++/src/interfaceStore.cpp,
+	  os/libes++/src/posix_system.cpp: Assign global construction
+	  priorities to InterfaceStore and System, etc.
+
+2008-06-30 19:58  Shiki.Okasaka
+
+	* include/es/hashtable.h: Add assertions.
+
+2008-06-30 05:25  Shiki.Okasaka
+
+	* include/es/objectTable.h: Clean up.
+
+2008-06-30 05:24  Shiki.Okasaka
+
+	* include/es/ent.h: Fix a typo.
+
+2008-06-22 00:15  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esjs/include/esjs.h, esjs/include/value.h,
+	  esjs/src/array.cpp, include/es/collection.h,
+	  include/es/context.h, os/kernel/include/arena.h,
+	  os/kernel/include/heap.h, os/kernel/port/heap.cpp,
+	  os/kernel/port/page.cpp, os/kernel/posix/posix_init.cpp,
+	  os/kernel/testsuite/context.cpp,
+	  os/kernel/testsuite/datetime.cpp,
+	  os/kernel/testsuite/ethernet.cpp,
+	  os/libes++/include/posix_system.h, os/net/include/socket.h,
+	  tools/guidgen.cpp: Fix bugs detected by gcc 4.3.0.
+
+2008-06-21 11:00  joao.taveira
+
+	* esidl/src/cxx.cpp: Rollback to revision 594. Reflection runtime
+	  assumes simple layout.
+
+2008-06-18 12:43  joao.taveira
+
+	* esidl/src/cxx.cpp: Corrected esidl bug which did not allow
+	  multiple inheritance (diamond problem) in generated C++.
+
+2008-06-18 11:05  joao.taveira
+
+	* Makefile: Makefile now installs required libraries for Fedora and
+	  Ubuntu 8.04
+
+2008-06-17 18:42  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp: (RpcStack) : Add rpcStackBase
+	  and rpcStack definitions outside the class declaration.
+
+2008-06-16 23:47  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp: (Process::start) : Fix to
+	  explicitly synchronize with the parent process.
+
+2008-06-16 06:28  Shiki.Okasaka
+
+	* os/testsuite/canvas.cpp: (main) : Take arguments for starting a
+	  child process. To start the shell, do `canvas file/esjs
+	  shell.js`.
+
+2008-06-16 06:18  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp:
+
+2008-06-15 19:37  Shiki.Okasaka
+
+	* os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  os/testsuite/canvas.cpp, os/testsuite/canvas2d.cpp,
+	  os/testsuite/canvas2d.h: (canvas) : Add a simplified version of
+	  the console service for posix build.
+
+2008-06-15 19:36  Shiki.Okasaka
+
+	* os/testsuite/video.cpp: (main) : Clean up.
+
+2008-06-15 19:14  Shiki.Okasaka
+
+	* os/testsuite/video.cpp: (fill) : Add another version using the
+	  memory mapped frame buffer.
+
+2008-06-15 19:12  Shiki.Okasaka
+
+	* os/libes++/include/posix_system.h,
+	  os/libes++/include/posix_video.h, os/libes++/src/posix_video.cpp:
+	  (VideoBuffer) : Inherit Stream to support System()->map().
+
+2008-06-15 12:41  Shiki.Okasaka
+
+	* os/libes++/src/posix_video.cpp: (init) : Fix a typo.
+
+2008-06-15 12:33  Shiki.Okasaka
+
+	* os/libes++/include/core.h, os/libes++/include/posix_video.h,
+	  os/libes++/src/posix_video.cpp: (VideoBuffer) : Add a monitor for
+	  synchronization.
+
+2008-06-15 05:42  Shiki.Okasaka
+
+	* os/libes++/src/posix_video.cpp: Fix the file header.
+
+2008-06-15 05:38  Shiki.Okasaka
+
+	* esjs/Makefile.am, esjs/Makefile.in, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/include/posix_video.h,
+	  os/libes++/src/posix_video.cpp, os/testsuite/Makefile.am,
+	  os/testsuite/Makefile.in, os/testsuite/video.cpp: (VideoBuffer) :
+	  Re-implement using glut.
+
+2008-06-15 05:08  Shiki.Okasaka
+
+	* os/kernel/pc/vesa.cpp: Clean up.
+
+2008-06-15 00:07  Shiki.Okasaka
+
+	* init/Makefile.am, init/Makefile.in,
+	  os/fs/fat/testsuite/Makefile.am, os/fs/fat/testsuite/Makefile.in,
+	  os/fs/iso9660/testsuite/Makefile.am,
+	  os/fs/iso9660/testsuite/Makefile.in, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/posix/video.h,
+	  os/kernel/posix/posix_init.cpp, os/kernel/posix/posix_video.cpp,
+	  os/kernel/testsuite/Makefile.am, os/kernel/testsuite/Makefile.in,
+	  os/kernel/testsuite/posix_cairo.cpp,
+	  os/kernel/testsuite/posix_video.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/include/posix_video.h,
+	  os/libes++/src/posix_system.cpp, os/libes++/src/posix_video.cpp,
+	  os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  os/testsuite/cairo.cpp, os/testsuite/video.cpp,
+	  tools/Makefile.am, tools/Makefile.in: Move posix_video from
+	  libeskernel.a to libes++.a.
+
+2008-06-14 23:29  Shiki.Okasaka
+
+	* os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  os/testsuite/cairo.cpp, os/testsuite/video.cpp: Moved from
+	  kernel/testsuite.
+
+2008-06-14 22:58  Shiki.Okasaka
+
+	* os/libes++/src/posix_system.cpp: Include posix_system.h.
+
+2008-06-14 22:56  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/include/posix_system.h: Separate from
+	  posix_system.cpp.
+
+2008-06-08 18:22  dan.ionut.chis
+
+	* esjs/Makefile.am, esjs/Makefile.in,
+	  os/fs/fat/testsuite/Makefile.am, os/fs/fat/testsuite/Makefile.in,
+	  os/fs/iso9660/testsuite/Makefile.am,
+	  os/fs/iso9660/testsuite/Makefile.in, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/posix/video.h,
+	  os/kernel/posix/posix_init.cpp, os/kernel/posix/posix_video.cpp,
+	  os/kernel/testsuite/Makefile.am, os/kernel/testsuite/Makefile.in,
+	  os/kernel/testsuite/posix_cairo.cpp,
+	  os/kernel/testsuite/posix_video.cpp,
+	  os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  tools/Makefile.am, tools/Makefile.in: Added pseudo video
+	  framebuffer device and tests
+
+2008-06-08 03:31  Shiki.Okasaka
+
+	* Makefile: (local) : Make local firstly.
+
+2008-06-08 02:54  Shiki.Okasaka
+
+	* Makefile: New.
+
+2008-06-03 18:15  Shiki.Okasaka
+
+	* esjs/Makefile.am, esjs/Makefile.in, esjs/configure.ac,
+	  esjs/include/interface.h, esjs/src/interface.cpp,
+	  include/Makefile.am, include/Makefile.in, include/es/apply.h,
+	  include/es/objectTable.h, os/Makefile.am, os/Makefile.in,
+	  os/configure, os/configure.ac, os/kernel/include/posix/core.h,
+	  os/kernel/posix/posix_init.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/include/core.h,
+	  os/libes++/src/interfaceStore.cpp,
+	  os/libes++/src/posix_system.cpp, os/testsuite,
+	  os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  os/testsuite/client.cpp, os/testsuite/server.cpp: Add an object
+	  RPC runtime over Unix domain sockets for Linux.
+
+2008-06-03 17:36  Shiki.Okasaka
+
+	* include/es/hashtable.h: Add a comment.
+
+2008-04-05 23:08  Shiki.Okasaka
+
+	* esjs/COPYING, esjs/Makefile.in, esjs/README: Remove.
+
+2008-04-05 22:51  Shiki.Okasaka
+
+	* ChangeLog, Makefile.am, Makefile.in, NEWS, README,
+	  cmd/config.sub, cmd/configure, cmd/configure.ac,
+	  cmd/squeak-3.7.1/ChangeLog, cmd/squeak-3.7.1/Makefile.am,
+	  cmd/squeak-3.7.1/Makefile.in, cmd/squeak-3.7.1/README,
+	  cmd/squeak-3.7.1/config.sub, cmd/squeak-3.7.1/configure,
+	  cmd/squeak-3.7.1/configure.ac, configure, configure.ac,
+	  esidl/configure, esidl/configure.ac, esjs/config.sub,
+	  esjs/configure, esjs/configure.ac, init/config.sub,
+	  init/configure, init/configure.ac, os/config.sub, os/configure,
+	  os/configure.ac, tools/config.sub, tools/configure,
+	  tools/configure.ac: Increment ES version to 0.1.2
+
 2008-04-05 22:32  Shiki.Okasaka
 
 	* patches/README, patches/automake-1.10.patch:
@@ -1006,443 +1510,442 @@
 
 2007-12-10 04:12  okasaka
 
-	* : es 0.1.1 released.
+	* es 0.1.1 released.
 
 2007-12-10 02:21  okasaka
 
-	* : (NEWS) : Set version to 0.1.1.
+	* (NEWS) : Set version to 0.1.1.
 
 2007-12-10 01:05  okasaka
 
-	* : (process) : Remove. Use cmd instead.
+	* (process) : Remove. Use cmd instead.
 
 2007-12-10 00:30  okasaka
 
-	* : (VERBOSE) : Disable.
+	* (VERBOSE) : Disable.
 
 2007-12-07 07:46  okasaka
 
-	* : (esidl2-cxx.$(OBJEXT)) : Depends on Makefile for VERSION.
+	* (esidl2-cxx.$(OBJEXT)) : Depends on Makefile for VERSION.
 
 2007-12-07 01:56  okasaka
 
-	* : (Makefile) : Refine build environment.
+	* (Makefile) : Refine build environment.
 
 2007-12-07 01:54  okasaka
 
-	* : (newlib) : New.
+	* (newlib) : New.
 
 2007-12-04 07:11  okasaka
 
-	* : (Process) : Fix process clean up procedure. Increment the
-	  process reference count for each thread.
+	* (Process) : Fix process clean up procedure. Increment the process
+	  reference count for each thread.
 
 2007-12-03 06:23  okasaka
 
-	* : (dir_Lookup) : Fix a bug.
+	* (dir_Lookup) : Fix a bug.
 
 2007-11-30 01:02  okasaka
 
-	* : (Canvas::getTextStyle) : Refine.
+	* (Canvas::getTextStyle) : Refine.
 
 2007-11-29 01:30  okasaka
 
-	* : (Canvas) : Support CSS3COLOR keyword colors.
+	* (Canvas) : Support CSS3COLOR keyword colors.
 
 2007-11-29 01:28  okasaka
 
-	* : (Rgb) : New for CSS3COLOR support.
+	* (Rgb) : New for CSS3COLOR support.
 
 2007-11-29 01:25  okasaka
 
-	* : (eol-style) : Set to LF.
+	* (eol-style) : Set to LF.
 
 2007-11-27 01:33  okasaka
 
-	* : (esjs) : Refine the handling of regular expression literals.
+	* (esjs) : Refine the handling of regular expression literals.
 
 2007-11-22 07:43  okasaka
 
-	* : (pthread_mutex) : Refine to process locking/unlocking in user
+	* (pthread_mutex) : Refine to process locking/unlocking in user
 	  space if possible.
 
 2007-11-21 04:48  okasaka
 
-	* : (file/fonts) : Add sazanami-mincho.ttf and sazanami-gothic.ttf.
+	* (file/fonts) : Add sazanami-mincho.ttf and sazanami-gothic.ttf.
 
 2007-11-21 04:46  okasaka
 
-	* : (kanji, gradient, rm) : New.
+	* (kanji, gradient, rm) : New.
 
 2007-11-21 04:42  okasaka
 
-	* : (__es__) : Use mmap().
+	* (__es__) : Use mmap().
 
 2007-11-21 04:40  okasaka
 
-	* : (mmap, munmap) : New.
+	* (mmap, munmap) : New.
 
 2007-11-21 04:31  okasaka
 
-	* : (systemCall) : Fix not to check the address referred by
-	  interface pointer for libgloss.
+	* (systemCall) : Fix not to check the address referred by interface
+	  pointer for libgloss.
 
 2007-11-19 08:11  okasaka
 
-	* : (Canvas::setTextStyle) : Refine.
+	* (Canvas::setTextStyle) : Refine.
 
 2007-11-19 08:08  okasaka
 
-	* : (main) : Test the Liberation fonts.
+	* (main) : Test the Liberation fonts.
 
 2007-11-16 08:52  okasaka
 
-	* : Test drawText().
+	* Test drawText().
 
 2007-11-16 08:52  okasaka
 
-	* : (EXTRA_DIST) : Add 40-generic.conf fonts.conf fonts.dtd.
+	* (EXTRA_DIST) : Add 40-generic.conf fonts.conf fonts.dtd.
 
 2007-11-16 08:50  okasaka
 
-	* : (ICanvasRenderingContext2D) : Add drawString enhancement.
+	* (ICanvasRenderingContext2D) : Add drawString enhancement.
 
 2007-11-16 08:48  okasaka
 
-	* : New
+	* New
 
 2007-11-16 08:47  okasaka
 
-	* : (vcopy) : Support destination path.
+	* (vcopy) : Support destination path.
 
 2007-11-16 08:47  okasaka
 
-	* : (fontconfig) : New.
+	* (fontconfig) : New.
 
 2007-11-16 08:22  okasaka
 
-	* : (FcAtomicReplaceOrig) : es's rename() returns error if newpath
+	* (FcAtomicReplaceOrig) : es's rename() returns error if newpath
 	  already exists like Win32.
 
 2007-11-16 08:21  okasaka
 
-	* : (libgloss) : Support more POSIX functions.
+	* (libgloss) : Support more POSIX functions.
 
 2007-11-16 08:18  okasaka
 
-	* : (Stream) : Contain IFile interface for better fstat() support.
+	* (Stream) : Contain IFile interface for better fstat() support.
 
 2007-11-16 08:16  okasaka
 
-	* : (init, shell) : Set the current working directory for POSIX
+	* (init, shell) : Set the current working directory for POSIX
 	  support.
 
 2007-11-16 08:14  okasaka
 
-	* : (setName) : Remove the length parameter following the esidl
+	* (setName) : Remove the length parameter following the esidl
 	  update.
 
 2007-11-16 08:13  okasaka
 
-	* : (at(const Attribute*)) : Remove the length parameter from a
+	* (at(const Attribute*)) : Remove the length parameter from a
 	  string setter.
 
 2007-11-16 08:09  okasaka
 
-	* : (createThread) : Extend kernel stack size to 16KB. Operations
+	* (createThread) : Extend kernel stack size to 16KB. Operations
 	  like createSubcontext() requires this much size.
 
 2007-11-16 08:07  okasaka
 
-	* : (getPosition, getSize) : Return -1 to support POSIX's fstat.
+	* (getPosition, getSize) : Return -1 to support POSIX's fstat.
 
 2007-11-12 05:24  okasaka
 
-	* : (setArguments) : Set the value of argv[argc] to NULL which some
+	* (setArguments) : Set the value of argv[argc] to NULL which some
 	  Un*x applications presume.
 
 2007-11-12 05:22  okasaka
 
-	* : (udpEchoClient udpEchoServer) : New.
+	* (udpEchoClient udpEchoServer) : New.
 
 2007-11-06 04:34  okasaka
 
-	* : (udpEchoClient udpEchoServer) : New.
+	* (udpEchoClient udpEchoServer) : New.
 
 2007-11-06 04:30  okasaka
 
-	* : (removeInterface) : Fix typo.
+	* (removeInterface) : Fix typo.
 
 2007-11-06 04:29  okasaka
 
-	* : (Tap) : Fix strncpy bugs.
+	* (Tap) : Fix strncpy bugs.
 
 2007-11-02 06:06  okasaka
 
-	* : (InFamily::addAddress, InFamily::removeAddress,
+	* (InFamily::addAddress, InFamily::removeAddress,
 	  InReceiver::output) : Fix reference counting for Inet4Address
 	  objects.
 
 2007-11-01 06:28  okasaka
 
-	* : (Inet4Address) : Revise the transition to the deprecated state,
+	* (Inet4Address) : Revise the transition to the deprecated state,
 	  etc.
 
 2007-11-01 06:26  okasaka
 
-	* : (Interface::vent) : Fix to clear local and remote address
-	  fields of the messenger.
+	* (Interface::vent) : Fix to clear local and remote address fields
+	  of the messenger.
 
 2007-10-31 02:17  okasaka
 
-	* : (Tap) : Revise using the packet interface.
+	* (Tap) : Revise using the packet interface.
 
 2007-10-31 02:15  okasaka
 
-	* : (IInternetConfig) : Refine comments.
+	* (IInternetConfig) : Refine comments.
 
 2007-10-23 07:21  okasaka
 
-	* : (ARPReceiver::input) : Set the local address state to
-	  deprecated upon an address conflict.
+	* (ARPReceiver::input) : Set the local address state to deprecated
+	  upon an address conflict.
 
 2007-10-23 07:19  okasaka
 
-	* : (main) : Retract a test temporarily.
+	* (main) : Retract a test temporarily.
 
 2007-10-18 02:08  okasaka
 
-	* : (Dp8390d) : Refine.
+	* (Dp8390d) : Refine.
 
 2007-10-15 04:59  okasaka
 
-	* : (Monitor::update, Monitor::unlock) : Fix bugs.
+	* (Monitor::update, Monitor::unlock) : Fix bugs.
 
 2007-10-12 05:16  okasaka
 
-	* : (es) : Add gradient.js
+	* (es) : Add gradient.js
 
 2007-10-12 05:15  okasaka
 
-	* : (Process::copyIn) : Avoid creating extra system call proxies,
-	  if possible, by passing the original pointers for upcall
-	  interface pointer parameters.
+	* (Process::copyIn) : Avoid creating extra system call proxies, if
+	  possible, by passing the original pointers for upcall interface
+	  pointer parameters.
 
 2007-10-11 04:47  okasaka
 
-	* : (es) : Don't suppress error messages.
+	* (es) : Don't suppress error messages.
 
 2007-10-11 04:46  okasaka
 
-	* : (copy) : Write error messages to the standard error.
+	* (copy) : Write error messages to the standard error.
 
 2007-10-11 04:04  okasaka
 
-	* : Move.
+	* Move.
 
 2007-10-11 02:12  okasaka
 
-	* : (DIST_COMMON) : Add ChangeLog.
+	* (DIST_COMMON) : Add ChangeLog.
 
 2007-10-11 02:06  okasaka
 
-	* : es 0.1.0 released.
+	* es 0.1.0 released.
 
 2007-10-10 08:21  ueno9
 
-	* : (Dp8390d::writeLocked) : Modify to return the size without
+	* (Dp8390d::writeLocked) : Modify to return the size without
 	  padding.
 
 2007-10-10 01:21  ueno9
 
-	* : (isotest.iso.gz) : Reduce the file size of data/image.
+	* (isotest.iso.gz) : Reduce the file size of data/image.
 
 2007-10-04 01:15  okasaka
 
-	* : (ChangeLog) : Remove.
+	* (ChangeLog) : Remove.
 
 2007-10-04 01:14  okasaka
 
-	* : (issue, invoke) : Fix packet command issuing.
+	* (issue, invoke) : Fix packet command issuing.
 
 2007-10-03 04:22  okasaka
 
-	* : Clean up.
+	* Clean up.
 
 2007-10-03 04:14  okasaka
 
-	* : (esidl) : Switch to OMG IDL syntax.
+	* (esidl) : Switch to OMG IDL syntax.
 
 2007-08-30 08:14  okasaka
 
-	* : es 0.0.13 released.
+	* es 0.0.13 released.
 
 2007-08-30 08:04  okasaka
 
-	* : Set version to 0.0.13.
+	* Set version to 0.0.13.
 
 2007-08-29 08:50  ueno9
 
-	* : (es.cpp) : reverted.
+	* (es.cpp) : reverted.
 
 2007-08-29 08:37  ueno9
 
-	* : (ICanvasRenderingContext2D) : New to support graphics on
-	  console.
+	* (ICanvasRenderingContext2D) : New to support graphics on console.
 
 2007-08-29 01:49  okasaka
 
-	* : (AC_CONFIG_SUBDIRS) : Add esjs.
+	* (AC_CONFIG_SUBDIRS) : Add esjs.
 
 2007-08-29 01:47  okasaka
 
-	* : (cairo, expat, fontconfig) : New.
+	* (cairo, expat, fontconfig) : New.
 
 2007-08-29 01:44  okasaka
 
-	* : (pthread) : Add primitive pthread interface to support cairo.
+	* (pthread) : Add primitive pthread interface to support cairo.
 
 2007-08-29 01:35  okasaka
 
-	* : Clean up.
+	* Clean up.
 
 2007-08-21 02:27  okasaka
 
-	* : (Process) : Fix reference counting of upcall/syscall proxies.
+	* (Process) : Fix reference counting of upcall/syscall proxies.
 
 2007-08-21 01:56  okasaka
 
-	* : (Process) : Support the current working directory.
+	* (Process) : Support the current working directory.
 
 2007-08-21 01:14  okasaka
 
-	* : (esjs) : Add more properties to Object, Function, and Arguments
+	* (esjs) : Add more properties to Object, Function, and Arguments
 	  objects.
 
 2007-08-17 02:18  ueno9
 
-	* : (esjs) : Add properties of Array and String objects.
+	* (esjs) : Add properties of Array and String objects.
 
 2007-08-10 04:54  ueno9
 
-	* : (utftoupper) : New.
+	* (utftoupper) : New.
 
 2007-08-10 01:46  okasaka
 
-	* : (Node::remove) : Fix bugs.
+	* (Node::remove) : Fix bugs.
 
 2007-07-31 04:53  okasaka
 
-	* : Support binutils-2.17, gcc-4.2.1, newlib-1.15.0, pcre-7.2, and
+	* Support binutils-2.17, gcc-4.2.1, newlib-1.15.0, pcre-7.2, and
 	  freetype-2.3.5.
 
 2007-07-31 04:52  okasaka
 
-	* : (catchException) : Explicitly put this in the .text section.
+	* (catchException) : Explicitly put this in the .text section.
 
 2007-07-26 09:40  okasaka
 
-	* : (ChangeLog) : Add to dist.
+	* (ChangeLog) : Add to dist.
 
 2007-07-26 09:31  okasaka
 
-	* : es 0.0.12 released.
+	* es 0.0.12 released.
 
 2007-07-26 09:31  okasaka
 
-	* : es 0.0.12 released.
+	* es 0.0.12 released.
 
 2007-07-26 09:22  okasaka
 
-	* : (Monitor::condUnlock, unlockAllMonitors, exit, cancel) : Fix
+	* (Monitor::condUnlock, unlockAllMonitors, exit, cancel) : Fix
 	  bugs.
 
 2007-07-26 07:50  ueno9
 
-	* : (arp.h) : Update.
+	* (arp.h) : Update.
 
 2007-07-26 06:54  okasaka
 
-	* : Set version to 0.0.12.
+	* Set version to 0.0.12.
 
 2007-07-26 06:20  ueno9
 
-	* : (esjs) : Support Date and Number objects.
+	* (esjs) : Support Date and Number objects.
 
 2007-07-26 05:26  okasaka
 
-	* : (eventManager.elf, date.js) : New.
+	* (eventManager.elf, date.js) : New.
 
 2007-07-26 04:12  okasaka
 
-	* : (constructBooleanObject) : New to support Boolean Objects.
+	* (constructBooleanObject) : New to support Boolean Objects.
 	  (ObjectValue::toNumber) : New.
 	  (Formatter) : Use ECMAScript mode.
 
 2007-07-26 02:56  okasaka
 
-	* : (startProcess) : Clean up.
+	* (startProcess) : Clean up.
 
 2007-07-26 02:55  okasaka
 
-	* : (Uart) : Clean up.
+	* (Uart) : Clean up.
 
 2007-07-26 02:34  okasaka
 
-	* : Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
+	* Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
 
 2007-07-26 02:23  okasaka
 
-	* : Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
+	* Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
 
 2007-07-26 02:17  okasaka
 
-	* : Clean up the build system.
+	* Clean up the build system.
 
 2007-07-26 01:59  okasaka
 
-	* : Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
+	* Switch to aclocal 1.10, autoconf 2.61, and automake 1.10 of F7.
 
 2007-07-26 01:52  okasaka
 
-	* : (Formatter) : Add ECMAScript mode.
+	* (Formatter) : Add ECMAScript mode.
 
 2007-07-20 00:25  okasaka
 
-	* : (esCreateMonitor, esLockMonitor, esTryLockMonitor,
+	* (esCreateMonitor, esLockMonitor, esTryLockMonitor,
 	  esUnlockMonitor) : Fix bugs.
 
 2007-07-19 08:35  okasaka
 
-	* : (esInit, Core::reschedule, initAP) : Fix SMP mode
-	  initialization sequence.
+	* (esInit, Core::reschedule, initAP) : Fix SMP mode initialization
+	  sequence.
 
 2007-07-19 08:34  okasaka
 
-	* : (_startap) : Fix bugs.
+	* (_startap) : Fix bugs.
 
 2007-07-19 01:08  okasaka
 
-	* : (dowrite) : Fix a bug.
+	* (dowrite) : Fix a bug.
 
 2007-07-18 09:30  okasaka
 
-	* : (cd.js) : New to support the current working directory concept.
+	* (cd.js) : New to support the current working directory concept.
 
 2007-07-18 08:49  okasaka
 
-	* : Add exit built-in command.
+	* Add exit built-in command.
 	  (elem) : Remove \v which is not a valid non-printing characters
 	  in PCRE.
 
 2007-07-18 08:48  okasaka
 
-	* : Use IBinding instead of IFile.
+	* Use IBinding instead of IFile.
 
 2007-07-18 08:42  okasaka
 
-	* : (Core::reschedule) : Fix to clear core->currentProc when
-	  running kernel threads.
+	* (Core::reschedule) : Fix to clear core->currentProc when running
+	  kernel threads.
 	  (Thread::cancel) : Fix bugs.
 	  (Apic::enableWatchdog) : New for kernel lock up detection.
 	  (Core::doubleFault) : New for double fault detection.
@@ -1453,725 +1956,722 @@
 
 2007-07-18 08:35  okasaka
 
-	* : (UpcallRecord) : Add an assertion.
+	* (UpcallRecord) : Add an assertion.
 
 2007-07-18 08:31  okasaka
 
-	* : (Process::Process, start) : Create the default thread in
-	  start() so that the owner can safely call the release method for
-	  a non-starting process.
+	* (Process::Process, start) : Create the default thread in start()
+	  so that the owner can safely call the release method for a
+	  non-starting process.
 
 2007-07-18 08:30  okasaka
 
-	* : (invoke) : Add verbose mode.
+	* (invoke) : Add verbose mode.
 
 2007-07-18 08:29  okasaka
 
-	* : (where) : New for debugging.
+	* (where) : New for debugging.
 
 2007-07-18 08:28  okasaka
 
-	* : (getName) : Return strlen for esjs.
+	* (getName) : Return strlen for esjs.
 
 2007-07-18 08:24  okasaka
 
-	* : (EventManager) : Cleanup.
+	* (EventManager) : Cleanup.
 
 2007-07-12 09:38  okasaka
 
-	* : (Process) : Save the default process's thread in syscallTable
-	  for reference counting.
+	* (Process) : Save the default process's thread in syscallTable for
+	  reference counting.
 	  (exit) : Do not release threads that are stored in syscallTable.
 
 2007-07-12 09:35  okasaka
 
-	* : (release, addUser, releaseUser) : Fix bugs.
+	* (release, addUser, releaseUser) : Fix bugs.
 
 2007-07-12 02:23  okasaka
 
-	* : Clean up.
+	* Clean up.
 
 2007-07-12 02:19  okasaka
 
-	* : (FatFileSystem) : Fix standbyList management.
+	* (FatFileSystem) : Fix standbyList management.
 
 2007-07-11 09:39  ueno9
 
-	* : (EventManager::mouseEvent, Squeak) : Update mouse position in
+	* (EventManager::mouseEvent, Squeak) : Update mouse position in
 	  event manager.
 
 2007-07-11 08:40  ueno9
 
-	* : (Squeak, Console::start) : refresh screen.
+	* (Squeak, Console::start) : refresh screen.
 
 2007-07-11 07:41  ueno9
 
-	* : (Squeak) : Support IEventQueue.
+	* (Squeak) : Support IEventQueue.
 
 2007-07-11 07:23  ueno9
 
-	* : (es.cpp) : Support console.
+	* (es.cpp) : Support console.
 
 2007-07-11 07:22  ueno9
 
-	* : (IEventQeueu, Console) : New.
+	* (IEventQeueu, Console) : New.
 
 2007-07-11 06:03  okasaka
 
-	* : (InterfaceMethodCode::evaluate) : Fix a bug.
+	* (InterfaceMethodCode::evaluate) : Fix a bug.
 
 2007-07-11 05:17  okasaka
 
-	* : (Ureg::load) : Disable interrupts while loading.
+	* (Ureg::load) : Disable interrupts while loading.
 
 2007-07-09 09:54  okasaka
 
-	* : (doread) : Add line buffer for better performance.
+	* (doread) : Add line buffer for better performance.
 	  (dowrite) : Fix to be able to save files on real machines.
 
 2007-07-09 09:50  okasaka
 
-	* : (SourceElements::evaluate) : Process function declarations
-	  before evaluating statements.
+	* (SourceElements::evaluate) : Process function declarations before
+	  evaluating statements.
 
 2007-07-09 04:34  okasaka
 
-	* : (GlobalMethod::evaluate) : Fix a GC related bug in eval method.
+	* (GlobalMethod::evaluate) : Fix a GC related bug in eval method.
 
 2007-07-09 02:21  okasaka
 
-	* : (AtaController::issue) : Blocks further requests to be issued
+	* (AtaController::issue) : Blocks further requests to be issued
 	  while busy.
 
 2007-07-02 09:41  okasaka
 
-	* : (es.elf : makeScript) : Fix clean build problem.
+	* (es.elf : makeScript) : Fix clean build problem.
 
 2007-06-29 03:33  okasaka
 
-	* : (edit.js) : New.
+	* (edit.js) : New.
 
 2007-06-29 03:31  okasaka
 
-	* : (InterfaceMethodCode::evaluate) : Arrow a non interface pointer
+	* (InterfaceMethodCode::evaluate) : Arrow a non interface pointer
 	  object to be passed for an interface pointer as zero for such as
 	  the bind method.
 
 2007-06-29 03:29  okasaka
 
-	* : (StringMethod::charAt) : New.
+	* (StringMethod::charAt) : New.
 
 2007-06-29 03:29  okasaka
 
-	* : (RegExpValue::match) : Fix not to match ^ if offset is not
-	  zero.
+	* (RegExpValue::match) : Fix not to match ^ if offset is not zero.
 
 2007-06-29 03:00  okasaka
 
-	* : (ObjectValue::setParameterList) : Support length property of
-	  the function.
+	* (ObjectValue::setParameterList) : Support length property of the
+	  function.
 
 2007-06-29 02:56  okasaka
 
-	* : (main) : Adjust GC thresh for better performance.
+	* (main) : Adjust GC thresh for better performance.
 
 2007-06-29 02:54  okasaka
 
-	* : (edit.js) : New.
+	* (edit.js) : New.
 
 2007-06-29 02:50  okasaka
 
-	* : (System) : To make its semantics more close to the current es
+	* (System) : To make its semantics more close to the current es
 	  model, use the file descriptor directly rather than FILE* and set
 	  the standard input to the raw mode.
 
 2007-06-28 07:45  ueno9
 
-	* : (freetype-2.3.4.patch) : New.
+	* (freetype-2.3.4.patch) : New.
 
 2007-06-22 07:58  okasaka
 
-	* : New.
+	* New.
 
 2007-06-22 07:30  okasaka
 
-	* : es 0.0.11 released.
+	* es 0.0.11 released.
 
 2007-06-22 07:29  okasaka
 
-	* : Set version to 0.0.11.
+	* Set version to 0.0.11.
 
 2007-06-22 06:14  okasaka
 
-	* : (%.h %.ird : %.idl) : Fix clean build issue.
+	* (%.h %.ird : %.idl) : Fix clean build issue.
 
 2007-06-22 02:25  okasaka
 
-	* : Release esjs.
+	* Release esjs.
 
 2007-06-22 02:16  okasaka
 
-	* : (init) : Start esjs instead of squeak.
+	* (init) : Start esjs instead of squeak.
 
 2007-06-22 02:09  okasaka
 
-	* : Initial check-in.
+	* Initial check-in.
 
 2007-06-22 01:53  okasaka
 
-	* : (IProcess) : Reorder the start methods for esjs.
+	* (IProcess) : Reorder the start methods for esjs.
 
 2007-06-22 01:51  okasaka
 
-	* : (main) : Clean up.
+	* (main) : Clean up.
 
 2007-06-22 01:50  okasaka
 
-	* : (FatStream::getName) : Return the name length for esjs.
+	* (FatStream::getName) : Return the name length for esjs.
 
 2007-06-22 01:48  okasaka
 
-	* : (posix_system, reflect, report) : New.
+	* (posix_system, reflect, report) : New.
 
 2007-06-22 01:45  okasaka
 
-	* : (Makefile) : Clean up.
+	* (Makefile) : Clean up.
 
 2007-06-22 01:42  okasaka
 
-	* : (Makefile) : Clean up.
+	* (Makefile) : Clean up.
 
 2007-06-22 01:39  okasaka
 
-	* : (Uart) : Support buffered input using interrupt.
+	* (Uart) : Support buffered input using interrupt.
 
 2007-06-22 01:31  okasaka
 
-	* : (isInteger, isBoolean, isFloat, isUuid) : New.
+	* (isInteger, isBoolean, isFloat, isUuid) : New.
 
 2007-06-22 01:27  okasaka
 
-	* : (Iterator::operator=) : New.
+	* (Iterator::operator=) : New.
 
 2007-06-22 01:25  okasaka
 
-	* : (Context::walk, list) : Fix not to use dynamic_cast for
-	  upcalls.
+	* (Context::walk, list) : Fix not to use dynamic_cast for upcalls.
 
 2007-06-22 01:22  okasaka
 
-	* : (Process::set) : Report an error message for debugging.
+	* (Process::set) : Report an error message for debugging.
 
 2007-06-22 01:20  okasaka
 
-	* : (malloc) : Pollute the allocated block for debugging.
+	* (malloc) : Pollute the allocated block for debugging.
 
 2007-06-22 01:19  okasaka
 
-	* : (Process::copyOut) : Fix a bug.
+	* (Process::copyOut) : Fix a bug.
 
 2007-06-22 01:17  okasaka
 
-	* : (Socket::accept) : Fix a bug.
+	* (Socket::accept) : Fix a bug.
 
 2007-06-22 01:14  okasaka
 
-	* : (Formatter::Formatter(std::string&)) : New.
+	* (Formatter::Formatter(std::string&)) : New.
 
 2007-06-22 01:10  okasaka
 
-	* : Drop -iquote for older gcc.
+	* Drop -iquote for older gcc.
 
 2007-06-22 01:06  okasaka
 
-	* : (pcre-7.1.patch) : New.
+	* (pcre-7.1.patch) : New.
 
 2007-06-22 01:05  okasaka
 
-	* : (pcre-7.1.patch) : New.
+	* (pcre-7.1.patch) : New.
 
 2007-06-22 01:03  okasaka
 
-	* : (hello) : New.
+	* (hello) : New.
 
 2007-06-22 01:01  okasaka
 
-	* : New.
+	* New.
 
 2007-05-30 09:29  okasaka
 
-	* : (Process::ast, Process::createThread, Process::upcall,
+	* (Process::ast, Process::createThread, Process::upcall,
 	  Thread::tls) : Fix broken user thread TLS initialization.
 
 2007-05-22 04:28  ueno9
 
-	* : (Pci::attach) : Support es1370.
+	* (Pci::attach) : Support es1370.
 
 2007-05-21 09:04  ueno9
 
-	* : (es1370) : new.
+	* (es1370) : new.
 
 2007-05-18 02:13  okasaka
 
-	* : (Formatter) : Fix %g conversion following C99, etc.
+	* (Formatter) : Fix %g conversion following C99, etc.
 
 2007-04-27 01:01  okasaka
 
-	* : es 0.0.10 released.
+	* es 0.0.10 released.
 
 2007-04-27 00:59  okasaka
 
-	* : Set version to 0.0.10.
+	* Set version to 0.0.10.
 
 2007-04-24 04:00  okasaka
 
-	* : Refine comments.
+	* Refine comments.
 
 2007-04-23 08:08  okasaka
 
-	* : (esInit) : Invalidate 0-2GB region after the processor
+	* (esInit) : Invalidate 0-2GB region after the processor
 	  initialization for debug purposes.
 
 2007-04-23 07:42  okasaka
 
-	* : Support PCI interrupts via APIC.
+	* Support PCI interrupts via APIC.
 
 2007-04-20 07:30  okasaka
 
-	* : (splIdle, splLo, splHi, splX) : Revert to using TPR.
+	* (splIdle, splLo, splHi, splX) : Revert to using TPR.
 
 2007-04-20 04:29  okasaka
 
-	* : (SoundBlaster16) : Throw ENODEV exception if not found not to
-	  be registered to the name space.
+	* (SoundBlaster16) : Throw ENODEV exception if not found not to be
+	  registered to the name space.
 
 2007-04-20 04:28  okasaka
 
-	* : Use APIC instead of 8259 if available.
+	* Use APIC instead of 8259 if available.
 
 2007-04-20 04:26  okasaka
 
-	* : (condWait) : Lock rendezvous while clearing owner to fix the
-	  race condition with condLock.
+	* (condWait) : Lock rendezvous while clearing owner to fix the race
+	  condition with condLock.
 
 2007-04-20 04:25  okasaka
 
-	* : Switch to text mode before power off.
+	* Switch to text mode before power off.
 
 2007-04-19 09:16  okasaka
 
-	* : (unlock) : Clear owner to fix the race condition in tryLock.
+	* (unlock) : Clear owner to fix the race condition in tryLock.
 
 2007-04-19 06:45  okasaka
 
-	* : (detectAuxDevice) : Abandon if not detected.
+	* (detectAuxDevice) : Abandon if not detected.
 
 2007-04-18 04:59  okasaka
 
-	* : (Thread::Thread) : Fix to clear TLS.
+	* (Thread::Thread) : Fix to clear TLS.
 
 2007-04-17 02:30  okasaka
 
-	* : es 0.0.9 released.
+	* es 0.0.9 released.
 
 2007-04-17 02:28  okasaka
 
-	* : Set version to 0.0.9.
+	* Set version to 0.0.9.
 
 2007-04-16 08:16  okasaka
 
-	* : Try to enable A20 via system control port A after BIOS failure.
+	* Try to enable A20 via system control port A after BIOS failure.
 
 2007-04-16 08:13  okasaka
 
-	* : Clean up.
+	* Clean up.
 
 2007-04-16 08:11  okasaka
 
-	* : (initNetwork) : Check presence of "device/ethernet" first.
+	* (initNetwork) : Check presence of "device/ethernet" first.
 
 2007-04-16 08:09  okasaka
 
-	* : Turn off verbose mode.
+	* Turn off verbose mode.
 
 2007-04-16 08:09  okasaka
 
-	* : (initAP, esInit) : Turn off APIC timer due to instability.
+	* (initAP, esInit) : Turn off APIC timer due to instability.
 	  Further investigation required.
 
 2007-04-16 08:06  okasaka
 
-	* : (splIdle, splLo, splHi, splX) : Use IF flag instead of TPR due
-	  to instability. Further investigation required.
+	* (splIdle, splLo, splHi, splX) : Use IF flag instead of TPR due to
+	  instability. Further investigation required.
 
 2007-04-16 08:05  okasaka
 
-	* : (scan) : Scan from bus 0 to bus 3.
+	* (scan) : Scan from bus 0 to bus 3.
 
 2007-04-13 08:20  okasaka
 
-	* : (Apic, Mps) : Refine to support real MP Configuration.
+	* (Apic, Mps) : Refine to support real MP Configuration.
 
 2007-04-13 08:18  okasaka
 
-	* : (registerInterruptHandler, unregisterInterruptHandler) :
-	  Support real I/O APIC.
+	* (registerInterruptHandler, unregisterInterruptHandler) : Support
+	  real I/O APIC.
 
 2007-04-12 03:22  okasaka
 
-	* : (AtaController) : Check signature more strictly.
+	* (AtaController) : Check signature more strictly.
 
 2007-04-12 03:21  okasaka
 
-	* : (Alarm) : Fix to initialize current to zero.
+	* (Alarm) : Fix to initialize current to zero.
 
 2007-04-12 03:18  okasaka
 
-	* : (init) : Fill memory with some non-zero value for debug
-	  purposes.
+	* (init) : Fill memory with some non-zero value for debug purposes.
 
 2007-04-12 03:16  okasaka
 
-	* : (Mmu::set) : Zero-initialize the new page table.
+	* (Mmu::set) : Zero-initialize the new page table.
 
 2007-04-12 02:59  okasaka
 
-	* : Refine video mode selection method.
+	* Refine video mode selection method.
 
 2007-04-12 02:59  okasaka
 
-	* : (partition_over8GB, over8GB.img) : Remove.
+	* (partition_over8GB, over8GB.img) : Remove.
 
 2007-04-11 04:10  okasaka
 
-	* : (testA20) : Check whether A20 is enabled.
+	* (testA20) : Check whether A20 is enabled.
 
 2007-04-11 04:08  okasaka
 
-	* : (synchronizedSignalSemaphoreWithIndex) : Wake up interpret() if
+	* (synchronizedSignalSemaphoreWithIndex) : Wake up interpret() if
 	  sleeping.
 
 2007-04-11 01:49  okasaka
 
-	* : Fix properties to 'application/octet-stream'.
+	* Fix properties to 'application/octet-stream'.
 
 2007-04-11 01:33  okasaka
 
-	* : Fix properties to 'application/octet-stream'.
+	* Fix properties to 'application/octet-stream'.
 
 2007-04-11 01:27  okasaka
 
-	* : Fix properties to 'application/octet-stream'.
+	* Fix properties to 'application/octet-stream'.
 
 2007-04-10 08:22  okasaka
 
-	* : (EventQueue) : Support keyboard auto-repeat. Fix key code
+	* (EventQueue) : Support keyboard auto-repeat. Fix key code
 	  translation of enter keys.
 
 2007-04-10 06:25  okasaka
 
-	* : (sqImageFileRead, sqImageFileWrite) : Fix return value.
+	* (sqImageFileRead, sqImageFileWrite) : Fix return value.
 
 2007-04-10 06:23  okasaka
 
-	* : (init) : Check whether squeak.elf exists.
+	* (init) : Check whether squeak.elf exists.
 
 2007-04-10 06:23  okasaka
 
-	* : Add verbose mode.
+	* Add verbose mode.
 
 2007-04-10 06:21  okasaka
 
-	* : Add verbose mode.
+	* Add verbose mode.
 
 2007-04-10 06:19  okasaka
 
-	* : Fix non verbose mode.
+	* Fix non verbose mode.
 
 2007-04-10 06:15  okasaka
 
-	* : (main) : Add disk check.
+	* (main) : Add disk check.
 
 2007-04-10 06:14  okasaka
 
-	* : (VDisk, vformat) : Add optional CHS parameters.
+	* (VDisk, vformat) : Add optional CHS parameters.
 
 2007-04-10 06:12  okasaka
 
-	* : (vget, vdel) : New.
+	* (vget, vdel) : New.
 
 2007-04-10 06:08  okasaka
 
-	* : (sqEsSecurity) : Fix file name.
+	* (sqEsSecurity) : Fix file name.
 
 2007-04-09 04:55  okasaka
 
-	* : (ioRelinquishProcessorForMicroseconds) : Wake up when an event
+	* (ioRelinquishProcessorForMicroseconds) : Wake up when an event
 	  arrives, and reset interruptCheckCounter for smooth eToy
 	  animation.
 
 2007-04-09 04:52  okasaka
 
-	* : (esInit) : Check MPS processor count.
+	* (esInit) : Check MPS processor count.
 
 2007-04-09 04:50  okasaka
 
-	* : (readRtcCounter) : Wait UIP.
+	* (readRtcCounter) : Wait UIP.
 
 2007-04-09 04:50  okasaka
 
-	* : (getTime) : Wait UIP.
+	* (getTime) : Wait UIP.
 
 2007-04-06 04:45  ueno9
 
-	* : Modified to support a real device (RTL8029AS).
+	* Modified to support a real device (RTL8029AS).
 
 2007-04-05 06:27  okasaka
 
-	* : (setPattern, drawCursor) : Fix not to clutter the screen.
+	* (setPattern, drawCursor) : Fix not to clutter the screen.
 
 2007-04-05 04:14  okasaka
 
-	* : (Pci) : New.
+	* (Pci) : New.
 
 2007-04-03 08:18  okasaka
 
-	* : Try CHS read after LBA read failure for CF-IDE.
+	* Try CHS read after LBA read failure for CF-IDE.
 
 2007-03-30 07:14  okasaka
 
-	* : (Keyboard::invoke) : Fix handling of wheel.
+	* (Keyboard::invoke) : Fix handling of wheel.
 
 2007-03-30 07:13  okasaka
 
-	* : (Vesa) : Synchronize methods.
+	* (Vesa) : Synchronize methods.
 
 2007-03-29 08:03  okasaka
 
-	* : (sync, AtaController) : Fix bugs.
+	* (sync, AtaController) : Fix bugs.
 
 2007-03-29 08:01  okasaka
 
-	* : (esInit) : Fix the port address numbers of the ATA control
-	  block registers.
+	* (esInit) : Fix the port address numbers of the ATA control block
+	  registers.
 
 2007-03-29 07:59  okasaka
 
-	* : (setBaud) : Add comment.
+	* (setBaud) : Add comment.
 
 2007-03-26 03:55  okasaka
 
-	* : Set version to 0.0.8.
+	* Set version to 0.0.8.
 
 2007-03-26 00:50  okasaka
 
-	* : systemCall: Trace the socket related system calls.
+	* systemCall: Trace the socket related system calls.
 
 2007-03-26 00:47  okasaka
 
-	* : (USE_SVGA) : Define to enable SVGA mode.
+	* (USE_SVGA) : Define to enable SVGA mode.
 
 2007-03-26 00:45  okasaka
 
-	* : Refine.
+	* Refine.
 
 2007-03-26 00:41  okasaka
 
-	* : (test2) : Report the argument to the thread start function.
+	* (test2) : Report the argument to the thread start function.
 
 2007-03-26 00:39  okasaka
 
-	* : Remove invalid test code.
+	* Remove invalid test code.
 
 2007-03-26 00:37  okasaka
 
-	* : (TESTS): Add handle.
+	* (TESTS): Add handle.
 
 2007-03-26 00:26  okasaka
 
-	* : (initNetwork) : Initiate DHCP client service.
+	* (initNetwork) : Initiate DHCP client service.
 
 2007-03-26 00:21  okasaka
 
-	* : Add Socket Plug-in.
+	* Add Socket Plug-in.
 
 2007-03-26 00:15  okasaka
 
-	* : (translateNormal) : Fix to translate keyboard digit keys.
+	* (translateNormal) : Fix to translate keyboard digit keys.
 
 2007-03-23 03:08  okasaka
 
-	* : Refine TCP/IP stack including non-blocking I/O support.
+	* Refine TCP/IP stack including non-blocking I/O support.
 
 2007-03-23 03:07  okasaka
 
-	* : Refine TCP/IP stack including non-blocking I/O support.
+	* Refine TCP/IP stack including non-blocking I/O support.
 
 2007-03-23 03:01  okasaka
 
-	* : New.
+	* New.
 
 2007-03-23 02:56  okasaka
 
-	* : (Timer::start) : Fix to unlock monitor while calling TimerTask.
+	* (Timer::start) : Fix to unlock monitor while calling TimerTask.
 
 2007-03-23 02:53  okasaka
 
-	* : (Monitor) : Fix to increment the reference count while locked.
+	* (Monitor) : Fix to increment the reference count while locked.
 
 2007-03-23 02:50  okasaka
 
-	* : (Label) : Fix to make gdb identify the stack bottom correctly.
+	* (Label) : Fix to make gdb identify the stack bottom correctly.
 
 2007-03-23 02:45  okasaka
 
-	* : Add gdbstub support
+	* Add gdbstub support
 
 2007-03-23 02:43  okasaka
 
-	* : Update the default interface database.
+	* Update the default interface database.
 
 2007-03-23 02:38  okasaka
 
-	* : (Uart::write) : Fix bug.
+	* (Uart::write) : Fix bug.
 
 2007-03-23 02:33  okasaka
 
-	* : (ISelectable) : New.
+	* (ISelectable) : New.
 
 2007-03-23 02:29  okasaka
 
-	* : (Collection::list) : Remove.
+	* (Collection::list) : Remove.
 
 2007-03-23 02:27  okasaka
 
-	* : (Broker::vtbl) : Expand the size of vtbl for ISocket.
+	* (Broker::vtbl) : Expand the size of vtbl for ISocket.
 
 2007-03-23 02:22  okasaka
 
-	* : New.
+	* New.
 
 2007-03-23 02:16  okasaka
 
-	* : (Ring::read) : Fix bug.
+	* (Ring::read) : Fix bug.
 
 2007-03-08 00:09  okasaka
 
-	* : (template<class J> Handle(J*, bool)) : Fix bug.
+	* (template<class J> Handle(J*, bool)) : Fix bug.
 
 2007-03-07 09:25  okasaka
 
-	* : Fix IsInterface<IInterface>::Value to be true by adding an
+	* Fix IsInterface<IInterface>::Value to be true by adding an
 	  IsInterfaceImp specialization for IInterface.
 
 2007-03-05 04:10  okasaka
 
-	* : Set version to 0.0.7.
+	* Set version to 0.0.7.
 
 2007-03-05 02:41  okasaka
 
-	* : Add DHCP client service.
+	* Add DHCP client service.
 
 2007-03-05 02:39  okasaka
 
-	* : (Thread::Monitor::wait) : Fix bug.
+	* (Thread::Monitor::wait) : Fix bug.
 
 2007-03-05 02:37  okasaka
 
-	* : New.
+	* New.
 
 2007-02-27 09:12  okasaka
 
-	* : Fix to assign the default, non-zero scopeID for every
+	* Fix to assign the default, non-zero scopeID for every
 	  Inet4Address object following RFC 4007.
 
 2007-02-27 04:32  okasaka
 
-	* : Add primitive DNS stub resolver.
+	* Add primitive DNS stub resolver.
 
 2007-02-22 05:49  okasaka
 
-	* : Add primitive DHCP client test.
+	* Add primitive DHCP client test.
 
 2007-02-16 09:26  okasaka
 
-	* : Refine ICMP error support.
+	* Refine ICMP error support.
 
 2007-02-09 06:40  okasaka
 
-	* : Set version to 0.0.6.
+	* Set version to 0.0.6.
 
 2007-02-09 05:06  okasaka
 
-	* : Refine conduit memory management.
+	* Refine conduit memory management.
 
 2007-02-07 04:22  okasaka
 
-	* : Support IP fragmentation, reassembly, and ARP caching.
+	* Support IP fragmentation, reassembly, and ARP caching.
 
 2007-02-07 04:19  okasaka
 
-	* : Add smartptr.cpp.
+	* Add smartptr.cpp.
 
 2007-02-07 04:16  okasaka
 
-	* : New.
+	* New.
 
 2007-01-29 07:50  okasaka
 
-	* : Support interface implementation class pointers using
+	* Support interface implementation class pointers using
 	  dynamic_cast instead of queryInterface.
 
 2007-01-17 02:41  okasaka
 
-	* : Update Copyright notice.
+	* Update Copyright notice.
 
 2007-01-17 02:20  okasaka
 
-	* : Add support for randomized timers, ephemeral ports, ICMP
+	* Add support for randomized timers, ephemeral ports, ICMP
 	  unreach., IGMP, and socket buffer size options.
 
 2007-01-17 02:16  okasaka
 
-	* : (rand48) : New.
+	* (rand48) : New.
 
 2007-01-17 02:13  okasaka
 
-	* : (es/collection.h) : New.
+	* (es/collection.h) : New.
 
 2007-01-17 02:08  okasaka
 
-	* : Add const qualifiers to constant array parameters to reflect
-	  the esidl changes.
+	* Add const qualifiers to constant array parameters to reflect the
+	  esidl changes.
 
 2007-01-17 02:03  okasaka
 
-	* : New.
+	* New.
 
 2007-01-17 01:59  okasaka
 
-	* : (DeclaratorHandler) : Fix to add const qualifier to constant
+	* (DeclaratorHandler) : Fix to add const qualifier to constant
 	  array parameters.
 
 2006-12-26 00:56  okasaka
 
-	* : Set version to 0.0.5.
+	* Set version to 0.0.5.
 
 2006-12-25 05:15  ueno9
 
-	* : Added manuals for network interfaces
+	* Added manuals for network interfaces
 
 2006-12-20 04:52  okasaka
 
-	* : Refine support for TCP/IP.
+	* Refine support for TCP/IP.
 
 2006-12-18 07:08  okasaka
 
-	* : Support conduits network framework for TCP stream.
+	* Support conduits network framework for TCP stream.
 
 2006-12-01 10:10  okasaka
 
-	* : Fix ARP conduits bugs.
+	* Fix ARP conduits bugs.
 	  (ARPReceiver::input) : Update MAC address immediately and set tha
 	  as the key to process ARP request by ARP adapters.
 	  (ARPFamily) : Use InetLocalAddressAccessor for arpAccessor
@@ -2179,187 +2679,187 @@
 
 2006-11-30 23:55  okasaka
 
-	* : Maintain.
+	* Maintain.
 
 2006-11-29 07:34  okasaka
 
-	* : Support Conduits network framework.
+	* Support Conduits network framework.
 
 2006-11-29 07:31  okasaka
 
-	* : (main) : Use the symbol VERSION to embed the version number in
+	* (main) : Use the symbol VERSION to embed the version number in
 	  the generated header file.
 
 2006-11-29 07:23  okasaka
 
-	* : New.
+	* New.
 
 2006-11-29 05:23  ueno9
 
-	* : Added support for Ethernet and loopback devices.
+	* Added support for Ethernet and loopback devices.
 
 2006-11-29 05:17  okasaka
 
-	* : Maintain.
+	* Maintain.
 
 2006-11-29 04:55  ueno9
 
-	* : Initial revision
+	* Initial revision
 
 2006-11-09 09:04  okasaka
 
-	* : (setPriority) : Fix bug.
+	* (setPriority) : Fix bug.
 
 2006-10-31 01:11  okasaka
 
-	* : Fix for GNU Make 3.81.
+	* Fix for GNU Make 3.81.
 
 2006-10-17 02:51  okasaka
 
-	* : Set version to 0.0.4.
+	* Set version to 0.0.4.
 
 2006-10-17 02:17  okasaka
 
-	* : Fix for SMP support.
+	* Fix for SMP support.
 
 2006-10-17 02:16  okasaka
 
-	* : Pass QFLAGS to qemu.
+	* Pass QFLAGS to qemu.
 
 2006-10-17 02:13  okasaka
 
-	* : Enable A20 gate just in case.
+	* Enable A20 gate just in case.
 
 2006-10-17 02:12  okasaka
 
-	* : New.
+	* New.
 
 2006-10-12 07:57  okasaka
 
-	* : Fix synchronize operations and extend the kernel stack size.
+	* Fix synchronize operations and extend the kernel stack size.
 
 2006-10-11 02:48  okasaka
 
-	* : Fix synchronization primitives for SMP support.
+	* Fix synchronization primitives for SMP support.
 
 2006-10-05 06:59  okasaka
 
-	* : Support SMP application processor startup.
+	* Support SMP application processor startup.
 
 2006-09-28 07:33  okasaka
 
-	* : Add gcc-4.1.1.patch.
+	* Add gcc-4.1.1.patch.
 
 2006-09-28 07:07  okasaka
 
-	* : Set version to 0.0.3.
+	* Set version to 0.0.3.
 
 2006-09-28 06:23  okasaka
 
-	* : Set version to 0.0.3.
+	* Set version to 0.0.3.
 
 2006-09-28 06:20  okasaka
 
-	* : Fix clean build problems.
+	* Fix clean build problems.
 
 2006-09-28 04:36  okasaka
 
-	* : Replaced by disk.img.gz.
+	* Replaced by disk.img.gz.
 
 2006-09-28 04:30  okasaka
 
-	* : Implement the kernel page fault handler that raises the EFAULT
+	* Implement the kernel page fault handler that raises the EFAULT
 	  system exception.
 
 2006-09-28 02:53  ueno9
 
-	* : Added mbr.bin
+	* Added mbr.bin
 
 2006-09-27 09:28  ueno9
 
-	* : Initial Check-in.
+	* Initial Check-in.
 
 2006-09-27 09:27  ueno9
 
-	* : Added a method to initialize the partition table.
+	* Added a method to initialize the partition table.
 
 2006-09-27 09:25  ueno9
 
-	* : Modified to create a C source file which contains a MBR.
+	* Modified to create a C source file which contains a MBR.
 
 2006-09-27 09:06  ueno9
 
-	* : Added a method to initialize the partition table.
+	* Added a method to initialize the partition table.
 
 2006-09-26 04:30  okasaka
 
-	* : Implement the interface store.
+	* Implement the interface store.
 
 2006-09-26 04:27  okasaka
 
-	* : Add patches/gcc-4.1.1.patch.
+	* Add patches/gcc-4.1.1.patch.
 
 2006-09-26 04:18  okasaka
 
-	* : Move extern "C" declarations.
+	* Move extern "C" declarations.
 
 2006-09-26 04:16  okasaka
 
-	* : New.
+	* New.
 
 2006-09-21 01:50  okasaka
 
-	* : Refine the system call and upcall paths.
+	* Refine the system call and upcall paths.
 
 2006-09-21 01:43  okasaka
 
-	* : (Binder::getName) : Fix bug.
+	* (Binder::getName) : Fix bug.
 
 2006-09-14 09:23  okasaka
 
-	* : Set version to 0.0.2.
+	* Set version to 0.0.2.
 
 2006-09-14 05:04  okasaka
 
-	* : (main): Refine.
+	* (main): Refine.
 
 2006-09-14 04:59  okasaka
 
-	* : Fix interface description.
+	* Fix interface description.
 
 2006-09-13 09:34  ueno9
 
-	* : Added a manual
+	* Added a manual
 
 2006-09-13 08:22  okasaka
 
-	* : Support procedural IPC.
+	* Support procedural IPC.
 
 2006-09-13 07:33  okasaka
 
-	* : Add esInit() declaration.
+	* Add esInit() declaration.
 
 2006-09-13 07:20  okasaka
 
-	* : Include core.h for esInit().
+	* Include core.h for esInit().
 
 2006-09-07 08:01  ueno9
 
-	* : Added manuals.
+	* Added manuals.
 
 2006-09-01 09:41  ueno9
 
-	* : Added manuals.
+	* Added manuals.
 
 2006-09-01 01:51  okasaka
 
-	* : Fix wrong Mmu::kernelDirectory value.
+	* Fix wrong Mmu::kernelDirectory value.
 
 2006-08-30 09:33  okasaka
 
-	* : Initial revision
+	* Initial revision
 
 2006-08-30 09:33  
 
-	* : New repository initialized by cvs2svn.
+	* New repository initialized by cvs2svn.
 
