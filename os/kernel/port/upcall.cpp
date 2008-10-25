@@ -89,14 +89,23 @@ set(Process* process, void* object, const Guid& iid, bool used)
 long long Process::
 upcall(void* self, void* base, int methodNumber, va_list ap)
 {
-    Thread* current(Thread::getCurrentThread());
+    Thread* current = Thread::getCurrentThread();
 
-    unsigned interfaceNumber(static_cast<void**>(self) - static_cast<void**>(base));
+    unsigned interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
+    Variant* variant = 0;
+    if (INTERFACE_POINTER_MAX <= interfaceNumber)
+    {
+        // self must be a pointer to a Variant value for the method returns a Variant.
+        variant = reinterpret_cast<Variant*>(self);
+        self = va_arg(ap, void*);
+        interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
+    }
+
     UpcallProxy* proxy = &upcallTable[interfaceNumber];
 
     // Now we need to identify which process is to be used for this upcall.
     Process* server = proxy->process;
-    bool log(server->log);
+    bool log = server->log;
 
 #ifdef VERBOSE
     esReport("Process(%p)::upcall[%d] %d\n", server, interfaceNumber, methodNumber);
@@ -175,6 +184,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
     record->proxy = proxy;
     record->methodNumber = methodNumber;
     record->param = ap;
+    record->variant = variant;
 
     long long result(0);
     int errorCode(0);
@@ -261,24 +271,35 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                 errorCode = record->ureg.ecx;
             }
 
-            // Process return code
             if (errorCode == 0)
             {
+                void** ip = 0;
                 Reflect::Type returnType(record->method.getReturnType());
-
                 switch (returnType.getType())
                 {
+                case Ent::SpecVariant:
+                    if (record->variant->getType() == Variant::TypeObject)
+                    {
+                        ip = reinterpret_cast<void**>(static_cast<IInterface*>(*(record->variant)));
+                    }
+                    result = reinterpret_cast<intptr_t>(record->variant);
+                    break;
                 case Ent::TypeInterface:
                     iid = returnType.getInterface().getIid();
                     // FALL THROUGH
                 case Ent::SpecObject:
                     // Convert the received interface pointer to kernel's interface pointer
-                    void** ip(reinterpret_cast<void**>(result));
+                    ip = reinterpret_cast<void**>(result);
                     if (ip == 0)
                     {
                         result = 0;
                     }
-                    else if (server->ipt <= ip && ip < server->ipt + INTERFACE_POINTER_MAX)
+                    break;
+                }
+
+                // Process the returned interface pointer
+                if (ip) {
+                    if (server->ipt <= ip && ip < server->ipt + INTERFACE_POINTER_MAX)
                     {
                         unsigned interfaceNumber(ip - server->ipt);
                         Handle<SyscallProxy> proxy(&server->syscallTable[interfaceNumber], true);
@@ -316,7 +337,6 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                     {
                         errorCode = EBADFD;
                     }
-                    break;
                 }
             }
         }
@@ -512,12 +532,22 @@ copyIn(UpcallRecord* record)
 
     Guid iid = IInterface::iid();
 
+    Reflect::Type returnType = record->method.getReturnType();
+    if (returnType.getType() == Ent::SpecVariant)
+    {
+        // Make space for the return value of Variant type
+        count = sizeof(Variant);
+        esp -= count;
+        *argp++ = (int) esp;
+    }
+
     // Set this
     *argp++ = (int) proxy->object;
 
-    Reflect::Type returnType = record->method.getReturnType();
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        // Variant op(void* buf, int len);
     case Ent::SpecString:
         // int op(char* buf, int len, ...);
         count = paramp[1];                          // XXX check count
@@ -569,8 +599,7 @@ copyIn(UpcallRecord* record)
         {
         case Ent::SpecVariant:
             {
-                memcpy(argp, paramp, sizeof(VariantBase));
-                Variant* var = reinterpret_cast<Variant*>(argp);
+                Variant* var = reinterpret_cast<Variant*>(paramp);
                 switch (var->getType())
                 {
                 case Variant::TypeString:
@@ -585,6 +614,7 @@ copyIn(UpcallRecord* record)
                     *var = Variant(reinterpret_cast<IInterface*>(copyInObject(static_cast<IInterface*>(*var), iid)));
                     break;
                 }
+                memcpy(argp, paramp, sizeof(VariantBase));
                 argp += sizeof(VariantBase) / sizeof(int);
                 paramp += sizeof(VariantBase) / sizeof(int);
                 var->makeVariant();
@@ -642,42 +672,7 @@ copyIn(UpcallRecord* record)
             iid = type.getInterface().getIid();
             // FALL THROUGH
         case Ent::SpecObject:
-            *argp++ = (int) copyInObject(*reinterpret_cast<IInterface**>(paramp++), iid);
-            if (void** ip = *reinterpret_cast<void***>(paramp))
-            {
-                int n;
-
-                n = broker.getInterfaceNo(reinterpret_cast<void*>(ip));
-                if (0 <= n)
-                {
-                    UpcallProxy* proxy = &upcallTable[n];
-                    if (proxy->process == this)
-                    {
-                        *paramp = 0;
-                        *argp++ = (int) proxy->object;
-                        break;
-                    }
-                }
-
-                // Set up a new system call proxy.
-                IInterface* object(reinterpret_cast<IInterface*>(ip));
-                n = set(syscallTable, object, iid);
-                if (0 <= n)
-                {
-                    // Set ip to proxy ip
-                    ip = &ipt[n];
-                    object->addRef();
-                }
-                else
-                {
-                    ip = 0; // XXX should raise an exception
-                }
-                *argp++ = *paramp = (int) ip;   // XXX
-            }
-            else
-            {
-                *argp++ = *paramp;
-            }
+            *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<IInterface**>(paramp), iid);
             // Note the reference count to the created syscall proxy must
             // be decremented by one at the end of this upcall.
             ++paramp;
@@ -734,8 +729,18 @@ copyOut(UpcallRecord* record, Guid& iid)
     int count;
 
     Reflect::Type returnType = record->method.getReturnType();
+    if (returnType.getType() == Ent::SpecVariant)
+    {
+        count = sizeof(Variant);
+        esp -= count;
+        read(record->variant, count, reinterpret_cast<long long>(esp));
+    }
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        // Variant op(void* buf, int len);
+        rc = paramp[1]; // XXX check type and string length if type is string
+        // FALL THROUGH
     case Ent::SpecString:
         // int op(char* buf, int len, ...);
         count = paramp[1];
@@ -791,10 +796,18 @@ copyOut(UpcallRecord* record, Guid& iid)
             esReport("%s", param.getName());
         }
 
+        void** ip = 0;
         switch (type.getType())
         {
         case Ent::SpecVariant:
-            paramp += sizeof(VariantBase) / sizeof(int);
+            {
+                Variant* var = reinterpret_cast<Variant*>(paramp);
+                if (var->getType() == Variant::TypeObject)
+                {
+                    ip = reinterpret_cast<void**>(static_cast<IInterface*>(*var));
+                }
+                paramp += sizeof(VariantBase) / sizeof(int);
+            }
             break;
         case Ent::SpecAny:  // XXX x86 specific
         case Ent::SpecBool:
@@ -837,19 +850,18 @@ copyOut(UpcallRecord* record, Guid& iid)
             break;
         case Ent::SpecObject:
         case Ent::TypeInterface:
-            {
-                void** ip = *reinterpret_cast<void***>(paramp);
-                if (ip && ipt <= ip && ip < ipt + INTERFACE_POINTER_MAX)
-                {
-                    // Release the created syscall proxy.
-                    SyscallProxy* proxy(&syscallTable[ip - ipt]);
-                    proxy->release();
-                }
-                ++paramp;
-            }
+            ip = *reinterpret_cast<void***>(paramp);
+            ++paramp;
             break;
         default:
             break;
+        }
+
+        if (ip && ipt <= ip && ip < ipt + INTERFACE_POINTER_MAX)
+        {
+            // Release the created syscall proxy.
+            SyscallProxy* proxy(&syscallTable[ip - ipt]);
+            proxy->release();
         }
 
         if (log && i + 1 < record->method.getParameterCount())

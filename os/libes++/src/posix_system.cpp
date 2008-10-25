@@ -79,7 +79,7 @@ __thread std::map<pid_t, int>* socketMap;
 // Misc.
 //
 
-long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method);
+long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method, Variant* variant);
 u64 getRandom();
 
 typedef long long (*Method)(void* self, ...);
@@ -859,15 +859,21 @@ public:
         Reflect::Type returnType = method.getReturnType();
         switch (returnType.getType())
         {
-        case Ent::TypeSequence:
-            // int op(xxx* buf, int len, ...);
-            resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
+        case Ent::SpecVariant:
+            resultSize = std::max(static_cast<int32_t>(sizeof(Capability)), static_cast<int32_t>(argp[1]));
+            resultPtr = RpcStack::alloc(resultSize);
             *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::SpecString:
             // int op(char* buf, int len, ...);
             resultPtr = RpcStack::alloc(static_cast<int32_t>(argp[1]));
+            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            ++argp;
+            break;
+        case Ent::TypeSequence:
+            // int op(xxx* buf, int len, ...);
+            resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
             *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
@@ -1003,6 +1009,9 @@ public:
         // TODO catch exception while applying
         switch (returnType.getType())
         {
+        case Ent::SpecVariant:
+            res.result = apply(argc, argv, (Variant (*)()) ((*object)[methodNumber]));
+            break;
         case Ent::SpecBool:
             res.result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
             break;
@@ -1056,24 +1065,26 @@ public:
             // FALL THROUGH
         case Ent::SpecObject:
             res.result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
-            if (static_cast<IInterface*>(res.result))
-            {
-                Capability* cap = static_cast<Capability*>(resultPtr);
-                exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
-                if (cap->check == 0)
-                {
-                    *fdp++ = cap->object;
-                }
-#ifdef VERBOSE
-                printf("<< ");
-                cap->report();
-#endif
-            }
             break;
         case Ent::TypeArray:
         case Ent::SpecVoid:
             apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
             break;
+        }
+
+        // Export object
+        if (res.result.getType() == Variant::TypeObject && static_cast<IInterface*>(res.result))
+        {
+            Capability* cap = static_cast<Capability*>(resultPtr);
+            exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
+            if (cap->check == 0)
+            {
+                *fdp++ = cap->object;
+            }
+#ifdef VERBOSE
+            printf("<< ");
+            cap->report();
+#endif
         }
 
         // Send response
@@ -1132,7 +1143,7 @@ public:
         return rc;
     }
 
-    long long callRemote(int interfaceNumber, int methodNumber, va_list ap)
+    long long callRemote(int interfaceNumber, int methodNumber, va_list ap, Variant* variant)
     {
         long long result = 0;
         int error = 0;
@@ -1198,7 +1209,7 @@ public:
             }
         }
 
-        result = ::callRemote(imported->capability, methodNumber, ap, method);
+        result = ::callRemote(imported->capability, methodNumber, ap, method, variant);
 
         importedTable.put(interfaceNumber);
 
@@ -1736,11 +1747,19 @@ u64 getRandom()
 long long callRemote(void* self, void* base, int methodNumber, va_list ap)
 {
     unsigned interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
-
-    return current.callRemote(interfaceNumber, methodNumber, ap);
+    Variant* variant = 0;
+    if (MAX_IMPORT < interfaceNumber)
+    {
+        // self is a pointer to a Variant value for the method that returns a Variant.
+        variant = reinterpret_cast<Variant*>(self);
+        self = va_arg(ap, void*);
+        interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
+        ASSERT(interfaceNumber < MAX_IMPORT);
+    }
+    return current.callRemote(interfaceNumber, methodNumber, ap, variant);
 }
 
-long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method)
+long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method, Variant* variant)
 {
     if (epfd < 0)
     {
@@ -1797,12 +1816,12 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     {
     case Ent::SpecVariant:
         // Variant op(void* buf, int len, ...);
-        break;
+        // FALL THROUGH
     case Ent::TypeSequence:
     case Ent::SpecString:
         // int op(xxx* buf, int len, ...);
         *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
-        *argp++ = Variant(va_arg(ap, int));
+        *argp++ = Variant(va_arg(ap, int32_t));
         break;
     case Ent::SpecUuid:
     case Ent::TypeStructure:
@@ -2050,6 +2069,39 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             long long rc;
             switch (returnType.getType())
             {
+            case Ent::SpecVariant:
+                switch (res->result.getType())
+                {
+                case Variant::TypeString:
+                    memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
+                            static_cast<int32_t>(rpcmsg.argv[2]));
+                    break;
+                case Variant::TypeObject:
+                    if (static_cast<IInterface*>(res->result))
+                    {
+                        Capability* cap = static_cast<Capability*>(res->getData());
+                        if (cap->check == 0 && (fdmax - fdp) == 1)
+                        {
+                            // Set cap->object to received fd number
+                            cap->object = *fdp++;
+                            // TODO Set exec on close to cap->object
+                        }
+#ifdef VERBOSE
+                        printf(">> ");
+                        cap->report();
+#endif
+                        res->result = current.importObject(*cap, iid, false);
+                    }
+                    else
+                    {
+                        res->result = Variant(static_cast<IInterface*>(0));
+                    }
+                    break;
+                }
+                assert(variant);
+                *variant = res->result;
+                res->result = Variant(reinterpret_cast<intptr_t>(variant));
+                break;
             case Ent::SpecString:
                 rc = static_cast<int32_t>(res->result);
                 if (0 < rc)

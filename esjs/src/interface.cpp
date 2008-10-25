@@ -152,7 +152,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     // Set this
     *argp++ = Variant(reinterpret_cast<intptr_t>(self));
 
-    // In the following implementation, we assume no out or inout attribute is
+    // In the following implementation, we assume no out nor inout attribute is
     // used for parameters.
 
     Reflect::Type returnType = method.getReturnType();
@@ -160,17 +160,17 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     {
     case Ent::SpecVariant:
         // Variant op(void* buf, int len, ...);
+        // FALL THROUGH
+    case Ent::SpecString:
+        // int op(xxx* buf, int len, ...);
+        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Variant(sizeof(heap));
         break;
     case Ent::TypeSequence:
         // int op(xxx* buf, int len, ...);
         *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
         ++ext;
         *argp++ = Variant(static_cast<int32_t>(((*list)[0])->toNumber()));
-        break;
-    case Ent::SpecString:
-        // int op(xxx* buf, int len, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
-        *argp++ = Variant(sizeof(heap));
         break;
     case Ent::SpecUuid:
     case Ent::TypeStructure:
@@ -305,6 +305,65 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     int argc = argp - argv;
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        {
+            Variant result = apply(argc, argv, (Variant (*)()) ((*self)[methodNumber]));
+            switch (result.getType())
+            {
+            case Variant::TypeVoid:
+                value = NullValue::getInstance();
+                break;
+            case Variant::TypeBool:
+                value = BoolValue::getInstance(static_cast<bool>(result));
+                break;
+            case Variant::TypeOctet:
+                value = new NumberValue(static_cast<uint8_t>(result));
+                break;
+            case Variant::TypeShort:
+                value = new NumberValue(static_cast<int16_t>(result));
+                break;
+            case Variant::TypeUnsignedShort:
+                value = new NumberValue(static_cast<uint16_t>(result));
+                break;
+            case Variant::TypeLong:
+                value = new NumberValue(static_cast<int32_t>(result));
+                break;
+            case Variant::TypeUnsignedLong:
+                value = new NumberValue(static_cast<uint32_t>(result));
+                break;
+            case Variant::TypeLongLong:
+                value = new NumberValue(static_cast<int64_t>(result));
+                break;
+            case Variant::TypeUnsignedLongLong:
+                value = new NumberValue(static_cast<uint64_t>(result));
+                break;
+            case Variant::TypeFloat:
+                value = new NumberValue(static_cast<float>(result));
+                break;
+            case Variant::TypeDouble:
+                value = new NumberValue(static_cast<double>(result));
+                break;
+            case Variant::TypeString:
+                value = new StringValue(heap);
+                break;
+            case Variant::TypeObject:
+                if (IInterface* unknown = static_cast<IInterface*>(result))
+                {
+                    ObjectValue* instance = new InterfacePointerValue(unknown);
+                    instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+                    value = instance;
+                }
+                else
+                {
+                    value = NullValue::getInstance();
+                }
+                break;
+            default:
+                value = NullValue::getInstance();
+                break;
+            }
+        }
+        break;
     case Ent::SpecBool:
         value = BoolValue::getInstance(static_cast<bool>(apply(argc, argv, (bool (*)()) ((*self)[methodNumber]))));
         break;
@@ -339,14 +398,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         value = new NumberValue(apply(argc, argv, (double (*)()) ((*self)[methodNumber])));
         break;
     case Ent::SpecAny:
-        if (sizeof(uint32_t) < sizeof(void*))
-        {
-            value = new NumberValue(static_cast<uint64_t>(apply(argc, argv, (uint64_t (*)()) ((*self)[methodNumber]))));
-        }
-        else
-        {
-            value = new NumberValue(static_cast<uint32_t>(apply(argc, argv, (uint32_t (*)()) ((*self)[methodNumber]))));
-        }
+        value = new NumberValue(static_cast<intptr_t>(apply(argc, argv, (intptr_t (*)()) ((*self)[methodNumber]))));
         break;
     case Ent::SpecString:
         heap[0] = '\0';
@@ -369,18 +421,15 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         riid = returnType.getInterface().getIid();
         // FALL THROUGH
     case Ent::SpecObject:
+        if (IInterface* unknown = apply(argc, argv, (IInterface* (*)()) ((*self)[methodNumber])))
         {
-            IInterface* unknown = apply(argc, argv, (IInterface* (*)()) ((*self)[methodNumber]));
-            if (unknown)
-            {
-                ObjectValue* instance = new InterfacePointerValue(unknown);
-                instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
-                value = instance;
-            }
-            else
-            {
-                value = NullValue::getInstance();
-            }
+            ObjectValue* instance = new InterfacePointerValue(unknown);
+            instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+            value = instance;
+        }
+        else
+        {
+            value = NullValue::getInstance();
         }
         break;
     case Ent::SpecVoid:

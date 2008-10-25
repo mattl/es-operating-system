@@ -98,31 +98,46 @@ long SyscallProxy::releaseUser()
 long long Process::
 systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 {
-    bool log(this->log);
+    bool log = this->log;
+    int* paramp = reinterpret_cast<int*>(paramv);
 
     if (base)
     {
         // Note base is zero if a system call is called from the "C" runtime.
-        ipt = base;
-        if (!isValid(base, sizeof(void*) * INTERFACE_POINTER_MAX))
+        if (reinterpret_cast<int>(base) & (sizeof(void*) - 1))
         {
-            throw SystemException<EFAULT>();
+            throw SystemException<EBADF>();
         }
+        ipt = base;
     }
 
     //
     // Determine the type of interface and which method is being invoked.
     //
-    if ((reinterpret_cast<long>(self) ^ reinterpret_cast<long>(base)) &
-        (sizeof(void*) - 1))
+    if (reinterpret_cast<long>(self) & (sizeof(void*) - 1))
     {
         throw SystemException<EBADF>();
     }
-    unsigned interfaceNumber(self - base);
-
+    unsigned interfaceNumber = self - base;
+    Variant* variant = 0;
     if (INTERFACE_POINTER_MAX <= interfaceNumber)
     {
-        throw SystemException<EBADF>();
+        // self could be a pointer to a Variant value when the method returns a Variant.
+        variant = reinterpret_cast<Variant*>(self);
+        if (!isValid(variant, sizeof(Variant)))
+        {
+          throw SystemException<EBADF>();
+        }
+        if (!isValid(paramp, sizeof(void*)))
+        {
+          throw SystemException<EBADF>();
+        }
+        self = *reinterpret_cast<void***>(paramp);
+        ++paramp;
+        interfaceNumber = self - base;
+        if (INTERFACE_POINTER_MAX <= interfaceNumber) {
+          throw SystemException<EBADF>();
+        }
     }
     Handle<SyscallProxy> proxy(&syscallTable[interfaceNumber], true);
     if (!proxy->isValid())
@@ -165,7 +180,15 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         }
         super = getInterface(super.getSuperIid());
     }
+
     Reflect::Method method(super.getMethod(methodNumber - baseMethodCount));
+    Reflect::Type returnType = method.getReturnType();
+    if (variant && returnType.getType() != Ent::SpecVariant ||
+        !variant && returnType.getType() == Ent::SpecVariant)
+    {
+        throw SystemException<EBADF>();
+    }
+
     if (log)
     {
         esReport("::%s(", method.getName());
@@ -199,7 +222,6 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     //
     // Set up parameters
     //
-    int* paramp = reinterpret_cast<int*>(paramv);
     Variant argv[9];
     Variant* argp = argv;
 
@@ -215,9 +237,10 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     Method** object = reinterpret_cast<Method**>(proxy->getObject());
     *argp++ = Variant(reinterpret_cast<intptr_t>(object));
 
-    Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        //  Variant op(void* buf, int len);
     case Ent::SpecString:
         // int op(char* buf, int len, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
@@ -490,8 +513,16 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     // Invoke method
     int argc = argp - argv;
     Variant result;
+    void* ip = 0;
     switch (returnType.getType())
     {
+    case Ent::SpecVariant:
+        *variant = apply(argc, argv, (Variant (*)()) ((*object)[methodNumber]));
+        result = Variant(reinterpret_cast<intptr_t>(variant));
+        if (variant->getType() == Variant::TypeObject) {
+            ip = static_cast<IInterface*>(*variant);
+        }
+        break;
     case Ent::SpecBool:
         result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
         break;
@@ -539,22 +570,25 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         // FALL THROUGH
     case Ent::SpecObject:
         result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
-        if (void* ip = static_cast<IInterface*>(result))
-        {
-            int n = set(syscallTable, ip, iid, true);
-            if (0 <= n)
-            {
-                result = Variant(reinterpret_cast<IInterface*>(&base[n]));
-            }
-            else
-            {
-                IInterface* object(static_cast<IInterface*>(ip));
-                object->release();
-                result = Variant(static_cast<IInterface*>(0));
-                throw SystemException<EMFILE>();
-            }
-        }
+        ip = static_cast<IInterface*>(result);
         break;
+    }
+
+    // Process the returned interface pointer
+    if (ip)
+    {
+        int n = set(syscallTable, ip, iid, true);
+        if (0 <= n)
+        {
+            result = Variant(reinterpret_cast<IInterface*>(&base[n]));
+        }
+        else
+        {
+            IInterface* object(static_cast<IInterface*>(ip));
+            object->release();
+            result = Variant(static_cast<IInterface*>(0));
+            throw SystemException<EMFILE>();
+        }
     }
 
     // Process addRef() and release() locally

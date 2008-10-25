@@ -27,6 +27,7 @@
 #include <es/list.h>
 #include <es/ref.h>
 #include <es/reflect.h>
+#include <es/variant.h>
 #include <es/base/IMonitor.h>
 #include <es/base/IProcess.h>
 #include <es/base/IRuntime.h>
@@ -90,6 +91,7 @@ class UpcallRecord
     UpcallProxy*        proxy;
     int                 methodNumber;
     va_list             param;
+    Variant*            variant;
     Reflect::Method     method;
 
     friend class Core;
