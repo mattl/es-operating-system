@@ -27,6 +27,8 @@
 
 module es
 {
+    native void_pointer;
+
     /** This interface provides methods for handling child processes of the current process.
      */
     interface Process : Interface
@@ -93,6 +95,7 @@ module es
     interface CurrentProcess : Interface
     {
         #pragma ID CurrentProcess = "DCE:3c10827b-44c2-11dc-9c02-0009bf000001";
+
         const unsigned long PROT_NONE = 0x0;
         const unsigned long PROT_READ = 0x1;
         const unsigned long PROT_WRITE = 0x2;
@@ -115,15 +118,15 @@ module es
          * @param offset the start offset of <code>pageable</code>.
          * @return the address of the mapping.
          */
-        any map(in any start, in long long length, in unsigned long prot, in unsigned long flags,
-                in Pageable pageable, in long long offset);
+        void_pointer map(in void_pointer start, in long long length, in unsigned long prot, in unsigned long flags,
+                         in Pageable pageable, in long long offset);
 
         /**
          * Deletes the mappings.
          * @param start the address of the mapping.
          * @param length the size of the mapping.
          */
-        void unmap(in any start, in long long length);
+        void unmap(in void_pointer start, in long long length);
 
         /** Returns the currently executing thread.
          */
@@ -135,7 +138,7 @@ module es
          * @param param     the argument to be passed to <code>start</code>.
          * @see IThread
          */
-        Thread createThread(in any start, in any param);
+        Thread createThread(in void_pointer start, in void_pointer param);
 
         /** Causes the currently executing thread to temporarily pause
          * and allow other threads to execute.
@@ -170,7 +173,7 @@ module es
          * Increments the program data space.
          * @param increment the increment size in bytes.
          */
-        any setBreak(in long long increment);
+        void_pointer setBreak(in long long increment);
 
         /**
          * Traces the system call invocation.

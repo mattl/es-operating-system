@@ -118,7 +118,7 @@ isValid(const void* start, long long length, bool write)
 }
 
 void* Process::
-map(const void* start, long long length, unsigned prot, unsigned flags,
+map(void* start, long long length, unsigned prot, unsigned flags,
     IPageable* pageable, long long offset)
 {
     Monitor::Synchronized method(monitor);
@@ -133,13 +133,13 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
 }
 
 void* Process::
-map(const void* start, long long length, unsigned prot, unsigned flags,
+map(void* start, long long length, unsigned prot, unsigned flags,
     IPageable* pageable, long long offset, long long size /* in pageable object */,
     void* min, void* max)
 {
     Map::List::Iterator iter = mapList.begin();
     Map* map;
-    const void* end;
+    void* end;
 
     if (Page::pageOffset(offset) != Page::pageOffset((unsigned long) start))
     {
@@ -160,7 +160,7 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
         {
             return 0;
         }
-        end = static_cast<const u8*>(start) + length;
+        end = static_cast<u8*>(start) + length;
         if (max < end || end <= start)
         {
             return 0;
@@ -184,7 +184,7 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
         {
             start = min;
         }
-        end = static_cast<const u8*>(start) + length;
+        end = static_cast<u8*>(start) + length;
         while ((map = iter.next()))
         {
             if (end <= map->start)
@@ -194,8 +194,8 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
             }
             if (start < map->end)
             {
-                start = map->end;
-                end = static_cast<const u8*>(start) + length;
+                start = const_cast<void*>(map->end);
+                end = static_cast<u8*>(start) + length;
             }
         }
         if (max < end || end <= start)
@@ -220,7 +220,7 @@ map(const void* start, long long length, unsigned prot, unsigned flags,
 }
 
 void Process::
-unmap(const void* start, long long length)
+unmap(void* start, long long length)
 {
     Monitor::Synchronized method(monitor);
 
@@ -620,7 +620,7 @@ set(SyscallProxy* table, void* interface, const Guid& iid, bool used)
 
 void Process::
 // setStartup(void (*startup)(void* (*start)(void* param), void* param)) // [check] startup must be a function pointer.
-setStartup(const void* startup)
+setStartup(void* startup)
 {
     typedef void (*Startup)(void* (*start)(void* param), void* param); // [check]
     this->startup = reinterpret_cast<Startup>(startup);

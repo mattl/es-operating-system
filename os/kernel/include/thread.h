@@ -403,7 +403,7 @@ public:
     //
     // ICurrentThread
     //
-    void exit(const void* val);
+    void exit(void* val);
     void sleep(long long timeout);
     int setCancelState(int state);
     int setCancelType(int type);
@@ -412,13 +412,13 @@ public:
 
     // ICurrentProcess
     void exit(int status);
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags,
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags,
               IPageable* pageable, long long offset);
-    void unmap(const void* start, long long length);
+    void unmap(void* start, long long length);
     ICurrentThread* currentThread();
     // [check] start must be a function pointer.
     // IThread* createThread(void* (*start)(void* param), void* param);
-    IThread* createThread(const void* start, const void* param);
+    IThread* createThread(void* start, void* param);
     void yield(void);
     IMonitor* createMonitor();
     IContext* getRoot();
@@ -436,8 +436,8 @@ public:
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
     void setFocus(void* (*focus)(void* param));
     */
-    void setStartup(const void* startup);
-    void setFocus(const void* focus);
+    void setStartup(void* startup);
+    void setFocus(void* focus);
 
     //
     // IInterface

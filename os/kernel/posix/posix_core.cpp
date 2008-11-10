@@ -37,13 +37,13 @@ exit(int status)
 }
 
 void* Core::
-map(const void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
 {
     return 0;
 }
 
 void Core::
-unmap(const void* start, long long length)
+unmap(void* start, long long length)
 {
 }
 

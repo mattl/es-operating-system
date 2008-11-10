@@ -114,7 +114,7 @@ selectThread()
 //
 
 void Sched::
-exit(const void* val)
+exit(void* val)
 {
     Thread* current(Thread::getCurrentThread());
     current->exit(const_cast<void*>(val));
@@ -167,15 +167,15 @@ exit(int status)
 }
 
 void* Sched::
-map(const void* start, long long length, unsigned int prot, unsigned int flags,
-          IPageable* pageable, long long offset)
+map(void* start, long long length, unsigned int prot, unsigned int flags,
+    IPageable* pageable, long long offset)
 {
     Process* current(Process::getCurrentProcess());
     return current->map(start, length, prot, flags, pageable, offset);
 }
 
 void Sched::
-unmap(const void* start, long long length)
+unmap(void* start, long long length)
 {
     Process* current(Process::getCurrentProcess());
     return current->unmap(start, length);
@@ -190,7 +190,7 @@ currentThread()
 
 IThread* Sched::
 // createThread(void* (*start)(void* param), void* param) // [check]
-createThread(const void* start, const void* param)
+createThread(void* start, void* param)
 {
     typedef void* (*Start)(void* param); // [check]
 
@@ -273,7 +273,7 @@ getCurrent()
 }
 
 void Sched::
-setStartup(const void* startup) // [check] setStartup(void (*startup)(void* (*start)(void* param), void* param))
+setStartup(void* startup) // [check] setStartup(void (*startup)(void* (*start)(void* param), void* param))
 {
     Process* current(Process::getCurrentProcess());
     return current->setStartup(startup);
@@ -281,7 +281,7 @@ setStartup(const void* startup) // [check] setStartup(void (*startup)(void* (*st
 
 void Sched::
 
-setFocus(const void* focus) // [check] setFocus(void* (*focus)(void* param))
+setFocus(void* focus) // [check] setFocus(void* (*focus)(void* param))
 {
     Process* current(Process::getCurrentProcess());
     return current->setFocus(focus); // [check]

@@ -198,13 +198,12 @@ getStrokeStyle(void* strokeStyle, int strokeStyleLength)
     return currentState()->getStyle(STYLE_STROKE, strokeStyle, strokeStyleLength);
 }
 
-int Canvas::
-setStrokeStyle(Variant strokeStyle)
+void Canvas::
+setStrokeStyle(const Variant strokeStyle)
 {
     Synchronized<IMonitor*> method(monitor);
     currentState()->setStyle(STYLE_STROKE, strokeStyle);
     dirtyStyle[STYLE_STROKE] = true;
-    return 0;
 }
 
 Variant Canvas::
@@ -214,13 +213,12 @@ getFillStyle(void* fillStyle, int fillStyleLength)
     return currentState()->getStyle(STYLE_FILL, fillStyle, fillStyleLength);
 }
 
-int Canvas::
-setFillStyle(Variant fillStyle)
+void Canvas::
+setFillStyle(const Variant fillStyle)
 {
     Synchronized<IMonitor*> method(monitor);
     currentState()->setStyle(STYLE_FILL, fillStyle);
     dirtyStyle[STYLE_FILL] = true;
-    return 0;
 }
 
 ICanvasGradient* Canvas::

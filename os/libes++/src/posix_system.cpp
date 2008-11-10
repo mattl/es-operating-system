@@ -455,7 +455,7 @@ public:
         ::exit(status);
     }
 
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
     {
         if (Stream* stream = dynamic_cast<Stream*>(pageable))
         {
@@ -467,7 +467,7 @@ public:
         }
     }
 
-    void unmap(const void* start, long long length)
+    void unmap(void* start, long long length)
     {
         munmap(const_cast<void*>(start), length);
     }
@@ -477,7 +477,7 @@ public:
     }
 
     // IThread* esCreateThread(void* (*start)(void* param), void* param)
-    IThread* createThread(const void* start, const void* param) // [check] start must be a function pointer.
+    IThread* createThread(void* start, void* param) // [check] start must be a function pointer.
     {
         return esCreateThread((void* (*)(void*)) start, (void*) param);
     }

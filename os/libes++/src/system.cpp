@@ -72,7 +72,7 @@ class System : public ICurrentProcess
             release();
         }
 
-        void exit(const void* val)
+        void exit(void* val)
         {
             // Call destructors before terminating the current thread.
             rval = const_cast<void*>(val);
@@ -140,12 +140,12 @@ public:
         currentProcess->exit(status);
     }
 
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
     {
         return currentProcess->map(start, length, prot, flags, pageable, offset);
     }
 
-    void unmap(const void* start, long long length)
+    void unmap(void* start, long long length)
     {
         currentProcess->unmap(start, length);
     }
@@ -157,7 +157,7 @@ public:
     }
 
     // IThread* createThread(void* (*start)(void* param), void* param) // [check] function pointer.
-    IThread* createThread(const void* start, const void* param)
+    IThread* createThread(void* start, void* param)
     {
         return currentProcess->createThread(start, param);
     }

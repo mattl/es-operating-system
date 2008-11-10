@@ -391,7 +391,7 @@ returnFromUpcall(Ureg* ureg)
 
 void Process::
 // setFocus(void* (*focus)(void* param)) // [check] focus must be a function pointer.
-setFocus(const void* focus)
+setFocus(void* focus)
 {
     typedef void* (*Focus)(void* param); // [check]
     this->focus = reinterpret_cast<Focus>(focus); // [check]

@@ -293,15 +293,15 @@ public:
     Thread* createThread(const unsigned stackSize);
     void detach(Thread* thread);
 
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags,
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags,
               IPageable* pageable, long long offset, long long size,
               void* min, void* max);
 
     // ICurrentProcess related (called by Sched)
     void exit(int status);
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags,
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags,
               IPageable* pageable, long long offset);
-    void unmap(const void* start, long long length);
+    void unmap(void* start, long long length);
     IThread* createThread(void* (*start)(void* param), void* param);
     IContext* getRoot();
     IStream* getInput();
@@ -317,8 +317,8 @@ public:
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
     void setFocus(void* (*focus)(void* param));
     */
-    void setStartup(const void* startup);
-    void setFocus(const void* focus);
+    void setStartup(void* startup);
+    void setFocus(void* focus);
 
     // IProcess
     void kill();

@@ -421,9 +421,9 @@ public:
     int getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
     int setGlobalCompositeOperation(const char* globalCompositeOperation);
     Variant getStrokeStyle(void* strokeStyle, int strokeStyleLength);
-    int setStrokeStyle(Variant strokeStyle);
+    void setStrokeStyle(const Variant strokeStyle);
     Variant getFillStyle(void* fillStyle, int fillStyleLength);
-    int setFillStyle(Variant fillStyle);
+    void setFillStyle(const Variant fillStyle);
     ICanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
     ICanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     float getLineWidth();

@@ -29,17 +29,19 @@ module es
     {
         #pragma ID Runtime = "DCE:fd4ad80c-414b-11db-9c02-0009bf000001";
 
+        native void_pointer;
+
         /**
          * Sets the startup routine of threads.
          * @param startup the function to start up a thread.
          */
-        void setStartup(in any startup);
+        void setStartup(in void_pointer startup);
 
         /**
          * Sets the focus routine for upcalls from the operating system kernel.
          * @param focus the function to process upcalls.
          */
-        void setFocus(in any focus);
+        void setFocus(in void_pointer focus);
     };
 };
 

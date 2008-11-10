@@ -39,8 +39,8 @@ class Core : public ICurrentThread, public ICurrentProcess
 public:
     // ICurrentProcess
     void exit(int status);
-    void* map(const void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset);
-    void unmap(const void* start, long long length);
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset);
+    void unmap(void* start, long long length);
     ICurrentThread* currentThread();
     IThread* createThread(void* (*start)(void* param), void* param);
     void yield();

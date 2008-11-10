@@ -22,11 +22,14 @@
 
 module es
 {
+    native void_pointer;
+
     /** A thread of execution in a program.
      */
     interface Thread : Interface
     {
         #pragma ID Thread = "DCE:032d1118-25db-11db-9c02-0009bf000001";
+
         enum State
         {
             NEW,
@@ -56,7 +59,7 @@ module es
 
         /** Waits for this thread to die.
          */
-        any join();
+        void_pointer join();
 
         /** Cancels this thread.
          */
@@ -96,7 +99,7 @@ module es
 
         /** Terminates the currently executing thread.
          */
-        void exit(in any val);
+        void exit(in void_pointer val);
 
         /** Causes the currently executing thread to sleep.
          */
