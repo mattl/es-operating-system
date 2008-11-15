@@ -18,13 +18,11 @@
 #ifndef NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
 #define NINTENDO_ES_UTIL_ICANVASRENDERINGCONTEXT2D_IDL_INCLUDED
 
-#include "es/base/IInterface.idl"
-
 module es
 {
     /**
      */
-    interface CanvasGradient : Interface
+    interface CanvasGradient
     {
         #pragma ID CanvasGradient = "DCE:f45e927e-46fe-11dd-8100-0009bf000001";
         // opaque object
@@ -33,7 +31,7 @@ module es
 
     /**
      */
-    interface CanvasPattern : Interface
+    interface CanvasPattern
     {
         #pragma ID CanvasPattern = "DCE:f323a595-46fe-11dd-8100-0009bf000001";
         // opaque object
@@ -43,7 +41,7 @@ module es
      * This interface provides methods for handling
      * a script rendering bitmap images.
      */
-    interface CanvasRenderingContext2D : Interface
+    interface CanvasRenderingContext2D
     {
         #pragma ID CanvasRenderingContext2D = "DCE:f49e00dd-46fe-11dd-8100-0009bf000001";
 

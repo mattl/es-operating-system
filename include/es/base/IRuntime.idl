@@ -18,14 +18,12 @@
 #ifndef NINTENDO_ES_BASE_IRUNTIME_IDL_INCLUDED
 #define NINTENDO_ES_BASE_IRUNTIME_IDL_INCLUDED
 
-#include "es/base/IInterface.idl"
-
 module es
 {
     /** This interface provides methods for run-time setup.
      * @since 0.0.2
      */
-    interface Runtime : Interface
+    interface Runtime
     {
         #pragma ID Runtime = "DCE:fd4ad80c-414b-11db-9c02-0009bf000001";
 

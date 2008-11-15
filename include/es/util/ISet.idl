@@ -24,7 +24,7 @@ module es
 {
     /** This interface represents a group of objects without duplication.
      */
-    interface Set : Interface
+    interface Set
     {
         #pragma ID Set = "DCE:64108b9e-25dc-11db-9c02-0009bf000001";
 

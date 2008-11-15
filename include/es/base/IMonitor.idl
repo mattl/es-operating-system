@@ -29,7 +29,7 @@ module es
      *
      * @see ICurrentProcess
      */
-    interface Monitor : Interface
+    interface Monitor
     {
         #pragma ID Monitor = "DCE:0326e914-25db-11db-9c02-0009bf000001";
 

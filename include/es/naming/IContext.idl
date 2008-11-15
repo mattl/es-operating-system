@@ -27,7 +27,7 @@ module es
      * of name-to-object bindings. It contains methods for examining and
      * updating these bindings.
      */
-    interface Context : Interface
+    interface Context
     {
         #pragma ID Context = "DCE:33f8180a-25dc-11db-9c02-0009bf000001";
 

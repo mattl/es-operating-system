@@ -467,9 +467,15 @@ uninstall-am: uninstall-nobase_includeHEADERS \
 
 
 @ES_TRUE@%.h %.ent : %.idl
+@ES_TRUE@	esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+
+@ES_TRUE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 @ES_TRUE@	esidl -C -I$(srcdir) $<
 
 @ES_FALSE@%.h %.ent : %.idl
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+
+@ES_FALSE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 @ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) $<
 
 clean-local:

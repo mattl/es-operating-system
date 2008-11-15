@@ -3,11 +3,17 @@ SUFFIXES = .h .idl
 if ES
 
 %.h %.ent : %.idl
+	esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+
+es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 	esidl -C -I$(srcdir) $<
 
 else !ES
 
 %.h %.ent : %.idl
+	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+
+es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) $<
 
 endif !ES
@@ -55,8 +61,8 @@ nobase_include_HEADERS = \
 	es/net/inet6.h \
 	es/net/tcp.h \
 	es/net/udp.h \
-  es/variant.h \
-  es/orderedMap.h
+	es/variant.h \
+	es/orderedMap.h
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = \
@@ -98,7 +104,7 @@ nobase_nodist_include_HEADERS = \
 	es/util/IIterator.h \
 	es/util/ISet.h \
 	es/util/ICanvasRenderingContext2D.h \
-  es/util/IOrderedMap.h
+	es/util/IOrderedMap.h
 
 nobase_nodist_include_HEADERS += \
 	es/base/IAlarm.ent \
@@ -139,7 +145,7 @@ nobase_nodist_include_HEADERS += \
 	es/util/IIterator.ent \
 	es/util/ISet.ent \
 	es/util/ICanvasRenderingContext2D.ent \
-  es/util/IOrderedMap.ent
+	es/util/IOrderedMap.ent
 
 nobase_include_HEADERS += \
 	es/base/IAlarm.idl \

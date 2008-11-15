@@ -25,7 +25,7 @@ module es
     /**
      * This interface provides methods for getting internet addresses.
      */
-    interface Resolver : Interface
+    interface Resolver
     {
         #pragma ID Resolver = "DCE:ab43362c-c601-11db-8100-0009bf000001";
         typedef sequence<octet> Buf;

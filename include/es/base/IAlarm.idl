@@ -26,7 +26,7 @@ module es
      * This interface provides a timer
      * which issues the specified callback function after a specified delay.
      */
-    interface Alarm : Interface
+    interface Alarm
     {
         #pragma ID Alarm = "DCE:032000e0-25db-11db-9c02-0009bf000001";
 

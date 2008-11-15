@@ -31,7 +31,7 @@ module es
 
     /** This interface provides methods for handling child processes of the current process.
      */
-    interface Process : Interface
+    interface Process
     {
         #pragma ID Process = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
 
@@ -92,7 +92,7 @@ module es
 
     /** This interface provides methods for handling the current process.
      */
-    interface CurrentProcess : Interface
+    interface CurrentProcess
     {
         #pragma ID CurrentProcess = "DCE:3c10827b-44c2-11dc-9c02-0009bf000001";
 
