@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
 #include <es/base/IStream.h>
 #include <es/device/IDiskManagement.h>
 #include <es/device/IRemovableMedia.h>
-#include <es/naming/IContext.h>
+#include <es/device/IPartition.h>
 #include "ata.h"
 #include "thread.h" // XXX
 
@@ -43,12 +43,12 @@ class AtaDma
     virtual void interrupt(int count /* in byte */) = 0;
 };
 
-class AtaController : public ICallback
+class AtaController : public es::ICallback
 {
     friend class AtaDevice;
     friend class AtaPacketDevice;
 
-    IMonitor*       monitor;
+    es::IMonitor*   monitor;
     Lock            lock;
     Ref             ref;
 
@@ -82,7 +82,7 @@ class AtaController : public ICallback
     static void* run(void* param);
 
 public:
-    AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata);
+    AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, es::IContext* ata);
     ~AtaController();
     void select(u8 device);
     u8 sync(u8 status);
@@ -91,19 +91,19 @@ public:
     int issue(AtaDevice* device, u8* packet, int packetSize,
               void* buffer = 0, int count = 0, u8 features = 0);
     int invoke(int);
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
     void detect();
 };
 
-class AtaDevice : public IStream, public IContext, public IDiskManagement
+class AtaDevice : public es::IStream, public es::IContext, public es::IDiskManagement
 {
     friend class AtaController;
 
 protected:
-    IMonitor*       monitor;
+    es::IMonitor*   monitor;
     Ref             ref;
     AtaController*  ctlr;
     u8              device;
@@ -118,10 +118,10 @@ protected:
     u16             dma;
     bool            removal;
 
-    IContext*       partition;
+    es::IPartition* partition;
 
     bool identify(u8* signature);
-    IContext* getPartition();
+    es::IPartition* getPartition();
 
 public:
     AtaDevice(AtaController* ctlr, u8 device, u8* signature);
@@ -139,13 +139,13 @@ public:
     void flush();
 
     // IContext
-    IBinding* bind(const char* name, IInterface* object);
-    IContext* createSubcontext(const char* name);
+    es::IBinding* bind(const char* name, es::IInterface* object);
+    es::IContext* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    IInterface* lookup(const char* name);
+    es::IInterface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    IIterator* list(const char* name);
+    es::IIterator* list(const char* name);
 
     // IDiskManagement
     int initialize();
@@ -153,14 +153,14 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
     virtual bool detect();
 };
 
-class AtaPacketDevice : public AtaDevice, public IRemovableMedia
+class AtaPacketDevice : public AtaDevice, public es::IRemovableMedia
 {
     u8 testUnitReady();
     int requestSense(void* sense, int count);
@@ -182,7 +182,7 @@ public:
 
     int read(void* dst, int count, long long offset);
     int write(const void* src, int count, long long offset);
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

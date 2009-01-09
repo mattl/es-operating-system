@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include <es/handle.h>
 #include <es/exception.h>
 #include <es/dateTime.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IStream.h>
 #include <es/base/IProcess.h>
 #include <es/usage.h>

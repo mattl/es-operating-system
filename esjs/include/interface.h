@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,11 @@
 
 #include "esjs.h"
 
-Reflect::Interface& getInterface(const Guid& iid);
+namespace es
+{
+    Reflect::Interface& getInterface(const char* iid);
+    IInterface* getConstructor(const char* iid);
+}
 
 ObjectValue* constructInterfaceObject();
 ObjectValue* constructSystemObject(void* system);
@@ -38,29 +42,29 @@ class InterfacePointerValue : public ObjectValue
 {
     es::IInterface* object;
 
-    public:
+public:
     InterfacePointerValue(es::IInterface* object) :
         object(object)
-        {
-        }
+    {
+    }
 
-        ~InterfacePointerValue()
+    ~InterfacePointerValue()
+    {
+        if (object)
         {
-            if (object)
-            {
-                object->release();
-            }
+            object->release();
         }
+    }
 
-        es::IInterface*& getObject()
-        {
-            return object;
-        }
+    es::IInterface*& getObject()
+    {
+        return object;
+    }
 
-        void clearObject()
-        {
-            object = 0;
-        }
+    void clearObject()
+    {
+        object = 0;
+    }
 
     Value* get(const std::string& name);
     void put(const std::string& name, Value* value, int attributes = 0);

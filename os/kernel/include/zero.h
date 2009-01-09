@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ public:
     int write(const void* src, int count);
     int write(const void* src, int count, long long offset);
     void flush();
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,8 @@
 #include <es.h>
 #include <es/exception.h>
 #include "cache.h"
+
+using namespace es;
 
 PageSet::
 PageSet(PageSet* parent) :
@@ -245,8 +247,8 @@ standby(Page* page)
     }
 }
 
-void* PageSet::
-createInstance(const Guid& riid)
+IPageSet* PageSet::
+fork()
 {
     void* objectPtr = 0;
     PageSet* instance = new PageSet(this);
@@ -254,24 +256,18 @@ createInstance(const Guid& riid)
     {
         throw SystemException<ENOMEM>();
     }
-    objectPtr = instance->queryInterface(riid);
-    instance->release();
-    return objectPtr;
+   return instance;
 }
 
 void* PageSet::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IPageSet::iid())
+    if (strcmp(riid, IPageSet::iid()) == 0)
     {
         objectPtr = static_cast<IPageSet*>(this);
     }
-    else if (riid == IInterface::iid())
-    {
-        objectPtr = static_cast<IClassFactory*>(this);
-    }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IPageSet*>(this);
     }
@@ -284,13 +280,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int PageSet::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int PageSet::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -332,4 +328,51 @@ report()
         ASSERT(!(page->flags & Page::Changed));
     }
     esReport("\n");
+}
+
+IPageSet* PageSet::
+Constructor::createInstance()
+{
+    ASSERT(PageTable::pageSet);
+    return PageTable::pageSet->fork();
+}
+
+void* PageSet::
+Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IPageSet::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IPageSet::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IPageSet::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int PageSet::
+Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int PageSet::
+Constructor::release()
+{
+    return 1;
+}
+
+void PageSet::
+initializeConstructor()
+{
+    // cf. -fthreadsafe-statics for g++
+    static Constructor constructor;
+    IPageSet::setConstructor(&constructor);
 }

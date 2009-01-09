@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
 #include <es/device/IAudioFormat.h>
 #include "spinlock.h"
 
-class Line : public IStream, public IAudioFormat, public ICallback
+class Line : public es::IStream, public es::IAudioFormat, public es::ICallback
 {
     Ref         ref;
 
@@ -35,15 +35,15 @@ class Line : public IStream, public IAudioFormat, public ICallback
     u16         rate;
 
 protected:
-    IMonitor*   monitor;
-    ICallback*  callback;
+    es::IMonitor*   monitor;
+    es::ICallback*  callback;
 
     Lock        spinLock;
     u8          buffer[8 * 1024];
     Ring        ring;
 
 public:
-    Line(ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    Line(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~Line();
 
     int invoke(int);
@@ -65,15 +65,15 @@ public:
     virtual int write(const void* src, int count) = 0;
     int write(const void* src, int count, long long offset);
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 class InputLine : public Line
 {
 public:
-    InputLine(ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    InputLine(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~InputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);
@@ -82,7 +82,7 @@ public:
 class OutputLine : public Line
 {
 public:
-    OutputLine(ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    OutputLine(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~OutputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);

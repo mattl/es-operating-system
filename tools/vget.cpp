@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,16 +19,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IStream.h>
 #include <es/base/IFile.h>
-#include <es/device/IFileSystem.h>
+#include <es/device/IFatFileSystem.h>
 #include <es/naming/IContext.h>
 #include <es/handle.h>
 #include "vdisk.h"
+#include "fatStream.h"
 
 u8 sec[512];
 
@@ -77,10 +76,8 @@ int main(int argc, char* argv[])
 {
     IInterface* ns = 0;
     esInit(&ns);
+    FatFileSystem::initializeConstructor();
     Handle<IContext> nameSpace(ns);
-
-    Handle<IClassStore> classStore(nameSpace->lookup("class"));
-    esRegisterFatFileSystemClass(classStore);
 
     if (argc < 3)
     {
@@ -90,8 +87,7 @@ int main(int argc, char* argv[])
 
     Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
     Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
 
     long long freeSpace;

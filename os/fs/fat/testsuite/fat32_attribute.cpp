@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -306,10 +306,8 @@ int main(void)
 {
     IInterface* ns = 0;
     esInit(&ns);
+    FatFileSystem::initializeConstructor();
     Handle<IContext> nameSpace(ns);
-
-    Handle<IClassStore> classStore(nameSpace->lookup("class"));
-    esRegisterFatFileSystemClass(classStore);
 
 #ifdef __es__
     Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
@@ -324,8 +322,7 @@ int main(void)
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
@@ -346,8 +343,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

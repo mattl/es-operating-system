@@ -65,36 +65,36 @@ libes___a_LIBADD =
 am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/utf.c src/color.cpp src/context.cpp src/dateTime.cpp \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
-	src/ring.cpp src/interfaceStore.cpp src/variant386.S \
-	src/variantx64.S include/core.h include/posix_system.h \
-	include/posix_video.h base/IAlarm.c base/ICache.c \
-	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
-	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
-	base/IMonitor.c base/IPageable.c base/IPageSet.c \
-	base/IProcess.c base/IRuntime.c base/ISelectable.c \
-	base/IService.c base/IStream.c base/IThread.c \
-	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
-	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
-	device/IFileSystem.c device/INetworkInterface.c device/IPic.c \
-	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
-	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
-	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
-	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
-	util/IOrderedMap.c src/report.cpp src/system.cpp \
+	src/ring.cpp include/core.h include/posix_system.h \
+	include/posix_video.h src/variant386.S src/variantx64.S \
+	base/IAlarm.c base/ICache.c base/ICallback.c \
+	base/IClassFactory.c base/IClassStore.c base/IFile.c \
+	base/IInterface.c base/IInterfaceStore.c base/IMonitor.c \
+	base/IPageable.c base/IPageSet.c base/IProcess.c \
+	base/IRuntime.c base/ISelectable.c base/IService.c \
+	base/IStream.c base/IThread.c device/IAudioFormat.c \
+	device/IBeep.c device/ICursor.c device/IDevice.c \
+	device/IDiskManagement.c device/IDmac.c \
+	device/IFatFileSystem.c device/IFileSystem.c \
+	device/IIso9660FileSystem.c device/INetworkInterface.c \
+	device/IPic.c device/IRemovableMedia.c device/IRtc.c \
+	device/IPartition.c naming/IBinding.c naming/IContext.c \
+	net/IInternetAddress.c net/IInternetConfig.c net/IResolver.c \
+	net/ISocket.c util/IIterator.c util/ISet.c \
+	util/ICanvasRenderingContext2D.c util/IOrderedMap.c \
+	src/interfaceStore.cpp src/report.cpp src/system.cpp \
 	src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
 	utf.$(OBJEXT)
 am__objects_2 = color.$(OBJEXT) context.$(OBJEXT) dateTime.$(OBJEXT) \
 	dump.$(OBJEXT) inet.$(OBJEXT) throw.$(OBJEXT) \
 	formatter.$(OBJEXT) ring.$(OBJEXT)
-@I386_TRUE@am__objects_3 = variant386.$(OBJEXT)
-@X86_64_TRUE@am__objects_4 = variantx64.$(OBJEXT)
-am__objects_5 = interfaceStore.$(OBJEXT) $(am__objects_3) \
-	$(am__objects_4)
-am__objects_6 =
-am__objects_7 = $(am__objects_1) $(am__objects_2) $(am__objects_5) \
-	$(am__objects_6)
-am__objects_8 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
+am__objects_3 =
+@I386_TRUE@am__objects_4 = variant386.$(OBJEXT)
+@X86_64_TRUE@am__objects_5 = variantx64.$(OBJEXT)
+am__objects_6 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+	$(am__objects_4) $(am__objects_5)
+am__objects_7 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
 	IClassFactory.$(OBJEXT) IClassStore.$(OBJEXT) IFile.$(OBJEXT) \
 	IInterface.$(OBJEXT) IInterfaceStore.$(OBJEXT) \
 	IMonitor.$(OBJEXT) IPageable.$(OBJEXT) IPageSet.$(OBJEXT) \
@@ -102,41 +102,40 @@ am__objects_8 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
 	IService.$(OBJEXT) IStream.$(OBJEXT) IThread.$(OBJEXT) \
 	IAudioFormat.$(OBJEXT) IBeep.$(OBJEXT) ICursor.$(OBJEXT) \
 	IDevice.$(OBJEXT) IDiskManagement.$(OBJEXT) IDmac.$(OBJEXT) \
-	IFileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
+	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
+	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
 	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
 	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) ICanvasRenderingContext2D.$(OBJEXT) \
 	IOrderedMap.$(OBJEXT)
-@ES_TRUE@am__objects_9 = system.$(OBJEXT)
-@POSIX_TRUE@am__objects_10 = posix_system.$(OBJEXT) \
+@ES_TRUE@am__objects_8 = system.$(OBJEXT)
+@POSIX_TRUE@am__objects_9 = posix_system.$(OBJEXT) \
 @POSIX_TRUE@	posix_video.$(OBJEXT) rpc.$(OBJEXT)
-am_libes___a_OBJECTS = $(am__objects_7) $(am__objects_8) \
-	report.$(OBJEXT) $(am__objects_9) $(am__objects_10)
+am_libes___a_OBJECTS = $(am__objects_6) $(am__objects_7) \
+	interfaceStore.$(OBJEXT) report.$(OBJEXT) $(am__objects_8) \
+	$(am__objects_9)
 libes___a_OBJECTS = $(am_libes___a_OBJECTS)
 libesrpc_a_AR = $(AR) $(ARFLAGS)
 libesrpc_a_LIBADD =
-am__libesrpc_a_SOURCES_DIST = src/interfaceStore.cpp src/variant386.S \
-	src/variantx64.S base/IAlarm.c base/ICache.c base/ICallback.c \
-	base/IClassFactory.c base/IClassStore.c base/IFile.c \
-	base/IInterface.c base/IInterfaceStore.c base/IMonitor.c \
-	base/IPageable.c base/IPageSet.c base/IProcess.c \
-	base/IRuntime.c base/ISelectable.c base/IService.c \
-	base/IStream.c base/IThread.c device/IAudioFormat.c \
-	device/IBeep.c device/ICursor.c device/IDevice.c \
-	device/IDiskManagement.c device/IDmac.c device/IFileSystem.c \
-	device/INetworkInterface.c device/IPic.c \
-	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
-	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
-	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
-	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
-	util/IOrderedMap.c src/rpc.cpp
-@I386_TRUE@am__objects_11 = libesrpc_a-variant386.$(OBJEXT)
-@X86_64_TRUE@am__objects_12 = libesrpc_a-variantx64.$(OBJEXT)
-am__objects_13 = libesrpc_a-interfaceStore.$(OBJEXT) $(am__objects_11) \
-	$(am__objects_12)
-am__objects_14 = libesrpc_a-IAlarm.$(OBJEXT) \
+am__libesrpc_a_SOURCES_DIST = base/IAlarm.c base/ICache.c \
+	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
+	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
+	base/IMonitor.c base/IPageable.c base/IPageSet.c \
+	base/IProcess.c base/IRuntime.c base/ISelectable.c \
+	base/IService.c base/IStream.c base/IThread.c \
+	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
+	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
+	device/IFatFileSystem.c device/IFileSystem.c \
+	device/IIso9660FileSystem.c device/INetworkInterface.c \
+	device/IPic.c device/IRemovableMedia.c device/IRtc.c \
+	device/IPartition.c naming/IBinding.c naming/IContext.c \
+	net/IInternetAddress.c net/IInternetConfig.c net/IResolver.c \
+	net/ISocket.c util/IIterator.c util/ISet.c \
+	util/ICanvasRenderingContext2D.c util/IOrderedMap.c \
+	src/rpc.cpp
+am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-ICache.$(OBJEXT) libesrpc_a-ICallback.$(OBJEXT) \
 	libesrpc_a-IClassFactory.$(OBJEXT) \
 	libesrpc_a-IClassStore.$(OBJEXT) libesrpc_a-IFile.$(OBJEXT) \
@@ -150,7 +149,9 @@ am__objects_14 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-IBeep.$(OBJEXT) libesrpc_a-ICursor.$(OBJEXT) \
 	libesrpc_a-IDevice.$(OBJEXT) \
 	libesrpc_a-IDiskManagement.$(OBJEXT) \
-	libesrpc_a-IDmac.$(OBJEXT) libesrpc_a-IFileSystem.$(OBJEXT) \
+	libesrpc_a-IDmac.$(OBJEXT) libesrpc_a-IFatFileSystem.$(OBJEXT) \
+	libesrpc_a-IFileSystem.$(OBJEXT) \
+	libesrpc_a-IIso9660FileSystem.$(OBJEXT) \
 	libesrpc_a-INetworkInterface.$(OBJEXT) \
 	libesrpc_a-IPic.$(OBJEXT) libesrpc_a-IRemovableMedia.$(OBJEXT) \
 	libesrpc_a-IRtc.$(OBJEXT) libesrpc_a-IPartition.$(OBJEXT) \
@@ -161,19 +162,18 @@ am__objects_14 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-IIterator.$(OBJEXT) libesrpc_a-ISet.$(OBJEXT) \
 	libesrpc_a-ICanvasRenderingContext2D.$(OBJEXT) \
 	libesrpc_a-IOrderedMap.$(OBJEXT)
-@POSIX_TRUE@am_libesrpc_a_OBJECTS = $(am__objects_13) \
-@POSIX_TRUE@	$(am__objects_14) libesrpc_a-rpc.$(OBJEXT)
+@POSIX_TRUE@am_libesrpc_a_OBJECTS = $(am__objects_10) \
+@POSIX_TRUE@	libesrpc_a-rpc.$(OBJEXT)
 libesrpc_a_OBJECTS = $(am_libesrpc_a_OBJECTS)
 libessup___a_AR = $(AR) $(ARFLAGS)
 libessup___a_LIBADD =
 am__libessup___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/utf.c src/color.cpp src/context.cpp src/dateTime.cpp \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
-	src/ring.cpp src/interfaceStore.cpp src/variant386.S \
-	src/variantx64.S include/core.h include/posix_system.h \
-	include/posix_video.h
+	src/ring.cpp include/core.h include/posix_system.h \
+	include/posix_video.h src/variant386.S src/variantx64.S
 am_libessup___a_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	$(am__objects_5) $(am__objects_6)
+	$(am__objects_3) $(am__objects_4) $(am__objects_5)
 nodist_libessup___a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	ICallback.$(OBJEXT) IClassFactory.$(OBJEXT) \
 	IClassStore.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
@@ -183,7 +183,8 @@ nodist_libessup___a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IStream.$(OBJEXT) IThread.$(OBJEXT) IAudioFormat.$(OBJEXT) \
 	IBeep.$(OBJEXT) ICursor.$(OBJEXT) IDevice.$(OBJEXT) \
 	IDiskManagement.$(OBJEXT) IDmac.$(OBJEXT) \
-	IFileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
+	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
+	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
 	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
 	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
@@ -346,14 +347,13 @@ cpp_source_files = \
 	src/formatter.cpp \
 	src/ring.cpp
 
-rpc_source_files = src/interfaceStore.cpp $(am__append_1) \
-	$(am__append_2)
 header_files = \
 	include/core.h \
 	include/posix_system.h \
 	include/posix_video.h
 
-libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(rpc_source_files) $(header_files)
+libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) \
+	$(header_files) $(am__append_1) $(am__append_2)
 
 #
 # default interface descriptions
@@ -382,7 +382,9 @@ nodist_libessup___a_SOURCES = \
 	device/IDevice.c \
 	device/IDiskManagement.c \
 	device/IDmac.c \
+	device/IFatFileSystem.c \
 	device/IFileSystem.c \
+	device/IIso9660FileSystem.c \
 	device/INetworkInterface.c \
 	device/IPic.c \
 	device/IRemovableMedia.c \
@@ -400,8 +402,8 @@ nodist_libessup___a_SOURCES = \
 	util/IOrderedMap.c
 
 libes___a_SOURCES = $(libessup___a_SOURCES) \
-	$(nodist_libessup___a_SOURCES) src/report.cpp $(am__append_3) \
-	$(am__append_6)
+	$(nodist_libessup___a_SOURCES) src/interfaceStore.cpp \
+	src/report.cpp $(am__append_3) $(am__append_6)
 @POSIX_TRUE@libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) src/rpc.cpp
 
 # -fno-exceptions
@@ -506,12 +508,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDevice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDiskManagement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDmac.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInterfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInternetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInternetConfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IIso9660FileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IIterator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IMonitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/INetworkInterface.Po@am__quote@
@@ -552,12 +556,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDevice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDiskManagement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDmac.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInterfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInternetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IInternetConfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IIso9660FileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IIterator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IMonitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-INetworkInterface.Po@am__quote@
@@ -577,10 +583,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ISocket.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IThread.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-interfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-rpc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-variant386.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-variantx64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
@@ -636,34 +639,6 @@ variantx64.obj: src/variantx64.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='variantx64.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
-
-libesrpc_a-variant386.o: src/variant386.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variant386.o -MD -MP -MF $(DEPDIR)/libesrpc_a-variant386.Tpo -c -o libesrpc_a-variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
-@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant386.Tpo $(DEPDIR)/libesrpc_a-variant386.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='libesrpc_a-variant386.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
-
-libesrpc_a-variant386.obj: src/variant386.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variant386.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-variant386.Tpo -c -o libesrpc_a-variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
-@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variant386.Tpo $(DEPDIR)/libesrpc_a-variant386.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='libesrpc_a-variant386.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
-
-libesrpc_a-variantx64.o: src/variantx64.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variantx64.o -MD -MP -MF $(DEPDIR)/libesrpc_a-variantx64.Tpo -c -o libesrpc_a-variantx64.o `test -f 'src/variantx64.S' || echo '$(srcdir)/'`src/variantx64.S
-@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variantx64.Tpo $(DEPDIR)/libesrpc_a-variantx64.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='libesrpc_a-variantx64.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variantx64.o `test -f 'src/variantx64.S' || echo '$(srcdir)/'`src/variantx64.S
-
-libesrpc_a-variantx64.obj: src/variantx64.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libesrpc_a-variantx64.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-variantx64.Tpo -c -o libesrpc_a-variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
-@am__fastdepCCAS_TRUE@	mv -f $(DEPDIR)/libesrpc_a-variantx64.Tpo $(DEPDIR)/libesrpc_a-variantx64.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='libesrpc_a-variantx64.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libesrpc_a-variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1057,6 +1032,20 @@ IDmac.obj: device/IDmac.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDmac.obj `if test -f 'device/IDmac.c'; then $(CYGPATH_W) 'device/IDmac.c'; else $(CYGPATH_W) '$(srcdir)/device/IDmac.c'; fi`
 
+IFatFileSystem.o: device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IFatFileSystem.o -MD -MP -MF $(DEPDIR)/IFatFileSystem.Tpo -c -o IFatFileSystem.o `test -f 'device/IFatFileSystem.c' || echo '$(srcdir)/'`device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IFatFileSystem.Tpo $(DEPDIR)/IFatFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFatFileSystem.c' object='IFatFileSystem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IFatFileSystem.o `test -f 'device/IFatFileSystem.c' || echo '$(srcdir)/'`device/IFatFileSystem.c
+
+IFatFileSystem.obj: device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IFatFileSystem.obj -MD -MP -MF $(DEPDIR)/IFatFileSystem.Tpo -c -o IFatFileSystem.obj `if test -f 'device/IFatFileSystem.c'; then $(CYGPATH_W) 'device/IFatFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFatFileSystem.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IFatFileSystem.Tpo $(DEPDIR)/IFatFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFatFileSystem.c' object='IFatFileSystem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IFatFileSystem.obj `if test -f 'device/IFatFileSystem.c'; then $(CYGPATH_W) 'device/IFatFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFatFileSystem.c'; fi`
+
 IFileSystem.o: device/IFileSystem.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IFileSystem.o -MD -MP -MF $(DEPDIR)/IFileSystem.Tpo -c -o IFileSystem.o `test -f 'device/IFileSystem.c' || echo '$(srcdir)/'`device/IFileSystem.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IFileSystem.Tpo $(DEPDIR)/IFileSystem.Po
@@ -1070,6 +1059,20 @@ IFileSystem.obj: device/IFileSystem.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFileSystem.c' object='IFileSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IFileSystem.obj `if test -f 'device/IFileSystem.c'; then $(CYGPATH_W) 'device/IFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFileSystem.c'; fi`
+
+IIso9660FileSystem.o: device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IIso9660FileSystem.o -MD -MP -MF $(DEPDIR)/IIso9660FileSystem.Tpo -c -o IIso9660FileSystem.o `test -f 'device/IIso9660FileSystem.c' || echo '$(srcdir)/'`device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IIso9660FileSystem.Tpo $(DEPDIR)/IIso9660FileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IIso9660FileSystem.c' object='IIso9660FileSystem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IIso9660FileSystem.o `test -f 'device/IIso9660FileSystem.c' || echo '$(srcdir)/'`device/IIso9660FileSystem.c
+
+IIso9660FileSystem.obj: device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IIso9660FileSystem.obj -MD -MP -MF $(DEPDIR)/IIso9660FileSystem.Tpo -c -o IIso9660FileSystem.obj `if test -f 'device/IIso9660FileSystem.c'; then $(CYGPATH_W) 'device/IIso9660FileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IIso9660FileSystem.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IIso9660FileSystem.Tpo $(DEPDIR)/IIso9660FileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IIso9660FileSystem.c' object='IIso9660FileSystem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IIso9660FileSystem.obj `if test -f 'device/IIso9660FileSystem.c'; then $(CYGPATH_W) 'device/IIso9660FileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IIso9660FileSystem.c'; fi`
 
 INetworkInterface.o: device/INetworkInterface.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT INetworkInterface.o -MD -MP -MF $(DEPDIR)/INetworkInterface.Tpo -c -o INetworkInterface.o `test -f 'device/INetworkInterface.c' || echo '$(srcdir)/'`device/INetworkInterface.c
@@ -1603,6 +1606,20 @@ libesrpc_a-IDmac.obj: device/IDmac.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDmac.obj `if test -f 'device/IDmac.c'; then $(CYGPATH_W) 'device/IDmac.c'; else $(CYGPATH_W) '$(srcdir)/device/IDmac.c'; fi`
 
+libesrpc_a-IFatFileSystem.o: device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFatFileSystem.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IFatFileSystem.Tpo -c -o libesrpc_a-IFatFileSystem.o `test -f 'device/IFatFileSystem.c' || echo '$(srcdir)/'`device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFatFileSystem.Tpo $(DEPDIR)/libesrpc_a-IFatFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFatFileSystem.c' object='libesrpc_a-IFatFileSystem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFatFileSystem.o `test -f 'device/IFatFileSystem.c' || echo '$(srcdir)/'`device/IFatFileSystem.c
+
+libesrpc_a-IFatFileSystem.obj: device/IFatFileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFatFileSystem.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IFatFileSystem.Tpo -c -o libesrpc_a-IFatFileSystem.obj `if test -f 'device/IFatFileSystem.c'; then $(CYGPATH_W) 'device/IFatFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFatFileSystem.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFatFileSystem.Tpo $(DEPDIR)/libesrpc_a-IFatFileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFatFileSystem.c' object='libesrpc_a-IFatFileSystem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFatFileSystem.obj `if test -f 'device/IFatFileSystem.c'; then $(CYGPATH_W) 'device/IFatFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFatFileSystem.c'; fi`
+
 libesrpc_a-IFileSystem.o: device/IFileSystem.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFileSystem.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IFileSystem.Tpo -c -o libesrpc_a-IFileSystem.o `test -f 'device/IFileSystem.c' || echo '$(srcdir)/'`device/IFileSystem.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IFileSystem.Tpo $(DEPDIR)/libesrpc_a-IFileSystem.Po
@@ -1616,6 +1633,20 @@ libesrpc_a-IFileSystem.obj: device/IFileSystem.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IFileSystem.c' object='libesrpc_a-IFileSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IFileSystem.obj `if test -f 'device/IFileSystem.c'; then $(CYGPATH_W) 'device/IFileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IFileSystem.c'; fi`
+
+libesrpc_a-IIso9660FileSystem.o: device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IIso9660FileSystem.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Tpo -c -o libesrpc_a-IIso9660FileSystem.o `test -f 'device/IIso9660FileSystem.c' || echo '$(srcdir)/'`device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Tpo $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IIso9660FileSystem.c' object='libesrpc_a-IIso9660FileSystem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IIso9660FileSystem.o `test -f 'device/IIso9660FileSystem.c' || echo '$(srcdir)/'`device/IIso9660FileSystem.c
+
+libesrpc_a-IIso9660FileSystem.obj: device/IIso9660FileSystem.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IIso9660FileSystem.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Tpo -c -o libesrpc_a-IIso9660FileSystem.obj `if test -f 'device/IIso9660FileSystem.c'; then $(CYGPATH_W) 'device/IIso9660FileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IIso9660FileSystem.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Tpo $(DEPDIR)/libesrpc_a-IIso9660FileSystem.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='device/IIso9660FileSystem.c' object='libesrpc_a-IIso9660FileSystem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IIso9660FileSystem.obj `if test -f 'device/IIso9660FileSystem.c'; then $(CYGPATH_W) 'device/IIso9660FileSystem.c'; else $(CYGPATH_W) '$(srcdir)/device/IIso9660FileSystem.c'; fi`
 
 libesrpc_a-INetworkInterface.o: device/INetworkInterface.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-INetworkInterface.o -MD -MP -MF $(DEPDIR)/libesrpc_a-INetworkInterface.Tpo -c -o libesrpc_a-INetworkInterface.o `test -f 'device/INetworkInterface.c' || echo '$(srcdir)/'`device/INetworkInterface.c
@@ -2036,20 +2067,6 @@ rpc.obj: src/rpc.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/rpc.cpp' object='rpc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rpc.obj `if test -f 'src/rpc.cpp'; then $(CYGPATH_W) 'src/rpc.cpp'; else $(CYGPATH_W) '$(srcdir)/src/rpc.cpp'; fi`
-
-libesrpc_a-interfaceStore.o: src/interfaceStore.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-interfaceStore.o -MD -MP -MF $(DEPDIR)/libesrpc_a-interfaceStore.Tpo -c -o libesrpc_a-interfaceStore.o `test -f 'src/interfaceStore.cpp' || echo '$(srcdir)/'`src/interfaceStore.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-interfaceStore.Tpo $(DEPDIR)/libesrpc_a-interfaceStore.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/interfaceStore.cpp' object='libesrpc_a-interfaceStore.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceStore.o `test -f 'src/interfaceStore.cpp' || echo '$(srcdir)/'`src/interfaceStore.cpp
-
-libesrpc_a-interfaceStore.obj: src/interfaceStore.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-interfaceStore.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-interfaceStore.Tpo -c -o libesrpc_a-interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libesrpc_a-interfaceStore.Tpo $(DEPDIR)/libesrpc_a-interfaceStore.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/interfaceStore.cpp' object='libesrpc_a-interfaceStore.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceStore.obj `if test -f 'src/interfaceStore.cpp'; then $(CYGPATH_W) 'src/interfaceStore.cpp'; else $(CYGPATH_W) '$(srcdir)/src/interfaceStore.cpp'; fi`
 
 libesrpc_a-rpc.o: src/rpc.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libesrpc_a-rpc.o -MD -MP -MF $(DEPDIR)/libesrpc_a-rpc.Tpo -c -o libesrpc_a-rpc.o `test -f 'src/rpc.cpp' || echo '$(srcdir)/'`src/rpc.cpp

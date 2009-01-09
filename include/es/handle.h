@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -185,7 +185,7 @@ class Handle
         // a virtual function.
         unsigned int addRef();
         unsigned int release();
-        void* queryInterface(const Guid& riid);
+        void* queryInterface(const char* riid);
 
         void operator delete(void*, size_t);
         Protected& operator=(const I&);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #define STREAM_H_INCLUDED
 
 #include <algorithm>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/endian.h>
 #include <es/ring.h>
@@ -607,8 +606,7 @@ public:
 
         listening(0)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        monitor = IMonitor::createInstance();
 
         initRto();
     }

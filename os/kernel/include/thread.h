@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -139,11 +139,11 @@ class UpcallRecord
     }
 };
 
-class Thread : public IThread, public ICallback, public Lock
+class Thread : public es::IThread, public es::ICallback, public Lock
 {
     friend class Sched;
     friend class Process;
-    friend int esInit(IInterface** nameSpace);
+    friend int esInit(es::IInterface** nameSpace);
 
 public:
     static Sched*       sched;      // XXX
@@ -204,7 +204,7 @@ public:
         void update(Thread* thread, int effective);
     };
 
-    class Monitor : public IMonitor, public ICallback
+    class Monitor : public es::IMonitor, public es::ICallback
     {
         friend class Thread;
 
@@ -232,9 +232,9 @@ public:
         void spinUnlock();
 
         // IInterface
-        void* queryInterface(const Guid& riid);
-        unsigned int addRef(void);
-        unsigned int release(void);
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
 
         void lock();
         bool tryLock();
@@ -262,6 +262,18 @@ public:
                 monitor.unlock();
             }
         };
+
+        // [Constructor]
+        class Constructor : public IConstructor
+        {
+        public:
+            es::IMonitor* createInstance();
+            void* queryInterface(const char* riid);
+            unsigned int addRef();
+            unsigned int release();
+        };
+
+        static void initializeConstructor();
     };
 
     typedef List<Monitor, &Monitor::link> MonitorList;
@@ -365,9 +377,9 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     static void startUp(void* param);
 
@@ -376,8 +388,8 @@ public:
     static void reschedule();
 };
 
-class Sched : public ICurrentThread, public ICurrentProcess, public IRuntime,
-              public ICallback, public Lock
+class Sched : public es::ICurrentThread, public es::ICurrentProcess, public es::IRuntime,
+              public es::ICallback, public Lock
 {
     friend class Core;
     friend class Lock;
@@ -387,7 +399,7 @@ class Sched : public ICurrentThread, public ICurrentProcess, public IRuntime,
     Ref                 ref;
     volatile unsigned   runQueueBits;
     bool                runQueueHint;
-    Thread::Queue       runQueue[IThread::Highest + 1];
+    Thread::Queue       runQueue[es::IThread::Highest + 1];
 
     static Ref          numCores;
 
@@ -413,23 +425,23 @@ public:
     // ICurrentProcess
     void exit(int status);
     void* map(void* start, long long length, unsigned int prot, unsigned int flags,
-              IPageable* pageable, long long offset);
+              es::IPageable* pageable, long long offset);
     void unmap(void* start, long long length);
     ICurrentThread* currentThread();
     // [check] start must be a function pointer.
     // IThread* createThread(void* (*start)(void* param), void* param);
-    IThread* createThread(void* start, void* param);
-    void yield(void);
-    IMonitor* createMonitor();
-    IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
-    IStream* getError();
+    es::IThread* createThread(void* start, void* param);
+    void yield();
+    es::IMonitor* createMonitor();
+    es::IContext* getRoot();
+    es::IStream* getInput();
+    es::IStream* getOutput();
+    es::IStream* getError();
     void* setBreak(long long increment);
     long long getNow();
     bool trace(bool on);
-    void setCurrent(IContext* context);
-    IContext* getCurrent();
+    void setCurrent(es::IContext* context);
+    es::IContext* getCurrent();
 
     // IRuntime
     /* [check] function pointer.
@@ -442,9 +454,9 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 typedef Thread::Monitor     Monitor;

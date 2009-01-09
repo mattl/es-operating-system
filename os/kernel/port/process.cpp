@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include "core.h"
 #include "elfFile.h"
 #include "process.h"
@@ -25,19 +24,14 @@
 
 extern ICurrentProcess* esCurrentProcess();
 
-ICacheFactory* Process::cacheFactory;
 Swap* Process::swap;
 Zero* Process::zero;
 
 void Process::
 initialize()
 {
-    cacheFactory = reinterpret_cast<CacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-    ASSERT(cacheFactory);
-
     zero = new Zero;
-    ICache* cache = cacheFactory->create(zero);
+    ICache* cache = ICache::createInstance(zero);
     swap = new Swap(dynamic_cast<Cache*>(cache));
 }
 
@@ -525,7 +519,7 @@ Process() :
     log(false),
     upcallCount(0)
 {
-    ICache* cache = cacheFactory->create(zero);
+    ICache* cache = ICache::createInstance(zero);
     mmu = new Mmu(dynamic_cast<Cache*>(cache));
     ASSERT(mmu);
 
@@ -593,7 +587,7 @@ load()
 // that has been assigned for the interface. However, the reference count of
 // the interface pointer must also be adjusted to do this.
 int Process::
-set(SyscallProxy* table, void* interface, const Guid& iid, bool used)
+set(SyscallProxy* table, void* interface, const char* iid, bool used)
 {
     Monitor::Synchronized method(monitor);
 
@@ -1105,14 +1099,14 @@ setError(IStream* error)
 }
 
 void* Process::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IInterface::iid())
+    if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IProcess*>(this);
     }
-    else if (riid == IProcess::iid())
+    else if (strcmp(riid, IProcess::iid()) == 0)
     {
         objectPtr = static_cast<IProcess*>(this);
     }
@@ -1226,4 +1220,45 @@ write(const void* src, int count, long long offset)
         pageOffset = 0;
     }
     return len;
+}
+
+IProcess* Process::Constructor::createInstance()
+{
+    return new Process;
+}
+
+void* Process::Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IProcess::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IProcess::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IProcess::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Process::Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int Process::Constructor::release()
+{
+    return 1;
+}
+
+void Process::
+initializeConstructor()
+{
+    static Constructor constructor;
+    IProcess::setConstructor(&constructor);
 }

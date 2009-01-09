@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@
 #include <errno.h>
 #include <es/types.h>
 #include <es/formatter.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include "i386/dp8390d.h"
 #include "i386/io.h"
@@ -347,9 +346,9 @@ Dp8390d(u8 bus, unsigned base, int irq) :
     sending(0),
     overflow(false)
 {
-    monitor = static_cast<IMonitor*>(esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
 
-    alarm = static_cast<IAlarm*>(esCreateInstance(CLSID_Alarm, IAlarm::iid()));
+    alarm = IAlarm::createInstance();
     alarm->setEnabled(false);
     alarm->setInterval(160000);
     alarm->setPeriodic(false);
@@ -813,19 +812,19 @@ invoke(int irq)
 //
 
 void* Dp8390d::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* object;
 
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         object = static_cast<IStream*>(this);
     }
-    else if (riid == INetworkInterface::iid())
+    else if (strcmp(riid, INetworkInterface::iid()) == 0)
     {
         object = static_cast<INetworkInterface*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         object = static_cast<INetworkInterface*>(this);
     }

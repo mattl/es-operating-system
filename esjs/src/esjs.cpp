@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -246,8 +246,8 @@ int main(int argc, char* argv[])
     }
     report("%s %s\n", argv[0], argv[1]);
 
-#ifdef __es__
     Handle<IContext> root = System()->getRoot();
+#ifdef __es__
     Handle<IFile> file = root->lookup(argv[1]);
     if (!file)
     {

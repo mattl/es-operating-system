@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,8 @@
 #include <es.h>
 #include <es/exception.h>
 #include "cache.h"
+
+using namespace es;
 
 Page* Cache::
 lookupPage(long long offset)
@@ -383,7 +385,7 @@ put(long long offset, unsigned long long pte)
 }
 
 Cache::
-Cache(CacheFactory* cacheFactory, IStream* backingStore, PageSet* pageSet) :
+Cache(Cache::Constructor* cacheFactory, IStream* backingStore, PageSet* pageSet) :
     cacheFactory(cacheFactory),
     backingStore(backingStore),
     file(static_cast<IFile*>(backingStore->queryInterface(IFile::iid()))),
@@ -451,18 +453,18 @@ getPageCount()
 }
 
 void* Cache::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICache::iid())
+    if (strcmp(riid, ICache::iid()) == 0)
     {
         objectPtr = static_cast<ICache*>(this);
     }
-    else if (riid == IPageable::iid())
+    else if (strcmp(riid, IPageable::iid()) == 0)
     {
         objectPtr = static_cast<IPageable*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICache*>(this);
     }
@@ -475,13 +477,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Cache::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Cache::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

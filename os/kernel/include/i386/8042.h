@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,11 +27,11 @@
 #include <es/naming/IContext.h>
 #include "thread.h"
 
-class Keyboard : public ICallback
+class Keyboard : public es::ICallback
 {
     typedef int (Keyboard::*Reader)(void* dst, int count);
 
-    class Stream : public IStream
+    class Stream : public es::IStream
     {
         Keyboard*   keyboard;
         Reader      reader;
@@ -48,9 +48,9 @@ class Keyboard : public ICallback
         int write(const void* src, int count, long long offset);
         void flush();
 
-        void* queryInterface(const Guid& riid);
-        unsigned int addRef(void);
-        unsigned int release(void);
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
     };
 
     // Port address
@@ -136,7 +136,7 @@ class Keyboard : public ICallback
     static s8 clamp(int n);
 
 public:
-    Keyboard(IContext* device);
+    Keyboard(es::IContext* device);
     ~Keyboard();
 
     void setLED(u8 led);
@@ -145,9 +145,9 @@ public:
     int invoke(int param);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_8042_H_INCLUDED

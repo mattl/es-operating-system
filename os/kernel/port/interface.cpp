@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +15,31 @@
  * limitations under the License.
  */
 
+#include "interfaceStore.h"
 #include <string.h>
 #include <es.h>
 #include <es/hashtable.h>
-#include "interfaceStore.h"
+#include <es/base/IInterface.h>
+#include <es/base/IAlarm.h>
+#include <es/base/ICache.h>
+#include <es/base/IMonitor.h>
+#include <es/base/IPageSet.h>
+#include <es/base/IProcess.h>
+#include <es/device/IFatFileSystem.h>
+#include <es/device/IIso9660FileSystem.h>
+#include <es/device/IPartition.h>
+
+using namespace es;
 
 unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 {
+    // Base classes first
+    IInterfaceInfo,
+
     IAlarmInfo,
     ICacheInfo,
     ICallbackInfo,
-    IClassFactoryInfo,
-    IClassStoreInfo,
     IFileInfo,
-    IInterfaceInfo,
     IInterfaceStoreInfo,
     IMonitorInfo,
     IPageableInfo,
@@ -46,7 +57,9 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IDeviceInfo,
     IDiskManagementInfo,
     IDmacInfo,
+    IFatFileSystemInfo,
     IFileSystemInfo,
+    IIso9660FileSystemInfo,
     IPicInfo,
     IRemovableMediaInfo,
     IRtcInfo,
@@ -66,6 +79,57 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     ICanvasRenderingContext2DInfo,
 };
 
+struct ConstructorAccessors
+{
+    const char* iid;
+    IInterface* (*constructorGetter)();                 // for statically created data
+    void (*constructorSetter)(IInterface* constructor); // for statically created data
+};
+
+ConstructorAccessors defaultConstructorInfo[] =
+{
+    {
+        IAlarm::iid(),
+        reinterpret_cast<IInterface* (*)()>(IAlarm::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IAlarm::setConstructor)
+    },
+    {
+        ICache::iid(),
+        reinterpret_cast<IInterface* (*)()>(ICache::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(ICache::setConstructor)
+    },
+    {
+        IMonitor::iid(),
+        reinterpret_cast<IInterface* (*)()>(IMonitor::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IMonitor::setConstructor)
+    },
+    {
+        IPageSet::iid(),
+        reinterpret_cast<IInterface* (*)()>(IPageSet::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IPageSet::setConstructor)
+    },
+    {
+        IProcess::iid(),
+        reinterpret_cast<IInterface* (*)()>(IProcess::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IProcess::setConstructor)
+    },
+    {
+        IFatFileSystem::iid(),
+        reinterpret_cast<IInterface* (*)()>(IFatFileSystem::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IFatFileSystem::setConstructor)
+    },
+    {
+        IIso9660FileSystem::iid(),
+        reinterpret_cast<IInterface* (*)()>(IIso9660FileSystem::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IIso9660FileSystem::setConstructor)
+    },
+    {
+        IPartition::iid(),
+        reinterpret_cast<IInterface* (*)()>(IPartition::getConstructor),
+        reinterpret_cast<void (*)(IInterface*)>(IPartition::setConstructor)
+    },
+};
+
 void InterfaceStore::
 registerInterface(Reflect::Module& module)
 {
@@ -74,7 +138,7 @@ registerInterface(Reflect::Module& module)
         Reflect::Interface interface(module.getInterface(i));
 
         SpinLock::Synchronized method(spinLock);
-        hashtable.add(interface.getIid(), interface);
+        hashtable.add(interface.getFullyQualifiedName(), interface);
     }
 
     for (int i = 0; i < module.getModuleCount(); ++i)
@@ -82,6 +146,14 @@ registerInterface(Reflect::Module& module)
         Reflect::Module m(module.getModule(i));
         registerInterface(m);
     }
+}
+
+void InterfaceStore::
+registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+{
+    InterfaceData* data = &hashtable.get(iid);
+    data->constructorGetter = getter;
+    data->constructorSetter = setter;
 }
 
 InterfaceStore::
@@ -95,6 +167,14 @@ InterfaceStore(int capacity) :
         Reflect r(defaultInterfaceInfo[i]);
         Reflect::Module global(r.getGlobalModule());
         registerInterface(global);
+    }
+
+    for (int i = 0;
+         i < sizeof defaultConstructorInfo / sizeof defaultConstructorInfo[0];
+         ++i)
+    {
+        ConstructorAccessors* accessors = &defaultConstructorInfo[i];
+        registerConstructor(accessors->iid, accessors->constructorGetter, accessors->constructorSetter);
     }
 }
 
@@ -114,7 +194,7 @@ add(const void* data, int length)
 }
 
 void InterfaceStore::
-remove(const Guid& riid)
+remove(const char* riid)
 {
     SpinLock::Synchronized method(spinLock);
 
@@ -123,14 +203,14 @@ remove(const Guid& riid)
 }
 
 void* InterfaceStore::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IInterfaceStore::iid())
+    if (strcmp(riid, IInterfaceStore::iid()) == 0)
     {
         objectPtr = static_cast<IInterfaceStore*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IInterfaceStore*>(this);
     }
@@ -143,13 +223,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int InterfaceStore::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int InterfaceStore::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

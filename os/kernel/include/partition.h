@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@
 class PartitionContext;
 class PartitionIterator;
 
-class PartitionStream : public IStream, public IDiskManagement
+class PartitionStream : public es::IStream, public es::IDiskManagement
 {
     Ref                     ref;
     PartitionContext*       context;
@@ -87,12 +87,12 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
-class PartitionContext : public IContext, public IPartition
+class PartitionContext : public es::IPartition
 {
     friend class PartitionStream;
     friend class PartitionIterator;
@@ -101,7 +101,7 @@ class PartitionContext : public IContext, public IPartition
 
     Ref                 ref;
     Monitor             monitor;
-    IStream*            disk;
+    es::IStream*        disk;
     PartitionStreamList partitionList;
 
     PartitionStream* createPartition(const char* name, u8 type);
@@ -111,7 +111,7 @@ class PartitionContext : public IContext, public IPartition
     PartitionStream* lookupPartitionStream(u8 type, u8 number);
     PartitionStream* lookupPartitionStream(const char* name);
     int getId(const char* name, const char* prefix);
-    int getGeometry(IDiskManagement::Geometry* geometry);
+    int getGeometry(es::IDiskManagement::Geometry* geometry);
     const char* getPrefix(const char* name);
     int getType(const char* name);
     int clearBootRecord(PartitionStream* stream);
@@ -141,22 +141,22 @@ public:
         PartitionStream::Partition* partition);
 
     // IContext
-    IBinding* bind(const char* name, IInterface* object);
-    IContext* createSubcontext(const char* name);
+    es::IBinding* bind(const char* name, es::IInterface* object);
+    es::IContext* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    IInterface* lookup(const char* name);
+    es::IInterface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    IIterator* list(const char* name);
+    es::IIterator* list(const char* name);
 
     // IPartition
     int initialize();
-    int mount(IStream* disk);
+    int mount(es::IStream* disk);
     int unmount();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     static const char* PREFIX_PRIMARY;
     static const char* PREFIX_EXTENDED;
@@ -204,9 +204,21 @@ public:
         BOOT_FLAG_INACTIVE = 0x00,
         BOOT_FLAG_ACTIVE   = 0x80
     };
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        es::IPartition* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
-class PartitionIterator : public IIterator, public IBinding
+class PartitionIterator : public es::IIterator, public es::IBinding
 {
     typedef List<PartitionStream, &PartitionStream::link>   PartitionStreamList;
 
@@ -219,16 +231,16 @@ public:
     ~PartitionIterator();
 
     // IIterator
-    bool hasNext(void);
-    IInterface* next();
-    int remove(void);
+    bool hasNext();
+    es::IInterface* next();
+    int remove();
 
     // IBinding
-    IInterface* getObject();
-    void setObject(IInterface* object);
+    es::IInterface* getObject();
+    void setObject(es::IInterface* object);
     int getName(char* name, int len);
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };

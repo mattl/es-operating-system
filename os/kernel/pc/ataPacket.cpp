@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +17,13 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/endian.h>
 #include "io.h"
 #include "ataController.h"
 
 // #define VERBOSE
 
+using namespace es;
 using namespace BigEndian;
 using namespace ATAttachment;
 using namespace Register;
@@ -250,22 +250,22 @@ unlock()
 }
 
 void* AtaPacketDevice::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IDiskManagement::iid())
+    else if (strcmp(riid, IDiskManagement::iid()) == 0)
     {
         objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IRemovableMedia::iid() && removal)
+    else if (strcmp(riid, IRemovableMedia::iid()) == 0 && removal)
     {
         objectPtr = static_cast<IRemovableMedia*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }

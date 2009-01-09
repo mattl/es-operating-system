@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,14 +117,14 @@ public:
         size++;
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IOrderedMap::iid())
+        if (strcmp(riid, IOrderedMap::iid()) == 0)
         {
             objectPtr = static_cast<IOrderedMap*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IOrderedMap*>(this);
         }
@@ -136,13 +136,13 @@ public:
         return objectPtr;
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         int count = ref.addRef();
         return count;
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         if (count == 0)

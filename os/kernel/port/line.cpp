@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,12 @@
 
 #include <errno.h>
 #include <string.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/synchronized.h>
+#include <es/base/IMonitor.h>
+#include "line.h"
 
 using namespace es;
-#include "line.h"
 
 Line::
 Line(ICallback* callback, u8 bits, u8 channels, u8 rate) :
@@ -32,8 +32,7 @@ Line(ICallback* callback, u8 bits, u8 channels, u8 rate) :
     rate(rate),
     ring(buffer, sizeof buffer)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
 }
 
 Line::
@@ -128,22 +127,22 @@ write(const void* src, int count, long long offset)
 }
 
 void* Line::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICallback::iid())
+    if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IAudioFormat::iid())
+    else if (strcmp(riid, IAudioFormat::iid()) == 0)
     {
         objectPtr = static_cast<IAudioFormat*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
@@ -156,13 +155,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Line::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Line::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -238,25 +238,31 @@ namespace Ent
     {
         Type type;          // TypeInterface
         u32  name;
-        Guid iid;
-        Guid piid;
+        u32  fullyQualifiedName;
+        u32  fullyQualifiedBaseName;
         Spec module;
         u32  methodCount;
         u32  constCount;
         u32  inheritedMethodCount;
+        Spec constructor;
         // Spec methods[methodCount];
         // Constant consts[constCount];
 
-        Interface(u32 name, Guid& iid, Guid& piid, Spec module,
-                  u32 methodCount, u32 constCount, u32 inheritedMethodCount) :
+        Interface(u32 name,
+                  u32 fullyQualifiedName,
+                  u32 fullyQualifiedBaseName,
+                  Spec module,
+                  u32 methodCount, u32 constCount, u32 inheritedMethodCount,
+                  Spec constructor) :
             type(TypeInterface),
             name(name),
-            iid(iid),
-            piid(piid),
+            fullyQualifiedName(fullyQualifiedName),
+            fullyQualifiedBaseName(fullyQualifiedBaseName),
             module(module),
             methodCount(methodCount),
             constCount(constCount),
-            inheritedMethodCount(inheritedMethodCount)
+            inheritedMethodCount(inheritedMethodCount),
+            constructor(constructor)
         {
         }
 

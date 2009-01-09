@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ module es
      */
     interface CanvasGradient
     {
-        #pragma ID CanvasGradient = "DCE:f45e927e-46fe-11dd-8100-0009bf000001";
         // opaque object
         void addColorStop(in float offset, in string color);
     };
@@ -33,7 +32,6 @@ module es
      */
     interface CanvasPattern
     {
-        #pragma ID CanvasPattern = "DCE:f323a595-46fe-11dd-8100-0009bf000001";
         // opaque object
     };
 
@@ -43,8 +41,6 @@ module es
      */
     interface CanvasRenderingContext2D
     {
-        #pragma ID CanvasRenderingContext2D = "DCE:f49e00dd-46fe-11dd-8100-0009bf000001";
-
         // state
         void save(); // push state on state stack
         void restore(); // pop state stack and restore state

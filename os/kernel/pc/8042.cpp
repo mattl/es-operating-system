@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/usage.h>
@@ -617,14 +616,14 @@ Keyboard::
 }
 
 void* Keyboard::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICallback::iid())
+    if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
@@ -637,13 +636,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Keyboard::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Keyboard::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -830,14 +829,14 @@ Stream::flush()
 }
 
 void* Keyboard::
-Stream::queryInterface(const Guid& riid)
+Stream::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
@@ -850,13 +849,13 @@ Stream::queryInterface(const Guid& riid)
 }
 
 unsigned int Keyboard::
-Stream::addRef(void)
+Stream::addRef()
 {
     return keyboard->addRef();
 }
 
 unsigned int Keyboard::
-Stream::release(void)
+Stream::release()
 {
     return keyboard->release();
 }

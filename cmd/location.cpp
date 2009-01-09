@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IInterfaceStore.h>
 #include <es/base/IProcess.h>
 #include "location.h"
@@ -89,14 +86,14 @@ public:
         return count;
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IInterface::iid())
+        if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ILocation*>(this);
         }
-        else if (riid == ILocation::iid())
+        else if (strcmp(riid, ILocation::iid()) == 0)
         {
             objectPtr = static_cast<ILocation*>(this);
         }
@@ -123,7 +120,55 @@ public:
         }
         return count;
     }
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        ILocation* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static Constructor constructor;
 };
+
+ILocation* Location::Constructor::createInstance()
+{
+    return new Location;
+}
+
+void* Location::Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, ILocation::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<ILocation::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<ILocation::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Location::Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int Location::Constructor::release()
+{
+    return 1;
+}
+
+Location::Constructor Location::constructor;
 
 int Location::id = 0;
 
@@ -140,16 +185,13 @@ int main(int argc, char* argv[])
     interfaceStore->add(ILocationInfo, ILocationInfoSize);
 
     // Register Location factory.
-    Handle<IClassStore> classStore = nameSpace->lookup("class");
+    Handle<IContext> classStore = nameSpace->lookup("class");
     TEST(classStore);
-    Handle<IClassFactory> binderFactory(new(ClassFactory<Location>));
-    classStore->add(CLSID_Location, binderFactory);
+    classStore->bind(ILocation::iid(), ILocation::getConstructor());
 
     // Create a client process.
     Handle<IProcess> client;
-    client = reinterpret_cast<IProcess*>(
-        classStore->createInstance(CLSID_Process,
-                                   client->iid()));
+    client = IProcess::createInstance();
     TEST(client);
 
     // Start the client process.
@@ -161,7 +203,7 @@ int main(int argc, char* argv[])
     client->wait();
 
     // Unregister Location factory.
-    classStore->remove(CLSID_Location);
+    classStore->unbind(ILocation::iid());
 
     System()->trace(false);
 }

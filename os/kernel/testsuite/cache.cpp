@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es.h>
 #include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "core.h"
@@ -45,12 +45,8 @@ int main()
     IInterface* root = 0;
     esInit(&root);
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     MemoryStream* backingStore = new MemoryStream(0);
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
 
     IStream* stream = cache->getStream();
 
@@ -73,7 +69,7 @@ int main()
     size = backingStore->getSize();
     TEST(size == 16);
 
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     stream = cache->getStream();
     size = stream->getSize();
     TEST(size == 16);
@@ -96,7 +92,7 @@ int main()
     cache->release();
 
     // Test input/output streams
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
 
     stream = cache->getInputStream();
     len = 0;
@@ -127,7 +123,7 @@ int main()
     cache->release();
 
     // Test sector size
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     int sectorSize = 512;
     cache->setSectorSize(sectorSize);
     sectorSize = cache->getSectorSize();
@@ -146,8 +142,6 @@ int main()
     stream->flush();
 
     cache->release();
-
-    cacheFactory->release();
 
     // Wait for 3 seconds to see the update thread exits.
     esSleep(30000000);

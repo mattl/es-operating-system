@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,23 +18,7 @@
 #ifndef LOCATION_H_INCLUDED
 #define LOCATION_H_INCLUDED
 
-#include <es/base/IClassStore.h>
 #include "ILocation.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/** <code>7bc74f7b-a42b-4df6-9be9-24daee701fcd</code>
- */
-const Guid CLSID_Location =
-{
-    0x21451205, 0xafbe, 0x4d5b, { 0x91, 0xff, 0x27, 0xdc, 0x23, 0x50, 0x9f, 0x08 }
-};
-
-#ifdef __cplusplus
-}
-#endif  // __cplusplus
 
 extern unsigned char ILocationInfo[];
 extern unsigned ILocationInfoSize;

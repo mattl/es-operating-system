@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,18 +26,14 @@
 #include <sys/stat.h>
 
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/context.h>
 #include <es/exception.h>
 #include <es/endian.h>
 #include <es/formatter.h>
 #include <es/handle.h>
-#include <es/base/IClassFactory.h>
 
 #include "alarm.h"
 #include "cache.h"
-#include "classStore.h"
 #include "loopback.h"
 #include "partition.h"
 #include "posix/tap.h"
@@ -46,10 +42,9 @@
 
 namespace
 {
-    IContext*       root;
-    IClassStore*    classStore;
-    IClassFactory*  alarmFactory;
-    u8              loopbackBuffer[64 * 1024];
+    IContext* root;
+    IContext* classStore;
+    u8        loopbackBuffer[64 * 1024];
 };
 
 const int Page::SIZE = 4096;
@@ -74,6 +69,12 @@ void esInitThread()
     thread->state = IThread::RUNNABLE;
     thread->setPriority(IThread::Normal);
     pthread_setspecific(Thread::cleanupKey, thread);
+
+    // Initialize trivial constructors.
+    Alarm::initializeConstructor();
+    Monitor::initializeConstructor();
+    PageSet::initializeConstructor();
+    PartitionContext::initializeConstructor();
 }
 
 int esInit(IInterface** nameSpace)
@@ -89,13 +90,6 @@ int esInit(IInterface** nameSpace)
 
     esInitThread();
 
-    // Create class store
-    classStore = static_cast<IClassStore*>(new ClassStore);
-
-    // Register CLSID_MonitorFactory which is used by Context
-    IClassFactory* monitorFactory = new(ClassFactory<Monitor>);
-    classStore->add(CLSID_Monitor, monitorFactory);
-
     root = new Context;
     if (nameSpace)
     {
@@ -103,8 +97,10 @@ int esInit(IInterface** nameSpace)
     }
 
     // Create class name space
-    IBinding* binding = root->bind("class", classStore);
-    binding->release();
+    IContext* classStore = root->createSubcontext("class");
+
+    // Register IMonitor constructor
+    classStore->bind(IMonitor::iid(), IMonitor::getConstructor());
 
     // Initialize the page table
     size_t size = 64 * 1024;
@@ -126,20 +122,19 @@ int esInit(IInterface** nameSpace)
 #endif
     PageTable::init(arena, size);
 
-    // Register CLSID_CacheFactory
-    IClassFactory* cacheFactoryFactory = new(ClassFactory<CacheFactory>);
-    classStore->add(CLSID_CacheFactory, cacheFactoryFactory);
+    // Register IAlarm constructor
+    classStore->bind(IAlarm::iid(), IAlarm::getConstructor());
 
-    // Register CLSID_PageSet
-    classStore->add(CLSID_PageSet, static_cast<IClassFactory*>(PageTable::pageSet));
+    // Register ICache constructor
+    Cache::initializeConstructor();
+    ICache::setConstructor(new Cache::Constructor);
+    classStore->bind(ICache::iid(), ICache::getConstructor());
 
-    // Register CLSID_Alarm
-    alarmFactory = new(ClassFactory<Alarm>);
-    classStore->add(CLSID_Alarm, alarmFactory);
+    // Register IPartition constructor
+    classStore->bind(IPartition::iid(), IPartition::getConstructor());
 
-    // Register CLSID_Partition
-    IClassFactory* partitionFactory = new(ClassFactory<PartitionContext>);
-    classStore->add(CLSID_Partition, partitionFactory);
+    // Register the global page set
+    classStore->bind(IPageSet::iid(), IPageSet::getConstructor());
 
     // Create device name space
     IContext* device = root->createSubcontext("device");
@@ -175,11 +170,6 @@ int esReportv(const char* spec, va_list list)
     int len = formatter.format(spec, list);
     fflush(stdout);
     return len;
-}
-
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
-{
-    return classStore->createInstance(rclsid, riid);
 }
 
 void esSleep(s64 timeout)

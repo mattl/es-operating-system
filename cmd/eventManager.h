@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +19,10 @@
 #define EVENTMANAGER_H_INCLUDED
 
 #include "IEventQueue.h"
-#include <es/base/IClassStore.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** <code>0d1d9843-fd06-4bd0-b6fc-34bb08b5af09</code>
- */
-const Guid CLSID_EventManager =
-{
-    0x0d1d9843, 0xfd06, 0x4bd0, { 0xb6, 0xfc, 0x34, 0xbb, 0x08, 0xb5, 0xaf, 0x09 }
-};
 
 extern unsigned char IEventQueueInfo[];
 extern unsigned IEventQueueInfoSize;

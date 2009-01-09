@@ -117,10 +117,10 @@ AR = ar
 ARFLAGS = cru
 libeskernel_a_AR = $(AR) $(ARFLAGS)
 libeskernel_a_LIBADD =
-am__libeskernel_a_SOURCES_DIST = pc/label.S port/classStore.cpp \
-	port/elf.cpp port/init.cpp port/interface.cpp port/arena.cpp \
-	port/cache.cpp port/cacheFactory.cpp port/heap.cpp \
-	port/line.cpp port/loopback.cpp port/page.cpp port/pageSet.cpp \
+am__libeskernel_a_SOURCES_DIST = pc/label.S port/elf.cpp port/init.cpp \
+	port/interface.cpp port/arena.cpp port/cache.cpp \
+	port/cacheFactory.cpp port/heap.cpp port/line.cpp \
+	port/loopback.cpp port/page.cpp port/pageSet.cpp \
 	port/pageTable.cpp port/stream.cpp port/zero.cpp \
 	port/alarm.cpp port/partitionContext.cpp \
 	port/partitionStream.cpp port/partitionIterator.cpp \
@@ -137,18 +137,17 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/classStore.cpp \
 	posix/posix_thread.cpp posix/posix_monitor.cpp \
 	posix/posix_core.cpp posix/posix_dateTime.cpp \
 	posix/posix_init.cpp posix/posix_ethernet.cpp include/alarm.h \
-	include/arena.h include/cache.h include/classStore.h \
-	include/elfFile.h include/heap.h include/interfaceStore.h \
-	include/line.h include/loopback.h include/partition.h \
-	include/process.h include/spinlock.h include/thread.h \
-	include/zero.h include/ata.h include/uart.h \
-	include/i386/8042.h include/i386/8237a.h include/i386/8254.h \
-	include/i386/8259.h include/i386/apic.h \
-	include/i386/ataController.h include/i386/cga.h \
-	include/i386/core.h include/i386/cpu.h include/i386/fdc.h \
-	include/i386/io.h include/i386/label.h include/i386/mps.h \
-	include/i386/pci.h include/i386/rtc.h include/i386/sb16.h \
-	include/i386/es1370.h include/i386/vesa.h \
+	include/arena.h include/cache.h include/elfFile.h \
+	include/heap.h include/interfaceStore.h include/line.h \
+	include/loopback.h include/partition.h include/process.h \
+	include/spinlock.h include/thread.h include/zero.h \
+	include/ata.h include/uart.h include/i386/8042.h \
+	include/i386/8237a.h include/i386/8254.h include/i386/8259.h \
+	include/i386/apic.h include/i386/ataController.h \
+	include/i386/cga.h include/i386/core.h include/i386/cpu.h \
+	include/i386/fdc.h include/i386/io.h include/i386/label.h \
+	include/i386/mps.h include/i386/pci.h include/i386/rtc.h \
+	include/i386/sb16.h include/i386/es1370.h include/i386/vesa.h \
 	include/i386/dp8390d.h include/posix/core.h \
 	include/posix/tap.h
 @ES_TRUE@am__objects_1 = label.$(OBJEXT)
@@ -171,20 +170,18 @@ am__objects_2 =
 @POSIX_TRUE@	posix_monitor.$(OBJEXT) posix_core.$(OBJEXT) \
 @POSIX_TRUE@	posix_dateTime.$(OBJEXT) posix_init.$(OBJEXT) \
 @POSIX_TRUE@	posix_ethernet.$(OBJEXT)
-am__objects_5 = classStore.$(OBJEXT) elf.$(OBJEXT) init.$(OBJEXT) \
-	interface.$(OBJEXT) arena.$(OBJEXT) cache.$(OBJEXT) \
-	cacheFactory.$(OBJEXT) heap.$(OBJEXT) line.$(OBJEXT) \
-	loopback.$(OBJEXT) page.$(OBJEXT) pageSet.$(OBJEXT) \
-	pageTable.$(OBJEXT) stream.$(OBJEXT) zero.$(OBJEXT) \
-	alarm.$(OBJEXT) partitionContext.$(OBJEXT) \
-	partitionStream.$(OBJEXT) partitionIterator.$(OBJEXT) \
-	$(am__objects_3) $(am__objects_4)
+am__objects_5 = elf.$(OBJEXT) init.$(OBJEXT) interface.$(OBJEXT) \
+	arena.$(OBJEXT) cache.$(OBJEXT) cacheFactory.$(OBJEXT) \
+	heap.$(OBJEXT) line.$(OBJEXT) loopback.$(OBJEXT) \
+	page.$(OBJEXT) pageSet.$(OBJEXT) pageTable.$(OBJEXT) \
+	stream.$(OBJEXT) zero.$(OBJEXT) alarm.$(OBJEXT) \
+	partitionContext.$(OBJEXT) partitionStream.$(OBJEXT) \
+	partitionIterator.$(OBJEXT) $(am__objects_3) $(am__objects_4)
 am__objects_6 = $(am__objects_2) $(am__objects_2)
 am_libeskernel_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_5) $(am__objects_6)
 nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
-	ICallback.$(OBJEXT) IClassFactory.$(OBJEXT) \
-	IClassStore.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
+	ICallback.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
 	IInterfaceStore.$(OBJEXT) IMonitor.$(OBJEXT) \
 	IPageable.$(OBJEXT) IPageSet.$(OBJEXT) IProcess.$(OBJEXT) \
 	IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) IService.$(OBJEXT) \
@@ -340,21 +337,20 @@ AM_CPPFLAGS = -I../../include -I$(srcdir)/../../include -iquote \
 # default interface information
 #
 
-# 	include/space.h 
+# 	include/space.h
 nodist_libeskernel_a_SOURCES = base/IAlarm.c base/ICache.c \
-	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
-	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
-	base/IMonitor.c base/IPageable.c base/IPageSet.c \
-	base/IProcess.c base/IRuntime.c base/ISelectable.c \
-	base/IService.c base/IStream.c base/IThread.c \
-	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
-	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
-	device/IFileSystem.c device/INetworkInterface.c device/IPic.c \
-	device/IRemovableMedia.c device/IRtc.c device/IPartition.c \
-	naming/IBinding.c naming/IContext.c net/IInternetAddress.c \
-	net/IInternetConfig.c net/IResolver.c net/ISocket.c \
-	util/IIterator.c util/ISet.c util/ICanvasRenderingContext2D.c \
-	util/IOrderedMap.c mbr.c
+	base/ICallback.c base/IFile.c base/IInterface.c \
+	base/IInterfaceStore.c base/IMonitor.c base/IPageable.c \
+	base/IPageSet.c base/IProcess.c base/IRuntime.c \
+	base/ISelectable.c base/IService.c base/IStream.c \
+	base/IThread.c device/IAudioFormat.c device/IBeep.c \
+	device/ICursor.c device/IDevice.c device/IDiskManagement.c \
+	device/IDmac.c device/IFileSystem.c device/INetworkInterface.c \
+	device/IPic.c device/IRemovableMedia.c device/IRtc.c \
+	device/IPartition.c naming/IBinding.c naming/IContext.c \
+	net/IInternetAddress.c net/IInternetConfig.c net/IResolver.c \
+	net/ISocket.c util/IIterator.c util/ISet.c \
+	util/ICanvasRenderingContext2D.c util/IOrderedMap.c mbr.c
 
 #
 # port
@@ -364,12 +360,11 @@ c_source_files =
 # memory management
 
 # extra source files
-cpp_source_files = port/classStore.cpp port/elf.cpp port/init.cpp \
-	port/interface.cpp port/arena.cpp port/cache.cpp \
-	port/cacheFactory.cpp port/heap.cpp port/line.cpp \
-	port/loopback.cpp port/page.cpp port/pageSet.cpp \
-	port/pageTable.cpp port/stream.cpp port/zero.cpp \
-	port/alarm.cpp port/partitionContext.cpp \
+cpp_source_files = port/elf.cpp port/init.cpp port/interface.cpp \
+	port/arena.cpp port/cache.cpp port/cacheFactory.cpp \
+	port/heap.cpp port/line.cpp port/loopback.cpp port/page.cpp \
+	port/pageSet.cpp port/pageTable.cpp port/stream.cpp \
+	port/zero.cpp port/alarm.cpp port/partitionContext.cpp \
 	port/partitionStream.cpp port/partitionIterator.cpp \
 	$(am__append_2) $(am__append_4)
 
@@ -379,11 +374,11 @@ cpp_source_files = port/classStore.cpp port/elf.cpp port/init.cpp \
 
 # extra header files
 header_files = include/alarm.h include/arena.h include/cache.h \
-	include/classStore.h include/elfFile.h include/heap.h \
-	include/interfaceStore.h include/line.h include/loopback.h \
-	include/partition.h include/process.h include/spinlock.h \
-	include/thread.h include/zero.h include/ata.h include/uart.h \
-	$(am__append_3) $(am__append_5)
+	include/elfFile.h include/heap.h include/interfaceStore.h \
+	include/line.h include/loopback.h include/partition.h \
+	include/process.h include/spinlock.h include/thread.h \
+	include/zero.h include/ata.h include/uart.h $(am__append_3) \
+	$(am__append_5)
 
 # cpp_source_files += \
 #	pc/acpios.cpp
@@ -478,8 +473,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICallback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICanvasRenderingContext2D.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassFactory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDevice.Po@am__quote@
@@ -519,7 +512,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cacheFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cga.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/classStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dp8390d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/es1370.Po@am__quote@
@@ -655,34 +647,6 @@ ICallback.obj: base/ICallback.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICallback.c' object='ICallback.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICallback.obj `if test -f 'base/ICallback.c'; then $(CYGPATH_W) 'base/ICallback.c'; else $(CYGPATH_W) '$(srcdir)/base/ICallback.c'; fi`
-
-IClassFactory.o: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassFactory.o -MD -MP -MF $(DEPDIR)/IClassFactory.Tpo -c -o IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassFactory.Tpo $(DEPDIR)/IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='IClassFactory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-
-IClassFactory.obj: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassFactory.obj -MD -MP -MF $(DEPDIR)/IClassFactory.Tpo -c -o IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassFactory.Tpo $(DEPDIR)/IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='IClassFactory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-
-IClassStore.o: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassStore.o -MD -MP -MF $(DEPDIR)/IClassStore.Tpo -c -o IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassStore.Tpo $(DEPDIR)/IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='IClassStore.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-
-IClassStore.obj: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassStore.obj -MD -MP -MF $(DEPDIR)/IClassStore.Tpo -c -o IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassStore.Tpo $(DEPDIR)/IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='IClassStore.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
 
 IFile.o: base/IFile.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IFile.o -MD -MP -MF $(DEPDIR)/IFile.Tpo -c -o IFile.o `test -f 'base/IFile.c' || echo '$(srcdir)/'`base/IFile.c
@@ -1173,20 +1137,6 @@ IOrderedMap.obj: util/IOrderedMap.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-classStore.o: port/classStore.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT classStore.o -MD -MP -MF $(DEPDIR)/classStore.Tpo -c -o classStore.o `test -f 'port/classStore.cpp' || echo '$(srcdir)/'`port/classStore.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/classStore.Tpo $(DEPDIR)/classStore.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/classStore.cpp' object='classStore.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o classStore.o `test -f 'port/classStore.cpp' || echo '$(srcdir)/'`port/classStore.cpp
-
-classStore.obj: port/classStore.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT classStore.obj -MD -MP -MF $(DEPDIR)/classStore.Tpo -c -o classStore.obj `if test -f 'port/classStore.cpp'; then $(CYGPATH_W) 'port/classStore.cpp'; else $(CYGPATH_W) '$(srcdir)/port/classStore.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/classStore.Tpo $(DEPDIR)/classStore.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/classStore.cpp' object='classStore.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o classStore.obj `if test -f 'port/classStore.cpp'; then $(CYGPATH_W) 'port/classStore.cpp'; else $(CYGPATH_W) '$(srcdir)/port/classStore.cpp'; fi`
 
 elf.o: port/elf.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT elf.o -MD -MP -MF $(DEPDIR)/elf.Tpo -c -o elf.o `test -f 'port/elf.cpp' || echo '$(srcdir)/'`port/elf.cpp

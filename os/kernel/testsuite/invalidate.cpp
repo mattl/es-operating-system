@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es.h>
 #include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "core.h"
@@ -45,9 +45,9 @@ static void SetData(u8* buf, long size)
     }
 }
 
-static void InitMemoryStream(ICacheFactory* cacheFactory, MemoryStream* backingStore, long size, long offset)
+static void InitMemoryStream(MemoryStream* backingStore, long size, long offset)
 {
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
     TEST(cache);
 
     IStream* stream = cache->getStream();
@@ -67,7 +67,7 @@ static void InitMemoryStream(ICacheFactory* cacheFactory, MemoryStream* backingS
     stream->release();
     cache->release();
 
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size, offset);
     TEST(ret == size);
@@ -89,20 +89,17 @@ int main()
     IInterface* root = NULL;
 
     esInit(&root);
+
     esReport("Check invalidate().\n");
 
     MemoryStream* backingStore = new MemoryStream(PAGE_SIZE);
     TEST(backingStore);
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     // Write data to the memory stream.
-    InitMemoryStream(cacheFactory, backingStore, PAGE_SIZE, 0);
+    InitMemoryStream(backingStore, PAGE_SIZE, 0);
 
     // Write data and invalidate them.
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     TEST(cache);
     stream = cache->getStream();
     TEST(stream);
@@ -116,7 +113,7 @@ int main()
     cache->release();
 
     // check the momory stream is not modified.
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     TEST(cache);
     stream = cache->getStream();
     TEST(stream);
@@ -128,9 +125,6 @@ int main()
 
     stream->release();
     cache->release();
-
-    unsigned long count = cacheFactory->release();
-    esReport("count: %lu\n", count);
 
     backingStore->release();
 

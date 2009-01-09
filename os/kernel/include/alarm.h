@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,7 @@
 #include <es/base/IAlarm.h>
 #include "spinlock.h"
 
-using namespace es;
-
-class Alarm : public IAlarm
+class Alarm : public es::IAlarm
 {
     enum
     {
@@ -46,7 +44,7 @@ class Alarm : public IAlarm
     };
 
     Ref             ref;
-    ICallback*      callback;
+    es::ICallback*  callback;
     unsigned        flags;
     long long       interval;
     long long       start;
@@ -91,16 +89,28 @@ public:
     long long getStartTime();
     bool isEnabled();
     bool isPeriodic();
-    void setCallback(ICallback* callback);
+    void setCallback(es::ICallback* callback);
     void setEnabled(bool enabled);
     void setPeriodic(bool periodic);
     void setInterval(long long interval);
     void setStartTime(long long time);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        es::IAlarm* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
 #endif // NINTENDO_ES_KERNEL_ALARM_H_INCLUDED

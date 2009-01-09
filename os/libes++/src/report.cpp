@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@
 #include <es/handle.h>
 #include <es/timeSpan.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 
 using namespace es;
@@ -36,8 +35,6 @@ extern "C"
     int esReportv(const char* spec, va_list list) __attribute__((weak));
     void esPanic(const char* file, int line, const char* msg, ...) __attribute__((weak));
 }
-
-void* esCreateInstance(const Guid& rclsid, const Guid& riid) __attribute__((weak));
 
 int esReport(const char* spec, ...)
 {
@@ -69,18 +66,6 @@ void esPanic(const char* file, int line, const char* msg, ...)
     esReport(" in \"%s\" on line %d.\n", file, line);
 
     System()->exit(1);
-}
-
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
-{
-    static Handle<IClassStore> classStore;
-
-    if (!classStore)
-    {
-        Handle<IContext> root = System()->getRoot();
-        classStore = root->lookup("class");
-    }
-    return classStore->createInstance(rclsid, riid);
 }
 
 DateTime DateTime::getNow()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +46,7 @@ class Dmac
 public:
 
 
-    class Chan : public IDmac
+    class Chan : public es::IDmac
     {
         Dmac*   dmac;
         u8      chan;
@@ -60,9 +60,9 @@ public:
         int getCount();
 
         // IInterface
-        void* queryInterface(const Guid& riid);
-        unsigned int addRef(void);
-        unsigned int release(void);
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
 
         friend class Dmac;
     };

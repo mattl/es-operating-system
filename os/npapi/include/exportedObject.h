@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@
 struct ExportKey
 {
     NPObject* object;
-    const Guid& iid;
+    const char* iid;
 
 public:
-    ExportKey(NPObject* object, const Guid& iid) :
+    ExportKey(NPObject* object, const char* iid) :
         object(object),
         iid(iid)
     {
@@ -43,13 +43,15 @@ public:
         return hash(object, iid);
     }
 
-    static size_t hash(NPObject* object, const Guid& iid)
+    static size_t hash(NPObject* object, const char* iid)
     {
-        return reinterpret_cast<const u32*>(&iid)[0] ^
-                reinterpret_cast<const u32*>(&iid)[1] ^
-                reinterpret_cast<const u32*>(&iid)[2] ^
-                reinterpret_cast<const u32*>(&iid)[3] ^
-                reinterpret_cast<size_t>(object);
+        size_t hash = 0;
+        while (*iid)
+        {
+            hash = (hash << 1) ^ *iid++;
+        }
+        hash ^= reinterpret_cast<size_t>(object);
+        return hash;
     }
 };
 
@@ -57,7 +59,7 @@ class ExportedObject
 {
     Ref ref;
     NPObject* object;
-    const Guid iid;
+    const char* iid;
     u64 check;
     bool doRelease;
 
@@ -82,7 +84,7 @@ public:
 
     bool isMatch(const ExportKey& key) const
     {
-        return (object == key.object && iid == key.iid) ? true : false;
+        return (object == key.object && strcmp(iid, key.iid) == 0) ? true : false;
     }
 
     u64 getCheck() const

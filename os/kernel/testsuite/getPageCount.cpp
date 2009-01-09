@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es.h>
 #include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "memoryStream.h"
@@ -46,14 +46,13 @@ int main()
     IInterface* root = NULL;
 
     esInit(&root);
+
     unsigned long maxFreeCount = PageTable::getFreeCount();
 
     esReport("Check getPageCount().\n");
 
     // Reserved all pages except for NON_RESERVER_PAGE pages.
-    IPageSet* pageSet;
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    Handle<IPageSet> pageSet = IPageSet::createInstance();
     unsigned long reserved = maxFreeCount - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -64,10 +63,6 @@ int main()
     esReport("Max free count: %d\n", maxFreeCount);
 #endif // VERBOSE
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     MemoryStream* backingStore = new MemoryStream(16);
     if (!backingStore)
     {
@@ -75,7 +70,7 @@ int main()
         return 1;
     }
 
-    ICache* cache1 = cacheFactory->create(backingStore);
+    ICache* cache1 = ICache::createInstance(backingStore);
     if (!cache1)
     {
         esReport("Bad alloc. (cache)\n");
@@ -96,7 +91,7 @@ int main()
         return 1;
     }
 
-    ICache* cache2 = cacheFactory->create(backingStore2);
+    ICache* cache2 = ICache::createInstance(backingStore2);
     if (!cache2)
     {
         esReport("Bad alloc. (cache2)\n");

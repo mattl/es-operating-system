@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 #include <sys/types.h>
 
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/base/IProcess.h>
 #include <es/naming/IBinding.h>
@@ -51,8 +50,7 @@ int main()
     Handle<IFile> elfFile = nameSpace->lookup("file/client");
     ASSERT(elfFile);
 
-    Handle<IClassStore> classStore = nameSpace->lookup("class");
-    Handle<IProcess> process = reinterpret_cast<IProcess*>(classStore->createInstance(CLSID_Process, IProcess::iid()));
+    Handle<IProcess> process = IProcess::createInstance();
     ASSERT(process);
 
     process->setRoot(nameSpace);

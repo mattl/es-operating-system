@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,9 +51,9 @@ public:
     Binding(const char* name, IInterface* object);
     ~Binding();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* iid);
+    unsigned int addRef();
+    unsigned int release();
 
     IInterface* getObject();
     void setObject(IInterface* object);
@@ -85,9 +85,9 @@ public:
     Context();
     ~Context();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* iid);
+    unsigned int addRef();
+    unsigned int release();
 
     es::IBinding* bind(const char* name, es::IInterface* object);
     es::IContext* createSubcontext(const char* name);
@@ -97,13 +97,10 @@ public:
     int unbind(const char* name);
     es::IIterator* list(const char* name);
 
-    static const Guid& iid()
+    static const char* iid()
     {
-        static const Guid iid =
-        {
-            0x8017f170, 0x1a13, 0x11dc, { 0x9c, 0x02, 0x00, 0x09, 0xbf, 0x00, 0x00, 0x01 }
-        };
-        return iid;
+        static const char* name = "__Context";
+        return name;
     }
 };
 
@@ -117,13 +114,13 @@ public:
     Iterator(Binding* binding);
     ~Iterator();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* iid);
+    unsigned int addRef();
+    unsigned int release();
 
-    bool hasNext(void);
+    bool hasNext();
     es::IInterface* next();
-    int remove(void);
+    int remove();
 };
 
 #endif  // NINTENDO_ES_CONTEXT_H_INCLUDED

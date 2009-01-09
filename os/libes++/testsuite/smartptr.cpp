@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,14 +33,14 @@ public:
         printf("done.\n");
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IInterface::iid())
+        if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ICallback*>(this);
         }
-        else if (riid == ICallback::iid())
+        else if (strcmp(riid, ICallback::iid()) == 0)
         {
             objectPtr = static_cast<ICallback*>(this);
         }
@@ -52,12 +52,12 @@ public:
         return objectPtr;
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         return ref.addRef();
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         printf("count: %d\n", count);
@@ -80,12 +80,12 @@ class B
     Ref ref;
 
 public:
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         return ref.addRef();
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         unsigned int count = ref.release();
         printf("count: %d\n", count);

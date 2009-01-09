@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <es.h>
-#include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
+#include <es/ref.h>
 #include <es/base/ICache.h>
 #include "core.h"
 #include "memoryStream.h"
@@ -34,15 +34,12 @@ int main()
 {
     IInterface* root = NULL;
     esInit(&root);
-
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    Handle<IContext> context = root;
 
     MemoryStream* backingStore = new(std::nothrow) MemoryStream(128*1024);
     TEST(backingStore);
 
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
     TEST(cache);
 
     IStream* stream = cache->getStream();

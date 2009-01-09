@@ -31,8 +31,6 @@ nodist_libeskernel_a_SOURCES = \
 	base/IAlarm.c \
 	base/ICache.c \
 	base/ICallback.c \
-	base/IClassFactory.c \
-	base/IClassStore.c \
 	base/IFile.c \
 	base/IInterface.c \
 	base/IInterfaceStore.c \
@@ -75,7 +73,6 @@ nodist_libeskernel_a_SOURCES = \
 c_source_files =
 
 cpp_source_files = \
-	port/classStore.cpp \
 	port/elf.cpp \
 	port/init.cpp \
 	port/interface.cpp
@@ -99,7 +96,6 @@ header_files = \
 	include/alarm.h \
 	include/arena.h \
 	include/cache.h \
-	include/classStore.h \
 	include/elfFile.h \
 	include/heap.h \
 	include/interfaceStore.h \
@@ -125,7 +121,7 @@ header_files += \
 	include/ata.h \
 	include/uart.h
 
-# 	include/space.h 
+# 	include/space.h
 
 nodist_libeskernel_a_SOURCES += mbr.c
 

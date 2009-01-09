@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -60,7 +60,7 @@ remove(const Guid& clsid)
 }
 
 void* ClassStore::
-createInstance(const Guid& rclsid, const Guid& riid)
+createInstance(const Guid& rclsid, const char* riid)
 {
     void* objectPtr = 0;
     IClassFactory* factory;
@@ -75,14 +75,14 @@ createInstance(const Guid& rclsid, const Guid& riid)
 }
 
 void* ClassStore::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IClassStore::iid())
+    if (strcmp(riid, IClassStore::iid()) == 0)
     {
         objectPtr = static_cast<IClassStore*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IClassStore*>(this);
     }
@@ -95,13 +95,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int ClassStore::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int ClassStore::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

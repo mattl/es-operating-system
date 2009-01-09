@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ asyncInvoke(void* param)
     {
         // TODO check mothod, etc.
         FPRINTF(stderr, "queryInterface\n");
-        if (iid == ICanvasRenderingContext2D::iid())
+        if (strcmp(iid, ICanvasRenderingContext2D::iid()) == 0)
         {
             OBJECT_TO_NPVARIANT(object, result);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 #include <stdlib.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/base/IProcess.h>
 #include <es/device/IFileSystem.h>
@@ -32,6 +31,7 @@
 #include <es/base/IService.h>
 #include <es/base/IStream.h>
 #include <es/base/IThread.h>
+#include <es/device/IFatFileSystem.h>
 #include <es/device/INetworkInterface.h>
 #include <es/naming/IContext.h>
 #include <es/net/ISocket.h>
@@ -41,6 +41,9 @@
 #include <es/net/dhcp.h>
 #include <es/net/dns.h>
 #include <es/net/udp.h>
+
+#include "fatStream.h"
+#include "iso9660Stream.h"
 
 using namespace es;
 
@@ -93,8 +96,7 @@ void init(Handle<IContext> root)
     esReport("main size: %lld\n", size);
 
     Handle<IProcess> process;
-    process = reinterpret_cast<IProcess*>(
-        esCreateInstance(CLSID_Process, IProcess::iid()));
+    process = IProcess::createInstance();
     ASSERT(process);
     process->setRoot(root);
     process->setCurrent(root);
@@ -166,8 +168,8 @@ int main(int argc, char* argv[])
 
     initNetwork(nameSpace);
 
-    Handle<IClassStore> classStore(nameSpace->lookup("class"));
-    esRegisterFatFileSystemClass(classStore);
+    FatFileSystem::initializeConstructor();
+    Iso9660FileSystem::initializeConstructor();
 
     Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
@@ -178,8 +180,7 @@ int main(int argc, char* argv[])
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
         Handle<IContext> root = fatFileSystem->getRoot();
@@ -188,16 +189,14 @@ int main(int argc, char* argv[])
 
         // start event manager process.
         Handle<IProcess> eventProcess;
-        eventProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        eventProcess = IProcess::createInstance();
         Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
         ASSERT(eventElf);
         startProcess(nameSpace, eventProcess, eventElf);
 
         // start console process.
         Handle<IProcess> consoleProcess;
-        consoleProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        consoleProcess =IProcess::createInstance();
         Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
         ASSERT(consoleElf);
         startProcess(nameSpace, consoleProcess, consoleElf);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -326,8 +326,7 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
     ASSERT(memcmp(fcb, FatFileSystem::nameDot, 11) != 0);
     ASSERT(memcmp(fcb, FatFileSystem::nameDotdot, 11) != 0);
 
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
 
     memmove(this->fcb, fcb, 32);
     fstClus = word(fcb + DIR_FstClusLO) | (word(fcb + DIR_FstClusHI) << 16);
@@ -351,11 +350,11 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
 
     if (!isDirectory())
     {
-        cache = fileSystem->cacheFactory->create(this);
+        cache = ICache::createInstance(this);
     }
     else
     {
-        cache = fileSystem->cacheFactory->create(this, fileSystem->pageSet);
+        cache = ICache::createInstance(this, fileSystem->pageSet);
     }
     cache->setSectorSize(fileSystem->bytsPerClus);
     fileSystem->add(this);
@@ -393,22 +392,22 @@ FatStream::
 }
 
 void* FatStream::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (isDirectory() && riid == IContext::iid())
+    if (isDirectory() && strcmp(riid, IContext::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IFile::iid())
+    else if (strcmp(riid, IFile::iid()) == 0)
     {
         objectPtr = static_cast<IFile*>(this);
     }
-    else if (riid == IBinding::iid())
+    else if (strcmp(riid, IBinding::iid()) == 0)
     {
         objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IBinding*>(this);
     }
@@ -421,7 +420,7 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int FatStream::
-addRef(void)
+addRef()
 {
     unsigned int count = ref.addRef();
     if (count == 2)
@@ -433,7 +432,7 @@ addRef(void)
 }
 
 unsigned int FatStream::
-release(void)
+release()
 {
     unsigned int count;
 

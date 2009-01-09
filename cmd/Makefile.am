@@ -3,7 +3,7 @@ SUBDIRS = . testsuite
 SUFFIXES = .h .idl .ent
 
 %.h %.ent: %.idl
-	esidl -I$(srcdir)/../include $<
+	esidl -I$(srcdir)/../include -include es/base/IInterface.idl -object Interface $<
 
 %.c : %.ent
 	mkdir -p $(*D);
@@ -16,12 +16,14 @@ SUFFIXES = .h .idl .ent
 	echo "Info;" >> $@;
 
 noinst_PROGRAMS = \
-	main hello cairo expat server client binder binderClient \
+	main hello cairo expat server client \
 	location locationClient \
 	eventManager eventManagerClient \
 	console consoleClient \
 	upcallTest upcallTestClient \
-	fontconfig newlib
+	fontconfig newlib \
+	# binder binderClient
+
 
 AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 AM_CPPFLAGS = -I- \
@@ -45,9 +47,9 @@ server_SOURCES = server.cpp
 
 client_SOURCES = client.cpp
 
-binder_SOURCES = binder.cpp binder.h
+# binder_SOURCES = binder.cpp binder.h
 
-binderClient_SOURCES = binderClient.cpp binder.h
+# binderClient_SOURCES = binderClient.cpp binder.h
 
 location_SOURCES = location.cpp location.h ILocation.idl
 

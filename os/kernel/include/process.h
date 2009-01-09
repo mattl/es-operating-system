@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,24 +40,24 @@ class SyscallProxy : public IInterface
     Ref         ref;
     Interlocked use;
     void*       object;
-    Guid        iid;
+    const char* iid;
 
 public:
     SyscallProxy() :
         ref(0),
         object(0),
-        iid(GUID_NULL)
+        iid(0)
     {
     }
 
-    bool set(void* object, const Guid& iid, bool used = false);
+    bool set(void* object, const char* iid, bool used = false);
 
     void* getObject() const
     {
         return object;
     }
 
-    const Guid& getIID() const
+    const char* getIID() const
     {
         return iid;
     }
@@ -71,7 +71,7 @@ public:
     long releaseUser();
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -87,24 +87,24 @@ class UpcallProxy : public IInterface
     Ref         ref;
     Interlocked use;
     void*       object;
-    Guid        iid;
+    const char* iid;
     Process*    process;
 
 public:
     UpcallProxy() :
         ref(0),
         object(0),
-        iid(GUID_NULL),
+        iid(0),
         process(0)
     {
     }
 
-    bool set(Process* process, void* object, const Guid& iid, bool used);
+    bool set(Process* process, void* object, const char* iid, bool used);
 
     bool isUsed();
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -216,9 +216,8 @@ public:
     static const unsigned INTERFACE_POINTER_MAX = 100;
 
 private:
-    static ICacheFactory*   cacheFactory;
-    static Zero*            zero;
-    static Swap*            swap;
+    static Zero*    zero;
+    static Swap*    swap;
 
     Ref             ref;
     Monitor         monitor;
@@ -288,7 +287,7 @@ public:
     int write(const void* src, int count, long long offset);
 
     long long systemCall(void** self, unsigned methodNumber, va_list param, void** base);
-    int set(SyscallProxy* table, void* object, const Guid& iid, bool used = false);
+    int set(SyscallProxy* table, void* object, const char* iid, bool used = false);
 
     Thread* createThread(const unsigned stackSize);
     void detach(Thread* thread);
@@ -334,9 +333,9 @@ public:
     void setError(IStream* error);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     // Initializes the static members
     static void initialize();
@@ -350,7 +349,7 @@ public:
     static long long upcall(void* self, void* base, int m, va_list ap);
     static Broker<upcall, INTERFACE_POINTER_MAX> broker;
     static UpcallProxy upcallTable[INTERFACE_POINTER_MAX];
-    static int set(Process* process, void* object, const Guid& iid, bool used);
+    static int set(Process* process, void* object, const char* iid, bool used);
 
     UpcallRecord* createUpcallRecord(const unsigned stackSize);
     UpcallRecord* getUpcallRecord();
@@ -364,12 +363,24 @@ public:
      */
     int copyIn(UpcallRecord* record);
     u8* copyInString(const char* string, u8* esp);
-    IInterface* copyInObject(IInterface* object, Guid& iid);
+    IInterface* copyInObject(IInterface* object, const char* iid);
 
     /** Copies back the input parameters from the server user stack.
      * @return  error number
      */
-    int copyOut(UpcallRecord* record, Guid& iid);
+    int copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName);
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        IProcess* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
 #endif // __es__

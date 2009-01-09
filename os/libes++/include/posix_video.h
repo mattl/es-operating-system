@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2008 Chis Dan Ionut
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -93,9 +93,9 @@ public:
     void put(long long offset, unsigned long long pte);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     static void* start(void* param);
     static void display();

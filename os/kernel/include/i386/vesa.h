@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
 #include <es/device/ICursor.h>
 #include "thread.h"
 
-class Vesa : public IStream, public ICursor, public IPageable
+class Vesa : public es::IStream, public es::ICursor, public es::IPageable
 {
     // VESA SuperVGA information block
     enum VbeInfoBlock
@@ -113,7 +113,7 @@ class Vesa : public IStream, public ICursor, public IPageable
 
 public:
     Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font,
-         IContext* device);
+         es::IContext* device);
 
     // IStream
     long long getPosition();
@@ -139,9 +139,9 @@ public:
     void put(long long offset, unsigned long long pte);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 #endif // NINTENDO_ES_KERNEL_I386_VESA_H_INCLUDED

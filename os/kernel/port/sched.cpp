@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -303,26 +303,26 @@ invoke(int result)
 //
 
 void* Sched::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICurrentThread::iid())
+    if (strcmp(riid, ICurrentThread::iid()) == 0)
     {
         objectPtr = static_cast<ICurrentThread*>(this);
     }
-    else if (riid == ICurrentProcess::iid())
+    else if (strcmp(riid, ICurrentProcess::iid()) == 0)
     {
         objectPtr = static_cast<ICurrentProcess*>(this);
     }
-    else if (riid == IRuntime::iid())
+    else if (strcmp(riid, IRuntime::iid()) == 0)
     {
         objectPtr = static_cast<IRuntime*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICurrentThread*>(this);
     }
@@ -335,13 +335,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Sched::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Sched::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

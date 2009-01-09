@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -139,13 +139,13 @@ Control::resolve(const char* hostName)
         {
             continue;
         }
-            
+
         if (dns->getResponseCode() != DNSHdr::NoError)
         {
             // switch search domain / nameserver, do not retransmit
             return 0;
         }
-            
+
         if (ntohs(dns->ancount) == 0)
         {
             continue;
@@ -519,14 +519,14 @@ getHostByAddress(const void* address, int len, unsigned int scopeID)
 }
 
 void* Resolver::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IResolver::iid())
+    if (strcmp(riid, IResolver::iid()) == 0)
     {
         objectPtr = static_cast<IResolver*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IResolver*>(this);
     }
@@ -560,8 +560,7 @@ Resolver::
 Resolver() :
     control(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
 }
 
 Resolver::

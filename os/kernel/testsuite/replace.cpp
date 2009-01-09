@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +20,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <es.h>
-#include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
+#include <es/ref.h>
 #include <es/base/ICache.h>
 #include "core.h"
 #include "memoryStream.h"
@@ -47,14 +47,13 @@ int main()
     IInterface* root = NULL;
 
     esInit(&root);
+
     unsigned long long maxPage = PageTable::getFreeCount();
 #ifdef VERBOSE
     esReport("maxPage: %lu\n", maxPage);
 #endif // VERBOSE
     // Reserved all pages except for NON_RESERVER_PAGE pages.
-    IPageSet* pageSet;
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    Handle<IPageSet> pageSet = IPageSet::createInstance();
     unsigned long long reserved = maxPage - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -64,7 +63,6 @@ int main()
     int size2 = maxPage * PAGE_SIZE * 2;
     u8* buf1;
     u8* buf2;
-    ICacheFactory* cacheFactory = 0;
 
     try
     {
@@ -72,9 +70,6 @@ int main()
         setData(buf1, size1, 1);
         buf2 = new u8[size1];
         setData(buf2, size1, 2);
-
-        cacheFactory = reinterpret_cast<ICacheFactory*>(
-            esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
     }
     catch (...)
     {
@@ -95,7 +90,7 @@ int main()
     {
         backingStore = new MemoryStream;
         TEST(backingStore);
-        cache1 = cacheFactory->create(backingStore);
+        cache1 = ICache::createInstance(backingStore);
         TEST(cache1);
         stream1 = cache1->getStream();
         TEST(stream1);
@@ -103,7 +98,7 @@ int main()
 
         backingStore2 = new MemoryStream;
         TEST(backingStore2);
-        cache2 = cacheFactory->create(backingStore2);
+        cache2 = ICache::createInstance(backingStore2);
         TEST(cache2);
         stream2 = cache2->getStream();
         TEST(stream2);

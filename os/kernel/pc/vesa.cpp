@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,8 @@
 #include "cache.h"
 
 // #define VERBOSE
+
+using namespace es;
 
 u32 Vesa::data[32] =
 {
@@ -470,22 +472,22 @@ put(long long offset, unsigned long long pte)
 }
 
 void* Vesa::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICursor::iid())
+    if (strcmp(riid, ICursor::iid()) == 0)
     {
         objectPtr = static_cast<ICursor*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICursor*>(this);
     }
-    else if (riid == IPageable::iid())
+    else if (strcmp(riid, IPageable::iid()) == 0)
     {
         objectPtr = static_cast<IPageable*>(this);
     }

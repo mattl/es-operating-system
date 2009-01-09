@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,8 +68,8 @@ void test(Handle<IContext> root)
 
     // Read
     stream = file->getStream();
-    u8* buf = new u8[size];
-    n = stream->read(buf, size);
+    u8 buf[20];
+    n = stream->read(buf, sizeof buf);
     TEST(n == 0);
 
     // Write
@@ -77,8 +77,8 @@ void test(Handle<IContext> root)
     size = stream->getSize();
     TEST(size == 11);
     stream->setPosition(0);
-    memset(buf, 0, size);
-    stream->read(buf, size);
+    memset(buf, 0, sizeof buf);
+    stream->read(buf, sizeof buf);
     TEST(memcmp(buf, "0123456789\n", 11) == 0);
     stream->flush();
 
@@ -107,25 +107,21 @@ void test(Handle<IContext> root)
     stream->write("Hello, world.\n", 14);
     size = stream->getSize();
     TEST(size == 14);
-    memset(buf, 0, size);
+    memset(buf, 0, sizeof buf);
     stream->setPosition(0);
-    stream->read(buf, size);
+    stream->read(buf, sizeof buf);
     TEST(memcmp(buf, "Hello, world.\n", 14) == 0);
     stream->flush();
     stream = 0;
     file = 0;
-
-    delete [] buf;
 }
 
 int main(void)
 {
     IInterface* ns = 0;
     esInit(&ns);
+    FatFileSystem::initializeConstructor();
     Handle<IContext> nameSpace(ns);
-
-    Handle<IClassStore> classStore(nameSpace->lookup("class"));
-    esRegisterFatFileSystemClass(classStore);
 
 #ifdef __es__
     Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
@@ -140,8 +136,7 @@ int main(void)
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
@@ -161,8 +156,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

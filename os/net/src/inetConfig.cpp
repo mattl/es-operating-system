@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -213,14 +213,14 @@ removeSearchDomain(const char* address)
 }
 
 void* InternetConfig::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IInternetConfig::iid())
+    if (strcmp(riid, IInternetConfig::iid()) == 0)
     {
         objectPtr = static_cast<IInternetConfig*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IInternetConfig*>(this);
     }

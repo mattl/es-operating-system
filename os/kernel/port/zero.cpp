@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <es.h>
 #include "zero.h"
 
 Zero::Zero()
@@ -68,14 +69,14 @@ void Zero::flush()
 {
 }
 
-void* Zero::queryInterface(const Guid& riid)
+void* Zero::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
@@ -87,12 +88,12 @@ void* Zero::queryInterface(const Guid& riid)
     return objectPtr;
 }
 
-unsigned int Zero::addRef(void)
+unsigned int Zero::addRef()
 {
     return ref.addRef();
 }
 
-unsigned int Zero::release(void)
+unsigned int Zero::release()
 {
     unsigned int count = ref.release();
     if (count == 0)

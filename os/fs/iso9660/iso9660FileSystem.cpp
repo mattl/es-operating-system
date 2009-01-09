@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 #include <errno.h>
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
 #include <es/handle.h>
 #include "iso9660Stream.h"
 
@@ -44,9 +43,6 @@ init()
 {
     hashSize = 20;
     hashTable = new Iso9660StreamChain[hashSize];
-
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
 }
 
 Iso9660FileSystem::
@@ -68,7 +64,6 @@ Iso9660FileSystem::
 ~Iso9660FileSystem()
 {
     dismount();
-    cacheFactory->release();
     delete[] hashTable;
 }
 
@@ -166,7 +161,7 @@ mount(IStream* disk)
     bytsPerSec = 2048;
     escapeSequences = 0;
 
-    diskCache = cacheFactory->create(disk);
+    diskCache = ICache::createInstance(disk);
     diskCache->setSectorSize(2048);
 
     Handle<IStream> stream(diskCache->getInputStream());
@@ -325,16 +320,20 @@ defrag()
 }
 
 void* Iso9660FileSystem::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IFileSystem::iid())
+    if (strcmp(riid, IIso9660FileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        objectPtr = static_cast<IIso9660FileSystem*>(this);
     }
-    else if (riid == IInterface::iid())
+    if (strcmp(riid, IFileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        objectPtr = static_cast<IIso9660FileSystem*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IIso9660FileSystem*>(this);
     }
     else
     {
@@ -345,13 +344,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Iso9660FileSystem::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Iso9660FileSystem::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -362,9 +361,48 @@ release(void)
     return count;
 }
 
-void esRegisterIsoFileSystemClass(IClassStore* classStore)
+
+IIso9660FileSystem* Iso9660FileSystem::Constructor::
+createInstance()
 {
-    // Register CLSID_MonitorFactory
-    IClassFactory* isoFileSystemFactory = new(ClassFactory<Iso9660FileSystem>);
-    classStore->add(CLSID_IsoFileSystem, isoFileSystemFactory);
+    return new Iso9660FileSystem;
+}
+
+void* Iso9660FileSystem::Constructor::
+queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IIso9660FileSystem::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IIso9660FileSystem::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IIso9660FileSystem::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Iso9660FileSystem::Constructor::
+addRef()
+{
+    return 1;
+}
+
+unsigned int Iso9660FileSystem::Constructor::
+release()
+{
+    return 1;
+}
+
+void Iso9660FileSystem::
+initializeConstructor()
+{
+    static Constructor constructor;
+    IIso9660FileSystem::setConstructor(&constructor);
 }

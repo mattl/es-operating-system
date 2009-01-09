@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #define NINTENDO_ES_TIMER_H_INCLUDED
 
 #include <new>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/synchronized.h>
 #include <es/timeSpan.h>
@@ -146,8 +145,7 @@ public:
         thread(0),
         canceled(false)
     {
-        monitor = reinterpret_cast<es::IMonitor*>(
-                    esCreateInstance(CLSID_Monitor, es::IMonitor::iid()));
+        monitor = es::IMonitor::createInstance();
         thread = esCreateThread(run, this);
         thread->setPriority(es::IThread::Highest);
         thread->start();

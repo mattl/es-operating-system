@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 #include <sys/types.h>
 
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
@@ -46,11 +45,6 @@ int main()
 
     Handle<IContext> nameSpace = System()->getRoot();
 
-#if 1
-    IInterface* unknown = nameSpace->lookup("class");
-    Handle<IClassStore> classStore = unknown;
-    assert(classStore);
-#endif
 
     Handle<IIterator> iterator = nameSpace->list("");
     while (iterator->hasNext())

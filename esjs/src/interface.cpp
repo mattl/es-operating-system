@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,15 @@
 #include <es/reflect.h>
 #include <es/variant.h>
 
+// TODO use proper name prefix or namespace
+namespace es
+{
+    Reflect::Interface& getInterface(const char* iid);
+    IInterface* getConstructor(const char* iid);
+    extern unsigned char* defaultInterfaceInfo[];
+    extern size_t defaultInterfaceCount;
+}  // namespace es
+
 using namespace es;
 
 // #define VERBOSE
@@ -39,11 +48,6 @@ class ObjectValue;
 #include "interface.h"
 
 extern ICurrentProcess* System();
-
-// TODO use proper name prefix or namespace
-extern Reflect::Interface& getInterface(const Guid& iid);
-extern unsigned char* defaultInterfaceInfo[];
-extern size_t defaultInterfaceCount;
 
 namespace
 {
@@ -113,14 +117,6 @@ bool parseGuid(const char* str, Guid* u)
     return true;
 }
 
-void printGuid(const Guid& guid)
-{
-    report("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-           guid.Data1, guid.Data2, guid.Data3,
-           guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
-           guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
-}
-
 //
 // invoke
 //
@@ -129,9 +125,8 @@ typedef long long (*InterfaceMethod)(void* self, ...);
 
 static char heap[64*1024];
 
-static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListValue* list)
+static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListValue* list)
 {
-    InterfaceMethod** self = reinterpret_cast<InterfaceMethod**>(object->getObject());
     if (!self)
     {
         throw getErrorInstance("TypeError");
@@ -147,7 +142,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
     Guid iidv[9];
     Guid* iidp = iidv;
     int ext = 0;    // extra parameter count
-    Guid riid = IInterface::iid();
+    const char* riid = IInterface::iid();
 
     // Set this
     *argp++ = Variant(reinterpret_cast<intptr_t>(self));
@@ -238,7 +233,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
                 throw getErrorInstance("TypeError");
             }
             *argp = Variant(iidp);
-            riid = *iidp;
+            // riid = *iidp; TODO: Fix this line later
             ++iidp;
             break;
         case Ent::TypeStructure:
@@ -418,7 +413,7 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         }
         break;
     case Ent::TypeInterface:
-        riid = returnType.getInterface().getIid();
+        riid = returnType.getInterface().getFullyQualifiedName();
         // FALL THROUGH
     case Ent::SpecObject:
         if (IInterface* unknown = apply(argc, argv, (IInterface* (*)()) ((*self)[methodNumber])))
@@ -437,12 +432,21 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
         value = NullValue::getInstance();
         break;
     }
+    return value;
+}
 
-    if (iid == IInterface::iid() && number == 2)   // IInterface::release()
+static Value* invoke(const char* iid, int number, InterfacePointerValue* object, ListValue* list)
+{
+    InterfaceMethod** self = reinterpret_cast<InterfaceMethod**>(object->getObject());
+    if (!self)
+    {
+        throw getErrorInstance("TypeError");
+    }
+    Value* value = invoke(iid, number, self, list);
+    if (strcmp(iid, IInterface::iid()) == 0 && number == 2)   // IInterface::release()
     {
         object->clearObject();
     }
-
     return value;
 }
 
@@ -452,13 +456,13 @@ static Value* invoke(Guid& iid, int number, InterfacePointerValue* object, ListV
 
 class AttributeValue : public ObjectValue
 {
-    bool    readOnly;
-    Guid    iid;
-    int     getter;     // Method number
-    int     setter;     // Method number
+    bool        readOnly;
+    const char* iid;
+    int         getter;     // Method number
+    int         setter;     // Method number
 
 public:
-    AttributeValue(const Guid& iid) :
+    AttributeValue(const char* iid) :
         readOnly(true),
         iid(iid),
         getter(0),
@@ -517,11 +521,11 @@ class InterfaceMethodCode : public Code
     FormalParameterList*    arguments;
     ObjectValue*            prototype;
 
-    Guid                    iid;
+    const char*             iid;
     int                     number;     // Method number
 
 public:
-    InterfaceMethodCode(ObjectValue* object, const Guid& iid, int number) :
+    InterfaceMethodCode(ObjectValue* object, const char* iid, int number) :
         arguments(new FormalParameterList),
         prototype(new ObjectValue),
         iid(iid),
@@ -577,11 +581,11 @@ public:
 
 class AttributeSetterValue : public ObjectValue
 {
-    Guid iid;
+    const char* iid;
     int number; // Method number
 
 public:
-    AttributeSetterValue(const Guid& iid, int number) :
+    AttributeSetterValue(const char* iid, int number) :
         iid(iid),
         number(number)
     {
@@ -608,11 +612,11 @@ public:
 
 class AttributeGetterValue : public ObjectValue
 {
-    Guid iid;
+    const char* iid;
     int number; // Method number
 
 public:
-    AttributeGetterValue(const Guid& iid, int number) :
+    AttributeGetterValue(const char* iid, int number) :
         iid(iid),
         number(number)
     {
@@ -682,12 +686,14 @@ public:
 
 class InterfaceConstructor : public Code
 {
-    FormalParameterList*      arguments;
-    InterfacePrototypeValue*  prototype;
-    Guid                      iid;
+    ObjectValue*             constructor;
+    FormalParameterList*     arguments;
+    InterfacePrototypeValue* prototype;
+    const char*              iid;
 
 public:
-    InterfaceConstructor(ObjectValue* object, const Guid& iid) :
+    InterfaceConstructor(ObjectValue* object, const char* iid) :
+        constructor(object),
         arguments(new FormalParameterList),
         prototype(new InterfacePrototypeValue),
         iid(iid)
@@ -767,13 +773,13 @@ public:
             }
         }
 
-        if (interface.getSuperIid() == GUID_NULL)
+        if (interface.getFullyQualifiedSuperName() == 0)
         {
             prototype->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype()->getPrototype());
         }
         else
         {
-            Reflect::Interface super = getInterface(interface.getSuperIid());
+            Reflect::Interface super = getInterface(interface.getFullyQualifiedSuperName());
             prototype->setPrototype(getGlobal()->get(super.getName())->get("prototype"));
         }
 
@@ -790,23 +796,41 @@ public:
     // Query interface for this interface.
     CompletionType evaluate()
     {
-        InterfacePointerValue* self = dynamic_cast<InterfacePointerValue*>(getScopeChain()->get("object"));
-        if (!self)
+        if (constructor->hasInstance(getThis()))
         {
-            throw getErrorInstance("TypeError");
+            // Constructor
+            IInterface* constructor = getConstructor(iid);
+            if (!constructor)
+            {
+                throw getErrorInstance("TypeError");
+            }
+            // TODO: Currently only the default constructor is supported
+            std::string ciid = iid;
+            ciid += "::Constructor";
+            Value* value = invoke(ciid.c_str(), 0, reinterpret_cast<InterfaceMethod**>(constructor), 0);
+            return CompletionType(CompletionType::Return, value, "");
         }
-
-        IInterface* object;
-        object = self->getObject();
-        if (!object || !(object = reinterpret_cast<IInterface*>(object->queryInterface(iid))))
+        else
         {
-            // We should throw an error in case called by a new expression.
-            throw getErrorInstance("TypeError");
-        }
+            // Cast
+            InterfacePointerValue* self = dynamic_cast<InterfacePointerValue*>(getScopeChain()->get("object"));
+            if (!self)
+            {
+                throw getErrorInstance("TypeError");
+            }
 
-        ObjectValue* value = new InterfacePointerValue(object);
-        value->setPrototype(prototype);
-        return CompletionType(CompletionType::Return, value, "");
+            IInterface* object;
+            object = self->getObject();
+            if (!object || !(object = reinterpret_cast<IInterface*>(object->queryInterface(iid))))
+            {
+                // We should throw an error in case called by a new expression.
+                throw getErrorInstance("TypeError");
+            }
+
+            ObjectValue* value = new InterfacePointerValue(object);
+            value->setPrototype(prototype);
+            return CompletionType(CompletionType::Return, value, "");
+        }
     }
 };
 
@@ -850,11 +874,7 @@ public:
             throw getErrorInstance("TypeError");
         }
 
-        Guid iid;
-        if (!parseGuid(value->toString().c_str(), &iid))
-        {
-            throw getErrorInstance("TypeError");
-        }
+        const char* iid = value->toString().c_str();
 
         Reflect::Interface interface;
         try
@@ -971,7 +991,7 @@ static void constructSystemObject(Reflect::Module& module)
         // Construct Default Interface Object
         PRINTF("%s\n", interface.getName());
         ObjectValue* object = new ObjectValue;
-        object->setCode(new InterfaceConstructor(object, interface.getIid()));
+        object->setCode(new InterfaceConstructor(object, interface.getFullyQualifiedName()));
         object->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype());
         getGlobal()->put(interface.getName(), object);
     }

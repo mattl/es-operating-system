@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +37,6 @@
 
 #include <es/broker.h>
 #include <es/capability.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
@@ -48,6 +46,8 @@
 #include <es/rpc.h>
 #include <es/timeSpan.h>
 #include <es/variant.h>
+
+#include <es/base/IAlarm.h>
 #include <es/base/IProcess.h>
 #include <es/util/ICanvasRenderingContext2D.h>
 
@@ -57,12 +57,15 @@
 #include "posix_system.h"
 #include "posix_video.h"
 
-// #define VERBOSE
+namespace es
+{
+    Reflect::Interface& getInterface(const char* iid);
+    void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*));
+    const char* getUniqueIdentifier(const char* iid);
+}
 
 using namespace es;
 using namespace posix;
-
-extern Reflect::Interface& getInterface(const Guid& iid);
 
 namespace
 {
@@ -79,18 +82,13 @@ __thread std::map<pid_t, int>* socketMap;
 // Misc.
 //
 
-long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method, Variant* variant);
+void initializeConstructors();
+
+long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method,
+                     bool stringIsInterfaceName, Variant* variant);
 u64 getRandom();
 
 typedef long long (*Method)(void* self, ...);
-
-void printGuid(const Guid& guid)
-{
-    fprintf(stderr, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-           guid.Data1, guid.Data2, guid.Data3,
-           guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3],
-           guid.Data4[4], guid.Data4[5], guid.Data4[6], guid.Data4[7]);
-}
 
 long long callRemote(void* self, void* base, int m, va_list ap);
 Broker<callRemote, MAX_IMPORT> importer;
@@ -119,11 +117,11 @@ class System : public ICurrentProcess
     struct ExportKey
     {
         IInterface* object;
-        Guid        iid;
+        const char* iid;
     public:
-        ExportKey(IInterface* object, const Guid& iid) :
+        ExportKey(IInterface* object, const char* iid) :
             object(object),
-            iid(iid)
+            iid(getUniqueIdentifier(iid))
         {
         }
 
@@ -132,13 +130,9 @@ class System : public ICurrentProcess
             return hash(object, iid);
         }
 
-        static size_t hash(IInterface* object, const Guid& iid)
+        static size_t hash(IInterface* object, const char* iid)
         {
-            return reinterpret_cast<const u32*>(&iid)[0] ^
-                   reinterpret_cast<const u32*>(&iid)[1] ^
-                   reinterpret_cast<const u32*>(&iid)[2] ^
-                   reinterpret_cast<const u32*>(&iid)[3] ^
-                   reinterpret_cast<size_t>(object);
+            return reinterpret_cast<size_t>(iid) ^ reinterpret_cast<size_t>(object);
         }
     };
 
@@ -146,7 +140,7 @@ class System : public ICurrentProcess
     {
         Ref         ref;
         IInterface* object;
-        Guid        iid;
+        const char* iid;
         u64         check;
         bool        doRelease;
 
@@ -180,11 +174,7 @@ class System : public ICurrentProcess
 
         size_t hash() const
         {
-            return reinterpret_cast<const u32*>(&iid)[0] ^
-                   reinterpret_cast<const u32*>(&iid)[1] ^
-                   reinterpret_cast<const u32*>(&iid)[2] ^
-                   reinterpret_cast<const u32*>(&iid)[3] ^
-                   reinterpret_cast<size_t>(object);
+            return reinterpret_cast<size_t>(iid) ^ reinterpret_cast<size_t>(object);
         }
 
         unsigned int addRef()
@@ -202,11 +192,11 @@ class System : public ICurrentProcess
     struct ImportKey
     {
         const Capability* capability;
-        const Guid*       iid;
+        const char* iid;
     public:
-        ImportKey(const Capability* capability, const Guid& iid) :
+        ImportKey(const Capability* capability, const char* iid) :
             capability(capability),
-            iid(&iid)
+            iid(getUniqueIdentifier(iid))
         {
         }
 
@@ -220,16 +210,16 @@ class System : public ICurrentProcess
     {
         Ref         ref;
         Capability  capability;
-        Guid        iid;
+        const char* iid;
         bool        doRelease;
 
     public:
         Imported(const ImportKey& key) :
             ref(0),
+            iid(key.iid),
             doRelease(false)
         {
             capability.copy(*key.capability);
-            iid = *key.iid;
         }
 
         ~Imported()
@@ -309,7 +299,9 @@ public:
             {
                 ::exit(EXIT_FAILURE);
             }
+#ifdef VERBOSE
             cmd.forkRes.report();
+#endif
         }
 
         // Import root and current
@@ -324,11 +316,6 @@ public:
             IInterface* unknown = 0;
             esInit(&unknown);
             root = reinterpret_cast<IContext*>(unknown->queryInterface(IContext::iid()));
-
-            // Register CLSID_Process
-            Handle<IClassStore> classStore(root->lookup("class"));
-            IClassFactory* processFactory = new(ClassFactory<Process>);
-            classStore->add(CLSID_Process, processFactory);
 
             // Register the pseudo framebuffer device
             try
@@ -345,6 +332,7 @@ public:
             root->bind("file", static_cast<IContext*>(file));
             file->release();
         }
+        initializeConstructors();
 
         // Import in, out, error
         if (0 <= cmd.forkRes.in.object)
@@ -432,7 +420,8 @@ public:
         {
             close(sockfd);
             char sun_path[108]; // UNIX_PATH_MAX
-            sprintf(sun_path, "/tmp/es-socket-%u", getpid());
+            memset(sun_path, 0, sizeof sun_path);
+            sprintf(sun_path + 1, "es-socket-%u", getpid());
             printf("unlink %s\n", sun_path);
             unlink(sun_path);
             }
@@ -574,14 +563,14 @@ public:
     {
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == ICurrentProcess::iid())
+        if (strcmp(riid, ICurrentProcess::iid()) == 0)
         {
             objectPtr = static_cast<ICurrentProcess*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ICurrentProcess*>(this);
         }
@@ -628,7 +617,7 @@ public:
         return v;
     }
 
-    int exportObject(IInterface* object, const Guid& iid, Capability* cap, bool param)
+    int exportObject(IInterface* object, const char* iid, Capability* cap, bool param)
     {
         if (!object)
         {
@@ -638,45 +627,50 @@ public:
             return -1;
         }
 
-        // posix implementation directory transfers Dir, File, and Stream file descriptors
-        if (Dir* dir = dynamic_cast<Dir*>(object))
+        if (importer.getInterfaceNo(object) == -1)  // We cannnot use dynamic_cast for imported objects.
         {
-            if (iid == IContext::iid() || iid == IFile::iid() || iid == IBinding::iid())
+            // posix implementation directory transfers Dir, File, and Stream file descriptors
+            if (Dir* dir = dynamic_cast<Dir*>(object))
             {
-                cap->pid = getpid();
-                cap->object = dup(dir->getfd());
-                cap->check = 0; // i.e., local
-                return cap->object;
+                if (strcmp(iid, IContext::iid()) == 0 ||
+                    strcmp(iid, IFile::iid()) == 0 ||
+                    strcmp(iid, IBinding::iid()) == 0)
+                {
+                    cap->pid = getpid();
+                    cap->object = dup(dir->getfd());
+                    cap->check = 0; // i.e., local
+                    return cap->object;
+                }
             }
-        }
-        else if (File* file = dynamic_cast<File*>(object))
-        {
-            if (iid == IFile::iid() || iid == IBinding::iid())
+            else if (File* file = dynamic_cast<File*>(object))
             {
-                cap->pid = getpid();
-                cap->object = dup(file->getfd());
-                cap->check = 0; // i.e., local
-                return cap->object;
+                if (strcmp(iid, IFile::iid()) == 0 || strcmp(iid, IBinding::iid()) == 0)
+                {
+                    cap->pid = getpid();
+                    cap->object = dup(file->getfd());
+                    cap->check = 0; // i.e., local
+                    return cap->object;
+                }
             }
-        }
-        else if (Stream* stream = dynamic_cast<Stream*>(object))
-        {
-            if (iid == IStream::iid() || iid == IPageable::iid())
+            else if (Stream* stream = dynamic_cast<Stream*>(object))
             {
-                cap->pid = getpid();
-                cap->object = dup(stream->getfd());
-                cap->check = 0; // i.e., local
-                return cap->object;
+                if (strcmp(iid, IStream::iid()) == 0 || strcmp(iid, IPageable::iid()) == 0)
+                {
+                    cap->pid = getpid();
+                    cap->object = dup(stream->getfd());
+                    cap->check = 0; // i.e., local
+                    return cap->object;
+                }
             }
-        }
-        else if (Iterator* iterator= dynamic_cast<Iterator*>(object))
-        {
-            if (iid == IIterator::iid())
+            else if (Iterator* iterator= dynamic_cast<Iterator*>(object))
             {
-                cap->pid = getpid();
-                cap->object = dup(iterator->getfd());
-                cap->check = 0; // i.e., local
-                return cap->object;
+                if (strcmp(iid, IIterator::iid()) == 0)
+                {
+                    cap->pid = getpid();
+                    cap->object = dup(iterator->getfd());
+                    cap->check = 0; // i.e., local
+                    return cap->object;
+                }
             }
         }
 
@@ -696,12 +690,10 @@ public:
         return i;
     }
 
-    IInterface* importObject(const Capability& cap, const Guid& iid, bool param)
+    IInterface* importObject(const Capability& cap, const char* iid, bool param)
     {
 #ifdef VERBOSE
-        printf("importObject: ");
-        printGuid(iid);
-        printf(" : %d\n", param);
+        printf("importObject: %s : %d\n", iid, param);
 #endif
 
         if (cap.object < 0)
@@ -711,19 +703,19 @@ public:
 
         if (cap.check == 0)
         {
-            if (iid == IContext::iid())
+            if (strcmp(iid, IContext::iid()) == 0)
             {
                 return static_cast<IContext*>(new Dir(cap.object, ""));
             }
-            if (iid == IFile::iid())
+            if (strcmp(iid, IFile::iid()) == 0)
             {
                 return static_cast<IFile*>(new File(cap.object, ""));
             }
-            if (iid == IStream::iid())
+            if (strcmp(iid, IStream::iid()) == 0)
             {
                 return static_cast<IStream*>(new Stream(cap.object));
             }
-            if (iid == IIterator::iid())   // TODO bk
+            if (strcmp(iid, IIterator::iid()) == 0)   // TODO bk
             {
                 return static_cast<IIterator*>(new Iterator(cap.object));
             }
@@ -741,7 +733,8 @@ public:
                 imported->addRef();
                 importedTable.put(i);
             }
-            return reinterpret_cast<IInterface*>(&(importer.getInterfaceTable())[i]);
+            IInterface* object = reinterpret_cast<IInterface*>(&(importer.getInterfaceTable())[i]);
+            return object;
         }
         else
         {
@@ -812,18 +805,22 @@ public:
             {
                 break;
             }
-            super = getInterface(super.getSuperIid());
+            super = getInterface(super.getFullyQualifiedSuperName());
         }
         Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
+        bool stringIsInterfaceName = false;
         // TODO Review later. Probably wrong...
-        if (super.getIid() == IInterface::iid())
+        if (super.getFullyQualifiedSuperName() == 0)
         {
             unsigned int count;
 
             switch (methodNumber - baseMethodCount)
             {
-            case 1: // addRef
+            case 0:  // queryInterface
+                stringIsInterfaceName = true;
+                break;
+            case 1:  // addRef
                 count = exported->addRef();
                 if (1 != count)
                 {
@@ -832,7 +829,7 @@ public:
                 }
                 exportedTable.get(hdr->capability.object);
                 break;
-            case 2: // release
+            case 2:  // release
                 count = exported->release();
                 exportedTable.put(hdr->capability.object);
                 if (0 <= count) // TODO: ==?
@@ -845,7 +842,7 @@ public:
             }
         }
 
-        Guid iid = IInterface::iid();
+        const char* iid = IInterface::iid();
         Method** object = reinterpret_cast<Method**>(exported->object);
         int argc = hdr->paramCount;
         Variant* argv = hdr->getArgv();
@@ -877,7 +874,6 @@ public:
             *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
-        case Ent::SpecUuid:
         case Ent::TypeStructure:
             // void op(struct* buf, ...);
             resultSize = returnType.getSize();
@@ -945,18 +941,13 @@ public:
             case Ent::SpecString:
                 if (static_cast<const char*>(*argp))
                 {
+                    if (stringIsInterfaceName)
+                    {
+                        iid = reinterpret_cast<const char*>(data);
+                    }
                     *argp = Variant(reinterpret_cast<const char*>(data));
                     size = strlen(reinterpret_cast<const char*>(data)) + 1;
                     data += size;
-                }
-                break;
-            case Ent::SpecUuid:
-                if (static_cast<const Guid*>(*argp))
-                {
-                    *argp = Variant(reinterpret_cast<const Guid*>(data));
-                    size = sizeof(Guid);
-                    data += size;
-                    iid = *static_cast<const Guid*>(*argp);
                 }
                 break;
             case Ent::TypeStructure:
@@ -966,7 +957,7 @@ public:
                 data += size;
                 break;
             case Ent::TypeInterface:
-                iid = type.getInterface().getIid();
+                iid = type.getInterface().getFullyQualifiedName();
                 // FALL THROUGH
             case Ent::SpecObject:
                 if (static_cast<IInterface*>(*argp))
@@ -1061,7 +1052,7 @@ public:
             resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));   // XXX maybe set just the # of elements
             break;
         case Ent::TypeInterface:
-            iid = returnType.getInterface().getIid();
+            iid = returnType.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject:
             res.result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
@@ -1082,7 +1073,7 @@ public:
                 *fdp++ = cap->object;
             }
 #ifdef VERBOSE
-            printf("<< ");
+            printf("<<(%s) ", iid);
             cap->report();
 #endif
         }
@@ -1179,17 +1170,21 @@ public:
             {
                 break;
             }
-            super = getInterface(super.getSuperIid());
+            super = getInterface(super.getFullyQualifiedSuperName());
         }
         Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
-        if (super.getIid() == IInterface::iid())
+        bool stringIsInterfaceName = false;
+        if (super.getFullyQualifiedSuperName() == 0)
         {
             int count;
 
             switch (methodNumber - baseMethodCount)
             {
-            case 1: // addRef
+            case 0:  // queryInterface
+                stringIsInterfaceName = true;
+                break;
+            case 1:  // addRef
                 count = imported->addRef();
                 if (1 != count)
                 {
@@ -1197,7 +1192,7 @@ public:
                 }
                 importedTable.get(interfaceNumber);
                 break;
-            case 2: // release
+            case 2:  // release
                 count = imported->release();
                 importedTable.put(interfaceNumber);
                 if (0 <= count)
@@ -1209,7 +1204,8 @@ public:
             }
         }
 
-        result = ::callRemote(imported->capability, methodNumber, ap, method, variant);
+        result = ::callRemote(imported->capability, methodNumber, ap, method,
+                              stringIsInterfaceName, variant);
 
         importedTable.put(interfaceNumber);
 
@@ -1370,7 +1366,9 @@ public:
         ::current.exportObject(current, IContext::iid(), &cmd.current, false);
         ::current.exportObject(root, IContext::iid(), &cmd.root, false);
         ::current.exportObject(0, IInterface::iid(), &cmd.document, false);
+#ifdef VERBOSE
         cmd.report();
+#endif
 
         int pfd[2];
         pipe(pfd);
@@ -1423,9 +1421,9 @@ public:
 
             // Unrelated files should be closed by the settings of fcntl FD_CLOEXEC after fexecve
             close(::current.getControlSocket());
-
+#ifdef VERBOSE
             printf("ppid: %d\n", getppid());
-
+#endif
             char* command = strdup(arguments);
             char* argv[32];
             int argc = 0;
@@ -1604,14 +1602,14 @@ public:
     }
 
     // IInterface
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IProcess::iid())
+        if (strcmp(riid, IProcess::iid()) == 0)
         {
             objectPtr = static_cast<IProcess*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IProcess*>(this);
         }
@@ -1645,7 +1643,53 @@ public:
     {
         return cmd;
     }
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        IProcess* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
+
+IProcess* Process::Constructor::createInstance()
+{
+    return new Process;
+}
+
+void* Process::Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IProcess::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IProcess::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IProcess::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Process::Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int Process::Constructor::release()
+{
+    return 1;
+}
 
 // Process system commands
 void* System::focus(void* param)
@@ -1759,7 +1803,8 @@ long long callRemote(void* self, void* base, int methodNumber, va_list ap)
     return current.callRemote(interfaceNumber, methodNumber, ap, variant);
 }
 
-long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method, Variant* variant)
+long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method,
+                     bool stringIsInterfaceName, Variant* variant)
 {
     if (epfd < 0)
     {
@@ -1806,7 +1851,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     // In the following implementation, we assume no out or inout attribute is
     // used for parameters.
     // Set up parameters
-    Guid iid = IInterface::iid();
+    const char* iid = IInterface::iid();
 
     // Set this
     *argp++ = Variant(static_cast<intptr_t>(0));  // to be filled by the server
@@ -1823,7 +1868,6 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
         *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         *argp++ = Variant(va_arg(ap, int32_t));
         break;
-    case Ent::SpecUuid:
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
         *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
@@ -1883,23 +1927,15 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             break;
         case Ent::SpecString:
             iop->iov_base = va_arg(ap, char*);
+            if (stringIsInterfaceName)
+            {
+                iid = static_cast<const char*>(iop->iov_base);
+            }
             *argp = Variant(reinterpret_cast<const char*>(iop->iov_base));
             if (iop->iov_base)
             {
                 iop->iov_len = strlen(static_cast<const char*>(iop->iov_base)) + 1;
                 ++iop;
-            }
-            break;
-        case Ent::SpecUuid:
-            iop->iov_base = va_arg(ap, Guid*);
-            if (iop->iov_base)
-            {
-                iop->iov_len = sizeof(Guid);
-                iid = *static_cast<const Guid*>(iop->iov_base);
-                *argp = Variant(reinterpret_cast<Guid*>(iop->iov_base));
-                ++iop;
-            } else {
-                *argp = Variant(reinterpret_cast<Guid*>(0));
             }
             break;
         case Ent::TypeStructure:
@@ -1915,7 +1951,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             ++iop;
             break;
         case Ent::TypeInterface:
-            iid = type.getInterface().getIid();
+            iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject: {
             IInterface* object = va_arg(ap, IInterface*);
@@ -2087,7 +2123,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                             // TODO Set exec on close to cap->object
                         }
 #ifdef VERBOSE
-                        printf(">> ");
+                        printf(">>(%s) ", iid);
                         cap->report();
 #endif
                         res->result = current.importObject(*cap, iid, false);
@@ -2119,7 +2155,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 break;
             case Ent::TypeInterface:
-                iid = returnType.getInterface().getIid();
+                iid = returnType.getInterface().getFullyQualifiedName();
                 // FALL THROUGH
             case Ent::SpecObject:
                 if (static_cast<IInterface*>(res->result))
@@ -2132,7 +2168,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                         // TODO Set exec on close to cap->object
                     }
 #ifdef VERBOSE
-                    printf(">> ");
+                    printf(">>(%s) ", iid);
                     cap->report();
 #endif
                     res->result = current.importObject(*cap, iid, false);
@@ -2191,6 +2227,12 @@ void* System::servant(void* param)
             }
         }
     }
+}
+
+void initializeConstructors()
+{
+    static Process::Constructor constructor;
+    IProcess::setConstructor(&constructor);
 }
 
 }   // namespace

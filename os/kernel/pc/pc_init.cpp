@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,12 @@
 
 #include <stdlib.h>
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/context.h>
 #include <es/exception.h>
 #include <es/endian.h>
 #include <es/formatter.h>
 #include <es/handle.h>
 #include <es/reflect.h>
-#include <es/base/IClassFactory.h>
 #include "io.h"
 #include "8042.h"
 #include "8237a.h"
@@ -34,7 +31,6 @@
 #include "ataController.h"
 #include "cache.h"
 #include "cga.h"
-#include "classStore.h"
 #include "core.h"
 #include "dp8390d.h"
 #include "fdc.h"
@@ -59,18 +55,15 @@
 
 void putDebugChar(int ch);
 
-Reflect::Interface* getInterface(const Guid* iid);
-
 namespace
 {
     IContext*       root;
-    IClassStore*    classStore;
+    IContext*       classStore;
     InterfaceStore* interfaceStore;
     Sched*          sched;
     Pit*            pit;
     IRtc*           rtc;
     IStream*        reportStream;
-    IClassFactory*  alarmFactory;
     Dmac*           master;
     Dmac*           slave;
     Pic*            pic;
@@ -160,6 +153,13 @@ extern void breakpoint(void);
 int esInit(IInterface** nameSpace)
 {
     set_debug_traps();
+
+    // Initialize trivial constructors.
+    Alarm::initializeConstructor();
+    Monitor::initializeConstructor();
+    PageSet::initializeConstructor();
+    PartitionContext::initializeConstructor();
+    Process::initializeConstructor();
 
     if (root)
     {
@@ -271,18 +271,17 @@ int esInit(IInterface** nameSpace)
 
     pit = new Pit(!mps->getFloatingPointerStructure() ? 1000 : 0);
 
-    // Create class store
-    classStore = static_cast<IClassStore*>(new ClassStore);
-
-    // Register CLSID_MonitorFactory
-    IClassFactory* monitorFactory = new(ClassFactory<Monitor>);
-    classStore->add(CLSID_Monitor, monitorFactory);
-
     root = new Context;
     if (nameSpace)
     {
         *nameSpace = root;
     }
+
+    // Create class store
+    classStore = root->createSubcontext("class");
+
+    // Register IMonitor constructor
+    classStore->bind(IMonitor::iid(), IMonitor::getConstructor());
 
     IBinding* binding;
 
@@ -307,24 +306,22 @@ int esInit(IInterface** nameSpace)
     binding = root->bind("interface", static_cast<IInterfaceStore*>(interfaceStore));
     binding->release();
 
-    // Register CLSID_Process
-    IClassFactory* processFactory = new(ClassFactory<Process>);
-    classStore->add(CLSID_Process, processFactory);
+    // Bind Process constructor
+    classStore->bind(IProcess::iid(), IProcess::getConstructor());
 
-    // Register CLSID_CacheFactory
-    IClassFactory* cacheFactoryFactory = new(ClassFactory<CacheFactory>);
-    classStore->add(CLSID_CacheFactory, cacheFactoryFactory);
+    // Bind Cache constructor
+    Cache::initializeConstructor();
+    ICache::setConstructor(new Cache::Constructor);
+    classStore->bind(ICache::iid(), ICache::getConstructor());
 
-    // Register CLSID_PageSet
-    classStore->add(CLSID_PageSet, static_cast<IClassFactory*>(PageTable::pageSet));
+    // Bind PageSet constructor
+    classStore->bind(IPageSet::iid(), IAlarm::getConstructor());
 
-    // Register CLSID_Alarm
-    alarmFactory = new(ClassFactory<Alarm>);
-    classStore->add(CLSID_Alarm, alarmFactory);
+    // Bind Alarm constructor
+    classStore->bind(IAlarm::iid(), IAlarm::getConstructor());
 
-    // Register CLSID_Partition
-    IClassFactory* partitionFactory = new(ClassFactory<PartitionContext>);
-    classStore->add(CLSID_Partition, partitionFactory);
+    // Bind Partition constructor
+    classStore->bind(IPartition::iid(), IPartition::getConstructor());
 
     slave = new Dmac(0x00, 0x80, 0);
     master = new Dmac(0xc0, 0x88, 1);
@@ -406,11 +403,6 @@ int esInit(IInterface** nameSpace)
     return 0;
 }
 
-void* esCreateInstance(const Guid& rclsid, const Guid& riid)
-{
-    return classStore->createInstance(rclsid, riid);
-}
-
 void esSleep(s64 timeout)
 {
     Thread* thread(Thread::getCurrentThread());
@@ -487,15 +479,30 @@ IStream* esReportStream()
     return reportStream;
 }
 
-Reflect::Interface& getInterface(const Guid& iid)
-{
-    return interfaceStore->getInterface(iid);
-}
-
 IThread* esCreateThread(void* (*start)(void* param), void* param)
 {
     return new Thread(start, param, IThread::Normal);
 }
+
+namespace es
+{
+
+Reflect::Interface& getInterface(const char* iid)
+{
+    return interfaceStore->getInterface(iid);
+}
+
+IInterface* getConstructor(const char* iid)
+{
+    return interfaceStore->getConstructor(iid);
+}
+
+const char* getUniqueIdentifier(const char* iid)
+{
+    return interfaceStore->getUniqueIdentifier(iid);
+}
+
+}  // namespace es
 
 bool nmiHandler()
 {

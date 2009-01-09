@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,11 @@
 #include <errno.h>
 #include <es.h>
 #include <es/exception.h>
+#include "alarm.h"
+#include "cache.h"
 #include "core.h"
+#include "partition.h"
+#include "process.h"
 #include "thread.h"
 
 int esReport(const char* spec, ...)

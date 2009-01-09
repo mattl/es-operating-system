@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@
 #include <es/device/INetworkInterface.h>
 #include "thread.h"
 
-class Loopback : public INetworkInterface, public IStream
+class Loopback : public es::INetworkInterface, public es::IStream
 {
     Ref     ref;
     Monitor monitor;
@@ -62,13 +62,13 @@ public:
     {
         return true;
     }
-    void getStatistics(INetworkInterface::Statistics* statistics)
+    void getStatistics(es::INetworkInterface::Statistics* statistics)
     {
-        memset(statistics, 0, sizeof(INetworkInterface::Statistics));
+        memset(statistics, 0, sizeof(es::INetworkInterface::Statistics));
     }
     int getType()
     {
-        return INetworkInterface::Loopback;
+        return es::INetworkInterface::Loopback;
     }
     int removeMulticastAddress(const unsigned char mac[6])
     {
@@ -96,7 +96,7 @@ public:
     void flush();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

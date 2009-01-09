@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,8 +42,7 @@
 #include <es/naming/IBinding.h>
 #include <es/naming/IContext.h>
 #include <es/device/IDiskManagement.h>
-#include <es/device/IFileSystem.h>
-#include <es/clsid.h>
+#include <es/device/IFatFileSystem.h>
 #include "fat.h"
 
 using namespace es;
@@ -143,9 +142,9 @@ public:
     IIterator* list(const char* name);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
 private:
     u32 getClusNum(long long position);
@@ -159,7 +158,7 @@ private:
     bool isRemoved();
 };
 
-class FatFileSystem : public IFileSystem
+class FatFileSystem : public IFatFileSystem
 {
     typedef List<FatStream, &FatStream::linkHash>   FatStreamChain;
     typedef List<FatStream, &FatStream::linkChain>  FatStreamList;
@@ -167,7 +166,6 @@ class FatFileSystem : public IFileSystem
     friend class PartitionStream;
 
     Ref             ref;
-    ICacheFactory*  cacheFactory;
     IStream*        partition;
     IPageSet*       pageSet;
     ICache*         diskCache;
@@ -293,9 +291,21 @@ public:
     int defrag();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        IFatFileSystem* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
 class FatIterator : public IIterator
@@ -313,7 +323,7 @@ public:
     IInterface* next();
     int remove(void);
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };

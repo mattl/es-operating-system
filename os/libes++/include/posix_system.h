@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,8 +47,6 @@
 #include <es/ref.h>
 #include <es/reflect.h>
 #include <es/timeSpan.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/base/IProcess.h>
 
 #include <sys/mman.h>
@@ -160,18 +158,18 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IStream::iid())
+        if (strcmp(riid, IStream::iid()) == 0)
         {
             objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IPageable::iid())
+        else if (strcmp(riid, IPageable::iid()) == 0)
         {
             objectPtr = static_cast<IPageable*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IStream*>(this);
         }
@@ -327,18 +325,18 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IFile::iid())
+        if (strcmp(riid, IFile::iid()) == 0)
         {
             objectPtr = static_cast<IFile*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (strcmp(riid, IBinding::iid()) == 0)
         {
             objectPtr = static_cast<IBinding*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IFile*>(this);
         }
@@ -435,14 +433,14 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IIterator::iid())
+        if (strcmp(riid, IIterator::iid()) == 0)
         {
             objectPtr = static_cast<IIterator*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IIterator*>(this);
         }
@@ -631,22 +629,22 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IFile::iid())
+        if (strcmp(riid, IFile::iid()) == 0)
         {
             objectPtr = static_cast<IFile*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (strcmp(riid, IBinding::iid()) == 0)
         {
             objectPtr = static_cast<IBinding*>(this);
         }
-        else if (riid == IContext::iid())
+        else if (strcmp(riid, IContext::iid()) == 0)
         {
             objectPtr = static_cast<IContext*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IContext*>(this);
         }

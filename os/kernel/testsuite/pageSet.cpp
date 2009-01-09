@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,6 @@
 #include <es.h>
 #include <es/handle.h>
 #include <es/ref.h>
-#include <es/clsid.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "memoryStream.h"
@@ -85,19 +84,13 @@ int main()
     esReport("Max free count: %d\n", initialMaxFreeCount);
 #endif
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     unsigned long maxFreeCount = PageTable::getFreeCount();
 
 #ifdef VERBOSE
     esReport("Reserve (maxFreeCount - NON_RESERVED_PAGE) pages.\n");
 #endif
     // Reserve (maxFreeCount - NON_RESERVED_PAGE) pages.
-    IPageSet* pageSet;
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    Handle<IPageSet> pageSet = IPageSet::createInstance();
     unsigned long reserved = maxFreeCount - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -113,13 +106,13 @@ int main()
     // Cache1 uses the reserved pages.
     MemoryStream* backingStore1 = new MemoryStream(0);
     TEST(backingStore1);
-    Handle<ICache> cache1 = cacheFactory->create(backingStore1, pageSet);
+    Handle<ICache> cache1 = ICache::createInstance(backingStore1, pageSet);
     TEST(cache1);
 
     // Cache2 uses non-reserved pages.
     MemoryStream* backingStore2 = new MemoryStream(0);
     TEST(backingStore2);
-    Handle<ICache> cache2 = cacheFactory->create(backingStore2);
+    Handle<ICache> cache2 = ICache::createInstance(backingStore2);
     TEST(cache2);
 
     CheckAssociatedPage(cache1, 0);

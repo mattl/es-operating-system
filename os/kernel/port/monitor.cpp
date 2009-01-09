@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -341,18 +341,18 @@ notifyAll()
 }
 
 void* Thread::Monitor::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IMonitor::iid())
+    if (strcmp(riid, IMonitor::iid()) == 0)
     {
         objectPtr = static_cast<IMonitor*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IMonitor*>(this);
     }
@@ -365,13 +365,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Thread::Monitor::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Thread::Monitor::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -380,4 +380,50 @@ release(void)
         return 0;
     }
     return count;
+}
+
+IMonitor* Thread::Monitor::
+Constructor::createInstance()
+{
+    return new Monitor;
+}
+
+void* Thread::Monitor::
+Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IMonitor::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Thread::Monitor::
+Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int Thread::Monitor::
+Constructor::release()
+{
+    return 1;
+}
+
+void Thread::Monitor::
+initializeConstructor()
+{
+    // cf. -fthreadsafe-statics for g++
+    static Constructor constructor;
+    IMonitor::setConstructor(&constructor);
 }

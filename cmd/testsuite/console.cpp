@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/base/IProcess.h>
-#include <es/device/IFileSystem.h>
+#include <es/device/IFatFileSystem.h>
 
 #include "../IEventQueue.h"
 
@@ -61,8 +60,7 @@ int main(int argc, char* argv[])
 
     Handle<IContext> nameSpace(ns);
 
-    Handle<IClassStore> classStore(nameSpace->lookup("class"));
-    esRegisterFatFileSystemClass(classStore);
+    Handle<IContext> classStore(nameSpace->lookup("class"));
 
     Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
@@ -73,8 +71,7 @@ int main(int argc, char* argv[])
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = reinterpret_cast<IFileSystem*>(
-        esCreateInstance(CLSID_FatFileSystem, IFileSystem::iid()));
+    fatFileSystem = IFatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
         Handle<IContext> root;
@@ -84,8 +81,7 @@ int main(int argc, char* argv[])
 
         // start event manager process.
         Handle<IProcess> eventProcess;
-        eventProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        eventProcess = IProcess::createInstance();
         TEST(eventProcess);
         Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
         TEST(eventElf);
@@ -93,8 +89,7 @@ int main(int argc, char* argv[])
 
         // start console process.
         Handle<IProcess> consoleProcess;
-        consoleProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        consoleProcess =IProcess::createInstance();
         TEST(consoleProcess);
         Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
         TEST(consoleElf);
@@ -102,8 +97,7 @@ int main(int argc, char* argv[])
 
         // start console client process.
         Handle<IProcess> consoleClientProcess;
-        consoleClientProcess = reinterpret_cast<IProcess*>(
-            esCreateInstance(CLSID_Process, IProcess::iid()));
+        consoleClientProcess =IProcess::createInstance();
         TEST(consoleClientProcess);
 
         Handle<IFile> consoleClientElf = nameSpace->lookup("file/consoleClient.elf");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es.h>
 #include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "core.h"
@@ -69,7 +69,7 @@ static long PacketWrite(IStream* stream, long size, long offset, long packetSize
     return len;
 }
 
-static long Verify(ICacheFactory* cacheFactory, long size, long offset, MemoryStream* backingStore, long packetSize)
+static long Verify(long size, long offset, MemoryStream* backingStore, long packetSize)
 {
     long ret =  -1;
 
@@ -83,7 +83,7 @@ static long Verify(ICacheFactory* cacheFactory, long size, long offset, MemorySt
         return -1;
     }
 
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
     if (!cache)
     {
         esReport("Unable to create cache.\n");
@@ -107,7 +107,7 @@ static long Verify(ICacheFactory* cacheFactory, long size, long offset, MemorySt
     cache->release();
 
     // read at once.
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size, offset);
     if (ret != size)
@@ -143,10 +143,6 @@ int main()
     esInit(&root);
     esReport("Check write().\n");
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     MemoryStream* backingStore = new MemoryStream(0);
     if (!backingStore)
     {
@@ -158,7 +154,7 @@ int main()
     long size = PAGE_SIZE;
 
     // write one byte at a time.
-    result = Verify(cacheFactory, size, offset, backingStore, 1);
+    result = Verify(size, offset, backingStore, 1);
     if (result < 0)
     {
         goto ERROR;
@@ -169,7 +165,7 @@ int main()
 
     // write 6KB at a time.
     size = 2 * PAGE_SIZE;
-    result = Verify(cacheFactory, size, offset, backingStore, PAGE_SIZE + PAGE_SIZE / 2);
+    result = Verify(size, offset, backingStore, PAGE_SIZE + PAGE_SIZE / 2);
     if (result < 0)
     {
         goto ERROR;
@@ -181,7 +177,7 @@ int main()
     // write 8KB at a time from the offset.
     offset = 100;
     size = 4 * PAGE_SIZE;
-    result = Verify(cacheFactory, size, offset, backingStore, 2 * PAGE_SIZE);
+    result = Verify(size, offset, backingStore, 2 * PAGE_SIZE);
     if (result < 0)
     {
         goto ERROR;
@@ -193,7 +189,7 @@ int main()
     // write 64KB at a time.
     offset = 0;
     size = BUF_SIZE;
-    result = Verify(cacheFactory, size, offset, backingStore, PAGE_TABLE_SIZE);
+    result = Verify(size, offset, backingStore, PAGE_TABLE_SIZE);
     if (result < 0)
     {
         goto ERROR;
@@ -209,5 +205,4 @@ ERROR:
     esReport("*** error ***\n");
 #endif // VERBOSE
     return 1;
-
 }

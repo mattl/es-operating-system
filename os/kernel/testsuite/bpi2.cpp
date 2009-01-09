@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include <sstream>
 #include <es/base/ICallback.h>
 #include <es/base/IAlarm.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include "core.h"
 #include "alarm.h"
@@ -38,9 +37,9 @@ public:
     int invoke(int result);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 namespace
@@ -100,9 +99,7 @@ int main()
     IInterface* ns = NULL;
     esInit(&ns);
 
-    Handle<IAlarm> alarm;
-    alarm = reinterpret_cast<IAlarm*>(
-        esCreateInstance(CLSID_Alarm, IAlarm::iid()));
+    Handle<IAlarm> alarm = IAlarm::createInstance();
 
     AlarmCallback* alarmCallback = new AlarmCallback;
     alarm->setInterval(50000000LL);
@@ -157,14 +154,14 @@ invoke(int result)
 //
 
 void* AlarmCallback::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICallback::iid())
+    if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
@@ -177,13 +174,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int AlarmCallback::
-addRef(void)
+addRef()
 {
     return ++ref;
 }
 
 unsigned int AlarmCallback::
-release(void)
+release()
 {
     if (--ref == 0)
     {

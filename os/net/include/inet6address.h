@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -200,7 +200,7 @@ public:
     IInterface* socket(int type, int protocol);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

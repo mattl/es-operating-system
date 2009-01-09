@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,10 +17,11 @@
 
 #include <new>
 #include <errno.h>
-#include <es/base/IClassFactory.h>
 #include "cache.h"
 
-void CacheFactory::
+using namespace es;
+
+void Cache::Constructor::
 add(Cache* cache)
 {
     addRef();
@@ -32,7 +33,7 @@ add(Cache* cache)
     }
 }
 
-void CacheFactory::
+void Cache::Constructor::
 remove(Cache* cache)
 {
     {
@@ -44,7 +45,7 @@ remove(Cache* cache)
     release();
 }
 
-void CacheFactory::
+void Cache::Constructor::
 change(Cache* cache)
 {
     SpinLock::Synchronized method(spinLock);
@@ -53,7 +54,7 @@ change(Cache* cache)
     changedList.addLast(cache);
 }
 
-void CacheFactory::
+void Cache::Constructor::
 clean(Cache* cache)
 {
     SpinLock::Synchronized method(spinLock);
@@ -62,7 +63,7 @@ clean(Cache* cache)
     standbyList.addLast(cache);
 }
 
-Cache* CacheFactory::
+Cache* Cache::Constructor::
 getStaleCache()
 {
     SpinLock::Synchronized method(spinLock);
@@ -80,7 +81,7 @@ getStaleCache()
     return 0;
 }
 
-void CacheFactory::
+void Cache::Constructor::
 update()
 {
     while (1 < ref)
@@ -107,18 +108,18 @@ update()
     release();  // ref is incremenet for the thread executing this method
 }
 
-void* CacheFactory::
+void* Cache::Constructor::
 run(void* param)
 {
-    CacheFactory* cacheFactory;
+    Cache::Constructor* cacheFactory;
 
-    cacheFactory = static_cast<CacheFactory*>(param);
+    cacheFactory = static_cast<Cache::Constructor*>(param);
     cacheFactory->update();
     return 0;
 }
 
-CacheFactory::
-CacheFactory() :
+Cache::
+Constructor::Constructor() :
     thread(run, this, IThread::Normal)
 {
     addRef();   // for thread
@@ -126,22 +127,22 @@ CacheFactory() :
     thread.start();
 }
 
-CacheFactory::
-~CacheFactory()
+Cache::
+Constructor::~Constructor()
 {
     ASSERT(ref == 0);
     ASSERT(standbyList.isEmpty());
     ASSERT(changedList.isEmpty());
 }
 
-ICache* CacheFactory::
-create(IStream* backingStore)
+ICache* Cache::
+Constructor::createInstance(IStream* backingStore)
 {
     return new Cache(this, backingStore, PageTable::pageSet);
 }
 
-ICache* CacheFactory::
-create(IStream* backingStore, IPageSet* pageSet)
+ICache* Cache::
+Constructor::createInstance(IStream* backingStore, IPageSet* pageSet)
 {
     PageSet* ps = dynamic_cast<PageSet*>(pageSet);
     if (!ps)
@@ -151,17 +152,17 @@ create(IStream* backingStore, IPageSet* pageSet)
     return new Cache(this, backingStore, ps);
 }
 
-void* CacheFactory::
-queryInterface(const Guid& riid)
+void* Cache::
+Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICacheFactory::iid())
+    if (strcmp(riid, ICache::IConstructor::iid()) == 0)
     {
-        objectPtr = static_cast<ICacheFactory*>(this);
+        objectPtr = static_cast<ICache::IConstructor*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
-        objectPtr = static_cast<ICacheFactory*>(this);
+        objectPtr = static_cast<ICache::IConstructor*>(this);
     }
     else
     {
@@ -171,14 +172,14 @@ queryInterface(const Guid& riid)
     return objectPtr;
 }
 
-unsigned int CacheFactory::
-addRef(void)
+unsigned int Cache::
+Constructor::addRef()
 {
     return ref.addRef();
 }
 
-unsigned int CacheFactory::
-release(void)
+unsigned int Cache::
+Constructor::release()
 {
     unsigned int count = ref.release();
     switch (count)
@@ -191,4 +192,12 @@ release(void)
         break;
     }
     return count;
+}
+
+void Cache::
+initializeConstructor()
+{
+    // cf. -fthreadsafe-statics for g++
+    Constructor* constructor = new Constructor;
+    ICache::setConstructor(constructor);
 }

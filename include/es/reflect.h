@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-#ifndef NINTENDO_ES_REFLECT2_H_INCLUDED
-#define NINTENDO_ES_REFLECT2_H_INCLUDED
+#ifndef NINTENDO_ES_REFLECT_H_INCLUDED
+#define NINTENDO_ES_REFLECT_H_INCLUDED
 
 #include <es.h>
 #include <es/ent.h>
 #include <es/types.h>
+#include <cstring>
 
 /**
  * This class provides an access to the reflection data.
@@ -720,20 +721,23 @@ public:
         }
 
         /**
-         * Gets the interface identifier of this interface.
+         * Gets the fully qualified name of this interface.
          */
-        Guid& getIid() const
+        const char* getFullyQualifiedName() const
         {
-            return record->iid;
+            return record->fullyQualifiedName ?
+                   static_cast<char*>(getPointer(ent, record->fullyQualifiedName)) :
+                   0;
         }
 
         /**
-         * Gets the identifier of the super interface.
-         * @return the IID of the super interface. 0 if not inherited any interface.
+         * Gets the fully qualified name of the super interface.
          */
-        Guid& getSuperIid() const
+        const char* getFullyQualifiedSuperName() const
         {
-            return record->piid;
+            return record->fullyQualifiedBaseName ?
+                   static_cast<char*>(getPointer(ent, record->fullyQualifiedBaseName)) :
+                   0;
         }
 
         /**
@@ -780,6 +784,25 @@ public:
         int getInheritedMethodCount() const
         {
             return record->inheritedMethodCount;
+        }
+
+        /**
+         * Checks if this interface has a constructor interface.
+         * @return true if this interface has a constructor interface.
+         */
+        bool hasConstructor() const
+        {
+            return record->constructor ? true : false;
+        }
+
+        /**
+         * Gets the constructor interface for this interface.
+         * @return the constructor interface.
+         */
+        Interface getConstructor() const
+        {
+            ASSERT(hasConstructor());
+            return Interface(ent, record->constructor);
         }
     };
 
@@ -883,7 +906,6 @@ public:
          */
         Module getModule(int n) const
         {
-            ASSERT(0 <= n && n < getModuleCount());
             return Module(ent, record->getModule(n));
         }
     };
@@ -1031,6 +1053,14 @@ public:
     {
         return Module(ent, sizeof(Ent::Header));
     }
+
+    struct CompareName
+    {
+        bool operator() (const char* a, const char* b) const
+        {
+            return (a == b) || (std::strcmp(a, b) == 0);
+        }
+    };
 };
 
-#endif  // #ifndef NINTENDO_ES_REFLECT2_H_INCLUDED
+#endif  // #ifndef NINTENDO_ES_REFLECT_H_INCLUDED

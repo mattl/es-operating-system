@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ extern IStream* esReportStream();
 
 typedef long long (*Method)(void* self, ...);
 
-bool SyscallProxy::set(void* object, const Guid& iid, bool used)
+bool SyscallProxy::set(void* object, const char* iid, bool used)
 {
     if (ref.addRef() != 1)
     {
@@ -46,7 +46,7 @@ bool SyscallProxy::set(void* object, const Guid& iid, bool used)
         return false;
     }
     this->object = object;
-    this->iid = iid;
+    this->iid = getUniqueIdentifier(iid);
     use.exchange(used ? 1 : 0);
     return true;
 }
@@ -178,7 +178,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             break;
         }
-        super = getInterface(super.getSuperIid());
+        super = getInterface(super.getFullyQualifiedSuperName());
     }
 
     Reflect::Method method(super.getMethod(methodNumber - baseMethodCount));
@@ -195,12 +195,16 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     }
 
     // Process addRef() and release() locally
-    if (super.getIid() == IInterface::iid())
+    bool stringIsInterfaceName = false;
+    if (super.getFullyQualifiedSuperName() == 0)
     {
         unsigned long count;
         switch (methodNumber - baseMethodCount)
         {
-        case 1: // addRef
+        case 0:  // queryInterface
+            stringIsInterfaceName = true;
+            break;
+        case 1:  // addRef
             count = proxy->addUser();
             if (log)
             {
@@ -208,7 +212,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             }
             return count;
             break;
-        case 2: // release
+        case 2:  // release
             count = proxy->releaseUser();
             if (log)
             {
@@ -231,7 +235,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     Handle<SyscallProxy> inputProxies[8];
     Handle<UpcallProxy>  upcallProxies[8];
 
-    Guid iid = IInterface::iid();
+    const char* iid = IInterface::iid();
 
     // Set this
     Method** object = reinterpret_cast<Method**>(proxy->getObject());
@@ -275,7 +279,6 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         count = *paramp * returnType.getSize();
         ++paramp;
         break;
-    case Ent::SpecUuid:
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
@@ -426,6 +429,10 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             break;
         case Ent::SpecString:
             ptr = *reinterpret_cast<void**>(paramp);
+            if (stringIsInterfaceName)
+            {
+                iid = static_cast<const char*>(ptr);
+            }
             *argp = Variant(static_cast<const char*>(ptr));
             ++paramp;
             count = sizeof(char);       // XXX check string length?
@@ -439,7 +446,6 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             count = *paramp * type.getSize();
             ++paramp;
             break;
-        case Ent::SpecUuid:         // Guid* guid, ...
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             ptr = *reinterpret_cast<void**>(paramp);
@@ -448,7 +454,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             ++paramp;
             break;
         case Ent::TypeInterface:
-            iid = type.getInterface().getIid();
+            iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject:
             if (void** ip = *reinterpret_cast<void***>(paramp++))
@@ -492,11 +498,6 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         if (ptr && !isValid(ptr, count))
         {
             throw SystemException<EFAULT>();
-        }
-
-        if (type.getType() == Ent::SpecUuid)
-        {
-            iid = *static_cast<const Guid*>(ptr);
         }
 
         if (log && i + 1 < method.getParameterCount())
@@ -566,7 +567,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::TypeInterface:
-        iid = returnType.getInterface().getIid();
+        iid = returnType.getInterface().getFullyQualifiedName();
         // FALL THROUGH
     case Ent::SpecObject:
         result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
@@ -592,7 +593,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     }
 
     // Process addRef() and release() locally
-    if (interface.getIid() == IMonitor::iid())
+    if (interface.getFullyQualifiedName() == IMonitor::iid())   // TODO(shiki): strcmp?
     {
         unsigned long count;
         switch (methodNumber)

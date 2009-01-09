@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,6 @@
 #include <errno.h>
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include "fatStream.h"
 
 using namespace es;
@@ -312,26 +310,18 @@ init()
     hashSize = 20;
     hashTable = new FatStreamChain[hashSize];
 
-    hashMonitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
-
-    fatMonitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
-
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
+    hashMonitor = IMonitor::createInstance();
+    fatMonitor =IMonitor::createInstance();
 
     // We must reserve a few pages for diskCache so that
     // we can access to FAT to write back file streams
     // under any low memory condition.
-    pageSet = reinterpret_cast<IPageSet*>(
-        esCreateInstance(CLSID_PageSet, IPageSet::iid()));
+    pageSet = IPageSet::createInstance();
     pageSet->reserve(1);
 }
 
 FatFileSystem::
 FatFileSystem() :
-    cacheFactory(0),
     partition(0),
     pageSet(0),
     diskCache(0),
@@ -349,7 +339,6 @@ FatFileSystem() :
 
 FatFileSystem::
 FatFileSystem(IStream* partition) :
-    cacheFactory(0),
     partition(0),
     pageSet(0),
     diskCache(0),
@@ -372,7 +361,6 @@ FatFileSystem::
     dismount();
 
     pageSet->release();
-    cacheFactory->release();
     fatMonitor->release();
     hashMonitor->release();
 
@@ -513,7 +501,7 @@ mount(IStream* disk)
     zero = new u8[bytsPerClus]; // XXX
     memset(zero, 0, bytsPerClus);
 
-    diskCache = cacheFactory->create(partition, pageSet);
+    diskCache = ICache::createInstance(partition, pageSet);
     diskCache->setSectorSize(bytsPerSec);
     diskStream = diskCache->getStream();
 
@@ -669,16 +657,20 @@ defrag()
 }
 
 void* FatFileSystem::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IFileSystem::iid())
+    if (strcmp(riid, IFatFileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        objectPtr = static_cast<IFatFileSystem*>(this);
     }
-    else if (riid == IInterface::iid())
+    if (strcmp(riid, IFileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFileSystem*>(this);
+        objectPtr = static_cast<IFatFileSystem*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IFatFileSystem*>(this);
     }
     else
     {
@@ -689,13 +681,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int FatFileSystem::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int FatFileSystem::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -706,9 +698,47 @@ release(void)
     return count;
 }
 
-void esRegisterFatFileSystemClass(IClassStore* classStore)
+IFatFileSystem* FatFileSystem::Constructor::
+createInstance()
 {
-    // Register CLSID_MonitorFactory
-    IClassFactory* fatFileSystemFactory = new(ClassFactory<FatFileSystem>);
-    classStore->add(CLSID_FatFileSystem, fatFileSystemFactory);
+    return new FatFileSystem;
+}
+
+void* FatFileSystem::Constructor::
+queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IFatFileSystem::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IFatFileSystem::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IFatFileSystem::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int FatFileSystem::Constructor::
+addRef()
+{
+    return 1;
+}
+
+unsigned int FatFileSystem::Constructor::
+release()
+{
+    return 1;
+}
+
+void FatFileSystem::
+initializeConstructor()
+{
+    static Constructor constructor;
+    IFatFileSystem::setConstructor(&constructor);
 }

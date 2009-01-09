@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,9 @@ bool isMatch(int pid, const struct sockaddr_un* sa)
 {
     char sun_path[108]; // UNIX_PATH_MAX
 
-    sprintf(sun_path, "/tmp/es-socket-%u", pid);
-    return (strcmp(sun_path, sa->sun_path) == 0) ? true : false;
+    memset(sun_path, 0, sizeof sun_path);
+    sprintf(sun_path + 1, "es-socket-%u", pid);
+    return (memcmp(sun_path, sa->sun_path, sizeof sun_path) == 0) ? true : false;
 }
 
 int* getRights(struct msghdr* msg, int* fdv, int maxfds)
@@ -77,8 +78,10 @@ int* getRights(struct msghdr* msg, int* fdv, int maxfds)
 
 struct sockaddr* getSocketAddress(int pid, struct sockaddr_un* sa)
 {
+    // Use the abstract namespace
+    memset(sa, 0, sizeof(struct sockaddr_un));
     sa->sun_family = AF_UNIX;
-    sprintf(sa->sun_path, "/tmp/es-socket-%u", pid);
+    sprintf(sa->sun_path + 1, "es-socket-%u", pid);
     return reinterpret_cast<sockaddr*>(sa);
 }
 

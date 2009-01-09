@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,11 +66,11 @@ public:
     void* queryInterface(const Guid& riid)
     {
         void* objectPtr;
-        if (riid == es::IMonitor::iid())
+        if (strcmp(riid, es::IMonitor::iid()) == 0)
         {
             objectPtr = static_cast<es::IMonitor*>(this);
         }
-        else if (riid == es::IInterface::iid())
+        else if (strcmp(riid, es::IInterface::iid()) == 0)
         {
             objectPtr = static_cast<es::IMonitor*>(this);
         }

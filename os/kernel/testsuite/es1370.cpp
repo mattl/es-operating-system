@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,6 @@
  */
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/base/IStream.h>
 #include <es/device/IAudioFormat.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 #ifndef DATAGRAM_H_INCLUDED
 #define DATAGRAM_H_INCLUDED
 
-#include <es/clsid.h>
 #include <es/endian.h>
 #include <es/ring.h>
 #include <es/synchronized.h>
@@ -78,8 +77,7 @@ public:
         errorCode(0),
         socket(0)
     {
-        monitor = reinterpret_cast<IMonitor*>(
-            esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+        monitor = IMonitor::createInstance();
     }
 
     ~DatagramReceiver()

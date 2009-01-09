@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 
 #include <es.h>
 #include <es/handle.h>
-#include <es/base/IClassStore.h>
+#include <es/base/IAlarm.h>
 #include <es/naming/IContext.h>
 #include "core.h"
 
@@ -25,12 +25,12 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-Handle<IClassStore> classStore;
+Handle<IContext> classStore;
 
 class Impl : public IInterface
 {
 public:
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         return NULL;
     }
@@ -52,8 +52,8 @@ int main()
     esReport("%d\n", IsInterface<IInterface>::Value);
     TEST(IsInterface<IInterface>::Value);
 
-    esReport("%d\n", IsInterface<IClassStore>::Value);
-    TEST(IsInterface<IClassStore>::Value);
+    esReport("%d\n", IsInterface<IAlarm>::Value);
+    TEST(IsInterface<IAlarm>::Value);
 
     esReport("%d\n", IsInterface<Impl>::Value);
     TEST(!IsInterface<Impl>::Value);

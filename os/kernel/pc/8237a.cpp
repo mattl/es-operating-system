@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include <string.h>
 #include <es.h>
 #include <es/usage.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include "io.h"
 #include "8237a.h"
@@ -108,14 +107,14 @@ Chan::getCount()
 }
 
 void* Dmac::
-Chan::queryInterface(const Guid& riid)
+Chan::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IDmac::iid())
+    if (strcmp(riid, IDmac::iid()) == 0)
     {
         objectPtr = static_cast<IDmac*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IDmac*>(this);
     }
@@ -128,13 +127,13 @@ Chan::queryInterface(const Guid& riid)
 }
 
 unsigned int Dmac::
-Chan::addRef(void)
+Chan::addRef()
 {
     return dmac->ref.addRef();
 }
 
 unsigned int Dmac::
-Chan::release(void)
+Chan::release()
 {
     unsigned int count = dmac->ref.release();
     if (count == 0)

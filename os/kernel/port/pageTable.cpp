@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,14 @@
 #include <es.h>
 #include "cache.h"
 
-SpinLock                PageTable::spinLock;
+SpinLock                PageTable::spinLock __attribute__((init_priority(1000)));       // Before System
 void*                   PageTable::base;
 size_t                  PageTable::size;
 size_t                  PageTable::pageCount;
 Page*                   PageTable::pageTable;
 PageTable::PageList*    PageTable::hashTable;
 PageSet*                PageTable::pageSet;
-Monitor                 PageTable::monitor;
+Monitor                 PageTable::monitor __attribute__((init_priority(1000)));        // Before System
 
 // Note base is specified as a physical address
 void PageTable::

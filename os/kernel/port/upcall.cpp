@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,12 +29,14 @@
 #include "interfaceStore.h"
 #include "process.h"
 
+// #define VERBOSE
+
 typedef long long (*Method)(void* self, ...);
 
 Broker<Process::upcall, Process::INTERFACE_POINTER_MAX> Process::broker;
 UpcallProxy Process::upcallTable[Process::INTERFACE_POINTER_MAX];
 
-bool UpcallProxy::set(Process* process, void* object, const Guid& iid, bool used)
+bool UpcallProxy::set(Process* process, void* object, const char* iid, bool used)
 {
     if (ref.addRef() != 1)
     {
@@ -42,7 +44,7 @@ bool UpcallProxy::set(Process* process, void* object, const Guid& iid, bool used
         return false;
     }
     this->object = object;
-    this->iid = iid;
+    this->iid = getUniqueIdentifier(iid);
     this->process = process;
     use.exchange(used ? 1 : 0);
     return true;
@@ -64,7 +66,7 @@ bool UpcallProxy::isUsed()
 }
 
 int Process::
-set(Process* process, void* object, const Guid& iid, bool used)
+set(Process* process, void* object, const char* iid, bool used)
 {
     for (UpcallProxy* proxy(upcallTable);
          proxy < &upcallTable[INTERFACE_POINTER_MAX];
@@ -73,12 +75,8 @@ set(Process* process, void* object, const Guid& iid, bool used)
         if (proxy->set(process, object, iid, used))
         {
 #ifdef VERBOSE
-            esReport("Process::set(%p, {%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}) : %d;\n",
-                     object,
-                     iid.Data1, iid.Data2, iid.Data3,
-                     iid.Data4[0], iid.Data4[1], iid.Data4[2], iid.Data4[3],
-                     iid.Data4[4], iid.Data4[5], iid.Data4[6], iid.Data4[7],
-                     proxy - upcallTable);
+            esReport("Process::set(%p, %s) : %d;\n",
+                     object, iid, proxy - upcallTable);
 #endif
             return proxy - upcallTable;
         }
@@ -108,7 +106,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
     bool log = server->log;
 
 #ifdef VERBOSE
-    esReport("Process(%p)::upcall[%d] %d\n", server, interfaceNumber, methodNumber);
+    esReport("Process(%p)::upcall[%d] %d - %s\n", server, interfaceNumber, methodNumber, proxy->iid);
 #endif
 
     // Determine the type of interface and which method is being invoked.
@@ -129,7 +127,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         {
             break;
         }
-        super = getInterface(super.getSuperIid());
+        super = getInterface(super.getFullyQualifiedSuperName());
     }
     Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
@@ -140,10 +138,14 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
     }
 
     unsigned long ref;
-    if (super.getIid() == IInterface::iid())
+    bool stringIsInterfaceName = false;
+    if (super.getFullyQualifiedSuperName() == 0)
     {
         switch (methodNumber - baseMethodCount)
         {
+        case 0:  // queryInterface
+            stringIsInterfaceName = true;
+            break;
         case 1: // addRef
             ref = proxy->addRef();
             // If this is the first addRef() call to proxy,
@@ -256,13 +258,13 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         }
         else
         {
-            Guid iid = IInterface::iid();
+            const char* iid = IInterface::iid();
 
             // Return to the client process.
             Process* client = current->returnToClient();
 
             // Copy output parameters from the user stack of the server process.
-            errorCode = server->copyOut(record, iid);
+            errorCode = server->copyOut(record, iid, stringIsInterfaceName);
 
             // Get result code
             if (errorCode == 0)
@@ -285,7 +287,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                     result = reinterpret_cast<intptr_t>(record->variant);
                     break;
                 case Ent::TypeInterface:
-                    iid = returnType.getInterface().getIid();
+                    iid = returnType.getInterface().getFullyQualifiedName();
                     // FALL THROUGH
                 case Ent::SpecObject:
                     // Convert the received interface pointer to kernel's interface pointer
@@ -343,7 +345,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         break;
     }
 
-    if (super.getIid() == IInterface::iid())
+    if (super.getFullyQualifiedSuperName() == 0)
     {
         switch (methodNumber - baseMethodCount)
         {
@@ -465,10 +467,13 @@ copyInString(const char* string, u8* esp)
     int count = 0;
     do
     {
+#if 0
+        // TODO: ptr might points to the kernel code/data.
         if (!isValid(ptr, 1))
         {
             return NULL;
         }
+#endif
         ++count;
     } while (*ptr++);
     esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -477,7 +482,7 @@ copyInString(const char* string, u8* esp)
 }
 
 IInterface* Process::
-copyInObject(IInterface* object, Guid& iid)
+copyInObject(IInterface* object, const char* iid)
 {
     if (!object)
     {
@@ -530,7 +535,7 @@ copyIn(UpcallRecord* record)
 
     int count = 0;
 
-    Guid iid = IInterface::iid();
+    const char* iid = IInterface::iid();
 
     Reflect::Type returnType = record->method.getReturnType();
     if (returnType.getType() == Ent::SpecVariant)
@@ -572,7 +577,6 @@ copyIn(UpcallRecord* record)
         *argp++ = paramp[1];
         paramp += 2;
         break;
-    case Ent::SpecUuid:
     case Ent::TypeStructure:
     case Ent::TypeArray:
         // void op(struct* buf, ...);
@@ -657,9 +661,6 @@ copyIn(UpcallRecord* record)
             *argp++ = paramp[1];
             paramp += 2;
             break;
-        case Ent::SpecUuid:         // Guid* guid, ...
-            iid = **reinterpret_cast<Guid**>(paramp);
-            // FALL THROUGH
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             count = type.getSize();
@@ -669,7 +670,7 @@ copyIn(UpcallRecord* record)
             ++paramp;
             break;
         case Ent::TypeInterface:
-            iid = type.getInterface().getIid();
+            iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject:
             *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<IInterface**>(paramp), iid);
@@ -701,7 +702,7 @@ copyIn(UpcallRecord* record)
 
 // Note copyOut() is called against the server process.
 int Process::
-copyOut(UpcallRecord* record, Guid& iid)
+copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
 {
     UpcallProxy* proxy(record->proxy);
     int methodNumber(record->methodNumber);
@@ -772,7 +773,6 @@ copyOut(UpcallRecord* record, Guid& iid)
         }
         paramp += 2;
         break;
-    case Ent::SpecUuid:
     case Ent::TypeStructure:
     case Ent::TypeArray:
         // void op(struct* buf, ...);
@@ -828,6 +828,10 @@ copyOut(UpcallRecord* record, Guid& iid)
             paramp += 2;
             break;
         case Ent::SpecString:
+            if (stringIsInterfaceName)
+            {
+                iid = *reinterpret_cast<const char**>(paramp);
+            }
             ++paramp;
             break;
         case Ent::SpecWString:
@@ -839,9 +843,6 @@ copyOut(UpcallRecord* record, Guid& iid)
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
             paramp += 2;
             break;
-        case Ent::SpecUuid:         // Guid* guid, ...
-            iid = **reinterpret_cast<Guid**>(paramp);
-            // FALL THROUGH
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             count = type.getSize();

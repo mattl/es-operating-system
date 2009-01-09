@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,9 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/handle.h>
 #include <es/context.h>
+#include <es/base/IMonitor.h>
 #include "core.h"
 
 using namespace es;
@@ -33,8 +33,7 @@ Binding::Binding(const char* name, IInterface* object) :
     object(object),
     context(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
     size_t len = strlen(name);
     this->name = new char[len + 1];
     strcpy(this->name, name);
@@ -135,14 +134,14 @@ void Binding::detach()
     }
 }
 
-void* Binding::queryInterface(const Guid& riid)
+void* Binding::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IBinding::iid())
+    if (strcmp(riid, IBinding::iid()) == 0)
     {
         objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IBinding*>(this);
     }
@@ -222,8 +221,7 @@ long Context::parse(const char* name, char* component, size_t len)
 Context::Context() :
     monitor(0)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
     Binding* binding = new Binding("", this);
     if (binding)
     {
@@ -573,18 +571,18 @@ int Context::destroySubcontext(const char* name)
     return hcontext->destroySubcontext(name);
 }
 
-void* Context::queryInterface(const Guid& riid)
+void* Context::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IContext::iid())
+    if (strcmp(riid, IContext::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == Context::iid())
+    else if (strcmp(riid, Context::iid()) == 0)
     {
         objectPtr = static_cast<Context*>(this);
     }
@@ -620,8 +618,7 @@ Iterator::Iterator(Binding* binding) :
     monitor(0),
     binding(binding)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
     binding->addRef();
 }
 
@@ -703,14 +700,14 @@ int Iterator::remove(void)
     return 0;
 }
 
-void* Iterator::queryInterface(const Guid& riid)
+void* Iterator::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IIterator::iid())
+    if (strcmp(riid, IIterator::iid()) == 0)
     {
         objectPtr = static_cast<IIterator*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IIterator*>(this);
     }

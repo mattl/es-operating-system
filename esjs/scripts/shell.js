@@ -1,11 +1,7 @@
-CLSID_Process = "3979e8b4-2e86-11db-9c02-0009bf000001";
-IID_IProcess = "3b6bc7bd-44c2-11dc-9c02-0009bf000001";
-
 stdin = System.input;
 stdout = System.output;
 stderr = System.error;
 root = System.root;
-classStore = ClassStore(root.lookup("class"));
 cwd = root;
 
 path = [ "file" ];
@@ -78,7 +74,7 @@ do {
         var x = stream.read(4);
         if (x == "\x7fELF")
         {
-            process = classStore.createInstance(CLSID_Process, IID_IProcess);
+            process = new Process();
             process.root = root;
             process.current = cwd;
             process.input = stdin;

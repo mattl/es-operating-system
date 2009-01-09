@@ -18,7 +18,9 @@ AM_LDFLAGS = -v -static -Wl,--section-start,".init"=0x81000000,-static,--no-omag
 
 AM_CPPFLAGS = -I- \
 	-I../include \
-	-I$(srcdir)/../include
+	-I$(srcdir)/../include \
+	-I$(srcdir)/../os/fs/fat \
+	-I$(srcdir)/../os/fs/iso9660
 
 es_SOURCES = es.cpp
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
 #include <es/device/IBeep.h>
 #include "alarm.h"
 
-class Pit : public ICallback, public IBeep
+class Pit : public es::ICallback, public es::IBeep
 {
     friend DateTime DateTime::getNow();
 
@@ -69,7 +69,7 @@ public:
     void beep();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

@@ -34,24 +34,21 @@ cpp_source_files = \
 	src/throw.cpp \
 	src/formatter.cpp \
 	src/ring.cpp
-
-rpc_source_files = \
-	src/interfaceStore.cpp
 	
-if I386
-rpc_source_files += src/variant386.S
-endif I386
-
-if X86_64
-rpc_source_files += src/variantx64.S
-endif X86_64
-
 header_files = \
 	include/core.h \
 	include/posix_system.h \
 	include/posix_video.h
 
-libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(rpc_source_files) $(header_files)
+libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
+
+if I386
+libessup___a_SOURCES += src/variant386.S
+endif I386
+
+if X86_64
+libessup___a_SOURCES += src/variantx64.S
+endif X86_64
 
 #
 # default interface descriptions
@@ -80,7 +77,9 @@ nodist_libessup___a_SOURCES = \
 	device/IDevice.c \
 	device/IDiskManagement.c \
 	device/IDmac.c \
+	device/IFatFileSystem.c \
 	device/IFileSystem.c \
+	device/IIso9660FileSystem.c \
 	device/INetworkInterface.c \
 	device/IPic.c \
 	device/IRemovableMedia.c \
@@ -97,7 +96,9 @@ nodist_libessup___a_SOURCES = \
 	util/ICanvasRenderingContext2D.c \
 	util/IOrderedMap.c
 
-libes___a_SOURCES = $(libessup___a_SOURCES) $(nodist_libessup___a_SOURCES) src/report.cpp
+libes___a_SOURCES = $(libessup___a_SOURCES) $(nodist_libessup___a_SOURCES) \
+	src/interfaceStore.cpp \
+	src/report.cpp
 
 if ES
 

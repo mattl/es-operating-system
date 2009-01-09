@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 #include <errno.h>
 #include <string.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/synchronized.h>
 #include "loopback.h"
@@ -134,18 +133,18 @@ void Loopback::flush()
 //
 
 void* Loopback::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == INetworkInterface::iid())
+    else if (strcmp(riid, INetworkInterface::iid()) == 0)
     {
         objectPtr = static_cast<INetworkInterface*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
@@ -158,13 +157,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Loopback::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Loopback::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

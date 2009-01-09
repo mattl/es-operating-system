@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -204,14 +204,14 @@ socket(int type, int protocol, int port)
 
 // IInterface
 void* Inet4Address::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IInternetAddress::iid())
+    if (strcmp(riid, IInternetAddress::iid()) == 0)
     {
         objectPtr = static_cast<IInternetAddress*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IInternetAddress*>(this);
     }

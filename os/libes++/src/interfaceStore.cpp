@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,31 +15,18 @@
  * limitations under the License.
  */
 
+#include <string.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
 #include <es/base/IInterface.h>
-
-using namespace es;
-
-class InterfaceStore
-{
-    Hashtable<Guid, Reflect::Interface> hashtable;
-
-    void registerInterface(Reflect::Module& module);
-
-public:
-    InterfaceStore(int capacity = 128);
-
-    Reflect::Interface& getInterface(const Guid& iid)
-    {
-        return hashtable.get(iid);
-    }
-
-    bool hasInterface(const Guid& iid)
-    {
-        return hashtable.contains(iid);
-    }
-};
+#include <es/base/IAlarm.h>
+#include <es/base/ICache.h>
+#include <es/base/IMonitor.h>
+#include <es/base/IPageSet.h>
+#include <es/base/IProcess.h>
+#include <es/device/IFatFileSystem.h>
+#include <es/device/IIso9660FileSystem.h>
+#include <es/device/IPartition.h>
 
 //
 // Reflection data of the default interface set
@@ -48,8 +35,6 @@ public:
 extern unsigned char IAlarmInfo[];
 extern unsigned char ICacheInfo[];
 extern unsigned char ICallbackInfo[];
-extern unsigned char IClassFactoryInfo[];
-extern unsigned char IClassStoreInfo[];
 extern unsigned char IFileInfo[];
 extern unsigned char IInterfaceInfo[];
 extern unsigned char IInterfaceStoreInfo[];
@@ -69,7 +54,9 @@ extern unsigned char ICursorInfo[];
 extern unsigned char IDeviceInfo[];
 extern unsigned char IDiskManagementInfo[];
 extern unsigned char IDmacInfo[];
+extern unsigned char IFatFileSystemInfo[];
 extern unsigned char IFileSystemInfo[];
+extern unsigned char IIso9660FileSystemInfo[];
 extern unsigned char IPicInfo[];
 extern unsigned char IRemovableMediaInfo[];
 extern unsigned char IRtcInfo[];
@@ -90,6 +77,123 @@ extern unsigned char ICanvasRenderingContext2DInfo[];
 
 extern unsigned char IOrderedMapInfo[];
 
+namespace es
+{
+
+class InterfaceStore
+{
+    struct InterfaceData
+    {
+        Reflect::Interface meta;
+        IInterface* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(IInterface* constructor); // for statically created data
+        IInterface* constructor;                            // for dynamically created data
+
+        InterfaceData() :
+            constructorGetter(0),
+            constructorSetter(0),
+            constructor(0)
+        {
+        }
+
+        InterfaceData(Reflect::Interface interface) :
+            meta(interface),
+            constructorGetter(0),
+            constructorSetter(0),
+            constructor(0)
+        {
+        }
+
+        IInterface* getConstructor() const
+        {
+            if (constructor)
+            {
+                return constructor;
+            }
+            if (constructorGetter)
+            {
+                return constructorGetter();
+            }
+            return 0;
+        }
+
+        void setConstructor(IInterface* constructor)
+        {
+            if (constructorSetter)
+            {
+                constructorSetter(constructor);
+                return;
+            }
+            this->constructor = constructor;
+        }
+    };
+
+    Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
+
+    void registerInterface(Reflect::Module& module);
+
+public:
+    InterfaceStore(int capacity = 128);
+
+    Reflect::Interface& getInterface(const char* iid)
+    {
+        return hashtable.get(iid).meta;
+    }
+
+    IInterface* getConstructor(const char* iid)
+    {
+        try
+        {
+            return hashtable.get(iid).getConstructor();
+        }
+        catch (...)
+        {
+            return 0;
+        }
+    }
+
+    bool hasInterface(const char* iid)
+    {
+        return hashtable.contains(iid);
+    }
+
+    void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+    {
+        try
+        {
+            InterfaceData* data = &hashtable.get(iid);
+            data->constructorGetter = getter;
+            data->constructorSetter = setter;
+        }
+        catch (...)
+        {
+        }
+    }
+
+    void registerConstructor(const char* iid, IInterface* constructor)
+    {
+        try
+        {
+            hashtable.get(iid).setConstructor(constructor);
+        }
+        catch (...)
+        {
+        }
+    }
+
+    const char* getUniqueIdentifier(const char* iid)
+    {
+        try
+        {
+            return hashtable.get(iid).meta.getFullyQualifiedName();
+        }
+        catch (...)
+        {
+            return 0;
+        }
+    }
+};
+
 unsigned char* defaultInterfaceInfo[] =
 {
     // Base classes first
@@ -98,8 +202,6 @@ unsigned char* defaultInterfaceInfo[] =
     IAlarmInfo,
     ICacheInfo,
     ICallbackInfo,
-    IClassFactoryInfo,
-    IClassStoreInfo,
     IFileInfo,
     IInterfaceStoreInfo,
     IMonitorInfo,
@@ -118,7 +220,9 @@ unsigned char* defaultInterfaceInfo[] =
     IDeviceInfo,
     IDiskManagementInfo,
     IDmacInfo,
+    IFatFileSystemInfo,
     IFileSystemInfo,
+    IIso9660FileSystemInfo,
     IPicInfo,
     IRemovableMediaInfo,
     IRtcInfo,
@@ -147,8 +251,8 @@ registerInterface(Reflect::Module& module)
 {
     for (int i = 0; i < module.getInterfaceCount(); ++i)
     {
-        Reflect::Interface interface(module.getInterface(i));
-        hashtable.add(interface.getIid(), interface);
+        InterfaceData data(module.getInterface(i));
+        hashtable.add(data.meta.getFullyQualifiedName(), data);
     }
 
     for (int i = 0; i < module.getModuleCount(); ++i)
@@ -168,14 +272,53 @@ InterfaceStore(int capacity) :
         Reflect::Module global(r.getGlobalModule());
         registerInterface(global);
     }
+
+    registerConstructor(IAlarm::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IAlarm::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IAlarm::setConstructor));
+    registerConstructor(ICache::iid(),
+                        reinterpret_cast<IInterface* (*)()>(ICache::getConstructor), reinterpret_cast<void (*)(IInterface*)>(ICache::setConstructor));
+    registerConstructor(IMonitor::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IMonitor::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IMonitor::setConstructor));
+    registerConstructor(IPageSet::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IPageSet::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IPageSet::setConstructor));
+    registerConstructor(IProcess::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IProcess::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IProcess::setConstructor));
+    registerConstructor(IFatFileSystem::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IFatFileSystem::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IFatFileSystem::setConstructor));
+    registerConstructor(IIso9660FileSystem::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IIso9660FileSystem::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IIso9660FileSystem::setConstructor));
+    registerConstructor(IPartition::iid(),
+                        reinterpret_cast<IInterface* (*)()>(IPartition::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IPartition::setConstructor));
 }
 
 namespace
 {
-    InterfaceStore  interfaceStore __attribute__((init_priority(1000)));    // Before System
+    InterfaceStore interfaceStore __attribute__((init_priority(1000)));    // Before System
 }
 
-Reflect::Interface& getInterface(const Guid& iid)
+Reflect::Interface& getInterface(const char* iid)
 {
     return interfaceStore.getInterface(iid);
 }
+
+IInterface* getConstructor(const char* iid)
+{
+    return interfaceStore.getConstructor(iid);
+}
+
+void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+{
+    return interfaceStore.registerConstructor(iid, getter, setter);
+}
+
+void registerConstructor(const char* iid, IInterface* constructor)
+{
+    return interfaceStore.registerConstructor(iid, constructor);
+}
+
+const char* getUniqueIdentifier(const char* iid)
+{
+    return interfaceStore.getUniqueIdentifier(iid);
+}
+
+}  // namespace es

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es.h>
 #include <es/ref.h>
-#include <es/clsid.h>
+#include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 #include "core.h"
@@ -40,9 +40,9 @@ static void SetData(u8* buf, long size)
     }
 }
 
-static long Verify(ICacheFactory* cacheFactory, long size, long offset, MemoryStream* backingStore)
+static long Verify(long size, long offset, MemoryStream* backingStore)
 {
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
     if (!cache)
     {
         esReport("Unable to create cache.\n");
@@ -82,7 +82,7 @@ static long Verify(ICacheFactory* cacheFactory, long size, long offset, MemorySt
     stream->release();
     cache->release();
 
-    cache = cacheFactory->create(backingStore);
+    cache = ICache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size, offset);
     if (ret != size)
@@ -118,10 +118,6 @@ int main()
     esInit(&root);
     esReport("Check read() and write().\n");
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     MemoryStream* backingStore = new MemoryStream(0);
     if (!backingStore)
     {
@@ -133,7 +129,7 @@ int main()
     long offset = 0;
 
     // write and read data less than the size of a page.
-    result = Verify(cacheFactory, 1, 0, backingStore);
+    result = Verify(1, 0, backingStore);
     if (result < 0)
     {
         return 1;
@@ -142,32 +138,32 @@ int main()
     long i;
     for (i = 0; i <= 8; i += 3)
     {
-        result = Verify(cacheFactory, 8, PAGE_SIZE * i, backingStore);
+        result = Verify(8, PAGE_SIZE * i, backingStore);
         if (result < 0)
         {
             goto ERROR;
         }
 
-        result = Verify(cacheFactory, PAGE_SIZE, PAGE_SIZE * i, backingStore);
+        result = Verify(PAGE_SIZE, PAGE_SIZE * i, backingStore);
         if (result < 0)
         {
             goto ERROR;
         }
 
-        result = Verify(cacheFactory, 8, PAGE_SIZE * (i + 1) - 2, backingStore);
+        result = Verify(8, PAGE_SIZE * (i + 1) - 2, backingStore);
         if (result < 0)
         {
             goto ERROR;
         }
 
-        result = Verify(cacheFactory, PAGE_SIZE, PAGE_SIZE / 2 + PAGE_SIZE * i, backingStore);
+        result = Verify(PAGE_SIZE, PAGE_SIZE / 2 + PAGE_SIZE * i, backingStore);
         if (result < 0)
         {
             goto ERROR;
         }
     }
 
-    result = Verify(cacheFactory, PAGE_SIZE * 8, 0, backingStore);
+    result = Verify(PAGE_SIZE * 8, 0, backingStore);
     if (result < 0)
     {
         goto ERROR;

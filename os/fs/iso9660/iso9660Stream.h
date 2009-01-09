@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 // ISO 9660 File Subsystem
 
 #include <es.h>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/endian.h>
 #include <es/list.h>
@@ -29,7 +28,7 @@
 #include <es/base/IFile.h>
 #include <es/base/IStream.h>
 #include <es/device/IDiskManagement.h>
-#include <es/device/IFileSystem.h>
+#include <es/device/IIso9660FileSystem.h>
 #include <es/util/IIterator.h>
 #include <es/naming/IBinding.h>
 #include <es/naming/IContext.h>
@@ -114,9 +113,9 @@ public:
     IIterator* list(const char* name);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 class Iso9660StreamUcs2 : public Iso9660Stream
@@ -132,13 +131,12 @@ public:
     int getName(char* name, int len);
 };
 
-class Iso9660FileSystem : public IFileSystem
+class Iso9660FileSystem : public IIso9660FileSystem
 {
     typedef List<Iso9660Stream, &Iso9660Stream::link> Iso9660StreamChain;
     friend class Iso9660Stream;
 
     Ref                 ref;
-    ICacheFactory*      cacheFactory;
     IStream*            disk;
     ICache*             diskCache;
     Iso9660Stream*      root;
@@ -175,7 +173,7 @@ public:
 
     // IFileSystem
     void mount(IStream* disk);
-    void dismount(void);
+    void dismount();
     void getRoot(IContext** root);
     long long getFreeSpace();
     long long getTotalSpace();
@@ -184,9 +182,21 @@ public:
     int defrag();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        IIso9660FileSystem* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
 class Iso9660Iterator : public IIterator
@@ -200,11 +210,11 @@ public:
     Iso9660Iterator(Iso9660Stream* stream);
     ~Iso9660Iterator();
 
-    bool hasNext(void);
+    bool hasNext();
     IInterface* next();
-    int remove(void);
+    int remove();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };

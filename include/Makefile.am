@@ -22,8 +22,6 @@ nobase_include_HEADERS = \
 	es.h \
 	es/apply.h \
 	es/broker.h \
-	es/classFactory.h \
-	es/clsid.h \
 	es/color.h \
 	es/collection.h \
 	es/context.h \
@@ -69,8 +67,6 @@ nobase_nodist_include_HEADERS = \
 	es/base/IAlarm.h \
 	es/base/ICache.h \
 	es/base/ICallback.h \
-	es/base/IClassFactory.h \
-	es/base/IClassStore.h \
 	es/base/IFile.h \
 	es/base/IInterface.h \
 	es/base/IInterfaceStore.h \
@@ -89,7 +85,9 @@ nobase_nodist_include_HEADERS = \
 	es/device/IDevice.h \
 	es/device/IDiskManagement.h \
 	es/device/IDmac.h \
+	es/device/IFatFileSystem.h \
 	es/device/IFileSystem.h \
+	es/device/IIso9660FileSystem.h \
 	es/device/INetworkInterface.h \
 	es/device/IPic.h \
 	es/device/IRemovableMedia.h \
@@ -110,8 +108,6 @@ nobase_nodist_include_HEADERS += \
 	es/base/IAlarm.ent \
 	es/base/ICache.ent \
 	es/base/ICallback.ent \
-	es/base/IClassFactory.ent \
-	es/base/IClassStore.ent \
 	es/base/IFile.ent \
 	es/base/IInterface.ent \
 	es/base/IInterfaceStore.ent \
@@ -130,7 +126,9 @@ nobase_nodist_include_HEADERS += \
 	es/device/IDevice.ent \
 	es/device/IDiskManagement.ent \
 	es/device/IDmac.ent \
+	es/device/IFatFileSystem.ent \
 	es/device/IFileSystem.ent \
+	es/device/IIso9660FileSystem.ent \
 	es/device/INetworkInterface.ent \
 	es/device/IPic.ent \
 	es/device/IRemovableMedia.ent \
@@ -151,8 +149,6 @@ nobase_include_HEADERS += \
 	es/base/IAlarm.idl \
 	es/base/ICache.idl \
 	es/base/ICallback.idl \
-	es/base/IClassFactory.idl \
-	es/base/IClassStore.idl \
 	es/base/IFile.idl \
 	es/base/IInterface.idl \
 	es/base/IInterfaceStore.idl \
@@ -171,7 +167,9 @@ nobase_include_HEADERS += \
 	es/device/IDevice.idl \
 	es/device/IDiskManagement.idl \
 	es/device/IDmac.idl \
+	es/device/IFatFileSystem.idl \
 	es/device/IFileSystem.idl \
+	es/device/IIso9660FileSystem.idl \
 	es/device/INetworkInterface.idl \
 	es/device/IPic.idl \
 	es/device/IRemovableMedia.idl \

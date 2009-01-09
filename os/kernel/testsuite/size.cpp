@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
+#include <limits.h>
 #include <es.h>
-#include <es/base/ICache.h>
 #include <es/exception.h>
+#include <es/handle.h>
+#include <es/base/ICache.h>
 #include <iostream>
 #include "core.h"
 #include "memoryStream.h"
@@ -28,8 +30,8 @@
 
 int main()
 {
-    long long pageTableSize = 32 * 1024LL;            // 32KB
-    long long hugeSize = 1024 * 1024 * 1024 * 1024LL; //  1TB
+    long long pageTableSize = 32 * 1024LL;       // 32KB
+    long long hugeSize = 9223372036854775807LL;  // LLONG_MAX
 
     IInterface* root = NULL;
 
@@ -37,14 +39,10 @@ int main()
 
     esReport("Check getSize() and setSize().\n");
 
-    ICacheFactory* cacheFactory = 0;
-    cacheFactory = reinterpret_cast<ICacheFactory*>(
-        esCreateInstance(CLSID_CacheFactory, ICacheFactory::iid()));
-
     MemoryStream* backingStore = new MemoryStream(16);
     TEST(backingStore);
 
-    ICache* cache = cacheFactory->create(backingStore);
+    ICache* cache = ICache::createInstance(backingStore);
     TEST(cache);
 
     IStream* stream = cache->getStream();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,9 @@
 #include <errno.h>
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 #include <es/naming/IBinding.h>
 
@@ -33,12 +31,6 @@
 using namespace es;
 
 ICurrentProcess* System();
-Handle<IClassStore> classStore;
-
-void* createInstance(const Guid& rclsid, const Guid& riid)
-{
-    return classStore->createInstance(rclsid, riid);
-}
 
 class Stream : public IStream, public IBinding
 {
@@ -136,18 +128,18 @@ public:
         return count;
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IInterface::iid())
+        if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IStream::iid())
+        else if (strcmp(riid, IStream::iid()) == 0)
         {
             objectPtr = static_cast<IStream*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (strcmp(riid, IBinding::iid()) == 0)
         {
             objectPtr = static_cast<IBinding*>(this);
             esReport("Stream::queryInterface: %p@%p\n", objectPtr, &objectPtr);
@@ -183,12 +175,10 @@ int main(int argc, char* argv[])
     System()->trace(false);
 
     Handle<IContext> nameSpace = System()->getRoot();
-    classStore = nameSpace->lookup("class");
-    TEST(classStore);
 
     // Create a client process.
     Handle<IProcess> client;
-    client = reinterpret_cast<IProcess*>(createInstance(CLSID_Process, IProcess::iid()));
+    client = IProcess::createInstance();
     TEST(client);
 
     // Set the standard output to the client process.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@
 #include <es/list.h>
 #include <es/dateTime.h>
 #include <es/base/ICache.h>
-#include <es/base/IClassFactory.h>
 #include <es/base/IFile.h>
 #include <es/base/IPageable.h>
 #include <es/base/IPageSet.h>
@@ -93,8 +92,8 @@ class Page
 
     void set(Cache* cache, long long offset);
 
-    int fill(IStream* backingStore);
-    int sync(IStream* backingStore, int sectorSize);
+    int fill(es::IStream* backingStore);
+    int sync(es::IStream* backingStore, int sectorSize);
 
     /** Updates lastUpdated to the current time.
      */
@@ -111,8 +110,8 @@ class Page
     int read(void* dst, int count, long long offset);
     int write(const void* src, int count, long long offset);
 
-    unsigned int addRef(void);
-    unsigned int release(void);
+    unsigned int addRef();
+    unsigned int release();
 
 public:
     static const int SIZE;      // Page size in bytes
@@ -250,10 +249,10 @@ public:
     friend class PageSet;
     friend class Stream;
 
-    friend int esInit(IInterface** nameSpace);
+    friend int esInit(es::IInterface** nameSpace);
 };
 
-class PageSet : public IClassFactory, public IPageSet
+class PageSet : public es::IPageSet
 {
     typedef List<Page, &Page::linkChain>    PageList;
 
@@ -319,37 +318,94 @@ class PageSet : public IClassFactory, public IPageSet
 
 public:
     // IPageSet
+    /** Creates a new PageSet from this page set.
+     */
+    IPageSet* fork();
+
     /** Reserves the reserveCount pages from parent.
      */
     void reserve(unsigned long long reserveCount);
 
-    // IClassFactory
-    void* createInstance(const Guid& riid);
-
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     friend class Cache;
     friend class CacheFactory;
     friend class Page;
     friend class PageTable;
     friend class Stream;
+
+    // [Constructor]
+    class Constructor : public IConstructor
+    {
+    public:
+        IPageSet* createInstance();
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+    };
+
+    static void initializeConstructor();
 };
 
-class Cache : public ICache, public IPageable
+class Cache : public es::ICache, public es::IPageable
 {
+    Monitor             monitor;
+    Ref                 ref;
+    Link<Cache>         link;
+
+public:
+    class Constructor : public IConstructor
+    {
+        typedef List<Cache, &Cache::link>       CacheList;
+
+        Ref         ref;
+
+        SpinLock    spinLock;
+        CacheList   standbyList;
+        CacheList   changedList;
+        Thread      thread;
+
+        void add(Cache* cache);
+        void remove(Cache* cache);
+        void change(Cache* cache);
+        void clean(Cache* cache);
+
+        Cache* getStaleCache();
+
+        void update();
+
+        static void* run(void* param);
+
+    public:
+        Constructor();
+        ~Constructor();
+
+        es::ICache* createInstance(es::IStream* backingStore);
+        es::ICache* createInstance(es::IStream* backingStore, es::IPageSet* pageSet);
+
+        // IInterface
+        void* queryInterface(const char* riid);
+        unsigned int addRef();
+        unsigned int release();
+
+        friend class Cache;
+        friend class Page;
+        friend class PageSet;
+        friend class PageTable;
+        friend class Stream;
+    };
+
+private:
     typedef List<Page, &Page::linkChain>    PageList;
 
     static const s64 DelayedWrite = 150000000;  // 15 [sec]
 
-    Monitor             monitor;
-    Ref                 ref;
-    CacheFactory*       cacheFactory;
-    Link<Cache>         link;
-    IStream*            backingStore;
-    IFile*              file;
+    Constructor*        cacheFactory;
+    es::IStream*        backingStore;
+    es::IFile*          file;
     PageSet*            pageSet;
     long long           size;
     PageList            changedList;
@@ -414,7 +470,7 @@ class Cache : public ICache, public IPageable
     unsigned long decPageCount();
 
 public:
-    Cache(CacheFactory* cacheFactory, IStream* backingStore, PageSet* pageSet);
+    Cache(Cache::Constructor* cacheFactory, es::IStream* backingStore, PageSet* pageSet);
     ~Cache();
 
     // IPageable
@@ -426,9 +482,9 @@ public:
     /** Creates a new stream for this cache.
      * @return  IStream interface pointer
      */
-    IStream* getStream();
-    IStream* getInputStream();
-    IStream* getOutputStream();
+    es::IStream* getStream();
+    es::IStream* getInputStream();
+    es::IStream* getOutputStream();
 
     long long getSize();
 
@@ -449,11 +505,11 @@ public:
     unsigned long long getPageCount();
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
-    friend class CacheFactory;
+    friend class Constructor;
     friend class Page;
     friend class PageSet;
     friend class PageTable;
@@ -462,51 +518,11 @@ public:
     friend class Mmu;
     friend class Process;
     friend class Swap;
+
+    static void initializeConstructor();
 };
 
-class CacheFactory : public ICacheFactory
-{
-    typedef List<Cache, &Cache::link>       CacheList;
-
-    Ref         ref;
-
-    SpinLock    spinLock;
-    CacheList   standbyList;
-    CacheList   changedList;
-    Thread      thread;
-
-    void add(Cache* cache);
-    void remove(Cache* cache);
-    void change(Cache* cache);
-    void clean(Cache* cache);
-
-    Cache* getStaleCache();
-
-    void update();
-
-    static void* run(void* param);
-
-public:
-    CacheFactory();
-    ~CacheFactory();
-
-    // ICacheFactory
-    ICache* create(IStream* backingStore);
-    ICache* create(IStream* backingStore, IPageSet* pageSet);
-
-    // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
-
-    friend class Cache;
-    friend class Page;
-    friend class PageSet;
-    friend class PageTable;
-    friend class Stream;
-};
-
-class Stream : public IStream, public IFile
+class Stream : public es::IStream, public es::IFile
 {
     Ref         ref;
     Cache*      cache;
@@ -541,12 +557,12 @@ public:
     bool isFile();
     bool isHidden();
     int getName(char* name, int nameLength);
-    IPageable* getPageable();
-    IStream* getStream();
+    es::IPageable* getPageable();
+    es::IStream* getStream();
 
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 
     friend class Cache;
 };

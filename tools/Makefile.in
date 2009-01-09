@@ -261,7 +261,12 @@ vget_SOURCES = vget.cpp vdisk.h
 vcopy_SOURCES = vcopy.cpp vdisk.h
 vlist_SOURCES = vlist.cpp vdisk.h
 guidgen_SOURCES = guidgen.cpp
-AM_CPPFLAGS = -I- -I../include -I$(srcdir)/../include
+AM_CPPFLAGS = -I- \
+	-I../include \
+	-I$(srcdir)/../include \
+	-I$(srcdir)/../os/fs/fat \
+	-I$(srcdir)/../os/fs/iso9660
+
 all: all-am
 
 .SUFFIXES:

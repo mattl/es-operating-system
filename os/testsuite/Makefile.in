@@ -34,7 +34,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 TESTS = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) cairo$(EXEEXT) \
-	canvas$(EXEEXT)
+	canvas$(EXEEXT) interfaceStore$(EXEEXT)
 noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -45,7 +45,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 am__EXEEXT_1 = client$(EXEEXT) server$(EXEEXT) video$(EXEEXT) \
-	cairo$(EXEEXT) canvas$(EXEEXT)
+	cairo$(EXEEXT) canvas$(EXEEXT) interfaceStore$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_cairo_OBJECTS = cairo.$(OBJEXT)
 cairo_OBJECTS = $(am_cairo_OBJECTS)
@@ -77,6 +77,18 @@ client_LDADD = $(LDADD)
 @APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
 @APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
 @ES_TRUE@client_DEPENDENCIES = ../libes++/libes++.a
+am_interfaceStore_OBJECTS = interfaceStore.$(OBJEXT)
+interfaceStore_OBJECTS = $(am_interfaceStore_OBJECTS)
+interfaceStore_LDADD = $(LDADD)
+@APPLE_FALSE@@ES_FALSE@interfaceStore_DEPENDENCIES =  \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a \
+@APPLE_FALSE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_FALSE@@ES_FALSE@	../libes++/libes++.a
+@APPLE_TRUE@@ES_FALSE@interfaceStore_DEPENDENCIES =  \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a \
+@APPLE_TRUE@@ES_FALSE@	../kernel/libeskernel.a \
+@APPLE_TRUE@@ES_FALSE@	../libes++/libes++.a
+@ES_TRUE@interfaceStore_DEPENDENCIES = ../libes++/libes++.a
 am_server_OBJECTS = server.$(OBJEXT)
 server_OBJECTS = $(am_server_OBJECTS)
 server_LDADD = $(LDADD)
@@ -110,9 +122,9 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(cairo_SOURCES) $(canvas_SOURCES) $(client_SOURCES) \
-	$(server_SOURCES) $(video_SOURCES)
+	$(interfaceStore_SOURCES) $(server_SOURCES) $(video_SOURCES)
 DIST_SOURCES = $(cairo_SOURCES) $(canvas_SOURCES) $(client_SOURCES) \
-	$(server_SOURCES) $(video_SOURCES)
+	$(interfaceStore_SOURCES) $(server_SOURCES) $(video_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -239,6 +251,7 @@ server_SOURCES = server.cpp
 video_SOURCES = video.cpp
 cairo_SOURCES = cairo.cpp
 canvas_SOURCES = canvas.cpp canvas2d.cpp canvas2d.h
+interfaceStore_SOURCES = interfaceStore.cpp
 all: all-am
 
 .SUFFIXES:
@@ -284,6 +297,9 @@ canvas$(EXEEXT): $(canvas_OBJECTS) $(canvas_DEPENDENCIES)
 client$(EXEEXT): $(client_OBJECTS) $(client_DEPENDENCIES) 
 	@rm -f client$(EXEEXT)
 	$(CXXLINK) $(client_OBJECTS) $(client_LDADD) $(LIBS)
+interfaceStore$(EXEEXT): $(interfaceStore_OBJECTS) $(interfaceStore_DEPENDENCIES) 
+	@rm -f interfaceStore$(EXEEXT)
+	$(CXXLINK) $(interfaceStore_OBJECTS) $(interfaceStore_LDADD) $(LIBS)
 server$(EXEEXT): $(server_OBJECTS) $(server_DEPENDENCIES) 
 	@rm -f server$(EXEEXT)
 	$(CXXLINK) $(server_OBJECTS) $(server_LDADD) $(LIBS)
@@ -301,6 +317,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas2d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/video.Po@am__quote@
 

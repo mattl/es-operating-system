@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,6 @@ module es
      */
     interface Socket
     {
-        #pragma ID Socket = "DCE:2f2ea026-d137-11db-9c02-0009bf000001";
-
         typedef sequence<octet> Buf;
 
         // socket type
@@ -209,8 +207,6 @@ module es
      */
     interface StreamSocket : Socket
     {
-        #pragma ID StreamSocket = "DCE:bed398d0-9fa5-11db-8100-0009bf000001";
-
         void sendUrgentData(in octet data);
 
         attribute long linger;
@@ -225,8 +221,6 @@ module es
      */
     interface MulticastSocket : Socket
     {
-        #pragma ID MulticastSocket = "DCE:bf5985a8-9fa5-11db-8100-0009bf000001";
-
         void joinGroup(in InternetAddress addr);
         void leaveGroup(in InternetAddress addr);
 

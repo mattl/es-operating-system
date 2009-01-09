@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include <errno.h>
 #include <es.h>
 #include <es/exception.h>
-#include <es/clsid.h>
 #include "fdc.h"
 #include "io.h"
 
@@ -42,8 +41,7 @@ FloppyDrive(FloppyController* ctlr, u8 drive) :
     gpl = 0x1b;
     fgpl = 0x54;
 
-    alarm = reinterpret_cast<IAlarm*>(
-        esCreateInstance(CLSID_Alarm, IAlarm::iid()));
+    alarm = IAlarm::createInstance();
 
     alarm->setEnabled(false);
     alarm->setInterval(10000000);
@@ -400,18 +398,18 @@ setLayout(const Partition* partition)
 }
 
 void* FloppyDrive::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IDiskManagement::iid())
+    if (strcmp(riid, IDiskManagement::iid()) == 0)
     {
         objectPtr = static_cast<IDiskManagement*>(this);
     }
-    else if (riid == IStream::iid())
+    else if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IDiskManagement*>(this);
     }

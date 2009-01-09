@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ class ClassFactory : public es::IClassFactory
     Ref ref;
 
 public:
-    void* createInstance(const Guid& riid)
+    void* createInstance(const char* riid)
     {
         void* objectPtr = 0;
         C* instance = new(std::nothrow) C;
@@ -49,7 +49,7 @@ public:
         return objectPtr;
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
         if (riid == es::IClassFactory::iid())

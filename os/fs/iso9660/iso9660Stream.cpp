@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ Iso9660Stream(Iso9660FileSystem* fileSystem, Iso9660Stream* parent, u32 offset, 
 
     // XXX interleave
 
-    cache = fileSystem->cacheFactory->create(this);
+    cache = ICache::createInstance(this);
     fileSystem->add(this);
 }
 
@@ -179,22 +179,22 @@ findNext(IStream* dir, u8* record)
 }
 
 void* Iso9660Stream::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (isDirectory() && riid == IContext::iid())
+    if (isDirectory() && strcmp(riid, IContext::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IFile::iid())
+    else if (strcmp(riid, IFile::iid()) == 0)
     {
         objectPtr = static_cast<IFile*>(this);
     }
-    else if (riid == IBinding::iid())
+    else if (strcmp(riid, IBinding::iid()) == 0)
     {
         objectPtr = static_cast<IBinding*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
@@ -207,13 +207,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Iso9660Stream::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Iso9660Stream::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

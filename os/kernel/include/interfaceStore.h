@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,36 +25,98 @@
 #include <es/base/IInterfaceStore.h>
 #include "thread.h"
 
-class InterfaceStore : public IInterfaceStore
+class InterfaceStore : public es::IInterfaceStore
 {
     static unsigned char* defaultInterfaceInfo[];
 
-    SpinLock    spinLock;
-    Ref         ref;
-    Hashtable<Guid, Reflect::Interface>
-                hashtable;
+    struct InterfaceData
+    {
+        Reflect::Interface meta;
+        es::IInterface* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(es::IInterface* constructor); // for statically created data
+        es::IInterface* constructor;                            // for dynamically created data
+
+        InterfaceData() :
+            constructorGetter(0),
+            constructorSetter(0),
+            constructor(0)
+        {
+        }
+
+        InterfaceData(Reflect::Interface interface) :
+            meta(interface),
+            constructorGetter(0),
+            constructorSetter(0),
+            constructor(0)
+        {
+        }
+
+        IInterface* getConstructor() const
+        {
+            if (constructor) {
+                return constructor;
+            }
+            if (constructorGetter) {
+                return constructorGetter();
+            }
+            return 0;
+        }
+    };
+
+    SpinLock spinLock;
+    Ref ref;
+    Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
 
     void registerInterface(Reflect::Module& module);
+    void registerConstructor(const char* iid, es::IInterface* (*getter)(), void (*setter)(es::IInterface*));
 
 public:
     InterfaceStore(int capacity = 128);
     ~InterfaceStore();
 
-    Reflect::Interface& getInterface(const Guid& iid)
+    Reflect::Interface& getInterface(const char* iid)
     {
         SpinLock::Synchronized method(spinLock);
 
-        return hashtable.get(iid);
+        return hashtable.get(iid).meta;
+    }
+
+    es::IInterface* getConstructor(const char* iid)
+    {
+        SpinLock::Synchronized method(spinLock);
+
+        return hashtable.get(iid).getConstructor();
+    }
+
+    bool hasInterface(const char* iid)
+    {
+        SpinLock::Synchronized method(spinLock);
+
+        return hashtable.contains(iid);
+    }
+
+    const char* getUniqueIdentifier(const char* iid)
+    {
+        SpinLock::Synchronized method(spinLock);
+
+        try
+        {
+            return hashtable.get(iid).meta.getFullyQualifiedName();
+        }
+        catch (...)
+        {
+            return 0;
+        }
     }
 
     // IInterfaceStore
     void add(const void* data, int length);
-    void remove(const Guid& riid);
+    void remove(const char* riid);
 
     // IInterface
-    void* queryInterface(const Guid& riid);
-    unsigned int addRef(void);
-    unsigned int release(void);
+    void* queryInterface(const char* riid);
+    unsigned int addRef();
+    unsigned int release();
 };
 
 //
@@ -64,8 +126,6 @@ public:
 extern unsigned char IAlarmInfo[];
 extern unsigned char ICacheInfo[];
 extern unsigned char ICallbackInfo[];
-extern unsigned char IClassFactoryInfo[];
-extern unsigned char IClassStoreInfo[];
 extern unsigned char IFileInfo[];
 extern unsigned char IInterfaceInfo[];
 extern unsigned char IInterfaceStoreInfo[];
@@ -85,7 +145,9 @@ extern unsigned char ICursorInfo[];
 extern unsigned char IDeviceInfo[];
 extern unsigned char IDiskManagementInfo[];
 extern unsigned char IDmacInfo[];
+extern unsigned char IFatFileSystemInfo[];
 extern unsigned char IFileSystemInfo[];
+extern unsigned char IIso9660FileSystemInfo[];
 extern unsigned char IPicInfo[];
 extern unsigned char IRemovableMediaInfo[];
 extern unsigned char IRtcInfo[];
@@ -104,6 +166,11 @@ extern unsigned char ISetInfo[];
 
 extern unsigned char ICanvasRenderingContext2DInfo[];
 
-Reflect::Interface& getInterface(const Guid& iid);
+namespace es
+{
+    Reflect::Interface& getInterface(const char* iid);
+    es::IInterface* getConstructor(const char* iid);
+    const char* getUniqueIdentifier(const char* iid);
+}  // namespace es
 
 #endif // NINTENDO_ES_KERNEL_INTERFACE_STORE_H_INCLUDED

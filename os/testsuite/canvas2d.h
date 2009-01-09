@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,14 +61,12 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
 #include <es/color.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
 #include <es/variant.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IFile.h>
 #include <es/base/IInterfaceStore.h>
 #include <es/base/IProcess.h>
@@ -128,14 +126,14 @@ public:
         cairo_set_source(cr, pattern);
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == ICanvasPattern::iid())
+        if (strcmp(riid, ICanvasPattern::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasPattern*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasPattern*>(this);
         }
@@ -201,14 +199,14 @@ public:
 
     void addColorStop(float offset, const char* color);
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == ICanvasGradient::iid())
+        if (strcmp(riid, ICanvasGradient::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasGradient*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasGradient*>(this);
         }
@@ -469,14 +467,14 @@ public:
     void mozPathText(const char* textToPath);
     void mozTextAlongPath(const char* textToDraw, bool stroke);
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == ICanvasRenderingContext2D::iid())
+        if (strcmp(riid, ICanvasRenderingContext2D::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasRenderingContext2D*>(this);
         }
-        else if (riid == IInterface::iid())
+        else if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<ICanvasRenderingContext2D*>(this);
         }

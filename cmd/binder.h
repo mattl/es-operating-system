@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,22 +17,5 @@
 
 #ifndef BINDER_H_INCLUDED
 #define BINDER_H_INCLUDED
-
-#include <es/base/IClassStore.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/** <code>b0f595e9-bd50-4146-8df2-ff61024f5e1b</code>
- */
-const Guid CLSID_Binder =
-{
-    0xb0f595e9, 0xbd50, 0x4146, { 0x8d, 0xf2, 0xff, 0x61, 0x02, 0x4f, 0x5e, 0x1b }
-};
-
-#ifdef __cplusplus
-}
-#endif  // __cplusplus
 
 #endif  // #ifndef BINDER_H_INCLUDED

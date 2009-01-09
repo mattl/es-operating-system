@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/clsid.h>
 #include "core.h"
 #include "fdc.h"
 #include "io.h"
@@ -28,8 +27,7 @@ FloppyController(IDmac* dmac, u16 base, u8 irq) :
     current(0),
     dmac(dmac)
 {
-    monitor = reinterpret_cast<IMonitor*>(
-        esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
 
     // motor off
     for (int i = 3; 0 <= i; --i)
@@ -176,14 +174,14 @@ result(void)
 }
 
 void* FloppyController::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ICallback::iid())
+    if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
@@ -196,13 +194,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int FloppyController::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int FloppyController::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

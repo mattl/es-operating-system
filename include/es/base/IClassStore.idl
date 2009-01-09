@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ module es
      */
     interface ClassStore
     {
-        #pragma ID ClassStore = "DCE:eeb4c758-4a0b-11db-9c02-0009bf000001";
         /**
          * Registers the specified class factory in this class store.
          * @param rclsid    the class ID.
@@ -43,10 +42,10 @@ module es
          * Creates an object from the class factory identified with the specified class ID.
          * The class factory must be registered in this class store.
          * @param rclsid    the class ID of the class factory.
-         * @param riid      the interface ID of the interface to be used to communicate with the new object.
+         * @param iid       the interface ID of the interface to be used to communicate with the new object.
          * @return the new object if the object is successfully created. Otherwise, null.
          */
-        Object createInstance(in uuid rclsid, in uuid riid);
+        Object createInstance(in uuid rclsid, in string riid);
     };
 };
 

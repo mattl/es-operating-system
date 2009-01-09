@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@
 #include "partition.h"
 
 using namespace LittleEndian;
+using namespace es;
 
 #define VERBOSE
 
@@ -42,7 +43,7 @@ extern "C"
 }
 
 PartitionContext::
-PartitionContext(void) : disk(0)
+PartitionContext() : disk(0)
 {
 
 }
@@ -623,7 +624,7 @@ getDefaultPartitionType(long long size)
 //
 
 int PartitionContext::
-initialize(void)
+initialize()
 {
     if (!disk)
     {
@@ -965,18 +966,18 @@ list(const char* name)
 //
 
 void* PartitionContext::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IContext::iid())
+    if (strcmp(riid, IContext::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
-    else if (riid == IPartition::iid())
+    else if (strcmp(riid, IPartition::iid()) == 0)
     {
         objectPtr = static_cast<IPartition*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IContext*>(this);
     }
@@ -989,13 +990,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int PartitionContext::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int PartitionContext::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -1004,4 +1005,50 @@ release(void)
         return 0;
     }
     return count;
+}
+
+
+IPartition* PartitionContext::
+Constructor::createInstance()
+{
+    return new PartitionContext;
+}
+
+void* PartitionContext::
+Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IPartition::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IPartition::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IPartition::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int PartitionContext::
+Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int PartitionContext::
+Constructor::release()
+{
+    return 1;
+}
+
+void PartitionContext::
+initializeConstructor()
+{
+    static Constructor constructor;
+    IPartition::setConstructor(&constructor);
 }

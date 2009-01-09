@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,15 +19,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 #include <es/naming/IBinding.h>
-#include "binder.h"
 
 using namespace es;
 
@@ -89,14 +85,14 @@ public:
         return count;
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IInterface::iid())
+        if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IBinding*>(this);
         }
-        else if (riid == IBinding::iid())
+        else if (strcmp(riid, IBinding::iid()) == 0)
         {
             objectPtr = static_cast<IBinding*>(this);
         }
@@ -133,17 +129,15 @@ int main(int argc, char* argv[])
     System()->trace(true);
 
     Handle<IContext> nameSpace = System()->getRoot();
-    Handle<IClassStore> classStore = nameSpace->lookup("class");
+    Handle<IContext> classStore = nameSpace->lookup("class");
     TEST(classStore);
 
     // Register Binder factory.
-    Handle<IClassFactory> binderFactory(new(ClassFactory<Binder>));
-    classStore->add(CLSID_Binder, binderFactory);
+    classStore->bind(IBinder::iid(), Binder::constructor);
 
     // Create a client process.
     Handle<IProcess> client;
-    client = reinterpret_cast<IProcess*>(
-        classStore->createInstance(CLSID_Process, client->iid()));
+    client = IProcess::createInstance();
     TEST(client);
 
     // Start the client process.
@@ -155,7 +149,7 @@ int main(int argc, char* argv[])
     client->wait();
 
     // Unregister Binder factory.
-    classStore->remove(CLSID_Binder);
+    classStore->unbind(IBinder::iid());
 
     System()->trace(false);
 }

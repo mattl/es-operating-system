@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,6 @@
 #include <netpacket/packet.h>
 #include <linux/if_ether.h>
 
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/synchronized.h>
 
@@ -94,7 +93,7 @@ Tap::Tap(const char* interfaceName) :
 
     close(s);
 
-    monitor = reinterpret_cast<IMonitor*>(esCreateInstance(CLSID_Monitor, IMonitor::iid()));
+    monitor = IMonitor::createInstance();
     ASSERT(monitor);
 }
 
@@ -338,18 +337,18 @@ getStatistics(Statistics* statistics)
 //
 
 void* Tap::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == INetworkInterface::iid())
+    else if (strcmp(riid, INetworkInterface::iid()) == 0)
     {
         objectPtr = static_cast<INetworkInterface*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<INetworkInterface*>(this);
     }

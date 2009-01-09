@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,8 @@
 #include <new>
 #include <errno.h>
 #include "cache.h"
+
+using namespace es;
 
 Stream::
 Stream(Cache* cache) :
@@ -108,18 +110,18 @@ flush()
 }
 
 void* Stream::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IStream::iid())
+    if (strcmp(riid, IStream::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IStream*>(this);
     }
-    else if (riid == IFile::iid() && cache->file)
+    else if (strcmp(riid, IFile::iid()) == 0 && cache->file)
     {
         objectPtr = static_cast<IFile*>(this);
     }
@@ -132,13 +134,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Stream::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Stream::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

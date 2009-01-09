@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,8 @@
 #include <es.h>
 #include <es/dateTime.h>
 #include "alarm.h"
+
+using namespace es;
 
 #ifndef LLONG_MAX
 #define LLONG_MAX 9223372036854775807LLu
@@ -166,10 +168,10 @@ cancel()
 }
 
 void* Alarm::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IAlarm::iid())
+    if (strcmp(riid, IAlarm::iid()) == 0)
     {
         objectPtr = static_cast<IAlarm*>(this);
     }
@@ -182,13 +184,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Alarm::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Alarm::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -376,4 +378,49 @@ Queue::check()
         ASSERT((void*) 0x80000000 <= next);
     }
     return true;
+}
+
+IAlarm* Alarm::
+Constructor::createInstance()
+{
+    return new Alarm;
+}
+
+void* Alarm::
+Constructor::queryInterface(const char* riid)
+{
+    void* objectPtr;
+    if (strcmp(riid, IAlarm::IConstructor::iid()) == 0)
+    {
+        objectPtr = static_cast<IAlarm::IConstructor*>(this);
+    }
+    else if (strcmp(riid, IInterface::iid()) == 0)
+    {
+        objectPtr = static_cast<IAlarm::IConstructor*>(this);
+    }
+    else
+    {
+        return NULL;
+    }
+    static_cast<IInterface*>(objectPtr)->addRef();
+    return objectPtr;
+}
+
+unsigned int Alarm::
+Constructor::addRef()
+{
+    return 1;
+}
+
+unsigned int Alarm::
+Constructor::release()
+{
+    return 1;
+}
+
+void Alarm::
+initializeConstructor()
+{
+    static Constructor constructor;
+    IAlarm::setConstructor(&constructor);
 }

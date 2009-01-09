@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,14 +70,14 @@ namespace
         unsigned int splLo() { return 0; }
         unsigned int splHi() { return 0; }
         void splX(unsigned int x) {}
-        void* queryInterface(const Guid& riid)
+        void* queryInterface(const char* riid)
         {
             void* objectPtr;
-            if (riid == IPic::iid())
+            if (strcmp(riid, IPic::iid()) == 0)
             {
                 objectPtr = static_cast<IPic*>(this);
             }
-            else if (riid == IInterface::iid())
+            else if (strcmp(riid, IInterface::iid()) == 0)
             {
                 objectPtr = static_cast<IPic*>(this);
             }
@@ -88,11 +88,11 @@ namespace
             static_cast<IInterface*>(objectPtr)->addRef();
             return objectPtr;
         }
-        unsigned int addRef(void)
+        unsigned int addRef()
         {
             return ref.addRef();
         }
-        unsigned int release(void)
+        unsigned int release()
         {
             unsigned int count = ref.release();
             if (count == 0)

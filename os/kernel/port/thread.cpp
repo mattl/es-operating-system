@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -505,18 +505,18 @@ checkStack()
 }
 
 void* Thread::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == IThread::iid())
+    if (strcmp(riid, IThread::iid()) == 0)
     {
         objectPtr = static_cast<IThread*>(this);
     }
-    else if (riid == ICallback::iid())
+    else if (strcmp(riid, ICallback::iid()) == 0)
     {
         objectPtr = static_cast<ICallback*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<IThread*>(this);
     }
@@ -529,13 +529,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Thread::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Thread::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)

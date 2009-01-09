@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,15 +22,18 @@
 #include <unwind.h>
 #include <es.h>
 #include <es/broker.h>
-#include <es/clsid.h>
 #include <es/dateTime.h>
 #include <es/exception.h>
 #include <es/formatter.h>
 #include <es/handle.h>
 #include <es/ref.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 #include <es/base/IRuntime.h>
+
+namespace es
+{
+    void registerConstructor(const char* iid, IInterface* constructor);
+}  // namespace es
 
 using namespace es;
 
@@ -101,17 +104,17 @@ class System : public ICurrentProcess
             currentThread->testCancel();
         }
 
-        void* queryInterface(const Guid& riid)
+        void* queryInterface(const char* riid)
         {
             return currentThread->queryInterface(riid);
         }
 
-        unsigned int addRef(void)
+        unsigned int addRef()
         {
             return currentThread->addRef();
         }
 
-        unsigned int release(void)
+        unsigned int release()
         {
             return currentThread->release();
         }
@@ -132,6 +135,31 @@ public:
             runtime->setStartup(reinterpret_cast<void*>(start)); // [check] cast.
             runtime->setFocus(reinterpret_cast<void*>(focus)); // [check] cast.
             runtime->release();
+        }
+
+        // Update constructors.
+        if (Handle<IContext> root = currentProcess->getRoot())
+        {
+            if (Handle<IIterator> iterator = root->list("class"))
+            {
+                while (iterator->hasNext())
+                {
+                    if (Handle<IBinding> binding = iterator->next())
+                    {
+                        char iid[1024];
+                        char ciid[1024];
+                        binding->getName(iid, sizeof iid);
+                        strcpy(ciid, iid);
+                        strcat(ciid, "::Constructor");
+                        if (IInterface* unknown = binding->getObject())
+                        {
+                            void* constructor = unknown->queryInterface(ciid);
+                            registerConstructor(iid, reinterpret_cast<IInterface*>(constructor));
+                            unknown->release();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -217,17 +245,17 @@ public:
         return currentProcess->getCurrent();
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         return currentProcess->queryInterface(riid);
     }
 
-    unsigned int addRef(void)
+    unsigned int addRef()
     {
         return currentProcess->addRef();
     }
 
-    unsigned int release(void)
+    unsigned int release()
     {
         return currentProcess->release();
     }
@@ -246,7 +274,7 @@ public:
     static void cleanup(_Unwind_Reason_Code reason, struct _Unwind_Exception* exc);
 };
 
-static System current __attribute__ ((init_priority (102)));
+static System current __attribute__((init_priority(1001)));    // After InterfaceStore
 
 ICurrentProcess* System() __attribute__((weak));
 

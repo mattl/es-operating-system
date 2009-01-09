@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,15 +19,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
-#include <es/clsid.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/ring.h>
 #include <es/ref.h>
 #include <es/synchronized.h>
 #include <es/usage.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
 #include <es/base/IInterfaceStore.h>
@@ -734,14 +731,14 @@ public:
         }
     }
 
-    void* queryInterface(const Guid& riid)
+    void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (riid == IInterface::iid())
+        if (strcmp(riid, IInterface::iid()) == 0)
         {
             objectPtr = static_cast<IEventQueue*>(this);
         }
-        else if (riid == IEventQueue::iid())
+        else if (strcmp(riid, IEventQueue::iid()) == 0)
         {
             objectPtr = static_cast<IEventQueue*>(this);
         }
@@ -831,21 +828,12 @@ int main(int argc, char* argv[])
     // System()->trace(true);
 
     Handle<IContext> nameSpace = System()->getRoot();
-    Handle<IClassStore> classStore = nameSpace->lookup("class");
-    TEST(classStore);
 
     // Register IEventQueue interface.
     Handle<IInterfaceStore> interfaceStore = nameSpace->lookup("interface");
     interfaceStore->add(IEventQueueInfo, IEventQueueInfoSize);
 
-    // Register Event manager factory.
-    Handle<IClassFactory> eventManagerFactory(new(ClassFactory<EventManager>));
-    classStore->add(CLSID_EventManager, eventManagerFactory);
-
     inputProcess(nameSpace);
-
-    // Unregister Event Manager factory.
-    classStore->remove(CLSID_EventManager);
 
     // Unregister IEventQueue interface.
     interfaceStore->remove(IEventQueue::iid());

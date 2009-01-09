@@ -3,7 +3,7 @@ LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessu
 else
 LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lrt
 endif
-
+	
 bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen vget vdel
 
 trunc_SOURCES = trunc.c
@@ -22,4 +22,9 @@ vlist_SOURCES = vlist.cpp vdisk.h
 
 guidgen_SOURCES = guidgen.cpp
 
-AM_CPPFLAGS = -I- -I../include -I$(srcdir)/../include
+AM_CPPFLAGS = -I- \
+	-I../include \
+	-I$(srcdir)/../include \
+	-I$(srcdir)/../os/fs/fat \
+	-I$(srcdir)/../os/fs/iso9660
+

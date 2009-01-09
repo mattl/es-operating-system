@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -688,22 +688,22 @@ remove(IMonitor* selector)
 //
 
 void* Socket::
-queryInterface(const Guid& riid)
+queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (riid == ISocket::iid())
+    if (strcmp(riid, ISocket::iid()) == 0)
     {
         objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == ISelectable::iid())
+    else if (strcmp(riid, ISelectable::iid()) == 0)
     {
         objectPtr = static_cast<ISelectable*>(this);
     }
-    else if (riid == IInterface::iid())
+    else if (strcmp(riid, IInterface::iid()) == 0)
     {
         objectPtr = static_cast<ISocket*>(this);
     }
-    else if (riid == IMulticastSocket::iid() && type == ISocket::Datagram)
+    else if (strcmp(riid, IMulticastSocket::iid()) == 0 && type == ISocket::Datagram)
     {
         objectPtr = static_cast<Socket*>(this);
     }
@@ -716,13 +716,13 @@ queryInterface(const Guid& riid)
 }
 
 unsigned int Socket::
-addRef(void)
+addRef()
 {
     return ref.addRef();
 }
 
 unsigned int Socket::
-release(void)
+release()
 {
     unsigned int count = ref.release();
     if (count == 0)
