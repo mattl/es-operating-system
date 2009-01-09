@@ -20,7 +20,6 @@ endif !ES
 
 nobase_include_HEADERS = \
 	es.h \
-	es/apply.h \
 	es/broker.h \
 	es/color.h \
 	es/collection.h \
