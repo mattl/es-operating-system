@@ -61,14 +61,12 @@
 
 #include <string.h>
 #include <es.h>
-#include <es/classFactory.h>
 #include <es/color.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
 #include <es/variant.h>
-#include <es/base/IClassStore.h>
 #include <es/base/IFile.h>
 #include <es/base/IInterfaceStore.h>
 #include <es/base/IProcess.h>
