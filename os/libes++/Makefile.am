@@ -57,8 +57,6 @@ nodist_libessup___a_SOURCES = \
 	base/IAlarm.c \
 	base/ICache.c \
 	base/ICallback.c \
-	base/IClassFactory.c \
-	base/IClassStore.c \
 	base/IFile.c \
 	base/IInterface.c \
 	base/IInterfaceStore.c \

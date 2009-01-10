@@ -67,8 +67,7 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
 	src/ring.cpp include/core.h include/posix_system.h \
 	include/posix_video.h src/variant386.S src/variantx64.S \
-	base/IAlarm.c base/ICache.c base/ICallback.c \
-	base/IClassFactory.c base/IClassStore.c base/IFile.c \
+	base/IAlarm.c base/ICache.c base/ICallback.c base/IFile.c \
 	base/IInterface.c base/IInterfaceStore.c base/IMonitor.c \
 	base/IPageable.c base/IPageSet.c base/IProcess.c \
 	base/IRuntime.c base/ISelectable.c base/IService.c \
@@ -95,8 +94,7 @@ am__objects_3 =
 am__objects_6 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5)
 am__objects_7 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
-	IClassFactory.$(OBJEXT) IClassStore.$(OBJEXT) IFile.$(OBJEXT) \
-	IInterface.$(OBJEXT) IInterfaceStore.$(OBJEXT) \
+	IFile.$(OBJEXT) IInterface.$(OBJEXT) IInterfaceStore.$(OBJEXT) \
 	IMonitor.$(OBJEXT) IPageable.$(OBJEXT) IPageSet.$(OBJEXT) \
 	IProcess.$(OBJEXT) IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) \
 	IService.$(OBJEXT) IStream.$(OBJEXT) IThread.$(OBJEXT) \
@@ -120,14 +118,13 @@ libes___a_OBJECTS = $(am_libes___a_OBJECTS)
 libesrpc_a_AR = $(AR) $(ARFLAGS)
 libesrpc_a_LIBADD =
 am__libesrpc_a_SOURCES_DIST = base/IAlarm.c base/ICache.c \
-	base/ICallback.c base/IClassFactory.c base/IClassStore.c \
-	base/IFile.c base/IInterface.c base/IInterfaceStore.c \
-	base/IMonitor.c base/IPageable.c base/IPageSet.c \
-	base/IProcess.c base/IRuntime.c base/ISelectable.c \
-	base/IService.c base/IStream.c base/IThread.c \
-	device/IAudioFormat.c device/IBeep.c device/ICursor.c \
-	device/IDevice.c device/IDiskManagement.c device/IDmac.c \
-	device/IFatFileSystem.c device/IFileSystem.c \
+	base/ICallback.c base/IFile.c base/IInterface.c \
+	base/IInterfaceStore.c base/IMonitor.c base/IPageable.c \
+	base/IPageSet.c base/IProcess.c base/IRuntime.c \
+	base/ISelectable.c base/IService.c base/IStream.c \
+	base/IThread.c device/IAudioFormat.c device/IBeep.c \
+	device/ICursor.c device/IDevice.c device/IDiskManagement.c \
+	device/IDmac.c device/IFatFileSystem.c device/IFileSystem.c \
 	device/IIso9660FileSystem.c device/INetworkInterface.c \
 	device/IPic.c device/IRemovableMedia.c device/IRtc.c \
 	device/IPartition.c naming/IBinding.c naming/IContext.c \
@@ -137,9 +134,7 @@ am__libesrpc_a_SOURCES_DIST = base/IAlarm.c base/ICache.c \
 	src/rpc.cpp
 am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-ICache.$(OBJEXT) libesrpc_a-ICallback.$(OBJEXT) \
-	libesrpc_a-IClassFactory.$(OBJEXT) \
-	libesrpc_a-IClassStore.$(OBJEXT) libesrpc_a-IFile.$(OBJEXT) \
-	libesrpc_a-IInterface.$(OBJEXT) \
+	libesrpc_a-IFile.$(OBJEXT) libesrpc_a-IInterface.$(OBJEXT) \
 	libesrpc_a-IInterfaceStore.$(OBJEXT) \
 	libesrpc_a-IMonitor.$(OBJEXT) libesrpc_a-IPageable.$(OBJEXT) \
 	libesrpc_a-IPageSet.$(OBJEXT) libesrpc_a-IProcess.$(OBJEXT) \
@@ -175,8 +170,7 @@ am__libessup___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 am_libessup___a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3) $(am__objects_4) $(am__objects_5)
 nodist_libessup___a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
-	ICallback.$(OBJEXT) IClassFactory.$(OBJEXT) \
-	IClassStore.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
+	ICallback.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
 	IInterfaceStore.$(OBJEXT) IMonitor.$(OBJEXT) \
 	IPageable.$(OBJEXT) IPageSet.$(OBJEXT) IProcess.$(OBJEXT) \
 	IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) IService.$(OBJEXT) \
@@ -362,8 +356,6 @@ nodist_libessup___a_SOURCES = \
 	base/IAlarm.c \
 	base/ICache.c \
 	base/ICallback.c \
-	base/IClassFactory.c \
-	base/IClassStore.c \
 	base/IFile.c \
 	base/IInterface.c \
 	base/IInterfaceStore.c \
@@ -501,8 +493,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICallback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICanvasRenderingContext2D.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassFactory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IClassStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDevice.Po@am__quote@
@@ -549,8 +539,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICallback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICanvasRenderingContext2D.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IClassFactory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IClassStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDevice.Po@am__quote@
@@ -751,34 +739,6 @@ ICallback.obj: base/ICallback.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICallback.c' object='ICallback.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ICallback.obj `if test -f 'base/ICallback.c'; then $(CYGPATH_W) 'base/ICallback.c'; else $(CYGPATH_W) '$(srcdir)/base/ICallback.c'; fi`
-
-IClassFactory.o: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassFactory.o -MD -MP -MF $(DEPDIR)/IClassFactory.Tpo -c -o IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassFactory.Tpo $(DEPDIR)/IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='IClassFactory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-
-IClassFactory.obj: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassFactory.obj -MD -MP -MF $(DEPDIR)/IClassFactory.Tpo -c -o IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassFactory.Tpo $(DEPDIR)/IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='IClassFactory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-
-IClassStore.o: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassStore.o -MD -MP -MF $(DEPDIR)/IClassStore.Tpo -c -o IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassStore.Tpo $(DEPDIR)/IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='IClassStore.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-
-IClassStore.obj: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IClassStore.obj -MD -MP -MF $(DEPDIR)/IClassStore.Tpo -c -o IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IClassStore.Tpo $(DEPDIR)/IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='IClassStore.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
 
 IFile.o: base/IFile.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IFile.o -MD -MP -MF $(DEPDIR)/IFile.Tpo -c -o IFile.o `test -f 'base/IFile.c' || echo '$(srcdir)/'`base/IFile.c
@@ -1325,34 +1285,6 @@ libesrpc_a-ICallback.obj: base/ICallback.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/ICallback.c' object='libesrpc_a-ICallback.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-ICallback.obj `if test -f 'base/ICallback.c'; then $(CYGPATH_W) 'base/ICallback.c'; else $(CYGPATH_W) '$(srcdir)/base/ICallback.c'; fi`
-
-libesrpc_a-IClassFactory.o: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassFactory.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassFactory.Tpo -c -o libesrpc_a-IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassFactory.Tpo $(DEPDIR)/libesrpc_a-IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='libesrpc_a-IClassFactory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassFactory.o `test -f 'base/IClassFactory.c' || echo '$(srcdir)/'`base/IClassFactory.c
-
-libesrpc_a-IClassFactory.obj: base/IClassFactory.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassFactory.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassFactory.Tpo -c -o libesrpc_a-IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassFactory.Tpo $(DEPDIR)/libesrpc_a-IClassFactory.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassFactory.c' object='libesrpc_a-IClassFactory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassFactory.obj `if test -f 'base/IClassFactory.c'; then $(CYGPATH_W) 'base/IClassFactory.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassFactory.c'; fi`
-
-libesrpc_a-IClassStore.o: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassStore.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassStore.Tpo -c -o libesrpc_a-IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassStore.Tpo $(DEPDIR)/libesrpc_a-IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='libesrpc_a-IClassStore.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassStore.o `test -f 'base/IClassStore.c' || echo '$(srcdir)/'`base/IClassStore.c
-
-libesrpc_a-IClassStore.obj: base/IClassStore.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IClassStore.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IClassStore.Tpo -c -o libesrpc_a-IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IClassStore.Tpo $(DEPDIR)/libesrpc_a-IClassStore.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='base/IClassStore.c' object='libesrpc_a-IClassStore.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IClassStore.obj `if test -f 'base/IClassStore.c'; then $(CYGPATH_W) 'base/IClassStore.c'; else $(CYGPATH_W) '$(srcdir)/base/IClassStore.c'; fi`
 
 libesrpc_a-IFile.o: base/IFile.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IFile.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IFile.Tpo -c -o libesrpc_a-IFile.o `test -f 'base/IFile.c' || echo '$(srcdir)/'`base/IFile.c
