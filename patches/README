@@ -10,10 +10,10 @@ original software.
     usage: $ tar -jxvf automake-1.10.tar.bz2
            $ patch -p0 -d . < automake-1.10.patch
 
-- GNU Binutils 2.18 (binutils-2.18.patch)
+- GNU Binutils 2.19 (binutils-2.19.patch)
     http://www.gnu.org/software/binutils/
-    usage: $ tar -jxvf binutils-2.18.tar.bz2
-           $ patch -p0 -d . < binutils-2.18.patch
+    usage: $ tar -jxvf binutils-2.19.tar.bz2
+           $ patch -p0 -d . < binutils-2.19.patch
 
 - GCC, the GNU Compiler Collection 4.3.1 (gcc-4.3.1.patch)
     http://gcc.gnu.org/
