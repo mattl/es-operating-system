@@ -3,10 +3,10 @@
 all : pc/init/fat32.img
 
 prerequisites :
-	if grep Ubuntu\ 8.04 /etc/issue; then \
-		echo "Ubuntu 8.04 detected"; \
+	if grep Ubuntu\ 8. /etc/issue; then \
+		echo "Ubuntu 8 detected"; \
 		sudo apt-get -qq update; \
-		sudo apt-get install subversion autoconf automake patch bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev; \
+		sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev; \
 	else \
 	if grep Fedora /etc/issue; then \
 		echo "Fedora detected"; \
@@ -32,7 +32,7 @@ trunk : prerequisites
 	fi;
 
 patches = \
-	trunk/patches/binutils-2.18.patch \
+	trunk/patches/binutils-2.19.patch \
 	trunk/patches/cairo-1.4.10.patch \
 	trunk/patches/expat-2.0.1.patch \
 	trunk/patches/fontconfig-2.4.2.patch \
@@ -43,12 +43,12 @@ patches = \
 
 $(patches) : trunk 
 
-src/binutils-2.18 : trunk/patches/binutils-2.18.patch
-	if [ ! -f src/binutils-2.18.tar.bz2 ]; then \
-		wget -P src ftp://ftp.gnu.org/gnu/binutils/binutils-2.18.tar.bz2; \
+src/binutils-2.19 : trunk/patches/binutils-2.19.patch
+	if [ ! -f src/binutils-2.19.tar.bz2 ]; then \
+		wget -P src ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.tar.bz2; \
 	fi; \
 	rm -rf $@; \
-	tar -C src -jxf src/binutils-2.18.tar.bz2; \
+	tar -C src -jxf src/binutils-2.19.tar.bz2; \
 	patch -p0 -d src < $<; \
 	touch $@
 
@@ -126,13 +126,13 @@ local : trunk
 	make; \
 	sudo make install
 
-opt/binutils : src/binutils-2.18
+opt/binutils : src/binutils-2.19
 	if [ ! -d $@ ]; then \
 		mkdir -p $@; \
 	fi; \
 	cd $@; \
 	rm -rf *; \
-	../../src/binutils-2.18/configure --target=i386-pc-es --prefix=/opt/es ; \
+	../../src/binutils-2.19/configure --target=i386-pc-es --prefix=/opt/es ; \
 	make; \
 	make install; \
 	touch .
