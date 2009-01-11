@@ -35,7 +35,7 @@ elif [ ! -d trunk ];
 then 
 	# Check out the source code from Google Code
 	mkdir trunk
-	if [ -z $$GOOGLE_USERNAME ]; 
+	if [ -z $GOOGLE_USERNAME ]; 
 	then
 		svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk
 	else
