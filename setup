@@ -1,135 +1,269 @@
-#!/bin/bash
+#!/bin/bash -v
 
-# Check out the source code from Google Code
-cd
-mkdir es
-cd es
-mkdir trunk
-svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk
+dist_dir=$(expr substr $0 1 $(expr $(expr length $0) - 5))
+
+# Check prerequisites
+if which yum 
+then
+	sudo yum install subversion autoconf automake patch bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel
+elif which apt-get
+then
+	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev
+else
+	echo 'Your OS is probably not a supported development environment.'
+	exit
+fi
+
+if [ -z "$ES_SDK" ];
+then
+export ES_SDK=`pwd`/sdk
+fi
+
+mkdir -p $ES_SDK
+mkdir -p src
+mkdir -p opt
+export PATH=$ES_SDK/bin:$PATH
+
+if [ -e $dist_dir/configure ];
+then
+	# Setup from the distribution
+	if [ ! -e trunk ];
+	then
+		ln -s $dist_dir trunk
+	fi
+elif [ ! -d trunk ]; 
+then 
+	# Check out the source code from Google Code
+	mkdir trunk
+	if [ -z $$GOOGLE_USERNAME ]; 
+	then
+		svn checkout http://es-operating-system.googlecode.com/svn/trunk/ trunk
+	else
+		svn checkout https://es-operating-system.googlecode.com/svn/trunk/ trunk --username $GOOGLE_USERNAME
+	fi
+	for i in trunk trunk/esidl trunk/tools trunk/os trunk/init trunk/cmd trunk/esjs
+	do 
+		(cd $i; aclocal; autoconf; automake -a --foreign)
+	done
+else
+	cd trunk
+	svn update
+	cd ..
+fi
 
 # Building development tools
-mkdir local
-cd local
-CFLAGS=-g CXXFLAGS=-g ../trunk/configure
+if [ ! -d local ]; 
+then
+	mkdir local
+	cd local
+	CFLAGS=-g CXXFLAGS=-g ../trunk/configure --prefix=$ES_SDK --libdir=$ES_SDK/lib.local
+else
+	cd local
+fi
 make
-sudo make install
+make install-exec
+cd ..
 
 # Binutils
-cd ..
-mkdir src
 cd src
-wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.18.tar.bz2
-tar -jxvf binutils-2.18.tar.bz2
-patch -p0 -d . < ../trunk/patches/binutils-2.18.patch
-cd ..
-mkdir opt
-cd opt
-mkdir binutils
+if [ ! -f binutils-2.19.tar.bz2 ];
+then
+	wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.tar.bz2
+fi
+if [ ! -d binutils-2.19 ] || [ ! -f ../opt/binutils/Makefile ] || [ -n "`find ../trunk/patches/binutils-2.19.patch -newer ../opt/binutils/Makefile -print`" ];
+then
+	rm -rf binutils-2.19
+	tar -jxf binutils-2.19.tar.bz2
+	patch -p0 -d . < ../trunk/patches/binutils-2.19.patch
+fi
+cd ../opt
+mkdir -p binutils
 cd binutils
-../../src/binutils-2.18/configure --target=i386-pc-es --prefix=/opt/es
-make
-make install
-export PATH=/opt/es/bin:$PATH
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/binutils-2.19.patch -newer Makefile -print`" ];
+then
+	../../src/binutils-2.19/configure --target=i386-pc-es --prefix=$ES_SDK
+	make
+	make install
+fi
+cd ../..
 
 # GCC and Newlib
-cd ../../src/
-wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
-tar -jxvf gcc-4.3.1.tar.bz2
-patch -p0 -d . < ../trunk/patches/gcc-4.3.1.patch
-wget ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
-tar -zxvf newlib-1.16.0.tar.gz
-patch -p0 -d . < ../trunk/patches/newlib-1.16.0.patch
+cd src
+if [ ! -f gcc-4.3.1.tar.bz2 ]; 
+then
+	wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
+fi
+if [ ! -d gcc-4.3.1 ] || [ ! -f ../opt/gcc/Makefile ] || [ -n "`find ../trunk/patches/gcc-4.3.1.patch -newer ../opt/gcc/Makefile -print`" ];
+then
+	rm -rf gcc-4.3.1
+	tar -jxf gcc-4.3.1.tar.bz2
+	patch -p0 -d . < ../trunk/patches/gcc-4.3.1.patch
+fi
+if [ ! -f newlib-1.16.0.tar.gz ]; 
+then
+	wget ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
+fi
+if [ ! -d newlib-1.16.0 ] || [ ! -f ../opt/gcc/Makefile ] || [ -n "`find ../trunk/patches/newlib-1.16.0.patch -newer ../opt/gcc/Makefile -print`" ];
+then
+	rm -rf newlib-1.16.0
+	tar -zxf newlib-1.16.0.tar.gz
+	patch -p0 -d . < ../trunk/patches/newlib-1.16.0.patch
+fi
 cd gcc-4.3.1
-ln -s ../newlib-1.16.0/newlib .
-ln -s ../newlib-1.16.0/libgloss .
+ln -fs ../newlib-1.16.0/newlib .
+ln -fs ../newlib-1.16.0/libgloss .
 cd ../../opt
-mkdir gcc
+mkdir -p gcc
 cd gcc
-../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=/opt/es
-make
-make install
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/gcc-4.3.1.patch -newer Makefile -print`" ] || [ -n "`find ../../trunk/patches/newlib-1.16.0.patch -newer Makefile -print`" ];
+then
+	../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=$ES_SDK
+	make
+	make install
+fi
+cd ../..
 
 # PCRE
-cd ../../src/
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2
-tar -jxvf pcre-7.8.tar.bz2
+cd src
+if [ ! -f pcre-7.8.tar.bz2 ]; 
+then
+	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2
+fi
+rm -rf pcre-7.8
+tar -jxf pcre-7.8.tar.bz2
 patch -p0 -d . < ../trunk/patches/pcre-7.8.patch
 cd ../opt
-mkdir pcre
+mkdir -p pcre
 cd pcre
-../../src/pcre-7.8/configure --prefix=/opt/es --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es
-make
-make install
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-7.8.patch -newer Makefile -print`" ];
+then
+	../../src/pcre-7.8/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es
+	make
+	make install
+fi
+cd ../..
 
 # FreeType 2
-cd ../../src/
-wget http://superb-east.dl.sourceforge.net/sourceforge/freetype/freetype-2.3.5.tar.bz2
-tar -jxvf freetype-2.3.5.tar.bz2
+cd src
+if [ ! -f freetype-2.3.5.tar.bz2 ]; 
+then
+	wget http://superb-east.dl.sourceforge.net/sourceforge/freetype/freetype-2.3.5.tar.bz2
+fi
+rm -rf freetype-2.3.5
+tar -jxf freetype-2.3.5.tar.bz2
 patch -p0 -d . < ../trunk/patches/freetype-2.3.5.patch
 cd ../opt
-mkdir freetype
+mkdir -p freetype
 cd freetype
-../../src/freetype-2.3.5/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es
-make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
-make install
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/freetype-2.3.5.patch -newer Makefile -print`" ];
+then
+	../../src/freetype-2.3.5/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
+	make install
+fi
+cd ../..
 
 # Expat
-cd ../../src/
-wget http://superb-west.dl.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz
-tar -zxvf expat-2.0.1.tar.gz
+cd src
+if [ ! -f expat-2.0.1.tar.gz ]; 
+then
+	wget http://superb-west.dl.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz
+fi
+rm -rf expat-2.0.1
+tar -zxf expat-2.0.1.tar.gz
 patch -p0 -d . < ../trunk/patches/expat-2.0.1.patch
 cd ../opt
-mkdir expat
+mkdir -p expat
 cd expat
-../../src/expat-2.0.1/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es
-make
-make installlib
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/expat-2.0.1.patch -newer Makefile -print`" ];
+then
+	../../src/expat-2.0.1/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	make
+	make installlib
+fi
+cd ../..
 
 # Fontconfig
-cd ../../src/
-wget http://fontconfig.org/release/fontconfig-2.4.2.tar.gz
-tar -zxvf fontconfig-2.4.2.tar.gz
+cd src
+if [ ! -f fontconfig-2.4.2.tar.gz ]; 
+then
+	wget http://fontconfig.org/release/fontconfig-2.4.2.tar.gz
+fi
+rm -rf fontconfig-2.4.2
+tar -zxf fontconfig-2.4.2.tar.gz
 patch -p0 -d . < ../trunk/patches/fontconfig-2.4.2.patch
 cd ../opt
-mkdir fontconfig
+mkdir -p fontconfig
 cd fontconfig
-../../src/fontconfig-2.4.2/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=/opt/es/include --with-expat-lib=/opt/es/lib --with-freetype-config=/opt/es/bin/freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file
-make
-make install
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/fontconfig-2.4.2.patch -newer Makefile -print`" ];
+then
+	../../src/fontconfig-2.4.2/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=$ES_SDK/include --with-expat-lib=$ES_SDK/lib --with-freetype-config=$ES_SDK/bin/freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file
+	make
+	make install
+fi
+cd ../..
 
 # Cairo
-cd ../../src/
-wget http://cairographics.org/releases/cairo-1.4.10.tar.gz
-tar -zxvf cairo-1.4.10.tar.gz
+cd src
+if [ ! -f cairo-1.4.10.tar.gz ]; 
+then
+	wget http://cairographics.org/releases/cairo-1.4.10.tar.gz
+fi
+rm -rf cairo-1.4.10
+tar -zxf cairo-1.4.10.tar.gz
 patch -p0 -d . < ../trunk/patches/cairo-1.4.10.patch
 cd ../opt
-mkdir cairo
+mkdir -p cairo
 cd cairo
-../../src/cairo-1.4.10/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg FREETYPE_CFLAGS='-I/opt/es/include/freetype2 -I/opt/es/include' FREETYPE_LIBS='-L/opt/es/lib -lfreetype' FONTCONFIG_CFLAGS=-I/opt/es/include FONTCONFIG_LIBS='-L/opt/es/lib -lfontconfig'
-make
-make install
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.4.10.patch -newer Makefile -print`" ];
+then
+	../../src/cairo-1.4.10/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig"
+	make
+	make install
+fi
+cd ../..
 
 # ES operating system for PC
-cd ../..
-mkdir pc
-cd pc
-CFLAGS=-g CXXFLAGS=-g ../trunk/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es
+if [ ! -d pc ]; 
+then
+	mkdir pc
+	cd pc
+	CFLAGS=-g CXXFLAGS=-g ../trunk/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+else
+	cd pc
+fi
 make
 make install
+cd ..
 
 # Squeak port for ES
-cd cmd
-mkdir squeak-3.7.1
-cd squeak-3.7.1
-CFLAGS=-g CXXFLAGS=-g ../../../trunk/cmd/squeak-3.7.1/configure --prefix=/opt/es --host=i386-pc-es --target=i386-pc-es
-make
-cd ../../../trunk/cmd/squeak-3.7.1/
-wget http://ftp.squeak.org/3.7/Squeak3.7-5989-full.zip
-unzip Squeak3.7-5989-full.zip
-wget http://ftp.squeak.org/3.7/SqueakV3.sources.gz
-gunzip SqueakV3.sources.gz
+if [ -e trunk/cmd/squeak-3.7.1/configure ];
+then
+	cd pc/cmd
+	if [ ! -d squeak-3.7.1 ]; 
+	then
+		mkdir squeak-3.7.1
+		cd squeak-3.7.1
+		CFLAGS=-g CXXFLAGS=-g ../../../trunk/cmd/squeak-3.7.1/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	else
+		cd squeak-3.7.1
+	fi
+	make
+	cd ../../../trunk/cmd/squeak-3.7.1/
+	if [ ! -f Squeak3.7-5989-full.image ]; 
+	then 
+		wget http://ftp.squeak.org/3.7/Squeak3.7-5989-full.zip
+		unzip Squeak3.7-5989-full.zip
+	fi
+	if [ ! -f SqueakV3.sources ]; 
+	then
+		wget http://ftp.squeak.org/3.7/SqueakV3.sources.gz
+		gunzip SqueakV3.sources.gz
+	fi
+	cd ../../../
+fi
 
-# Run ES on QEMU
-cd ../../../pc/init/
+# Generate ES boot disk image
+cd pc/init/
 ./es
-qemu -hda fat32.img -serial stdio -soundhw sb16 -cdrom ../os/kernel/testsuite/isotest.iso
+
