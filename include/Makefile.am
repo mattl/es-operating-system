@@ -21,6 +21,7 @@ endif !ES
 nobase_include_HEADERS = \
 	es.h \
 	es/broker.h \
+	es/capability.h \
 	es/color.h \
 	es/collection.h \
 	es/context.h \
