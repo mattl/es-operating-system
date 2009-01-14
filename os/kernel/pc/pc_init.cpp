@@ -338,13 +338,16 @@ int esInit(IInterface** nameSpace)
     {
         // Check Architectural Performance Monitoring leaf.
         int eax, ebx, ecx, edx;
-        Core::cpuid(0x0a, &eax, &ebx, &ecx, &edx);
-        if (0 < (eax & 0x0f) && // Check the version identifier
-            !(ebx & 0x04))      // Check the availability of UnHalted Reference Cycles event
-        {
-            esReport("Enabled NMI kernel watchdog.\n");
+        Core::cpuid(0x00, &eax, &ebx, &ecx, &edx);
+        if (0x0a <= eax) {
+            Core::cpuid(0x0a, &eax, &ebx, &ecx, &edx);
+            if (0 < (eax & 0x0f) && // Check the version identifier
+                !(ebx & 0x04))      // Check the availability of UnHalted Reference Cycles event
+            {
+                esReport("Enabled NMI kernel watchdog.\n");
 
-            apic->enableWatchdog();
+                apic->enableWatchdog();
+            }
         }
     }
 
