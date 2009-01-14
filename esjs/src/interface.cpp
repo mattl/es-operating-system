@@ -16,13 +16,13 @@
  */
 
 #include <string.h>
+#include <es/any.h>
 #include <es/endian.h>
 #include <es/formatter.h>
 #include <es/base/IInterface.h>
 #include <es/base/IProcess.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
-#include <es/variant.h>
 
 // TODO use proper name prefix or namespace
 namespace es
@@ -137,15 +137,15 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
 
     // Set up parameters
-    Variant argv[9];
-    Variant* argp = argv;
+    Any argv[9];
+    Any* argp = argv;
     Guid iidv[9];
     Guid* iidp = iidv;
     int ext = 0;    // extra parameter count
     const char* riid = IInterface::iid();
 
     // Set this
-    *argp++ = Variant(reinterpret_cast<intptr_t>(self));
+    *argp++ = Any(reinterpret_cast<intptr_t>(self));
 
     // In the following implementation, we assume no out nor inout attribute is
     // used for parameters.
@@ -154,27 +154,27 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        // Variant op(void* buf, int len, ...);
+        // Any op(void* buf, int len, ...);
         // FALL THROUGH
     case Ent::SpecString:
         // int op(xxx* buf, int len, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
-        *argp++ = Variant(sizeof(heap));
+        *argp++ = Any(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Any(sizeof(heap));
         break;
     case Ent::TypeSequence:
         // int op(xxx* buf, int len, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         ++ext;
-        *argp++ = Variant(static_cast<int32_t>(((*list)[0])->toNumber()));
+        *argp++ = Any(static_cast<int32_t>(((*list)[0])->toNumber()));
         break;
     case Ent::SpecUuid:
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         break;
     case Ent::TypeArray:
         // void op(xxx[x] buf, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(heap));
+        *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         break;
     }
 
@@ -189,30 +189,30 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         switch (type.getType())
         {
         case Ent::SpecVariant:
-            // Variant variant, ...
+            // Any variant, ...
             switch (value->getType()) {
             case Value::BoolType:
-                *argp = Variant(static_cast<bool>(value->toBoolean()));
+                *argp = Any(static_cast<bool>(value->toBoolean()));
                 break;
             case Value::StringType:
-                *argp = Variant(value->toString().c_str());
+                *argp = Any(value->toString().c_str());
                 break;
             case Value::NumberType:
-                *argp = Variant(static_cast<double>(value->toNumber()));
+                *argp = Any(static_cast<double>(value->toNumber()));
                 break;
             case Value::ObjectType:
                 if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
                 {
-                    *argp = Variant(unknown->getObject());
+                    *argp = Any(unknown->getObject());
                 }
                 else
                 {
                     // XXX expose ECMAScript object
-                    *argp = Variant(static_cast<IInterface*>(0));
+                    *argp = Any(static_cast<IInterface*>(0));
                 }
                 break;
             default:
-                *argp = Variant();
+                *argp = Any();
                 break;
             }
             argp->makeVariant();
@@ -220,19 +220,19 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             // XXX Assume sequence<octet> now...
-            *argp++ = Variant(reinterpret_cast<intptr_t>(value->toString().c_str()));
+            *argp++ = Any(reinterpret_cast<intptr_t>(value->toString().c_str()));
             value = (*list)[++i];
-            *argp = Variant(static_cast<int32_t>(value->toNumber()));
+            *argp = Any(static_cast<int32_t>(value->toNumber()));
             break;
         case Ent::SpecString:
-            *argp = Variant(value->toString().c_str());
+            *argp = Any(value->toString().c_str());
             break;
         case Ent::SpecUuid:
             if (!parseGuid(value->toString().c_str(), iidp))
             {
                 throw getErrorInstance("TypeError");
             }
-            *argp = Variant(iidp);
+            *argp = Any(iidp);
             // riid = *iidp; TODO: Fix this line later
             ++iidp;
             break;
@@ -248,46 +248,46 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         case Ent::TypeInterface:
             if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
             {
-                *argp = Variant(unknown->getObject());
+                *argp = Any(unknown->getObject());
             }
             else
             {
-                *argp = Variant(static_cast<IInterface*>(0));
+                *argp = Any(static_cast<IInterface*>(0));
             }
             break;
         case Ent::SpecBool:
-            *argp = Variant(static_cast<bool>(value->toBoolean()));
+            *argp = Any(static_cast<bool>(value->toBoolean()));
             break;
         case Ent::SpecAny:
-            *argp = Variant(static_cast<intptr_t>(value->toNumber()));
+            *argp = Any(static_cast<intptr_t>(value->toNumber()));
             break;
         case Ent::SpecS16:
-            *argp = Variant(static_cast<int16_t>(value->toNumber()));
+            *argp = Any(static_cast<int16_t>(value->toNumber()));
             break;
         case Ent::SpecS32:
-            *argp = Variant(static_cast<int32_t>(value->toNumber()));
+            *argp = Any(static_cast<int32_t>(value->toNumber()));
             break;
         case Ent::SpecS8:
         case Ent::SpecU8:
-            *argp = Variant(static_cast<uint8_t>(value->toNumber()));
+            *argp = Any(static_cast<uint8_t>(value->toNumber()));
             break;
         case Ent::SpecU16:
-            *argp = Variant(static_cast<uint16_t>(value->toNumber()));
+            *argp = Any(static_cast<uint16_t>(value->toNumber()));
             break;
         case Ent::SpecU32:
-            *argp = Variant(static_cast<uint32_t>(value->toNumber()));
+            *argp = Any(static_cast<uint32_t>(value->toNumber()));
             break;
         case Ent::SpecS64:
-            *argp = Variant(static_cast<int64_t>(value->toNumber()));
+            *argp = Any(static_cast<int64_t>(value->toNumber()));
             break;
         case Ent::SpecU64:
-            *argp = Variant(static_cast<uint64_t>(value->toNumber()));
+            *argp = Any(static_cast<uint64_t>(value->toNumber()));
             break;
         case Ent::SpecF32:
-            *argp = Variant(static_cast<float>(value->toNumber()));
+            *argp = Any(static_cast<float>(value->toNumber()));
             break;
         case Ent::SpecF64:
-            *argp = Variant(static_cast<double>(value->toNumber()));
+            *argp = Any(static_cast<double>(value->toNumber()));
             break;
         default:
             break;
@@ -302,46 +302,46 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     {
     case Ent::SpecVariant:
         {
-            Variant result = apply(argc, argv, (Variant (*)()) ((*self)[methodNumber]));
+            Any result = apply(argc, argv, (Any (*)()) ((*self)[methodNumber]));
             switch (result.getType())
             {
-            case Variant::TypeVoid:
+            case Any::TypeVoid:
                 value = NullValue::getInstance();
                 break;
-            case Variant::TypeBool:
+            case Any::TypeBool:
                 value = BoolValue::getInstance(static_cast<bool>(result));
                 break;
-            case Variant::TypeOctet:
+            case Any::TypeOctet:
                 value = new NumberValue(static_cast<uint8_t>(result));
                 break;
-            case Variant::TypeShort:
+            case Any::TypeShort:
                 value = new NumberValue(static_cast<int16_t>(result));
                 break;
-            case Variant::TypeUnsignedShort:
+            case Any::TypeUnsignedShort:
                 value = new NumberValue(static_cast<uint16_t>(result));
                 break;
-            case Variant::TypeLong:
+            case Any::TypeLong:
                 value = new NumberValue(static_cast<int32_t>(result));
                 break;
-            case Variant::TypeUnsignedLong:
+            case Any::TypeUnsignedLong:
                 value = new NumberValue(static_cast<uint32_t>(result));
                 break;
-            case Variant::TypeLongLong:
+            case Any::TypeLongLong:
                 value = new NumberValue(static_cast<int64_t>(result));
                 break;
-            case Variant::TypeUnsignedLongLong:
+            case Any::TypeUnsignedLongLong:
                 value = new NumberValue(static_cast<uint64_t>(result));
                 break;
-            case Variant::TypeFloat:
+            case Any::TypeFloat:
                 value = new NumberValue(static_cast<float>(result));
                 break;
-            case Variant::TypeDouble:
+            case Any::TypeDouble:
                 value = new NumberValue(static_cast<double>(result));
                 break;
-            case Variant::TypeString:
+            case Any::TypeString:
                 value = new StringValue(heap);
                 break;
-            case Variant::TypeObject:
+            case Any::TypeObject:
                 if (IInterface* unknown = static_cast<IInterface*>(result))
                 {
                     ObjectValue* instance = new InterfacePointerValue(unknown);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 
 #ifdef __x86_64__
 
-#define VSIZE   $16     // sizeof(Variant)
-#define VTYPE   8       // offsetof(Variant, type)
+#define VSIZE   $16     // sizeof(Any)
+#define VTYPE   8       // offsetof(Any, type)
 
 #define VBOOL   $1
 #define VU8     $2
@@ -39,10 +39,10 @@
 
         .text
 
-// Variant apply(argc: rdi, argv: rsi, function: rdx);
+// Any apply(argc: rdi, argv: rsi, function: rdx);
 // INTEGER: %edi, %rsi, %rdx, %rcx, %r8, %r9
 // SSE: %xmm0 to %xmm7
-// Return value (Variant): %rax, %rdx
+// Return value (Any): %rax, %rdx
 // temporary registers: %rax, %r10, %r11, %xmm8-%xmm15
 // callee-saved registers: %rbx, %rbp, %r12-%r15
 // %r10: gpr count
@@ -50,9 +50,9 @@
 // %r12: argc
 // %r13: type
 
-// Variant apply(int argc, Variant* argv, Variant (*function)());
-        .globl  _Z5applyiP7VariantPFS_vE
-_Z5applyiP7VariantPFS_vE:
+// Any apply(int argc, Any* argv, Any (*function)());
+        .globl  _Z5applyiP3AnyPFS_vE
+_Z5applyiP3AnyPFS_vE:
 
 apply:
         pushq   %r12
@@ -275,9 +275,9 @@ invoke:
         ret
         // End of apply
 
-// Variant apply(int argc, Variant* argv, bool (*function)());
-        .globl _Z5applyiP7VariantPFbvE
-_Z5applyiP7VariantPFbvE:
+// Any apply(int argc, Any* argv, bool (*function)());
+        .globl _Z5applyiP3AnyPFbvE
+_Z5applyiP3AnyPFbvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -285,9 +285,9 @@ _Z5applyiP7VariantPFbvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, uint8_t (*function)());
-        .globl _Z5applyiP7VariantPFhvE
-_Z5applyiP7VariantPFhvE:
+// Any apply(int argc, Any* argv, uint8_t (*function)());
+        .globl _Z5applyiP3AnyPFhvE
+_Z5applyiP3AnyPFhvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -295,9 +295,9 @@ _Z5applyiP7VariantPFhvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, int16_t (*function)());
-        .globl _Z5applyiP7VariantPFsvE
-_Z5applyiP7VariantPFsvE:
+// Any apply(int argc, Any* argv, int16_t (*function)());
+        .globl _Z5applyiP3AnyPFsvE
+_Z5applyiP3AnyPFsvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -305,9 +305,9 @@ _Z5applyiP7VariantPFsvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, uint16_t (*function)());
-        .globl _Z5applyiP7VariantPFtvE
-_Z5applyiP7VariantPFtvE:
+// Any apply(int argc, Any* argv, uint16_t (*function)());
+        .globl _Z5applyiP3AnyPFtvE
+_Z5applyiP3AnyPFtvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -315,9 +315,9 @@ _Z5applyiP7VariantPFtvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, int32_t (*function)());
-        .globl _Z5applyiP7VariantPFivE
-_Z5applyiP7VariantPFivE:
+// Any apply(int argc, Any* argv, int32_t (*function)());
+        .globl _Z5applyiP3AnyPFivE
+_Z5applyiP3AnyPFivE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -325,9 +325,9 @@ _Z5applyiP7VariantPFivE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, uint32_t (*function)());
-        .globl _Z5applyiP7VariantPFjvE
-_Z5applyiP7VariantPFjvE:
+// Any apply(int argc, Any* argv, uint32_t (*function)());
+        .globl _Z5applyiP3AnyPFjvE
+_Z5applyiP3AnyPFjvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -335,11 +335,11 @@ _Z5applyiP7VariantPFjvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, int64_t (*function)());
-        .globl _Z5applyiP7VariantPFxvE
-_Z5applyiP7VariantPFxvE:
-        .globl _Z5applyiP7VariantPFlvE
-_Z5applyiP7VariantPFlvE:
+// Any apply(int argc, Any* argv, int64_t (*function)());
+        .globl _Z5applyiP3AnyPFxvE
+_Z5applyiP3AnyPFxvE:
+        .globl _Z5applyiP3AnyPFlvE
+_Z5applyiP3AnyPFlvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -347,11 +347,11 @@ _Z5applyiP7VariantPFlvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, uint64_t (*function)());
-        .globl _Z5applyiP7VariantPFyvE
-_Z5applyiP7VariantPFyvE:
-        .globl _Z5applyiP7VariantPFmvE
-_Z5applyiP7VariantPFmvE:
+// Any apply(int argc, Any* argv, uint64_t (*function)());
+        .globl _Z5applyiP3AnyPFyvE
+_Z5applyiP3AnyPFyvE:
+        .globl _Z5applyiP3AnyPFmvE
+_Z5applyiP3AnyPFmvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -359,9 +359,9 @@ _Z5applyiP7VariantPFmvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, float (*function)());
-        .globl _Z5applyiP7VariantPFfvE
-_Z5applyiP7VariantPFfvE:
+// Any apply(int argc, Any* argv, float (*function)());
+        .globl _Z5applyiP3AnyPFfvE
+_Z5applyiP3AnyPFfvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -371,9 +371,9 @@ _Z5applyiP7VariantPFfvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, double (*function)());
-        .globl _Z5applyiP7VariantPFdvE
-_Z5applyiP7VariantPFdvE:
+// Any apply(int argc, Any* argv, double (*function)());
+        .globl _Z5applyiP3AnyPFdvE
+_Z5applyiP3AnyPFdvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -383,9 +383,9 @@ _Z5applyiP7VariantPFdvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, const char* (*function)());
-        .globl _Z5applyiP7VariantPFPKcvE
-_Z5applyiP7VariantPFPKcvE:
+// Any apply(int argc, Any* argv, const char* (*function)());
+        .globl _Z5applyiP3AnyPFPKcvE
+_Z5applyiP3AnyPFPKcvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -393,9 +393,9 @@ _Z5applyiP7VariantPFPKcvE:
         leave
         ret
 
-// Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
-        .globl _Z5applyiP7VariantPFPN2es10IInterfaceEvE
-_Z5applyiP7VariantPFPN2es10IInterfaceEvE:
+// Any apply(int argc, Any* argv, es::IInterface* (*function)());
+        .globl _Z5applyiP3AnyPFPN2es10IInterfaceEvE
+_Z5applyiP3AnyPFPN2es10IInterfaceEvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply
@@ -403,9 +403,9 @@ _Z5applyiP7VariantPFPN2es10IInterfaceEvE:
         leave
         ret
 
-// long long evaluate(const Variant& variant);
-_Z8evaluateRK7Variant:
-        .globl _Z8evaluateRK7Variant
+// long long evaluate(const Any& variant);
+_Z8evaluateRK3Any:
+        .globl _Z8evaluateRK3Any
         pushq   %rbp
         movq    %rsp, %rbp
         movl    VTYPE(%rdi), %eax

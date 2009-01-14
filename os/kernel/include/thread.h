@@ -23,11 +23,11 @@
 #include <stdarg.h>
 #include <stddef.h> // size_t
 #include <es.h>
+#include <es/any.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
 #include <es/reflect.h>
-#include <es/variant.h>
 #include <es/base/IMonitor.h>
 #include <es/base/IProcess.h>
 #include <es/base/IRuntime.h>
@@ -91,7 +91,7 @@ class UpcallRecord
     UpcallProxy*        proxy;
     int                 methodNumber;
     va_list             param;
-    Variant*            variant;
+    Any*                variant;
     Reflect::Method     method;
 
     friend class Core;

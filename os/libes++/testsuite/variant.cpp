@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2008 Kenichi Ishibashi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,13 @@
 #include <stdio.h>
 #include <wchar.h>
 #include <algorithm>
-#include <es/variant.h>
+#include <es/any.h>
 
 class VariantHolder
 {
     static const int STRING_CHAR_MAX = 128;
 
-    Variant var;
+    Any var;
     char* string;
     int length;
 
@@ -39,16 +39,16 @@ public:
 
     ~VariantHolder()
     {
-        if (var.getType() == Variant::TypeString && string)
+        if (var.getType() == Any::TypeString && string)
         {
             delete string;
         }
     }
 
-    Variant getVar(void* value, int valueLength)
+    Any getVar(void* value, int valueLength)
     {
         int type = var.getType();
-        if (type == Variant::TypeString)
+        if (type == Any::TypeString)
         {
             strncpy(static_cast<char*>(value), string, valueLength);
             return static_cast<const char*>(value);
@@ -56,10 +56,10 @@ public:
         return var;
     }
 
-    int setVar(Variant value)
+    int setVar(Any value)
     {
         int type = value.getType();
-        if (type == Variant::TypeString)
+        if (type == Any::TypeString)
         {
             const char* ptr = static_cast<const char*>(value);
             length = std::min(static_cast<int>(strlen(ptr)) + 1, STRING_CHAR_MAX);
@@ -78,12 +78,12 @@ public:
 
 const int VariantHolder::STRING_CHAR_MAX;
 
-Variant returnVariant(int x, int y)
+Any returnVariant(int x, int y)
 {
-    return Variant(x * y);
+    return Any(x * y);
 }
 
-uint8_t returnOctet(int n1, int n2, int n3, int n4, int n5, Variant v)
+uint8_t returnOctet(int n1, int n2, int n3, int n4, int n5, Any v)
 {
     printf("v: type = %d (%d)\n", v.getType(), static_cast<int32_t>(v));
     return 'c';
@@ -108,78 +108,78 @@ int main()
 {
     VariantHolder vh;
     char buf[128];
-    Variant param[19];
-    Variant value;
+    Any param[19];
+    Any value;
 
-    printf("sizeof(Variant) = %u, offsetof(VariantBase, type) = %u\n", sizeof(Variant), offsetof(VariantBase, type));
+    printf("sizeof(Any) = %u, offsetof(AnyBase, type) = %u\n", sizeof(Any), offsetof(AnyBase, type));
 
     value = returnVariant(2, 3);
-    assert(value.getType() == Variant::TypeLong);
+    assert(value.getType() == Any::TypeLong);
     assert(static_cast<int32_t>(value) == 6);
     printf("%d\n", evaluate(value));
 
     returnLongLong(1, 0.0, 2, 3, 4, 5, 6, 7, 8, 9,
                    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10);
 
-    param[0] = Variant(12);
-    param[1] = Variant(2);
-    value = apply(2, param, reinterpret_cast<Variant (*)()>(returnVariant));
-    assert(value.getType() == Variant::TypeLong);
+    param[0] = Any(12);
+    param[1] = Any(2);
+    value = apply(2, param, reinterpret_cast<Any (*)()>(returnVariant));
+    assert(value.getType() == Any::TypeLong);
     assert(static_cast<int32_t>(value) == 24);
     printf("int32 value: %d\n", static_cast<int32_t>(value));
 
-    param[0] = Variant(1);
-    param[1] = Variant(0.0);
-    param[2] = Variant(2);
-    param[3] = Variant(3);
-    param[4] = Variant(4);
-    param[5] = Variant(5);
-    param[6] = Variant(6);
-    param[7] = Variant(7);
-    param[8] = Variant(8);
-    param[9] = Variant(9);
-    param[10] = Variant(1.0);
-    param[11] = Variant(2.0);
-    param[12] = Variant(3.0);
-    param[13] = Variant(4.0);
-    param[14] = Variant(5.0);
-    param[15] = Variant(6.0);
-    param[16] = Variant(7.0);
-    param[17] = Variant(8.0);
-    param[18] = Variant(10);
+    param[0] = Any(1);
+    param[1] = Any(0.0);
+    param[2] = Any(2);
+    param[3] = Any(3);
+    param[4] = Any(4);
+    param[5] = Any(5);
+    param[6] = Any(6);
+    param[7] = Any(7);
+    param[8] = Any(8);
+    param[9] = Any(9);
+    param[10] = Any(1.0);
+    param[11] = Any(2.0);
+    param[12] = Any(3.0);
+    param[13] = Any(4.0);
+    param[14] = Any(5.0);
+    param[15] = Any(6.0);
+    param[16] = Any(7.0);
+    param[17] = Any(8.0);
+    param[18] = Any(10);
     value = apply(19, param, reinterpret_cast<int64_t (*)()>(returnLongLong));
-    assert(value.getType() == Variant::TypeLongLong);
+    assert(value.getType() == Any::TypeLongLong);
     printf("int64 value: %lld\n", static_cast<int64_t>(value));
 
     param[0] = false;
     value = apply(1, param, reinterpret_cast<float (*)()>(returnFloat));
-    assert(value.getType() == Variant::TypeFloat);
+    assert(value.getType() == Any::TypeFloat);
     printf("float value: %g\n", static_cast<float>(value));
 
-    param[0] = Variant(1);
-    param[1] = Variant(2);
-    param[2] = Variant(3);
-    param[3] = Variant(4);
-    param[4] = Variant(5);
-    param[5] = Variant(37);
+    param[0] = Any(1);
+    param[1] = Any(2);
+    param[2] = Any(3);
+    param[3] = Any(4);
+    param[4] = Any(5);
+    param[5] = Any(37);
     param[5].makeVariant();
     value = apply(6, param, reinterpret_cast<uint8_t (*)()>(returnOctet));
-    assert(value.getType() == Variant::TypeOctet);
+    assert(value.getType() == Any::TypeOctet);
     printf("octet value: %c\n", static_cast<uint8_t>(value));
 
     vh.setVar(200LL);
     value = vh.getVar(buf, sizeof buf);
-    assert(value.getType() == Variant::TypeLongLong);
+    assert(value.getType() == Any::TypeLongLong);
     printf("int64 value: %lld\n", static_cast<int64_t>(value));
 
     vh.setVar(100);
     value = vh.getVar(buf, sizeof buf);
-    assert(value.getType() == Variant::TypeLong);
+    assert(value.getType() == Any::TypeLong);
     printf("int32 value: %d\n", static_cast<int32_t>(value));
 
     vh.setVar("rgb(255,255,255)");
     value = vh.getVar(buf, sizeof buf);
-    assert(value.getType() == Variant::TypeString);
+    assert(value.getType() == Any::TypeString);
     printf("string value: %s\n", static_cast<const char*>(value));
 
     printf("done.\n");

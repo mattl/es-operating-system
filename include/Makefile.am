@@ -20,6 +20,7 @@ endif !ES
 
 nobase_include_HEADERS = \
 	es.h \
+	es/any.h \
 	es/broker.h \
 	es/capability.h \
 	es/color.h \
@@ -59,7 +60,6 @@ nobase_include_HEADERS = \
 	es/net/inet6.h \
 	es/net/tcp.h \
 	es/net/udp.h \
-	es/variant.h \
 	es/orderedMap.h
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.

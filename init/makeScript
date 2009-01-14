@@ -54,5 +54,5 @@ echo 'vcopy '$DIR'/fat32.img `find /usr/share/fonts -name LiberationSerif-Regula
 echo 'vcopy '$DIR'/fat32.img '$SRC'/1b68cf4fced22970e89022fed6868d03-x86.cache-2 > /dev/null' >> $SCRIPT
 
 echo '' >> $SCRIPT
-echo 'echo usage: qemu -hda '$DIR'/fat32.img -serial stdio -soundhw sb16 -net nic,vlan=0 -net tap,vlan=0,ifname=tap0,script=/etc/qemu-ifup' >> $SCRIPT
+echo 'echo usage: qemu -hda '$DIR'/fat32.img -serial stdio -soundhw sb16' >> $SCRIPT
 chmod u+x $SCRIPT

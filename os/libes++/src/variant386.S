@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 
 #ifdef __i386__
 
-#define VSIZE   $12     // sizeof(Variant)
-#define VTYPE   8       // offsetof(Variant, type)
+#define VSIZE   $12     // sizeof(Any)
+#define VTYPE   8       // offsetof(Any, type)
 
 #define VBOOL   $1
 #define VU8     $2
@@ -39,121 +39,121 @@
 
         .text
 
-// Variant apply(int argc, Variant* argv, Variant (*function)());
-        .globl  _Z5applyiP7VariantPFS_vE
-_Z5applyiP7VariantPFS_vE:
+// Any apply(int argc, Any* argv, Any (*function)());
+        .globl  _Z5applyiP3AnyPFS_vE
+_Z5applyiP3AnyPFS_vE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VVARIANT, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, bool (*function)());
-        .globl _Z5applyiP7VariantPFbvE
-_Z5applyiP7VariantPFbvE:
+// Any apply(int argc, Any* argv, bool (*function)());
+        .globl _Z5applyiP3AnyPFbvE
+_Z5applyiP3AnyPFbvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VBOOL, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, uint8_t (*function)());
-        .globl _Z5applyiP7VariantPFhvE
-_Z5applyiP7VariantPFhvE:
+// Any apply(int argc, Any* argv, uint8_t (*function)());
+        .globl _Z5applyiP3AnyPFhvE
+_Z5applyiP3AnyPFhvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VU8, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, int16_t (*function)());
-        .globl _Z5applyiP7VariantPFsvE
-_Z5applyiP7VariantPFsvE:
+// Any apply(int argc, Any* argv, int16_t (*function)());
+        .globl _Z5applyiP3AnyPFsvE
+_Z5applyiP3AnyPFsvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VS16, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, uint16_t (*function)());
-        .globl _Z5applyiP7VariantPFtvE
-_Z5applyiP7VariantPFtvE:
+// Any apply(int argc, Any* argv, uint16_t (*function)());
+        .globl _Z5applyiP3AnyPFtvE
+_Z5applyiP3AnyPFtvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VU16, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, int32_t (*function)());
-        .globl _Z5applyiP7VariantPFivE
-_Z5applyiP7VariantPFivE:
-        .globl _Z5applyiP7VariantPFlvE
-_Z5applyiP7VariantPFlvE:
+// Any apply(int argc, Any* argv, int32_t (*function)());
+        .globl _Z5applyiP3AnyPFivE
+_Z5applyiP3AnyPFivE:
+        .globl _Z5applyiP3AnyPFlvE
+_Z5applyiP3AnyPFlvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VS32, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, uint32_t (*function)());
-        .globl _Z5applyiP7VariantPFjvE
-_Z5applyiP7VariantPFjvE:
-        .globl _Z5applyiP7VariantPFmvE
-_Z5applyiP7VariantPFmvE:
+// Any apply(int argc, Any* argv, uint32_t (*function)());
+        .globl _Z5applyiP3AnyPFjvE
+_Z5applyiP3AnyPFjvE:
+        .globl _Z5applyiP3AnyPFmvE
+_Z5applyiP3AnyPFmvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VU32, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, int64_t (*function)());
-        .globl _Z5applyiP7VariantPFxvE
-_Z5applyiP7VariantPFxvE:
+// Any apply(int argc, Any* argv, int64_t (*function)());
+        .globl _Z5applyiP3AnyPFxvE
+_Z5applyiP3AnyPFxvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VS64, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, uint64_t (*function)());
-        .globl _Z5applyiP7VariantPFyvE
-_Z5applyiP7VariantPFyvE:
+// Any apply(int argc, Any* argv, uint64_t (*function)());
+        .globl _Z5applyiP3AnyPFyvE
+_Z5applyiP3AnyPFyvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VU64, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, float (*function)());
-        .globl _Z5applyiP7VariantPFfvE
-_Z5applyiP7VariantPFfvE:
+// Any apply(int argc, Any* argv, float (*function)());
+        .globl _Z5applyiP3AnyPFfvE
+_Z5applyiP3AnyPFfvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VFLT, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, double (*function)());
-        .globl _Z5applyiP7VariantPFdvE
-_Z5applyiP7VariantPFdvE:
+// Any apply(int argc, Any* argv, double (*function)());
+        .globl _Z5applyiP3AnyPFdvE
+_Z5applyiP3AnyPFdvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VDBL, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, const char* (*function)());
-        .globl _Z5applyiP7VariantPFPKcvE
-_Z5applyiP7VariantPFPKcvE:
+// Any apply(int argc, Any* argv, const char* (*function)());
+        .globl _Z5applyiP3AnyPFPKcvE
+_Z5applyiP3AnyPFPKcvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
         movl    VSTRING, VTYPE(%eax)
         jmp     apply
 
-// Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
-        .globl _Z5applyiP7VariantPFPN2es10IInterfaceEvE
-_Z5applyiP7VariantPFPN2es10IInterfaceEvE:
+// Any apply(int argc, Any* argv, es::IInterface* (*function)());
+        .globl _Z5applyiP3AnyPFPN2es10IInterfaceEvE
+_Z5applyiP3AnyPFPN2es10IInterfaceEvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value
@@ -172,7 +172,7 @@ while:
         movl    VTYPE(%eax), %edx
         testl   %edx, %edx
         jns     0f                      // Test VVARIANT flag
-        // Push Variant as it is
+        // Push Any as it is
         andl    $0x7fffffff, %edx
         pushl   %edx
         pushl   4(%eax)
@@ -248,9 +248,9 @@ break:
         leave
         ret
 
-// long long evaluate(const Variant& variant);
-_Z8evaluateRK7Variant:
-        .globl _Z8evaluateRK7Variant
+// long long evaluate(const Any& variant);
+_Z8evaluateRK3Any:
+        .globl _Z8evaluateRK3Any
         pushl   %ebp
         movl    %esp, %ebp
         movl    0x8(%ebp),%eax

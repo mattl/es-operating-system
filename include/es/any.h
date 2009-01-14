@@ -1,6 +1,6 @@
 /*
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2008 Kenichi Ishibashi
- * Copyright 2008 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef GOOGLE_ES_VARIANT_H_INCLUDED
-#define GOOGLE_ES_VARIANT_H_INCLUDED
+#ifndef GOOGLE_ES_ANY_H_INCLUDED
+#define GOOGLE_ES_ANY_H_INCLUDED
 
 #include <errno.h>
 #include <inttypes.h>
@@ -27,7 +27,7 @@
 #include <es/uuid.h>
 #include <es/base/IInterface.h>
 
-struct VariantBase
+struct AnyBase
 {
     union
     {
@@ -50,7 +50,7 @@ struct VariantBase
 };
 
 // The any type for Web IDL
-class Variant : private VariantBase
+class Any : private AnyBase
 {
 public:
     enum
@@ -70,61 +70,61 @@ public:
         TypeObject,
         TypeGuid,
         TypeSize,
-        FlagVariant = 0x80000000
+        FlagAny = 0x80000000
     };
 
-    Variant()
+    Any()
     {
         longLongValue = 0;
         type = TypeVoid;
     }
 
-    Variant(const VariantBase& v) :
-        VariantBase(v)
+    Any(const AnyBase& v) :
+        AnyBase(v)
     {
-        type |= FlagVariant;
+        type |= FlagAny;
     }
 
-    Variant(bool value)
+    Any(bool value)
     {
         boolValue = value;
         type = TypeBool;
     }
 
-    Variant(uint8_t value)
+    Any(uint8_t value)
     {
         octetValue = value;
         type = TypeOctet;
     }
 
-    Variant(int16_t value)
+    Any(int16_t value)
     {
         shortValue = value;
         type = TypeShort;
     }
 
-    Variant(uint16_t value)
+    Any(uint16_t value)
     {
         unsignedShortValue = value;
         type = TypeUnsignedShort;
     }
 
     // Since int32_t can be either long or int, use int so as not to conflict with constructor for long
-    Variant(int value)
+    Any(int value)
     {
         longValue = value;
         type = TypeLong;
     }
 
     // Since uint32_t can be either long or int, use int so as not to conflict with constructor for unsigned long
-    Variant(unsigned int value)
+    Any(unsigned int value)
     {
         unsignedLongValue = value;
         type = TypeUnsignedLong;
     }
 
     // To support constants declared with intptr_t, constructor for long is necessary.
-    Variant(long value)
+    Any(long value)
     {
 #if 2147483647L < LONG_MAX
         longLongValue = value;
@@ -136,7 +136,7 @@ public:
     }
 
     // To support constants declared with uintptr_t, constructor for long is necessary.
-    Variant(unsigned long value)
+    Any(unsigned long value)
     {
 #if 4294967295UL < ULONG_MAX
         unsignedLongValue = value;
@@ -148,44 +148,44 @@ public:
     }
 
     // To support constants declared with LL, long long variant cannot be int64_t.
-    Variant(long long value)
+    Any(long long value)
     {
         longLongValue = value;
         type = TypeLongLong;
     }
 
     // To support constants declared with LLu, long long variant cannot be uint64_t.
-    Variant(unsigned long long value)
+    Any(unsigned long long value)
     {
         unsignedLongLongValue = value;
         type = TypeUnsignedLongLong;
     }
 
-    Variant(float value)
+    Any(float value)
     {
         floatValue = value;
         type = TypeFloat;
     }
 
-    Variant(double value)
+    Any(double value)
     {
         doubleValue = value;
         type = TypeDouble;
     }
 
-    Variant(const char* value)
+    Any(const char* value)
     {
         stringValue = value;
         type = TypeString;
     }
 
-    Variant(es::IInterface* value)
+    Any(es::IInterface* value)
     {
         objectValue = value;
         type = TypeObject;
     }
 
-    Variant(const Guid* value)
+    Any(const Guid* value)
     {
         guidValue = value;
         type = TypeGuid;
@@ -310,34 +310,34 @@ public:
 
     int getType() const
     {
-        return (type & ~FlagVariant);
+        return (type & ~FlagAny);
     }
 
     void makeVariant()
     {
-        type |= FlagVariant;
+        type |= FlagAny;
     }
 
     bool isVariant() const
     {
-        return (type & FlagVariant) ? true : false;
+        return (type & FlagAny) ? true : false;
     }
 };
 
-Variant apply(int argc, Variant* argv, Variant (*function)());
-Variant apply(int argc, Variant* argv, bool (*function)());
-Variant apply(int argc, Variant* argv, uint8_t (*function)());
-Variant apply(int argc, Variant* argv, int16_t (*function)());
-Variant apply(int argc, Variant* argv, uint16_t (*function)());
-Variant apply(int argc, Variant* argv, int32_t (*function)());
-Variant apply(int argc, Variant* argv, uint32_t (*function)());
-Variant apply(int argc, Variant* argv, int64_t (*function)());
-Variant apply(int argc, Variant* argv, uint64_t (*function)());
-Variant apply(int argc, Variant* argv, float (*function)());
-Variant apply(int argc, Variant* argv, double (*function)());
-Variant apply(int argc, Variant* argv, const char* (*function)());
-Variant apply(int argc, Variant* argv, es::IInterface* (*function)());
+Any apply(int argc, Any* argv, Any (*function)());
+Any apply(int argc, Any* argv, bool (*function)());
+Any apply(int argc, Any* argv, uint8_t (*function)());
+Any apply(int argc, Any* argv, int16_t (*function)());
+Any apply(int argc, Any* argv, uint16_t (*function)());
+Any apply(int argc, Any* argv, int32_t (*function)());
+Any apply(int argc, Any* argv, uint32_t (*function)());
+Any apply(int argc, Any* argv, int64_t (*function)());
+Any apply(int argc, Any* argv, uint64_t (*function)());
+Any apply(int argc, Any* argv, float (*function)());
+Any apply(int argc, Any* argv, double (*function)());
+Any apply(int argc, Any* argv, const char* (*function)());
+Any apply(int argc, Any* argv, es::IInterface* (*function)());
 
-long long evaluate(const Variant& variant);
+long long evaluate(const Any& variant);
 
-#endif // GOOGLE_ES_VARIANT_H_INCLUDED
+#endif // GOOGLE_ES_ANY_H_INCLUDED

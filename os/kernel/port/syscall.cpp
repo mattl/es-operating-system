@@ -18,11 +18,11 @@
 #include <errno.h>
 #include <stddef.h>
 #include <es.h>
+#include <es/any.h>
 #include <es/broker.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/reflect.h>
-#include <es/variant.h>
 #include <es/base/ISelectable.h>
 #include <es/net/IInternetAddress.h>
 #include <es/net/IInternetConfig.h>
@@ -119,12 +119,12 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         throw SystemException<EBADF>();
     }
     unsigned interfaceNumber = self - base;
-    Variant* variant = 0;
+    Any* variant = 0;
     if (INTERFACE_POINTER_MAX <= interfaceNumber)
     {
-        // self could be a pointer to a Variant value when the method returns a Variant.
-        variant = reinterpret_cast<Variant*>(self);
-        if (!isValid(variant, sizeof(Variant)))
+        // self could be a pointer to a Any value when the method returns a Any.
+        variant = reinterpret_cast<Any*>(self);
+        if (!isValid(variant, sizeof(Any)))
         {
           throw SystemException<EBADF>();
         }
@@ -226,8 +226,8 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     //
     // Set up parameters
     //
-    Variant argv[9];
-    Variant* argp = argv;
+    Any argv[9];
+    Any* argp = argv;
 
     void* ptr;
     int count;
@@ -239,12 +239,12 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     // Set this
     Method** object = reinterpret_cast<Method**>(proxy->getObject());
-    *argp++ = Variant(reinterpret_cast<intptr_t>(object));
+    *argp++ = Any(reinterpret_cast<intptr_t>(object));
 
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        //  Variant op(void* buf, int len);
+        //  Any op(void* buf, int len);
     case Ent::SpecString:
         // int op(char* buf, int len, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
@@ -252,14 +252,14 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             throw SystemException<EFAULT>();
         }
         ptr = *reinterpret_cast<void**>(paramp);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+        *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
         ++paramp;
         if (!isValid(paramp, sizeof(int32_t)))
         {
             throw SystemException<EFAULT>();
         }
         count = *paramp;
-        *argp++ = Variant(static_cast<int32_t>(count));
+        *argp++ = Any(static_cast<int32_t>(count));
         ++paramp;
         break;
     case Ent::TypeSequence:
@@ -269,13 +269,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             throw SystemException<EFAULT>();
         }
         ptr = *reinterpret_cast<void**>(paramp);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+        *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
         ++paramp;
         if (!isValid(paramp, sizeof(int32_t)))
         {
             throw SystemException<EFAULT>();
         }
-        *argp++ = Variant(static_cast<int32_t>(*paramp));
+        *argp++ = Any(static_cast<int32_t>(*paramp));
         count = *paramp * returnType.getSize();
         ++paramp;
         break;
@@ -286,7 +286,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             throw SystemException<EFAULT>();
         }
         ptr = *reinterpret_cast<void**>(paramp);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+        *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
         count = returnType.getSize();
         ++paramp;
         break;
@@ -297,7 +297,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             throw SystemException<EFAULT>();
         }
         ptr = *reinterpret_cast<void**>(paramp);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+        *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
         count = returnType.getSize();
         ++paramp;
         break;
@@ -331,7 +331,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             stackBytes = 8;
             break;
         case Ent::SpecVariant:
-            stackBytes = sizeof(VariantBase);
+            stackBytes = sizeof(AnyBase);
             break;
         default:
             stackBytes = 4;
@@ -345,15 +345,15 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         switch (entType)
         {
         case Ent::SpecVariant:
-            *argp = Variant(*reinterpret_cast<VariantBase*>(paramp));
-            paramp += sizeof(VariantBase) / sizeof(int);
+            *argp = Any(*reinterpret_cast<AnyBase*>(paramp));
+            paramp += sizeof(AnyBase) / sizeof(int);
             switch (argp->getType())
             {
-            case Variant::TypeString:
+            case Any::TypeString:
                 ptr = static_cast<const char*>(*argp);
                 count = sizeof(char);       // XXX check string length?
                 break;
-            case Variant::TypeObject:
+            case Any::TypeObject:
                 if (void** ip = *reinterpret_cast<void***>(static_cast<IInterface*>(*argp)))
                 {
                     if (base <= ip && ip < base + INTERFACE_POINTER_MAX)
@@ -365,7 +365,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                             throw SystemException<EINVAL>();
                         }
                         inputProxies[i] = proxy;
-                        *argp = Variant(static_cast<IInterface*>(inputProxies[i]->getObject()));
+                        *argp = Any(static_cast<IInterface*>(inputProxies[i]->getObject()));
                     }
                     else    // XXX Check range
                     {
@@ -379,52 +379,52 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         // Note the reference count of the created upcall proxy must
                         // be decremented by one at the end of this system call.
                         upcallProxies[i] = &upcallTable[n];
-                        *argp = Variant(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
+                        *argp = Any(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
                     }
                 }
                 else
                 {
-                    *argp = Variant(static_cast<IInterface*>(0));
+                    *argp = Any(static_cast<IInterface*>(0));
                 }
                 argp->makeVariant();
                 break;
             }
             break;
         case Ent::SpecBool:
-            *argp = Variant(static_cast<bool>(*paramp++));
+            *argp = Any(static_cast<bool>(*paramp++));
             break;
         case Ent::SpecAny:
-            *argp = Variant(static_cast<uint32_t>(*paramp++)); // x86 only
+            *argp = Any(static_cast<uint32_t>(*paramp++)); // x86 only
             break;
         case Ent::SpecS16:
-            *argp = Variant(static_cast<int16_t>(*paramp++));
+            *argp = Any(static_cast<int16_t>(*paramp++));
             break;
         case Ent::SpecS32:
-            *argp = Variant(static_cast<int32_t>(*paramp++));
+            *argp = Any(static_cast<int32_t>(*paramp++));
             break;
         case Ent::SpecS8:
         case Ent::SpecU8:
-            *argp = Variant(static_cast<uint8_t>(*paramp++));
+            *argp = Any(static_cast<uint8_t>(*paramp++));
             break;
         case Ent::SpecU16:
-            *argp = Variant(static_cast<uint16_t>(*paramp++));
+            *argp = Any(static_cast<uint16_t>(*paramp++));
             break;
         case Ent::SpecU32:
-            *argp = Variant(static_cast<uint32_t>(*paramp++));
+            *argp = Any(static_cast<uint32_t>(*paramp++));
             break;
         case Ent::SpecS64:
-            *argp = Variant(*reinterpret_cast<int64_t*>(paramp));
+            *argp = Any(*reinterpret_cast<int64_t*>(paramp));
             paramp += 2;
             break;
         case Ent::SpecU64:
-            *argp = Variant(*reinterpret_cast<uint64_t*>(paramp));
+            *argp = Any(*reinterpret_cast<uint64_t*>(paramp));
             paramp += 2;
             break;
         case Ent::SpecF32:
-            *argp = Variant(*reinterpret_cast<float*>(paramp++));
+            *argp = Any(*reinterpret_cast<float*>(paramp++));
             break;
         case Ent::SpecF64:
-            *argp = Variant(*reinterpret_cast<double*>(paramp));
+            *argp = Any(*reinterpret_cast<double*>(paramp));
             paramp += 2;
             break;
         case Ent::SpecString:
@@ -433,23 +433,23 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             {
                 iid = static_cast<const char*>(ptr);
             }
-            *argp = Variant(static_cast<const char*>(ptr));
+            *argp = Any(static_cast<const char*>(ptr));
             ++paramp;
             count = sizeof(char);       // XXX check string length?
             break;
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             ptr = *reinterpret_cast<void**>(paramp);
-            *argp++ = Variant(reinterpret_cast<intptr_t>(ptr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
             ++paramp;
-            *argp = Variant(static_cast<int32_t>(*paramp));
+            *argp = Any(static_cast<int32_t>(*paramp));
             count = *paramp * type.getSize();
             ++paramp;
             break;
         case Ent::TypeStructure:    // struct* buf, ...
         case Ent::TypeArray:        // xxx[x] buf, ...
             ptr = *reinterpret_cast<void**>(paramp);
-            *argp = Variant(reinterpret_cast<intptr_t>(ptr));
+            *argp = Any(reinterpret_cast<intptr_t>(ptr));
             count = type.getSize();
             ++paramp;
             break;
@@ -468,7 +468,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         throw SystemException<EINVAL>();
                     }
                     inputProxies[i] = proxy;
-                    *argp = Variant(static_cast<IInterface*>(inputProxies[i]->getObject()));
+                    *argp = Any(static_cast<IInterface*>(inputProxies[i]->getObject()));
                 }
                 else    // XXX Check range
                 {
@@ -482,12 +482,12 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                     // Note the reference count of the created upcall proxy must
                     // be decremented by one at the end of this system call.
                     upcallProxies[i] = &upcallTable[n];
-                    *argp = Variant(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
+                    *argp = Any(reinterpret_cast<IInterface*>(&(broker.getInterfaceTable())[n]));
                 }
             }
             else
             {
-                *argp = Variant(static_cast<IInterface*>(0));
+                *argp = Any(static_cast<IInterface*>(0));
             }
             break;
         default:
@@ -513,14 +513,14 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     // Invoke method
     int argc = argp - argv;
-    Variant result;
+    Any result;
     void* ip = 0;
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        *variant = apply(argc, argv, (Variant (*)()) ((*object)[methodNumber]));
-        result = Variant(reinterpret_cast<intptr_t>(variant));
-        if (variant->getType() == Variant::TypeObject) {
+        *variant = apply(argc, argv, (Any (*)()) ((*object)[methodNumber]));
+        result = Any(reinterpret_cast<intptr_t>(variant));
+        if (variant->getType() == Any::TypeObject) {
             ip = static_cast<IInterface*>(*variant);
         }
         break;
@@ -581,13 +581,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         int n = set(syscallTable, ip, iid, true);
         if (0 <= n)
         {
-            result = Variant(reinterpret_cast<IInterface*>(&base[n]));
+            result = Any(reinterpret_cast<IInterface*>(&base[n]));
         }
         else
         {
             IInterface* object(static_cast<IInterface*>(ip));
             object->release();
-            result = Variant(static_cast<IInterface*>(0));
+            result = Any(static_cast<IInterface*>(0));
             throw SystemException<EMFILE>();
         }
     }

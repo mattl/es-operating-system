@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@
 
 #include <stdio.h>
 
+#include <es/any.h>
 #include <es/capability.h>
 #include <es/types.h>
-#include <es/variant.h>
 
 namespace es
 {
@@ -135,9 +135,9 @@ struct RpcReq
     // Param    argv[];
     // Data
 
-    Variant* getArgv()
+    Any* getArgv()
     {
-        return reinterpret_cast<Variant*>(this + 1);
+        return reinterpret_cast<Any*>(this + 1);
     }
 
     void* getData()
@@ -153,7 +153,7 @@ struct RpcRes
     int         tag;
     int         pid;
     unsigned    exceptionCode;
-    Variant     result;
+    Any         result;
     // Data
 
     void* getData()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -191,7 +191,7 @@ dirtyAllStyles()
     }
 }
 
-Variant Canvas::
+Any Canvas::
 getStrokeStyle(void* strokeStyle, int strokeStyleLength)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -199,14 +199,14 @@ getStrokeStyle(void* strokeStyle, int strokeStyleLength)
 }
 
 void Canvas::
-setStrokeStyle(const Variant strokeStyle)
+setStrokeStyle(const Any strokeStyle)
 {
     Synchronized<IMonitor*> method(monitor);
     currentState()->setStyle(STYLE_STROKE, strokeStyle);
     dirtyStyle[STYLE_STROKE] = true;
 }
 
-Variant Canvas::
+Any Canvas::
 getFillStyle(void* fillStyle, int fillStyleLength)
 {
     Synchronized<IMonitor*> method(monitor);
@@ -214,7 +214,7 @@ getFillStyle(void* fillStyle, int fillStyleLength)
 }
 
 void Canvas::
-setFillStyle(const Variant fillStyle)
+setFillStyle(const Any fillStyle)
 {
     Synchronized<IMonitor*> method(monitor);
     currentState()->setStyle(STYLE_FILL, fillStyle);

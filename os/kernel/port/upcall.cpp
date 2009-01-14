@@ -20,11 +20,11 @@
 #include <string.h>
 #include <new>
 #include <es.h>
+#include <es/any.h>
 #include <es/broker.h>
 #include <es/exception.h>
 #include <es/handle.h>
 #include <es/reflect.h>
-#include <es/variant.h>
 #include "core.h"
 #include "interfaceStore.h"
 #include "process.h"
@@ -90,11 +90,11 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
     Thread* current = Thread::getCurrentThread();
 
     unsigned interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
-    Variant* variant = 0;
+    Any* variant = 0;
     if (INTERFACE_POINTER_MAX <= interfaceNumber)
     {
-        // self must be a pointer to a Variant value for the method returns a Variant.
-        variant = reinterpret_cast<Variant*>(self);
+        // self must be a pointer to a Any value for the method returns a Any.
+        variant = reinterpret_cast<Any*>(self);
         self = va_arg(ap, void*);
         interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
     }
@@ -280,7 +280,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                 switch (returnType.getType())
                 {
                 case Ent::SpecVariant:
-                    if (record->variant->getType() == Variant::TypeObject)
+                    if (record->variant->getType() == Any::TypeObject)
                     {
                         ip = reinterpret_cast<void**>(static_cast<IInterface*>(*(record->variant)));
                     }
@@ -540,8 +540,8 @@ copyIn(UpcallRecord* record)
     Reflect::Type returnType = record->method.getReturnType();
     if (returnType.getType() == Ent::SpecVariant)
     {
-        // Make space for the return value of Variant type
-        count = sizeof(Variant);
+        // Make space for the return value of Any type
+        count = sizeof(Any);
         esp -= count;
         *argp++ = (int) esp;
     }
@@ -552,7 +552,7 @@ copyIn(UpcallRecord* record)
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        // Variant op(void* buf, int len);
+        // Any op(void* buf, int len);
     case Ent::SpecString:
         // int op(char* buf, int len, ...);
         count = paramp[1];                          // XXX check count
@@ -603,24 +603,24 @@ copyIn(UpcallRecord* record)
         {
         case Ent::SpecVariant:
             {
-                Variant* var = reinterpret_cast<Variant*>(paramp);
+                Any* var = reinterpret_cast<Any*>(paramp);
                 switch (var->getType())
                 {
-                case Variant::TypeString:
+                case Any::TypeString:
                     esp = copyInString(static_cast<const char*>(*var), esp);
                     if (!esp)
                     {
                         return EFAULT;
                     }
-                    *var = Variant(reinterpret_cast<const char*>(esp));
+                    *var = Any(reinterpret_cast<const char*>(esp));
                     break;
-                case Variant::TypeObject:
-                    *var = Variant(reinterpret_cast<IInterface*>(copyInObject(static_cast<IInterface*>(*var), iid)));
+                case Any::TypeObject:
+                    *var = Any(reinterpret_cast<IInterface*>(copyInObject(static_cast<IInterface*>(*var), iid)));
                     break;
                 }
-                memcpy(argp, paramp, sizeof(VariantBase));
-                argp += sizeof(VariantBase) / sizeof(int);
-                paramp += sizeof(VariantBase) / sizeof(int);
+                memcpy(argp, paramp, sizeof(AnyBase));
+                argp += sizeof(AnyBase) / sizeof(int);
+                paramp += sizeof(AnyBase) / sizeof(int);
                 var->makeVariant();
             }
             break;
@@ -732,14 +732,14 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
     Reflect::Type returnType = record->method.getReturnType();
     if (returnType.getType() == Ent::SpecVariant)
     {
-        count = sizeof(Variant);
+        count = sizeof(Any);
         esp -= count;
         read(record->variant, count, reinterpret_cast<long long>(esp));
     }
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        // Variant op(void* buf, int len);
+        // Any op(void* buf, int len);
         rc = paramp[1]; // XXX check type and string length if type is string
         // FALL THROUGH
     case Ent::SpecString:
@@ -801,12 +801,12 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
         {
         case Ent::SpecVariant:
             {
-                Variant* var = reinterpret_cast<Variant*>(paramp);
-                if (var->getType() == Variant::TypeObject)
+                Any* var = reinterpret_cast<Any*>(paramp);
+                if (var->getType() == Any::TypeObject)
                 {
                     ip = reinterpret_cast<void**>(static_cast<IInterface*>(*var));
                 }
-                paramp += sizeof(VariantBase) / sizeof(int);
+                paramp += sizeof(AnyBase) / sizeof(int);
             }
             break;
         case Ent::SpecAny:  // XXX x86 specific

@@ -19,8 +19,8 @@
 #define NINTENDO_ESJS_INTERFACE_H_INCLUDED
 
 #include <es.h>
+#include <es/any.h>
 #include <es/reflect.h>
-#include <es/variant.h>
 #include <es/base/IInterface.h>
 
 #include "esjs.h"

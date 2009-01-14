@@ -35,6 +35,7 @@
 #include <sys/un.h>
 #include <sys/wait.h>
 
+#include <es/any.h>
 #include <es/broker.h>
 #include <es/capability.h>
 #include <es/dateTime.h>
@@ -45,7 +46,6 @@
 #include <es/reflect.h>
 #include <es/rpc.h>
 #include <es/timeSpan.h>
-#include <es/variant.h>
 
 #include <es/base/IAlarm.h>
 #include <es/base/IProcess.h>
@@ -85,7 +85,7 @@ __thread std::map<pid_t, int>* socketMap;
 void initializeConstructors();
 
 long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method,
-                     bool stringIsInterfaceName, Variant* variant);
+                     bool stringIsInterfaceName, Any* variant);
 u64 getRandom();
 
 typedef long long (*Method)(void* self, ...);
@@ -824,7 +824,7 @@ public:
                 count = exported->addRef();
                 if (1 != count)
                 {
-                    res.result = Variant(static_cast<uint32_t>(count));
+                    res.result = Any(static_cast<uint32_t>(count));
                     return 0;
                 }
                 exportedTable.get(hdr->capability.object);
@@ -836,7 +836,7 @@ public:
                 {
                     exportedTable.put(hdr->capability.object);
                 }
-                res.result = Variant(static_cast<uint32_t>(count));
+                res.result = Any(static_cast<uint32_t>(count));
                 // TODO should return?
                 break;
             }
@@ -845,11 +845,11 @@ public:
         const char* iid = IInterface::iid();
         Method** object = reinterpret_cast<Method**>(exported->object);
         int argc = hdr->paramCount;
-        Variant* argv = hdr->getArgv();
-        Variant* argp = argv;
+        Any* argv = hdr->getArgv();
+        Any* argp = argv;
 
         // Set this
-        *argp++ = Variant(exported->object);
+        *argp++ = Any(exported->object);
 
         // Reserve space from rpcStack to store result
         void* resultPtr = 0;
@@ -859,32 +859,32 @@ public:
         case Ent::SpecVariant:
             resultSize = std::max(static_cast<int32_t>(sizeof(Capability)), static_cast<int32_t>(argp[1]));
             resultPtr = RpcStack::alloc(resultSize);
-            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::SpecString:
             // int op(char* buf, int len, ...);
             resultPtr = RpcStack::alloc(static_cast<int32_t>(argp[1]));
-            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::TypeSequence:
             // int op(xxx* buf, int len, ...);
             resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
-            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
         case Ent::TypeStructure:
             // void op(struct* buf, ...);
             resultSize = returnType.getSize();
             resultPtr = RpcStack::alloc(resultSize);
-            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             break;
         case Ent::TypeArray:
             // void op(xxx[x] buf, ...);
             resultSize = returnType.getSize();
             resultPtr = RpcStack::alloc(resultSize);
-            *argp++ = Variant(reinterpret_cast<intptr_t>(resultPtr));
+            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             break;
         case Ent::TypeInterface:
         case Ent::SpecObject:
@@ -907,15 +907,15 @@ public:
             case Ent::SpecVariant:
                 switch (argp->getType())
                 {
-                case Variant::TypeString:
+                case Any::TypeString:
                     if (static_cast<const char*>(*argp))
                     {
-                        *argp = Variant(reinterpret_cast<const char*>(data));
+                        *argp = Any(reinterpret_cast<const char*>(data));
                         size = strlen(reinterpret_cast<const char*>(data)) + 1;
                         data += size;
                     }
                     break;
-                case Variant::TypeObject:
+                case Any::TypeObject:
                     if (static_cast<IInterface*>(*argp))
                     {
                         // Import object
@@ -925,7 +925,7 @@ public:
                             cap->object = *fdv++;   // TODO check range
                         }
                         IInterface* object = importObject(*cap, iid, true); // TODO false?
-                        *argp = Variant(object);
+                        *argp = Any(object);
                         data += sizeof(Capability);
                     }
                     break;
@@ -935,7 +935,7 @@ public:
             case Ent::TypeSequence:
                 // xxx* buf, int len, ...
                 size = type.getSize() * static_cast<uint32_t>(argp[1]);
-                *argp++ = Variant(reinterpret_cast<intptr_t>(data));
+                *argp++ = Any(reinterpret_cast<intptr_t>(data));
                 data += size;
                 break;
             case Ent::SpecString:
@@ -945,7 +945,7 @@ public:
                     {
                         iid = reinterpret_cast<const char*>(data);
                     }
-                    *argp = Variant(reinterpret_cast<const char*>(data));
+                    *argp = Any(reinterpret_cast<const char*>(data));
                     size = strlen(reinterpret_cast<const char*>(data)) + 1;
                     data += size;
                 }
@@ -953,7 +953,7 @@ public:
             case Ent::TypeStructure:
             case Ent::TypeArray:
                 size = type.getSize();
-                *argp = Variant(reinterpret_cast<intptr_t>(data));
+                *argp = Any(reinterpret_cast<intptr_t>(data));
                 data += size;
                 break;
             case Ent::TypeInterface:
@@ -969,7 +969,7 @@ public:
                         cap->object = *fdv++;   // TODO check range
                     }
                     IInterface* object = importObject(*cap, iid, true); // TODO false?
-                    *argp = Variant(object);
+                    *argp = Any(object);
                     data += sizeof(Capability);
                 }
                 break;
@@ -1001,7 +1001,7 @@ public:
         switch (returnType.getType())
         {
         case Ent::SpecVariant:
-            res.result = apply(argc, argv, (Variant (*)()) ((*object)[methodNumber]));
+            res.result = apply(argc, argv, (Any (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecBool:
             res.result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
@@ -1064,7 +1064,7 @@ public:
         }
 
         // Export object
-        if (res.result.getType() == Variant::TypeObject && static_cast<IInterface*>(res.result))
+        if (res.result.getType() == Any::TypeObject && static_cast<IInterface*>(res.result))
         {
             Capability* cap = static_cast<Capability*>(resultPtr);
             exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
@@ -1134,7 +1134,7 @@ public:
         return rc;
     }
 
-    long long callRemote(int interfaceNumber, int methodNumber, va_list ap, Variant* variant)
+    long long callRemote(int interfaceNumber, int methodNumber, va_list ap, Any* variant)
     {
         long long result = 0;
         int error = 0;
@@ -1791,11 +1791,11 @@ u64 getRandom()
 long long callRemote(void* self, void* base, int methodNumber, va_list ap)
 {
     unsigned interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
-    Variant* variant = 0;
+    Any* variant = 0;
     if (MAX_IMPORT < interfaceNumber)
     {
-        // self is a pointer to a Variant value for the method that returns a Variant.
-        variant = reinterpret_cast<Variant*>(self);
+        // self is a pointer to a Any value for the method that returns a Any.
+        variant = reinterpret_cast<Any*>(self);
         self = va_arg(ap, void*);
         interfaceNumber = static_cast<void**>(self) - static_cast<void**>(base);
         ASSERT(interfaceNumber < MAX_IMPORT);
@@ -1804,7 +1804,7 @@ long long callRemote(void* self, void* base, int methodNumber, va_list ap)
 }
 
 long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, Reflect::Method& method,
-                     bool stringIsInterfaceName, Variant* variant)
+                     bool stringIsInterfaceName, Any* variant)
 {
     if (epfd < 0)
     {
@@ -1837,9 +1837,9 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     struct
     {
         RpcReq  req;
-        Variant argv[9];
+        Any argv[9];
     } rpcmsg = { RPC_REQ, tag, getpid(), cap, methodNumber };
-    Variant* argp = rpcmsg.argv;
+    Any* argp = rpcmsg.argv;
     Capability caps[8];
     Capability* capp = caps;
 
@@ -1854,27 +1854,27 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     const char* iid = IInterface::iid();
 
     // Set this
-    *argp++ = Variant(static_cast<intptr_t>(0));  // to be filled by the server
+    *argp++ = Any(static_cast<intptr_t>(0));  // to be filled by the server
 
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
     case Ent::SpecVariant:
-        // Variant op(void* buf, int len, ...);
+        // Any op(void* buf, int len, ...);
         // FALL THROUGH
     case Ent::TypeSequence:
     case Ent::SpecString:
         // int op(xxx* buf, int len, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
-        *argp++ = Variant(va_arg(ap, int32_t));
+        *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+        *argp++ = Any(va_arg(ap, int32_t));
         break;
     case Ent::TypeStructure:
         // void op(struct* buf, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+        *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         break;
     case Ent::TypeArray:
         // void op(xxx[x] buf, ...);
-        *argp++ = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+        *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         break;
     }
 
@@ -1888,11 +1888,11 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
         switch (type.getType())
         {
         case Ent::SpecVariant:
-            // Variant variant, ...
-            *argp = Variant(va_arg(ap, VariantBase));
+            // Any variant, ...
+            *argp = Any(va_arg(ap, AnyBase));
             switch (argp->getType())
             {
-            case Variant::TypeString:
+            case Any::TypeString:
                 if (static_cast<const char*>(*argp))
                 {
                     iop->iov_base = const_cast<char*>(static_cast<const char*>(*argp));
@@ -1900,7 +1900,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     ++iop;
                 }
                 break;
-            case Variant::TypeObject:
+            case Any::TypeObject:
                 if (static_cast<IInterface*>(*argp))
                 {
                     IInterface* object = static_cast<IInterface*>(*argp);
@@ -1920,8 +1920,8 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
         case Ent::TypeSequence:
             // xxx* buf, int len, ...
             iop->iov_base = va_arg(ap, void*);
-            *argp++ = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
-            *argp = Variant(va_arg(ap, int32_t));
+            *argp++ = Any(reinterpret_cast<intptr_t>(iop->iov_base));
+            *argp = Any(va_arg(ap, int32_t));
             iop->iov_len = type.getSize() * static_cast<int32_t>(*argp);
             ++iop;
             break;
@@ -1931,7 +1931,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             {
                 iid = static_cast<const char*>(iop->iov_base);
             }
-            *argp = Variant(reinterpret_cast<const char*>(iop->iov_base));
+            *argp = Any(reinterpret_cast<const char*>(iop->iov_base));
             if (iop->iov_base)
             {
                 iop->iov_len = strlen(static_cast<const char*>(iop->iov_base)) + 1;
@@ -1940,13 +1940,13 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             break;
         case Ent::TypeStructure:
             iop->iov_base = va_arg(ap, void*);
-            *argp = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
+            *argp = Any(reinterpret_cast<intptr_t>(iop->iov_base));
             iop->iov_len = type.getSize();
             ++iop;
             break;
         case Ent::TypeArray:
             iop->iov_base = va_arg(ap, void*);
-            *argp = Variant(reinterpret_cast<intptr_t>(iop->iov_base));
+            *argp = Any(reinterpret_cast<intptr_t>(iop->iov_base));
             iop->iov_len = type.getSize();
             ++iop;
             break;
@@ -1955,7 +1955,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             // FALL THROUGH
         case Ent::SpecObject: {
             IInterface* object = va_arg(ap, IInterface*);
-            *argp = Variant(object);
+            *argp = Any(object);
             if (object)
             {
                 current.exportObject(object, iid, capp, true);  // TODO check error
@@ -1971,42 +1971,42 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             break;
         }
         case Ent::SpecBool:
-            *argp = Variant(static_cast<bool>(va_arg(ap, int)));
+            *argp = Any(static_cast<bool>(va_arg(ap, int)));
             break;
         case Ent::SpecAny:
-            *argp = Variant(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+            *argp = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
             break;
         case Ent::SpecS16:
-            *argp = Variant(static_cast<int16_t>(va_arg(ap, int)));
+            *argp = Any(static_cast<int16_t>(va_arg(ap, int)));
             break;
         case Ent::SpecS32:
-            *argp = Variant(va_arg(ap, int32_t));
+            *argp = Any(va_arg(ap, int32_t));
             break;
         case Ent::SpecS8:
         case Ent::SpecU8:
-            *argp = Variant(static_cast<uint8_t>(va_arg(ap, int)));
+            *argp = Any(static_cast<uint8_t>(va_arg(ap, int)));
             break;
         case Ent::SpecU16:
-            *argp = Variant(static_cast<uint16_t>(va_arg(ap, int)));
+            *argp = Any(static_cast<uint16_t>(va_arg(ap, int)));
             break;
         case Ent::SpecU32:
-            *argp = Variant(va_arg(ap, uint32_t));
+            *argp = Any(va_arg(ap, uint32_t));
             break;
         case Ent::SpecS64:
-            *argp = Variant(va_arg(ap, int64_t));
+            *argp = Any(va_arg(ap, int64_t));
             break;
         case Ent::SpecU64:
-            *argp = Variant(va_arg(ap, uint64_t));
+            *argp = Any(va_arg(ap, uint64_t));
             break;
         case Ent::SpecF32:
             {
                 // XXX works on X86 only probably
                 uint32_t value = va_arg(ap, uint32_t);
-                *argp = Variant(*reinterpret_cast<float*>(&value));
+                *argp = Any(*reinterpret_cast<float*>(&value));
             }
             break;
         case Ent::SpecF64:
-            *argp = Variant(va_arg(ap, double));
+            *argp = Any(va_arg(ap, double));
             break;
         default:
             break;
@@ -2016,13 +2016,13 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     int argc = argp - rpcmsg.argv;
     rpcmsg.req.paramCount = argc;
     iov[0].iov_base = &rpcmsg;
-    iov[0].iov_len = sizeof(RpcReq) + sizeof(Variant) * argc;
+    iov[0].iov_len = sizeof(RpcReq) + sizeof(Any) * argc;
 
 #ifdef VERBOSE
     printf("Send RpcReq: %d %d\n", s, argc);
     esDump(&rpcmsg, sizeof(RpcReq));
     for (int i = 0; i < argc; ++i) {
-        esDump((char*) &rpcmsg + sizeof(RpcReq) + sizeof(Variant) * i, sizeof(Variant));
+        esDump((char*) &rpcmsg + sizeof(RpcReq) + sizeof(Any) * i, sizeof(Any));
     }
 #endif
 
@@ -2108,11 +2108,11 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             case Ent::SpecVariant:
                 switch (res->result.getType())
                 {
-                case Variant::TypeString:
+                case Any::TypeString:
                     memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
                             static_cast<int32_t>(rpcmsg.argv[2]));
                     break;
-                case Variant::TypeObject:
+                case Any::TypeObject:
                     if (static_cast<IInterface*>(res->result))
                     {
                         Capability* cap = static_cast<Capability*>(res->getData());
@@ -2130,13 +2130,13 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     }
                     else
                     {
-                        res->result = Variant(static_cast<IInterface*>(0));
+                        res->result = Any(static_cast<IInterface*>(0));
                     }
                     break;
                 }
                 assert(variant);
                 *variant = res->result;
-                res->result = Variant(reinterpret_cast<intptr_t>(variant));
+                res->result = Any(reinterpret_cast<intptr_t>(variant));
                 break;
             case Ent::SpecString:
                 rc = static_cast<int32_t>(res->result);
@@ -2175,7 +2175,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 else
                 {
-                    res->result = Variant(static_cast<IInterface*>(0));
+                    res->result = Any(static_cast<IInterface*>(0));
                 }
                 break;
             case Ent::TypeArray:

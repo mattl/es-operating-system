@@ -61,12 +61,12 @@
 
 #include <string.h>
 #include <es.h>
+#include <es/any.h>
 #include <es/color.h>
 #include <es/handle.h>
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
-#include <es/variant.h>
 #include <es/base/IFile.h>
 #include <es/base/IInterfaceStore.h>
 #include <es/base/IProcess.h>
@@ -313,14 +313,14 @@ class Canvas : public ICanvasRenderingContext2D
             }
         }
 
-        int setStyle(int whichStyle, Variant style)
+        int setStyle(int whichStyle, Any style)
         {
-            if (style.getType() == Variant::TypeObject)
+            if (style.getType() == Any::TypeObject)
             {
                 // TODO
             }
 
-            if (style.getType() == Variant::TypeString)
+            if (style.getType() == Any::TypeString)
             {
                 Rgb rgba;
                 try
@@ -337,18 +337,18 @@ class Canvas : public ICanvasRenderingContext2D
             return -1;
         }
 
-        Variant getStyle(int whichStyle, void* style, int styleLength)
+        Any getStyle(int whichStyle, void* style, int styleLength)
         {
             if (ICanvasGradient* gradient = gradientStyles[whichStyle])
             {
                 gradient->addRef();
-                return Variant(gradient);
+                return Any(gradient);
             }
 
             if (ICanvasPattern* pattern = patternStyles[whichStyle])
             {
                 pattern->addRef();
-                return Variant(pattern);
+                return Any(pattern);
             }
 
             char color[22];
@@ -365,9 +365,9 @@ class Canvas : public ICanvasRenderingContext2D
             if (strlen(color) + 1 <= styleLength)
             {
                 strcpy(static_cast<char*>(style), color);
-                return Variant(static_cast<const char*>(style));
+                return Any(static_cast<const char*>(style));
             }
-            return Variant("");
+            return Any("");
         }
     };
 
@@ -418,10 +418,10 @@ public:
     void setGlobalAlpha(float globalAlpha);
     int getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
     int setGlobalCompositeOperation(const char* globalCompositeOperation);
-    Variant getStrokeStyle(void* strokeStyle, int strokeStyleLength);
-    void setStrokeStyle(const Variant strokeStyle);
-    Variant getFillStyle(void* fillStyle, int fillStyleLength);
-    void setFillStyle(const Variant fillStyle);
+    Any getStrokeStyle(void* strokeStyle, int strokeStyleLength);
+    void setStrokeStyle(const Any strokeStyle);
+    Any getFillStyle(void* fillStyle, int fillStyleLength);
+    void setFillStyle(const Any fillStyle);
     ICanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
     ICanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     float getLineWidth();
