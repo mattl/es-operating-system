@@ -24,7 +24,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <es/exception.h>
-#include <es/uuid.h>
 #include <es/base/IInterface.h>
 
 struct AnyBase
@@ -43,8 +42,6 @@ struct AnyBase
         double          doubleValue;  // ES extension
         const char*     stringValue;  // DOMString in UTF-8
         es::IInterface* objectValue;
-
-        const Guid*     guidValue;    // ES extension
     };
     int type;
 };
@@ -68,8 +65,6 @@ public:
         TypeDouble,
         TypeString,
         TypeObject,
-        TypeGuid,
-        TypeSize,
         FlagAny = 0x80000000
     };
 
@@ -185,12 +180,6 @@ public:
         type = TypeObject;
     }
 
-    Any(const Guid* value)
-    {
-        guidValue = value;
-        type = TypeGuid;
-    }
-
     operator uint8_t() const
     {
         if (getType() != TypeOctet)
@@ -297,15 +286,6 @@ public:
             throw SystemException<EACCES>();
         }
         return objectValue;
-    }
-
-    operator const Guid*() const
-    {
-        if (getType() != TypeGuid)
-        {
-            throw SystemException<EACCES>();
-        }
-        return guidValue;
     }
 
     int getType() const
