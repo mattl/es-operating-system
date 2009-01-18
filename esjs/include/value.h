@@ -37,6 +37,9 @@
 #define INFINITY    __builtin_inf()
 #endif
 
+extern char* parseHex(const char* str, int limit, u32& hex);
+extern char* skipSpace(const char* str);
+
 extern int report(const char* spec, ...);
 
 class Value;
@@ -816,23 +819,34 @@ public:
 
     static double toNumber(const std::string& value)
     {
+        double number;
         const char* ptr = value.c_str();
-        while (*ptr && isspace(*ptr))
-        {
-            ++ptr;
-        }
+        ptr = skipSpace(ptr);
         char* end;
         if (strncasecmp(ptr, "0x", 2) == 0)
         {
             ptr += 2;
-            long long number = strtoll(ptr, &end, 16);
-            return (end != ptr) ? number : NAN;
+            number = strtoll(ptr, &end, 16);
+        }
+        else if (strncmp(ptr, "Infinity", 8) == 0)
+        {
+            end = const_cast<char*>(ptr) + 8;
+            number = INFINITY;
         }
         else
         {
-            double number = strtod(ptr, &end);
-            return (end != ptr) ? number : NAN;
+            number = strtod(ptr, &end);
         }
+        if (end == ptr)
+        {
+            return NAN;
+        }
+        end = skipSpace(end);
+        if (*end != 0)
+        {
+            return NAN;
+        }
+        return number;
     };
 };
 

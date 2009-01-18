@@ -24,9 +24,6 @@
 #include <es/utf.h>
 #include "value.h"
 
-char* parseHex(const char* str, int limit, u32& hex);
-char* skipSpace(const char* str);
-
 class SourceElements;
 
 // SourceElement
