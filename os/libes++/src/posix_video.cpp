@@ -194,7 +194,7 @@ setPosition(int x, int y)
 }
 
 void VideoBuffer::
-setPattern(const u32 data[32], const u32 mask[32], u16 xHotSpot, u16 yHotSpot)
+setPattern(const unsigned int data[32], const unsigned int mask[32], u16 xHotSpot, u16 yHotSpot)
 {
     Synchronized<IMonitor*> method(monitor);
 

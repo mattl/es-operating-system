@@ -33,7 +33,6 @@
 #define VDBL    $10
 #define VSTRING $11
 #define VOBJECT $12
-#define VGUID   $13
 
 #define VVARIANT    $0x80000000
 
@@ -409,7 +408,7 @@ _Z8evaluateRK3Any:
         pushq   %rbp
         movq    %rsp, %rbp
         movl    VTYPE(%rdi), %eax
-        cmpl    VGUID, %eax
+        cmpl    VOBJECT, %eax
         jge     invalid_type
         jmp     *0f(,%eax,8)
 0:

@@ -33,7 +33,6 @@
 #define VDBL    $10
 #define VSTRING $11
 #define VOBJECT $12
-#define VGUID   $13
 
 #define VVARIANT    $0x80000000
 
@@ -180,7 +179,7 @@ while:
         loop    while
         jmp     break
 0:
-        cmpl    VGUID, %edx
+        cmpl    VOBJECT, %edx
         ja      4f
         jmp     *0f(,%edx,4)
         .section        .rodata
@@ -199,7 +198,6 @@ while:
         .long   3f      // dbl
         .long   4f      // string
         .long   4f      // object
-        .long   4f      // guid
         .text
 1:
         movzbl  (%eax), %edx
@@ -255,7 +253,7 @@ _Z8evaluateRK3Any:
         movl    %esp, %ebp
         movl    0x8(%ebp),%eax
         movl    VTYPE(%eax), %edx
-        cmpl    VGUID, %edx
+        cmpl    VOBJECT, %edx
         ja      6f
         jmp     *0f(,%edx,4)
         .section        .rodata
