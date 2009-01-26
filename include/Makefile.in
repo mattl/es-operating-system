@@ -147,6 +147,7 @@ srcdir = @srcdir@
 subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUFFIXES = .h .idl
@@ -466,16 +467,16 @@ uninstall-am: uninstall-nobase_includeHEADERS \
 
 
 @ES_TRUE@%.h %.ent : %.idl
-@ES_TRUE@	esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+@ES_TRUE@	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface $<
 
 @ES_TRUE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-@ES_TRUE@	esidl -C -I$(srcdir) $<
+@ES_TRUE@	esidl -C -isystem $(srcdir) $<
 
 @ES_FALSE@%.h %.ent : %.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) -include es/base/IInterface.idl -object Interface $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface $<
 
 @ES_FALSE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -I$(srcdir) $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) $<
 
 clean-local:
 	-rm -rf es
