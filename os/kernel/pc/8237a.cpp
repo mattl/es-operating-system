@@ -67,7 +67,7 @@ Chan::setup(void* buffer, int len, u8 mode)
 {
     Lock::Synchronized method(dmac->spinLock);
 
-    mode &= IDmac::READ | IDmac::WRITE | IDmac::AUTO_INITIALIZE;
+    mode &= es::Dmac::READ | es::Dmac::WRITE | es::Dmac::AUTO_INITIALIZE;
     dmac->setup(chan, ((u32) buffer) & ~0xc0000000, len, mode | 0x40);  // single mode
 }
 
@@ -110,19 +110,19 @@ void* Dmac::
 Chan::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IDmac::iid()) == 0)
+    if (strcmp(riid, es::Dmac::iid()) == 0)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        objectPtr = static_cast<es::Dmac*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IDmac*>(this);
+        objectPtr = static_cast<es::Dmac*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

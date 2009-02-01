@@ -35,11 +35,11 @@
 static u8 Data[BUF_SIZE * 2];
 static u8 Buf[BUF_SIZE * 2];
 
-Handle<IContext> Context;
+Handle<es::Context> Context;
 
 static void* readData(void* param)
 {
-    Handle<IStream> stream = Context->lookup("device/loopback");
+    Handle<es::Stream> stream = Context->lookup("device/loopback");
     int ret = stream->read(Buf, sizeof(Buf));
     TEST(0 < ret);
     return 0;
@@ -47,7 +47,7 @@ static void* readData(void* param)
 
 static void* writeData(void* param)
 {
-    Handle<IStream> stream = Context->lookup("device/loopback");
+    Handle<es::Stream> stream = Context->lookup("device/loopback");
     int ret = stream->write(Data, 1);
     TEST(ret == 1);
     return 0;
@@ -55,13 +55,13 @@ static void* writeData(void* param)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
     Context = root;
     TEST(Context);
 
-    Handle<IStream> stream = Context->lookup("device/loopback");
+    Handle<es::Stream> stream = Context->lookup("device/loopback");
     TEST(stream);
 
     int count = sizeof(Data);
@@ -70,9 +70,9 @@ int main()
         Data[count] = count % 0xff;
     }
 
-    IThread* thread = new Thread(writeData, // thread function
+    es::Thread* thread = new Thread(writeData, // thread function
                                  0,         // argument to thread function
-                                 IThread::Normal - 1); // priority
+                                 es::Thread::Normal - 1); // priority
     thread->start();
 
     // check blocking feature.
@@ -105,7 +105,7 @@ int main()
 
     thread = new Thread(readData,  // thread function
                         0,         // argument to thread function
-                        IThread::Normal-1); // priority
+                        es::Thread::Normal-1); // priority
     thread->start();
 
     // check blocking feature.

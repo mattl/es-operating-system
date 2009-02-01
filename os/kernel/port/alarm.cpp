@@ -19,8 +19,6 @@
 #include <es/dateTime.h>
 #include "alarm.h"
 
-using namespace es;
-
 #ifndef LLONG_MAX
 #define LLONG_MAX 9223372036854775807LLu
 #endif
@@ -75,9 +73,9 @@ isExpired(long long now)
 }
 
 void Alarm::
-setCallback(ICallback* callback)
+setCallback(es::Callback* callback)
 {
-    ICallback* prev = 0;
+    es::Callback* prev = 0;
 
     if (callback)
     {
@@ -171,15 +169,15 @@ void* Alarm::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IAlarm::iid()) == 0)
+    if (strcmp(riid, es::Alarm::iid()) == 0)
     {
-        objectPtr = static_cast<IAlarm*>(this);
+        objectPtr = static_cast<es::Alarm*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -380,7 +378,7 @@ Queue::check()
     return true;
 }
 
-IAlarm* Alarm::
+es::Alarm* Alarm::
 Constructor::createInstance()
 {
     return new Alarm;
@@ -390,19 +388,19 @@ void* Alarm::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IAlarm::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Alarm::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IAlarm::IConstructor*>(this);
+        objectPtr = static_cast<es::Alarm::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IAlarm::IConstructor*>(this);
+        objectPtr = static_cast<es::Alarm::Constructor*>(this);
     }
     else
     {
-        return NULL;
+        return 0;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -422,5 +420,5 @@ void Alarm::
 initializeConstructor()
 {
     static Constructor constructor;
-    IAlarm::setConstructor(&constructor);
+    es::Alarm::setConstructor(&constructor);
 }

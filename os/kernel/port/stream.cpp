@@ -19,8 +19,6 @@
 #include <errno.h>
 #include "cache.h"
 
-using namespace es;
-
 Stream::
 Stream(Cache* cache) :
     cache(cache), position(0)
@@ -113,23 +111,23 @@ void* Stream::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IFile::iid()) == 0 && cache->file)
+    else if (strcmp(riid, es::File::iid()) == 0 && cache->file)
     {
-        objectPtr = static_cast<IFile*>(this);
+        objectPtr = static_cast<es::File*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -210,7 +208,7 @@ read(void* dst, int count, long long offset)
 }
 
 //
-// IFile containment
+// es::File containment
 //
 
 unsigned int Stream::
@@ -311,14 +309,14 @@ getName(char* name, int nameLength)
     return cache->file->getName(name, nameLength);
 }
 
-IPageable* Stream::
+es::Pageable* Stream::
 getPageable()
 {
     ASSERT(cache->file);
     return cache->file->getPageable();
 }
 
-IStream* Stream::
+es::Stream* Stream::
 getStream()
 {
     ASSERT(cache->file);

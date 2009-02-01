@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,6 @@
 #include <es.h>
 #include <es/handle.h>
 #include "fatStream.h"
-
-using namespace es;
 
 bool FatStream::
 check(u8* clusRefs)
@@ -95,7 +93,7 @@ SkipChainCheck:
     if (isDirectory())
     {
         // XXX clean stale FCB entries.
-        Handle<IStream> dir(cache->getStream());
+        Handle<es::Stream> dir(cache->getStream());
         if (!isRoot())
         {
             dir->setPosition(2 * 32);

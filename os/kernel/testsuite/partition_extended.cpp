@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-IDiskManagement::Geometry VDiskGeometry;
+es::DiskManagement::Geometry VDiskGeometry;
 
 static void SetData(u8* buf, long long size)
 {
@@ -37,16 +37,16 @@ static void SetData(u8* buf, long long size)
     }
 }
 
-void PrintPartitions(IContext* context)
+void PrintPartitions(es::Context* context)
 {
     char name[16];
-    IDiskManagement::Partition params;
+    es::DiskManagement::Partition params;
     esReport("boot type offset   size\n");
-    Handle<IIterator> iter = context->list("");
-    Handle<IBinding> binding;
+    Handle<es::Iterator> iter = context->list("");
+    Handle<es::Binding> binding;
     while ((binding = iter->next()))
     {
-        Handle<IDiskManagement> diskManagement = binding->getObject();
+        Handle<es::DiskManagement> diskManagement = binding->getObject();
         TEST(diskManagement);
         diskManagement->getLayout(&params);
         TEST(0 < binding->getName(name, sizeof(name)));
@@ -57,7 +57,7 @@ void PrintPartitions(IContext* context)
                  params.partitionLength,
                  name);
 
-        Handle<IStream> stream = context->lookup(name);
+        Handle<es::Stream> stream = context->lookup(name);
         TEST(stream);
         long long size;
         size = stream->getSize();
@@ -68,9 +68,9 @@ void PrintPartitions(IContext* context)
     esReport("\n");
 }
 
-void CheckGeometry(Handle<IDiskManagement> dm)
+void CheckGeometry(Handle<es::DiskManagement> dm)
 {
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     dm->getGeometry(&geometry); // throw exception when error occurs.
 #ifdef VERBOSE
     esReport("Geometry\n");
@@ -87,23 +87,23 @@ void CheckGeometry(Handle<IDiskManagement> dm)
     TEST(geometry.diskSize == VDiskGeometry.diskSize);
 }
 
-void CreatePartition(IContext* context, const char* name, long long& size, u8 type)
+void CreatePartition(es::Context* context, const char* name, long long& size, u8 type)
 {
     esReport("Create: %s (size %lld, type 0x%02x)\n", name ,size, type);
 
-    Handle<IBinding> binding;
+    Handle<es::Binding> binding;
     binding = context->bind(name, 0);
     TEST(binding);
 
-    Handle<IStream> stream = context->lookup(name);
+    Handle<es::Stream> stream = context->lookup(name);
     TEST(stream);
-    Handle<IStream> object = binding->getObject();
+    Handle<es::Stream> object = binding->getObject();
     TEST(stream == object);
 
     CheckGeometry(stream);
 
-    Handle<IDiskManagement> diskManagement = stream;
-    IDiskManagement::Partition params;
+    Handle<es::DiskManagement> diskManagement = stream;
+    es::DiskManagement::Partition params;
     diskManagement->getLayout(&params);
 
     stream->setSize(size);
@@ -121,10 +121,10 @@ void CreatePartition(IContext* context, const char* name, long long& size, u8 ty
     }
 }
 
-void Test(IContext* context)
+void Test(es::Context* context)
 {
-    Handle<IBinding> binding;
-    Handle<IStream> stream;
+    Handle<es::Binding> binding;
+    Handle<es::Stream> stream;
 
     long long size0 = 8 * 1024 * 1024LL;
     CreatePartition(context, "partition0", size0, 0x01);
@@ -142,9 +142,9 @@ void Test(IContext* context)
     CreatePartition(context, "logical2", size4, 0x04);
 
     stream = context->lookup("extended");
-    Handle<IDiskManagement> dm = stream;
+    Handle<es::DiskManagement> dm = stream;
 
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     dm->getGeometry(&geometry);
     size0 = stream->getSize();
 
@@ -197,7 +197,7 @@ void Test(IContext* context)
     TEST(stream);
 }
 
-void Init(IContext* context)
+void Init(es::Context* context)
 {
     // remove all partitions.
     esReport("Remove all partitions.\n");
@@ -210,8 +210,8 @@ void Init(IContext* context)
     int id = 0;
     sprintf(name, "logical%u", id);
 
-    Handle<IStream> stream;
-    Handle<IBinding> binding;
+    Handle<es::Stream> stream;
+    Handle<es::Binding> binding;
     while (stream = context->lookup(name))
     {
         ++id;
@@ -242,20 +242,20 @@ void Init(IContext* context)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat16_32MB.img"));
-    Handle<IDiskManagement> dm = disk;
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat16_32MB.img"));
+    Handle<es::DiskManagement> dm = disk;
     dm->getGeometry(&VDiskGeometry);
 
-    Handle<IPartition> partition = new PartitionContext();
+    Handle<es::Partition> partition = new PartitionContext();
     TEST(partition);
 
     // mount
     TEST(partition->mount(disk) == 0);
     {
-        Handle<IContext> context = partition;
+        Handle<es::Context> context = partition;
         TEST(context);
 
         Init(context);
@@ -275,9 +275,9 @@ int main(int argc, char* argv[])
     TEST(partition);
     TEST(partition->mount(disk) == 0);
     {
-        Handle<IContext> context = partition;
+        Handle<es::Context> context = partition;
         // check
-        Handle<IStream> stream;
+        Handle<es::Stream> stream;
         TEST(stream = context->lookup("partition0"));
         TEST(!(stream = context->lookup("partition1")));
         TEST(!(stream = context->lookup("partition2")));

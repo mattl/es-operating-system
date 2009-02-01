@@ -34,9 +34,9 @@
 class FloppyController;
 class FloppyDrive;
 
-using namespace es;
 
-class FloppyDrive : public IDiskManagement, public IStream , public ICallback // public IRemovableMedia
+
+class FloppyDrive : public es::DiskManagement, public es::Stream , public es::Callback // public es::RemovableMedia
 {
     friend class FloppyController;
 
@@ -54,7 +54,7 @@ class FloppyDrive : public IDiskManagement, public IStream , public ICallback //
     u8                  gpl;
     u8                  fgpl;
 
-    IAlarm*             alarm;
+    es::Alarm*             alarm;
     DateTime            motor;
 
     Link<FloppyDrive>   link;
@@ -96,7 +96,7 @@ public:
     unsigned int release();
 };
 
-class FloppyController : public ICallback
+class FloppyController : public es::Callback
 {
     friend class FloppyDrive;
 
@@ -125,8 +125,8 @@ class FloppyController : public ICallback
     u16             base;
     u8              motor;
 
-    IMonitor*       monitor;
-    IDmac*          dmac;
+    es::Monitor*       monitor;
+    es::Dmac*          dmac;
     FloppyDrive*    current;
     u8              command[14];
     int             commandLength;
@@ -141,7 +141,7 @@ class FloppyController : public ICallback
     int result();
 
 public:
-    FloppyController(IDmac* dmac, u16 base = 0x3f0, u8 irq = 6);
+    FloppyController(es::Dmac* dmac, u16 base = 0x3f0, u8 irq = 6);
     ~FloppyController();
 
     // ICallback

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,22 +25,22 @@
 #include <es/base/IProcess.h>
 #include <es/base/ISelectable.h>
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 class Selector
 {
     struct Item
     {
-        ISelectable*    selectable;
+        es::Selectable*    selectable;
         void          (*handler)(void*);
         void*           param;
 
     };
     friend bool operator==(const Item& a, const Item& b);
 
-    IMonitor*           monitor;
+    es::Monitor*           monitor;
     Collection<Item>    list;
 
 public:
@@ -60,7 +60,7 @@ public:
     }
     bool wait(long long timeout = 0)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         bool result = monitor->wait(timeout);
         Iterator iter = list.begin();
@@ -71,9 +71,9 @@ public:
         }
         return result;
     }
-    int add(ISelectable* selectable, void (*handler)(void*), void* param)
+    int add(es::Selectable* selectable, void (*handler)(void*), void* param)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
 esReport("Selector::%s %d, %p\n", __func__, __LINE__, selectable);
         if (selectable)
@@ -90,9 +90,9 @@ esReport("Selector::%s %d, %p\n", __func__, __LINE__, selectable);
         }
         return 0;
     }
-    int remove(ISelectable* selectable)
+    int remove(es::Selectable* selectable)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
 esReport("Selector::%s %d, %p\n", __func__, __LINE__, selectable);
         if (selectable)

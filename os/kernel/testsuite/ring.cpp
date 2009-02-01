@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ int main(void)
     u8 data[5];
     u8 pat[5];
 
-    IInterface* nameSpace = 0;
+    es::Interface* nameSpace = 0;
     esInit(&nameSpace);
 
     for (i = 0; i < 5; ++i)

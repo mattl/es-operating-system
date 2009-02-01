@@ -277,14 +277,14 @@ setCancelState(int state)
     lock();
 
     // ASSERT(this == getCurrentThread());
-    int previous = (attr & ICurrentThread::CANCEL_ENABLE);
-    if (state & ICurrentThread::CANCEL_ENABLE)
+    int previous = (attr & es::CurrentThread::CANCEL_ENABLE);
+    if (state & es::CurrentThread::CANCEL_ENABLE)
     {
-        attr |= ICurrentThread::CANCEL_ENABLE;
+        attr |= es::CurrentThread::CANCEL_ENABLE;
     }
     else
     {
-        attr &= ~ICurrentThread::CANCEL_ENABLE;
+        attr &= ~es::CurrentThread::CANCEL_ENABLE;
     }
 
     unlock();
@@ -300,14 +300,14 @@ setCancelType(int type)
     lock();
 
     // ASSERT(this == getCurrentThread());
-    int previous = (attr & ICurrentThread::CANCEL_ASYNCHRONOUS);
-    if (type & ICurrentThread::CANCEL_ASYNCHRONOUS)
+    int previous = (attr & es::CurrentThread::CANCEL_ASYNCHRONOUS);
+    if (type & es::CurrentThread::CANCEL_ASYNCHRONOUS)
     {
-        attr |= ICurrentThread::CANCEL_ASYNCHRONOUS;
+        attr |= es::CurrentThread::CANCEL_ASYNCHRONOUS;
     }
     else
     {
-        attr &= ~ICurrentThread::CANCEL_ASYNCHRONOUS;
+        attr &= ~es::CurrentThread::CANCEL_ASYNCHRONOUS;
     }
 
     unlock();
@@ -321,7 +321,7 @@ testCancel()
 {
     unsigned x = Core::splHi();
     ASSERT(this == getCurrentThread());
-    if (attr & ICurrentThread::CANCEL_REQUESTED)
+    if (attr & es::CurrentThread::CANCEL_REQUESTED)
     {
         exit(0);
     }
@@ -334,20 +334,20 @@ cancel()
     unsigned x = Core::splHi();
     lock();
 
-    if (attr & ICurrentThread::CANCEL_DISABLE)
+    if (attr & es::CurrentThread::CANCEL_DISABLE)
     {
         unlock();
         Core::splX(x);
         return;
     }
 
-    attr |= ICurrentThread::CANCEL_REQUESTED;
-    if (!(attr & ICurrentThread::CANCEL_ASYNCHRONOUS))
+    attr |= es::CurrentThread::CANCEL_REQUESTED;
+    if (!(attr & es::CurrentThread::CANCEL_ASYNCHRONOUS))
     {
         if (state == WAITING)
         {
             rendezvous->remove(this);
-            state = IThread::RUNNABLE;
+            state = es::Thread::RUNNABLE;
             setRun();
             if (monitor)
             {
@@ -437,7 +437,7 @@ sleep(s64 timeout)
     unsigned x = Core::splHi();
     ASSERT(state == RUNNING);
     alarm.setInterval(timeout);
-    alarm.setCallback(static_cast<ICallback*>(this));
+    alarm.setCallback(static_cast<es::Callback*>(this));
     alarm.setEnabled(true);
     DelegateTemplate<Thread> d(this, &Thread::condSleep);
     sleepPoint.sleep(&d);
@@ -457,7 +457,7 @@ Thread::
 Thread(void* (*func)(void*), void* param, int priority,
        void* stack, unsigned stackSize) :
     state(NEW),
-    attr(ICurrentThread::CANCEL_DEFERRED | ICurrentThread::CANCEL_ENABLE),
+    attr(es::CurrentThread::CANCEL_DEFERRED | es::CurrentThread::CANCEL_ENABLE),
     core(0),
     base(priority),
     priority(priority),
@@ -508,23 +508,23 @@ void* Thread::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IThread::iid()) == 0)
+    if (strcmp(riid, es::Thread::iid()) == 0)
     {
-        objectPtr = static_cast<IThread*>(this);
+        objectPtr = static_cast<es::Thread*>(this);
     }
-    else if (strcmp(riid, ICallback::iid()) == 0)
+    else if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IThread*>(this);
+        objectPtr = static_cast<es::Thread*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

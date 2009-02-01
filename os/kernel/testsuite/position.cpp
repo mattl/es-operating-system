@@ -32,17 +32,17 @@
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    Handle<IContext> context = root;
+    Handle<es::Context> context = root;
 
     MemoryStream* backingStore = new(std::nothrow) MemoryStream(128*1024);
     TEST(backingStore);
 
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     TEST(cache);
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     TEST(stream);
 
     long long size;

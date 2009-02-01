@@ -28,7 +28,6 @@
 #include "partition.h"
 
 using namespace LittleEndian;
-using namespace es;
 
 #define VERBOSE
 
@@ -140,7 +139,7 @@ createPartition(const char* name, u8 type)
         return 0;
     }
 
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     getGeometry(&geometry);
 
     // Read MBR
@@ -288,7 +287,7 @@ createLogicalPartition(const char* name)
         return 0;
     }
 
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     getGeometry(&geometry);
     u32 secSize = geometry.bytesPerSector;
     unsigned secPerCylinder = geometry.heads * geometry.sectorsPerTrack;
@@ -330,13 +329,13 @@ createLogicalPartition(const char* name)
 }
 
 int PartitionContext::
-getGeometry(IDiskManagement::Geometry* geometry)
+getGeometry(es::DiskManagement::Geometry* geometry)
 {
     if (!disk || !geometry)
     {
         return -1;
     }
-    Handle<IDiskManagement> dm(disk, true);
+    Handle<es::DiskManagement> dm(disk, true);
     if (dm)
     {
         try
@@ -620,7 +619,7 @@ getDefaultPartitionType(long long size)
 }
 
 //
-// PartitionContext : IPartition
+// PartitionContext : es::Partition
 //
 
 int PartitionContext::
@@ -659,13 +658,13 @@ initialize()
  *  The order is important when partitions are unmounted.
  */
 int PartitionContext::
-mount(IStream* disk)
+mount(es::Stream* disk)
 {
     Monitor::Synchronized method(monitor);
 
     this->disk = disk;
 
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     getGeometry(&geometry);
 
     // Read MBR
@@ -809,11 +808,11 @@ unmount()
 }
 
 //
-// PartitionContext : IContext
+// PartitionContext : es::Context
 //
 
-IBinding* PartitionContext::
-bind(const char* name, IInterface* object)
+es::Binding* PartitionContext::
+bind(const char* name, es::Interface* object)
 {
     Monitor::Synchronized method(monitor);
 
@@ -845,15 +844,15 @@ bind(const char* name, IInterface* object)
         }
     }
 
-    Handle<IStream> created(ps, true);
-    Handle<IIterator> iter = list("");
-    Handle<IBinding> binding;
+    Handle<es::Stream> created(ps, true);
+    Handle<es::Iterator> iter = list("");
+    Handle<es::Binding> binding;
     while ((binding = iter->next()))
     {
-        Handle<IStream> stream = binding->getObject();
+        Handle<es::Stream> stream = binding->getObject();
         if (stream == created)
         {
-            IBinding* ret = binding;
+            es::Binding* ret = binding;
             ret->addRef();
             return ret;
         }
@@ -862,7 +861,7 @@ bind(const char* name, IInterface* object)
     return 0;
 }
 
-IContext* PartitionContext::
+es::Context* PartitionContext::
 createSubcontext(const char* name)
 {
     return 0;
@@ -908,7 +907,7 @@ getId(const char* name, const char* prefix)
     return n;
 }
 
-IInterface* PartitionContext::
+es::Interface* PartitionContext::
 lookup(const char* name)
 {
     PartitionStream* stream = lookupPartitionStream(name);
@@ -918,7 +917,7 @@ lookup(const char* name)
     }
 
     stream->addRef();
-    return static_cast<IStream*>(stream);
+    return static_cast<es::Stream*>(stream);
 }
 
 int PartitionContext::
@@ -955,37 +954,37 @@ unbind(const char* name)
     return -1;
 }
 
-IIterator* PartitionContext::
+es::Iterator* PartitionContext::
 list(const char* name)
 {
     return new PartitionIterator(this);
 }
 
 //
-// PartitionContext : IInterface
+// PartitionContext : es::Interface
 //
 
 void* PartitionContext::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IContext::iid()) == 0)
+    if (strcmp(riid, es::Context::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, IPartition::iid()) == 0)
+    else if (strcmp(riid, es::Partition::iid()) == 0)
     {
-        objectPtr = static_cast<IPartition*>(this);
+        objectPtr = static_cast<es::Partition*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -1008,7 +1007,7 @@ release()
 }
 
 
-IPartition* PartitionContext::
+es::Partition* PartitionContext::
 Constructor::createInstance()
 {
     return new PartitionContext;
@@ -1018,19 +1017,19 @@ void* PartitionContext::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IPartition::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Partition::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IPartition::IConstructor*>(this);
+        objectPtr = static_cast<es::Partition::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IPartition::IConstructor*>(this);
+        objectPtr = static_cast<es::Partition::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -1050,5 +1049,5 @@ void PartitionContext::
 initializeConstructor()
 {
     static Constructor constructor;
-    IPartition::setConstructor(&constructor);
+    es::Partition::setConstructor(&constructor);
 }

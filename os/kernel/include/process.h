@@ -35,7 +35,7 @@ class InterfaceDescriptor;
 class Map;
 class Process;
 
-class SyscallProxy : public IInterface
+class SyscallProxy : public es::Interface
 {
     Ref         ref;
     Interlocked use;
@@ -82,7 +82,7 @@ public:
     friend class Process;
 };
 
-class UpcallProxy : public IInterface
+class UpcallProxy : public es::Interface
 {
     Ref         ref;
     Interlocked use;
@@ -131,7 +131,7 @@ public:
     unsigned long get(const void* addr);
 
     void set(const void* addr, Page* page, unsigned long pte);
-    void unset(const void* addr, long count, IPageable* pageable, long long offset);
+    void unset(const void* addr, long count, es::Pageable* pageable, long long offset);
 
     void load();
     void invalidate(const void* addr);
@@ -185,7 +185,7 @@ class Map
     const void* start;
     const void* end;
     long        length;
-    IPageable*  pageable;
+    es::Pageable*  pageable;
     long long   offset;
     unsigned    prot;
     unsigned    flags;
@@ -194,7 +194,7 @@ class Map
 
     Map(Process* proc, const void* start, const void* end, long length,
         unsigned prot, unsigned flags,
-        IPageable* pagealbe, long long offset);
+        es::Pageable* pagealbe, long long offset);
     ~Map();
 
     long getOffset(const void* addr)
@@ -207,7 +207,7 @@ class Map
     long long getPosition(const void* addr);
 };
 
-class Process : public IProcess, public IRuntime
+class Process : public es::Process, public es::Runtime
 {
 public:
     static void* const USER_MIN;
@@ -242,11 +242,11 @@ private:
     List<Thread, &Thread::linkProcess>
                     threadList;
 
-    IContext*       root;
-    IContext*       current;
-    IStream*        in;
-    IStream*        out;
-    IStream*        error;
+    es::Context*       root;
+    es::Context*       current;
+    es::Stream*        in;
+    es::Stream*        out;
+    es::Stream*        error;
 
     bool            log;
 
@@ -293,23 +293,23 @@ public:
     void detach(Thread* thread);
 
     void* map(void* start, long long length, unsigned int prot, unsigned int flags,
-              IPageable* pageable, long long offset, long long size,
+              es::Pageable* pageable, long long offset, long long size,
               void* min, void* max);
 
     // ICurrentProcess related (called by Sched)
     void exit(int status);
     void* map(void* start, long long length, unsigned int prot, unsigned int flags,
-              IPageable* pageable, long long offset);
+              es::Pageable* pageable, long long offset);
     void unmap(void* start, long long length);
-    IThread* createThread(void* (*start)(void* param), void* param);
-    IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
-    IStream* getError();
+    es::Thread* createThread(void* (*start)(void* param), void* param);
+    es::Context* getRoot();
+    es::Stream* getInput();
+    es::Stream* getOutput();
+    es::Stream* getError();
     void* setBreak(long long increment);
     bool trace(bool on);
-    void setCurrent(IContext* context);
-    IContext* getCurrent();
+    void setCurrent(es::Context* context);
+    es::Context* getCurrent();
 
     // IRuntime
     /* [check] function pointer.
@@ -322,15 +322,15 @@ public:
     // IProcess
     void kill();
     void start();
-    void start(IFile* file);
-    void start(IFile* file, const char* arguments);
+    void start(es::File* file);
+    void start(es::File* file, const char* arguments);
     int wait();
     int getExitValue();
     bool hasExited();
-    void setRoot(IContext* root);
-    void setInput(IStream* in);
-    void setOutput(IStream* out);
-    void setError(IStream* error);
+    void setRoot(es::Context* root);
+    void setInput(es::Stream* in);
+    void setOutput(es::Stream* out);
+    void setError(es::Stream* error);
 
     // IInterface
     void* queryInterface(const char* riid);
@@ -363,7 +363,7 @@ public:
      */
     int copyIn(UpcallRecord* record);
     u8* copyInString(const char* string, u8* esp);
-    IInterface* copyInObject(IInterface* object, const char* iid);
+    es::Interface* copyInObject(es::Interface* object, const char* iid);
 
     /** Copies back the input parameters from the server user stack.
      * @return  error number
@@ -371,10 +371,10 @@ public:
     int copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName);
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Process::Constructor
     {
     public:
-        IProcess* createInstance();
+        es::Process* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();

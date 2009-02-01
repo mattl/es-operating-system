@@ -33,8 +33,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 u32 FatStream::
 getClusNum(long long position)
 {
@@ -92,7 +90,7 @@ setPosition(long long pos)
 long long FatStream::
 getSize()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return this->size;
 }
@@ -100,7 +98,7 @@ getSize()
 void FatStream::
 setSize(long long newSize)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (newSize < 0 || 0xffffffff < newSize)
     {
@@ -199,7 +197,7 @@ read(void* dst, int count)
 int FatStream::
 read(void* dst, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (size < offset || count < 0)
     {
@@ -250,7 +248,7 @@ write(const void* src, int count)
 int FatStream::
 write(const void* src, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (size < offset || count < 0)
     {
@@ -296,7 +294,7 @@ write(const void* src, int count, long long offset)
 void FatStream::
 flush()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (flags & Updated)
     {
@@ -306,7 +304,7 @@ flush()
             fcb[DIR_Attr] |= ATTR_ARCHIVE;
             if (parent)
             {
-                Handle<IStream> dir(parent->cache->getStream());
+                Handle<es::Stream> dir(parent->cache->getStream());
                 dir->write(fcb, 32, offset);
                 dir->flush();
             }
@@ -326,7 +324,7 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
     ASSERT(memcmp(fcb, FatFileSystem::nameDot, 11) != 0);
     ASSERT(memcmp(fcb, FatFileSystem::nameDotdot, 11) != 0);
 
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 
     memmove(this->fcb, fcb, 32);
     fstClus = word(fcb + DIR_FstClusLO) | (word(fcb + DIR_FstClusHI) << 16);
@@ -350,11 +348,11 @@ FatStream(FatFileSystem* fileSystem, FatStream* parent, u32 offset, u8* fcb) :
 
     if (!isDirectory())
     {
-        cache = ICache::createInstance(this);
+        cache = es::Cache::createInstance(this);
     }
     else
     {
-        cache = ICache::createInstance(this, fileSystem->pageSet);
+        cache = es::Cache::createInstance(this, fileSystem->pageSet);
     }
     cache->setSectorSize(fileSystem->bytsPerClus);
     fileSystem->add(this);
@@ -395,27 +393,27 @@ void* FatStream::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (isDirectory() && strcmp(riid, IContext::iid()) == 0)
+    if (isDirectory() && strcmp(riid, es::Context::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, IFile::iid()) == 0)
+    else if (strcmp(riid, es::File::iid()) == 0)
     {
-        objectPtr = static_cast<IFile*>(this);
+        objectPtr = static_cast<es::File*>(this);
     }
-    else if (strcmp(riid, IBinding::iid()) == 0)
+    else if (strcmp(riid, es::Binding::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -447,7 +445,7 @@ release()
         {
             if (cache)
             {
-                ICache* c = cache;
+                es::Cache* c = cache;
 
                 cache = 0;
                 c->invalidate();

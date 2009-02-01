@@ -24,7 +24,7 @@
 
 // #define VERBOSE
 
-using namespace es;
+
 
 u32 Vesa::data[32] =
 {
@@ -72,7 +72,7 @@ u16 Vesa::yHotSpot(0);
 using namespace LittleEndian;
 
 Vesa::
-Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font, IContext* device) :
+Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font, es::Context* device) :
     vbeInfoBlock(vbeInfoBlock),
     modeInfoBlock(modeInfoBlock),
     font(font)
@@ -115,8 +115,8 @@ Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font, IContext* device) :
              font);
 #endif // VERBOSE
 
-    device->bind("framebuffer", static_cast<IStream*>(this));
-    device->bind("cursor", static_cast<ICursor*>(this));
+    device->bind("framebuffer", static_cast<es::Stream*>(this));
+    device->bind("cursor", static_cast<es::Cursor*>(this));
 }
 
 int Vesa::
@@ -475,27 +475,27 @@ void* Vesa::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICursor::iid()) == 0)
+    if (strcmp(riid, es::Cursor::iid()) == 0)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        objectPtr = static_cast<es::Cursor*>(this);
     }
-    else if (strcmp(riid, IStream::iid()) == 0)
+    else if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        objectPtr = static_cast<es::Cursor*>(this);
     }
-    else if (strcmp(riid, IPageable::iid()) == 0)
+    else if (strcmp(riid, es::Pageable::iid()) == 0)
     {
-        objectPtr = static_cast<IPageable*>(this);
+        objectPtr = static_cast<es::Pageable*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

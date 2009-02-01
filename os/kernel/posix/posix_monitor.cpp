@@ -78,7 +78,7 @@ lock()
 
     if (!tryLock())
     {
-        current->state = IThread::BLOCKED;
+        current->state = es::Thread::BLOCKED;
         int err = pthread_mutex_lock(&mutex);
         if (err)
         {
@@ -86,7 +86,7 @@ lock()
         }
         addRef();
     }
-    current->state = IThread::RUNNABLE;
+    current->state = es::Thread::RUNNABLE;
 }
 
 bool Monitor::
@@ -121,9 +121,9 @@ wait()
 {
     Thread* current(Thread::getCurrentThread());
 
-    current->state = IThread::WAITING;
+    current->state = es::Thread::WAITING;
     int err = pthread_cond_wait(&cond, &mutex);
-    current->state = IThread::RUNNABLE;
+    current->state = es::Thread::RUNNABLE;
     if (err)
     {
         esThrow(err);
@@ -151,15 +151,15 @@ wait(s64 timeout)
 #endif
         ts.tv_sec += timeout / 10000000;
         ts.tv_nsec += (timeout % 10000000) * 100;
-        current->state = IThread::TIMED_WAITING;
+        current->state = es::Thread::TIMED_WAITING;
         err = pthread_cond_timedwait(&cond, &mutex, &ts);
-        current->state = IThread::RUNNABLE;
+        current->state = es::Thread::RUNNABLE;
     }
     else
     {
-        current->state = IThread::WAITING;
+        current->state = es::Thread::WAITING;
         err = pthread_cond_wait(&cond, &mutex);
-        current->state = IThread::RUNNABLE;
+        current->state = es::Thread::RUNNABLE;
     }
     switch (err)
     {
@@ -198,19 +198,19 @@ void* Monitor::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IMonitor::iid()) == 0)
+    if (strcmp(riid, es::Monitor::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        objectPtr = static_cast<es::Monitor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        objectPtr = static_cast<es::Monitor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -232,7 +232,7 @@ release()
     return count;
 }
 
-IMonitor* Monitor::
+es::Monitor* Monitor::
 Constructor::createInstance()
 {
     return new Monitor;
@@ -242,19 +242,19 @@ void* Monitor::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IMonitor::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Monitor::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+        objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+        objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -275,5 +275,5 @@ initializeConstructor()
 {
     // cf. -fthreadsafe-statics for g++
     static Constructor constructor;
-    IMonitor::setConstructor(&constructor);
+    es::Monitor::setConstructor(&constructor);
 }

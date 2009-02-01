@@ -21,9 +21,9 @@
 #include <es/device/IPic.h>
 #include <es/ref.h>
 
-using namespace es;
 
-class Pic : public IPic
+
+class Pic : public es::Pic
 {
     Ref ref;
     u8  imrMaster;

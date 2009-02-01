@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +43,9 @@
 #include <es/device/IAudioFormat.h>
 #include <es/synchronized.h>
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 extern "C" {
 
@@ -56,15 +56,15 @@ int synchronizedSignalSemaphoreWithIndex(int semaIndex);
 
 }
 
-Handle<IStream> gSoundOutput;
-Handle<IStream> gSoundInput;
+Handle<es::Stream> gSoundOutput;
+Handle<es::Stream> gSoundInput;
 
 namespace
 {
-    IMonitor* monitorPlayState;
-    IMonitor* monitorPlaySize;
-    IMonitor* monitorRecordState;
-    IMonitor* monitorRecording;
+    es::Monitor* monitorPlayState;
+    es::Monitor* monitorPlaySize;
+    es::Monitor* monitorRecordState;
+    es::Monitor* monitorRecording;
 }
 
 int soundInit(void)
@@ -159,7 +159,7 @@ static void PlayCallback(int result, int len);
 
 int snd_AvailableSpace(void)
 {
-    Synchronized<IMonitor*> method(monitorPlaySize);
+    Synchronized<es::Monitor*> method(monitorPlaySize);
     int available = playState.bufSizeInBytes - playState.size;
 
     return available;
@@ -167,7 +167,7 @@ int snd_AvailableSpace(void)
 
 static u8* PutSound(const u8* src, int size)
 {
-    Synchronized<IMonitor*> method(monitorPlayState);
+    Synchronized<es::Monitor*> method(monitorPlayState);
 
     u8* buf = playState.buffer;
     const u8* bufEnd = playState.buffer + playState.bufSizeInBytes;
@@ -207,7 +207,7 @@ static u8* PutSound(const u8* src, int size)
     }
 
     {
-        Synchronized<IMonitor*> method(monitorPlaySize);
+        Synchronized<es::Monitor*> method(monitorPlaySize);
         playState.size += size;
     }
     playState.tail = tail;
@@ -268,7 +268,7 @@ int snd_PlaySilence(void)
 
 int snd_Start(int frameCount, int samplesPerSec, int stereo, int semaIndex)
 {
-    Synchronized<IMonitor*> method(monitorPlayState);
+    Synchronized<es::Monitor*> method(monitorPlayState);
 
     if (!gSoundOutput)
     {
@@ -289,7 +289,7 @@ int snd_Start(int frameCount, int samplesPerSec, int stereo, int semaIndex)
 
     int chan = (stereo ? 2 : 1);
 
-    Handle<IAudioFormat> audio(gSoundOutput);
+    Handle<es::AudioFormat> audio(gSoundOutput);
     audio->setBitsPerSample(16);
     audio->setChannels(chan);
     audio->setSamplingRate(samplesPerSec);
@@ -319,7 +319,7 @@ int snd_Start(int frameCount, int samplesPerSec, int stereo, int semaIndex)
 
 int snd_Stop(void)
 {
-    Synchronized<IMonitor*> method(monitorPlayState);
+    Synchronized<es::Monitor*> method(monitorPlayState);
 
     if (!playState.open)
     {
@@ -333,7 +333,7 @@ int snd_Stop(void)
 
     playState.played = 0;
     {
-        Synchronized<IMonitor*> method(monitorPlaySize);
+        Synchronized<es::Monitor*> method(monitorPlaySize);
         playState.size = 0;
     }
     playState.head = playState.tail = NULL;
@@ -352,7 +352,7 @@ int snd_SetRecordLevel(int level)
 
 static int SetupRecordBuf(int recorded)
 {
-    Synchronized<IMonitor*> method(monitorRecordState);
+    Synchronized<es::Monitor*> method(monitorRecordState);
 
     const u8* tail = recordState.tail;
     const u8* buf  = recordState.buffer;
@@ -407,10 +407,10 @@ static int SetupRecordBuf(int recorded)
 
 int snd_StartRecording(int desiredSamplesPerSec, int stereo, int semaIndex)
 {
-    Synchronized<IMonitor*> recording(monitorRecording);
+    Synchronized<es::Monitor*> recording(monitorRecording);
 
     {
-        Synchronized<IMonitor*> method(monitorRecordState);
+        Synchronized<es::Monitor*> method(monitorRecordState);
         if (recordState.open == true)
         {
             return 0;
@@ -462,7 +462,7 @@ int snd_StartRecording(int desiredSamplesPerSec, int stereo, int semaIndex)
             chan = 1;
         }
 
-        Handle<IAudioFormat> audio(gSoundInput);
+        Handle<es::AudioFormat> audio(gSoundInput);
         audio->setBitsPerSample(8 * recordState.dataFormat);
         audio->setChannels(chan);
         audio->setSamplingRate(recordState.samplingRate);
@@ -476,12 +476,12 @@ int snd_StartRecording(int desiredSamplesPerSec, int stereo, int semaIndex)
 int snd_StopRecording(void)
 {
     {
-        Synchronized<IMonitor*> method(monitorRecordState);
+        Synchronized<es::Monitor*> method(monitorRecordState);
         recordState.inProgress = false;
     }
 
     {
-        Synchronized<IMonitor*> recording(monitorRecording);
+        Synchronized<es::Monitor*> recording(monitorRecording);
 
         recordState.bufSizeInBytes = 0;
         recordState.maxRecordSize = 0;
@@ -505,7 +505,7 @@ int snd_StopRecording(void)
 
 double snd_GetRecordingSampleRate(void)
 {
-    Synchronized<IMonitor*> method(monitorRecordState);
+    Synchronized<es::Monitor*> method(monitorRecordState);
     return  (double) recordState.samplingRate;
 }
 
@@ -571,7 +571,7 @@ static u8* CopyRecordedSamples(short* dst, u8* src, int len)
 
 int snd_RecordSamplesIntoAtLength(int buf, int startSliceIndex, int bufferSizeInBytes)
 {
-    Synchronized<IMonitor*> method(monitorRecordState);
+    Synchronized<es::Monitor*> method(monitorRecordState);
 
     if (!recordState.inProgress)
     {
@@ -599,7 +599,7 @@ void snd_SetVolume(double left, double right)//johnmci@smalltalkconsulting.com N
 
 static void Setup(void)
 {
-    Synchronized<IMonitor*> method(monitorPlayState);
+    Synchronized<es::Monitor*> method(monitorPlayState);
 
     const u8* buf = playState.buffer;
     const u8* bufEnd = playState.buffer + playState.bufSizeInBytes;
@@ -655,7 +655,7 @@ static void Setup(void)
 
 static void MoveHead(int played)
 {
-    Synchronized<IMonitor*> method(monitorPlayState);
+    Synchronized<es::Monitor*> method(monitorPlayState);
 
     const u8* buf = playState.buffer;
     const u8* bufEnd = playState.buffer + playState.bufSizeInBytes;
@@ -664,7 +664,7 @@ static void MoveHead(int played)
     bufEnd = playState.buffer + playState.bufSizeInBytes;
 
     {
-        Synchronized<IMonitor*> method(monitorPlaySize);
+        Synchronized<es::Monitor*> method(monitorPlaySize);
         playState.size -= played;
     }
 
@@ -681,10 +681,10 @@ static void MoveHead(int played)
 
 void* audioProcess(void* param)
 {
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
     gSoundOutput = root->lookup("device/soundOutput");
 
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
     monitorPlayState = System()->createMonitor();
     monitorPlaySize = System()->createMonitor();
@@ -748,13 +748,13 @@ void* audioProcess(void* param)
 
 void* recordProcess(void* param)
 {
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
     gSoundInput = root->lookup("device/soundInput");
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
     monitorRecordState = System()->createMonitor();
     monitorRecording = System()->createMonitor();
     {
-        Synchronized<IMonitor*> method(monitorRecordState);
+        Synchronized<es::Monitor*> method(monitorRecordState);
         recordState.inProgress = false;
     }
 
@@ -776,7 +776,7 @@ void* recordProcess(void* param)
 
         for (;;)
         {
-            Synchronized<IMonitor*> method(monitorRecording);
+            Synchronized<es::Monitor*> method(monitorRecording);
 
             monitorRecordState->lock();
             if (!recordState.inProgress)

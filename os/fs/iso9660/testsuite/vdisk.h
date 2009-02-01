@@ -16,8 +16,8 @@
  */
 
 #include <es/base/IInterface.h>
-using namespace es;
-int esInit(IInterface** nameSpace);
+
+int esInit(es::Interface** nameSpace);
 
 #ifndef __es__
 
@@ -34,7 +34,7 @@ int esInit(IInterface** nameSpace);
 #include <es/base/IStream.h>
 #include <es/device/IDiskManagement.h>
 
-class VDisk : public IStream, public IDiskManagement
+class VDisk : public es::Stream, public es::DiskManagement
 {
     Ref      ref;
     int      fd;
@@ -230,23 +230,23 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IStream::iid()) == 0)
+        if (strcmp(riid, es::Stream::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IDiskManagement::iid()) == 0)
+        else if (strcmp(riid, es::DiskManagement::iid()) == 0)
         {
-            objectPtr = static_cast<IDiskManagement*>(this);
+            objectPtr = static_cast<es::DiskManagement*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 

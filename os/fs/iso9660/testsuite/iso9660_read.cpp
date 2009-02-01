@@ -77,11 +77,11 @@ static CheckList FileList[] =
     {"u..v..w", 0}
 };
 
-void test(Handle<IContext> root)
+void test(Handle<es::Context> root)
 {
-    Handle<IContext>    dir = root->lookup("test1");
+    Handle<es::Context>    dir = root->lookup("test1");
     TEST(dir);
-    Handle<IIterator>   iter;
+    Handle<es::Iterator>   iter;
     long long           size = 0;
     long long           ret;
 
@@ -90,7 +90,7 @@ void test(Handle<IContext> root)
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
 #ifdef VERBOSE
         esReport("\"%s\" (%d)\n", name, strlen(name));
@@ -110,8 +110,8 @@ void test(Handle<IContext> root)
         }
         TEST(found);
 
-        Handle<IFile> file = binding;
-        Handle<IStream>     stream = file->getStream();
+        Handle<es::File> file = binding;
+        Handle<es::Stream>     stream = file->getStream();
         char* buf = new char[32];
         ret = stream->read(buf, sizeof(buf));
         TEST(ret == 4); // test
@@ -134,7 +134,7 @@ void test(Handle<IContext> root)
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
 #ifdef VERBOSE
         esReport("\"%s\" (%d)\n", name, strlen(name));
@@ -142,8 +142,8 @@ void test(Handle<IContext> root)
         TEST(strcmp(name, "01234567890123456789012345678901234567890123456789"
                           "01234567890123456789012345678901234567890123456789"
                           "01234567") == 0); // 108 characters.
-        Handle<IFile> file = binding;
-        Handle<IStream>     stream = file->getStream();
+        Handle<es::File> file = binding;
+        Handle<es::Stream>     stream = file->getStream();
         char* buf = new char[32];
         ret = stream->read(buf, sizeof(buf));
         TEST(ret == 4); // test
@@ -153,15 +153,15 @@ void test(Handle<IContext> root)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -169,12 +169,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

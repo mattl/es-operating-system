@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,8 +35,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 namespace
 {
     template <typename T>
@@ -50,8 +48,8 @@ namespace
 
 // object - In general, object is possibly null. For FatStream, however,
 // object must be NULL.
-IBinding* FatStream::
-bind(const char* name, IInterface* object)
+es::Binding* FatStream::
+bind(const char* name, es::Interface* object)
 {
     if (!canWrite())
     {
@@ -66,7 +64,7 @@ bind(const char* name, IInterface* object)
     return stream->create(name, 0);
 }
 
-IContext* FatStream::
+es::Context* FatStream::
 createSubcontext(const char* name)
 {
     if (!canWrite())
@@ -102,7 +100,7 @@ destroySubcontext(const char* name)
     return stream->remove();    // XXX remove all entries under stream.
 }
 
-IInterface* FatStream::
+es::Interface* FatStream::
 lookup(const char* name)
 {
     FatStream* stream(lookup(this, name));
@@ -110,7 +108,7 @@ lookup(const char* name)
     {
         return 0;
     }
-    return static_cast<IContext*>(stream);
+    return static_cast<es::Context*>(stream);
 }
 
 int FatStream::
@@ -156,7 +154,7 @@ rename(const char* oldName, const char* newName)
     // Update '..'
     if (oldStream->parent != newStream->parent && oldStream->isDirectory())
     {
-        Handle<IStream> dir(oldStream->cache->getStream());
+        Handle<es::Stream> dir(oldStream->cache->getStream());
         dir->read(tmp, 32, 32);
         xword(tmp + DIR_FstClusLO, oldStream->fstClus);
         xword(tmp + DIR_FstClusHI, oldStream->fstClus >> 16);
@@ -189,7 +187,7 @@ unbind(const char* name)
     return stream->remove();
 }
 
-IIterator* FatStream::
+es::Iterator* FatStream::
 list(const char* name)
 {
     Handle<FatStream> stream(lookup(this, name));

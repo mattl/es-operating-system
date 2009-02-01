@@ -31,16 +31,16 @@
 #include "vdisk.h"
 #include "fatStream.h"
 
-void list(Handle<IContext> root, const char* filename)
+void list(Handle<es::Context> root, const char* filename)
 {
     filename = filename ? filename : "";
-    Handle<IIterator> iter = root->list(filename);
+    Handle<es::Iterator> iter = root->list(filename);
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
-        Handle<IFile> file(binding->getObject());
+        Handle<es::File> file(binding->getObject());
         long long size;
         size = file->getSize();
         long long t;
@@ -60,10 +60,10 @@ void list(Handle<IContext> root, const char* filename)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
     if (argc < 2)
     {
@@ -71,15 +71,15 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
-    Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = IFatFileSystem::createInstance();
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>(argv[1]));
+    Handle<es::FileSystem> fatFileSystem;
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->checkDisk(false);
     esReport("\n");
 
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         list(root, argv[2]);

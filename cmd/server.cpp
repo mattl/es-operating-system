@@ -28,14 +28,14 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-using namespace es;
 
-ICurrentProcess* System();
 
-class Stream : public IStream, public IBinding
+es::CurrentProcess* System();
+
+class Stream : public es::Stream, public es::Binding
 {
     Ref         ref;
-    IInterface* object;
+    es::Interface* object;
 
 public:
     Stream() :
@@ -101,12 +101,12 @@ public:
     {
     }
 
-    IInterface* getObject()
+    es::Interface* getObject()
     {
         return object;
     }
 
-    void setObject(IInterface* element)
+    void setObject(es::Interface* element)
     {
         esReport("Stream::setObject(%p)\n", element);
         if (element)
@@ -131,24 +131,24 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IStream::iid()) == 0)
+        else if (strcmp(riid, es::Stream::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IBinding::iid()) == 0)
+        else if (strcmp(riid, es::Binding::iid()) == 0)
         {
-            objectPtr = static_cast<IBinding*>(this);
+            objectPtr = static_cast<es::Binding*>(this);
             esReport("Stream::queryInterface: %p@%p\n", objectPtr, &objectPtr);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -174,11 +174,11 @@ int main(int argc, char* argv[])
     esReport("Hello, world.\n");
     System()->trace(false);
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
     // Create a client process.
-    Handle<IProcess> client;
-    client = IProcess::createInstance();
+    Handle<es::Process> client;
+    client = es::Process::createInstance();
     TEST(client);
 
     // Set the standard output to the client process.
@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
     client->setOutput(&stream);
 
     // Start the client process.
-    Handle<IFile> file = nameSpace->lookup("file/client.elf");
+    Handle<es::File> file = nameSpace->lookup("file/client.elf");
     TEST(file);
     client->start(file);
 

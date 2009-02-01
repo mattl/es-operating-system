@@ -41,7 +41,7 @@ static void SetData(u8* buf, long size)
     }
 }
 
-static long PacketRead(IStream* stream, long size, long offset, long packetSize)
+static long PacketRead(es::Stream* stream, long size, long offset, long packetSize)
 {
     long ret;
     long len = 0;
@@ -82,14 +82,14 @@ static long Verify(long size, long offset, MemoryStream* backingStore, long pake
         return -1;
     }
 
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     if (!cache)
     {
         esReport("Unable to create cache\n");
         return -1;
     }
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     if (!stream)
     {
         esReport("Unable to create stream\n");
@@ -114,7 +114,7 @@ static long Verify(long size, long offset, MemoryStream* backingStore, long pake
 #endif // VERBOSE
 
     // read, changing number of packets.
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     stream = cache->getStream();
     ret = PacketRead(stream, size, offset, paketUnit);
     if (ret != size)
@@ -146,12 +146,12 @@ int main()
 {
     int result = -1;
 
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
     esReport("Check read() and write().\n");
 
-    Handle<IContext> context = root;
+    Handle<es::Context> context = root;
 
     long offset = 0;
     long size = PAGE_SIZE;

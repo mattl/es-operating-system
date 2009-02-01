@@ -43,12 +43,12 @@ class AtaDma
     virtual void interrupt(int count /* in byte */) = 0;
 };
 
-class AtaController : public es::ICallback
+class AtaController : public es::Callback
 {
     friend class AtaDevice;
     friend class AtaPacketDevice;
 
-    es::IMonitor*   monitor;
+    es::Monitor*   monitor;
     Lock            lock;
     Ref             ref;
 
@@ -82,7 +82,7 @@ class AtaController : public es::ICallback
     static void* run(void* param);
 
 public:
-    AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, es::IContext* ata);
+    AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, es::Context* ata);
     ~AtaController();
     void select(u8 device);
     u8 sync(u8 status);
@@ -98,12 +98,12 @@ public:
     void detect();
 };
 
-class AtaDevice : public es::IStream, public es::IContext, public es::IDiskManagement
+class AtaDevice : public es::Stream, public es::Context, public es::DiskManagement
 {
     friend class AtaController;
 
 protected:
-    es::IMonitor*   monitor;
+    es::Monitor*   monitor;
     Ref             ref;
     AtaController*  ctlr;
     u8              device;
@@ -118,10 +118,10 @@ protected:
     u16             dma;
     bool            removal;
 
-    es::IPartition* partition;
+    es::Partition* partition;
 
     bool identify(u8* signature);
-    es::IPartition* getPartition();
+    es::Partition* getPartition();
 
 public:
     AtaDevice(AtaController* ctlr, u8 device, u8* signature);
@@ -139,13 +139,13 @@ public:
     void flush();
 
     // IContext
-    es::IBinding* bind(const char* name, es::IInterface* object);
-    es::IContext* createSubcontext(const char* name);
+    es::Binding* bind(const char* name, es::Interface* object);
+    es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::IInterface* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    es::IIterator* list(const char* name);
+    es::Iterator* list(const char* name);
 
     // IDiskManagement
     int initialize();
@@ -160,7 +160,7 @@ public:
     virtual bool detect();
 };
 
-class AtaPacketDevice : public AtaDevice, public es::IRemovableMedia
+class AtaPacketDevice : public AtaDevice, public es::RemovableMedia
 {
     u8 testUnitReady();
     int requestSense(void* sense, int count);

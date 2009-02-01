@@ -25,20 +25,20 @@
 #include <es/base/IProcess.h>
 #include <es/naming/IBinding.h>
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
-class Binder : public IBinding
+class Binder : public es::Binding
 {
     static int  id;
 
     Ref         ref;
-    IInterface* object;
+    es::Interface* object;
     char        name[14];
 
 public:
@@ -56,12 +56,12 @@ public:
         }
     }
 
-    IInterface* getObject()
+    es::Interface* getObject()
     {
         return object;
     }
 
-    void setObject(IInterface* element)
+    void setObject(es::Interface* element)
     {
         if (element)
         {
@@ -88,19 +88,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IBinding*>(this);
+            objectPtr = static_cast<es::Binding*>(this);
         }
-        else if (strcmp(riid, IBinding::iid()) == 0)
+        else if (strcmp(riid, es::Binding::iid()) == 0)
         {
-            objectPtr = static_cast<IBinding*>(this);
+            objectPtr = static_cast<es::Binding*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -128,20 +128,20 @@ int main(int argc, char* argv[])
     esReport("This is the Binder server process.\n");
     System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
-    Handle<IContext> classStore = nameSpace->lookup("class");
+    Handle<es::Context> nameSpace = System()->getRoot();
+    Handle<es::Context> classStore = nameSpace->lookup("class");
     TEST(classStore);
 
     // Register Binder factory.
     classStore->bind(IBinder::iid(), Binder::constructor);
 
     // Create a client process.
-    Handle<IProcess> client;
-    client = IProcess::createInstance();
+    Handle<es::Process> client;
+    client = es::Process::createInstance();
     TEST(client);
 
     // Start the client process.
-    Handle<IFile> file = nameSpace->lookup("file/binderClient.elf");
+    Handle<es::File> file = nameSpace->lookup("file/binderClient.elf");
     TEST(file);
     client->start(file);
 

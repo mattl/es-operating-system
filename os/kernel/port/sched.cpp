@@ -34,7 +34,7 @@ void Sched::
 setRun(Thread* thread)
 {
     lock();
-    thread->state = IThread::RUNNABLE;
+    thread->state = es::Thread::RUNNABLE;
     Thread::Queue* queue = &runQueue[thread->priority];
     queue->addLast(thread);
     runQueueBits |= 0x80000000u >> thread->priority;
@@ -46,7 +46,7 @@ void Sched::
 unsetRun(Thread* thread)
 {
     lock();
-    ASSERT(thread->state == IThread::RUNNABLE);
+    ASSERT(thread->state == es::Thread::RUNNABLE);
     Thread::Queue* queue = &runQueue[thread->priority];
     queue->remove(thread);
     if (queue->isEmpty())
@@ -78,8 +78,8 @@ selectThread()
         } while (runQueueBits == 0);
 
         lock();
-        priority = IThread::Highest + 1 - ffs(runQueueBits);
-        if (priority <= IThread::Highest && IThread::Lowest <= priority)
+        priority = es::Thread::Highest + 1 - ffs(runQueueBits);
+        if (priority <= es::Thread::Highest && es::Thread::Lowest <= priority)
         {
             queue = &runQueue[priority];
             next = queue->getFirst();
@@ -91,7 +91,7 @@ selectThread()
         unlock();
     }
 
-    ASSERT(next->state == IThread::RUNNABLE);
+    ASSERT(next->state == es::Thread::RUNNABLE);
     ASSERT(next->priority == priority);
     queue->remove(next);
     ASSERT(!queue->contains(next));
@@ -99,7 +99,7 @@ selectThread()
     {
         runQueueBits &= ~(0x80000000u >> priority);
     }
-    next->state = IThread::RUNNING;
+    next->state = es::Thread::RUNNING;
     next->core = Core::getCurrentCore();
 
     unlock();
@@ -168,7 +168,7 @@ exit(int status)
 
 void* Sched::
 map(void* start, long long length, unsigned int prot, unsigned int flags,
-    IPageable* pageable, long long offset)
+    es::Pageable* pageable, long long offset)
 {
     Process* current(Process::getCurrentProcess());
     return current->map(start, length, prot, flags, pageable, offset);
@@ -181,14 +181,14 @@ unmap(void* start, long long length)
     return current->unmap(start, length);
 }
 
-ICurrentThread* Sched::
+es::CurrentThread* Sched::
 currentThread()
 {
     addRef();
     return this;
 }
 
-IThread* Sched::
+es::Thread* Sched::
 // createThread(void* (*start)(void* param), void* param) // [check]
 createThread(void* start, void* param)
 {
@@ -204,34 +204,34 @@ yield(void)
     Thread::reschedule();
 }
 
-IMonitor* Sched::
+es::Monitor* Sched::
 createMonitor()
 {
     return new Monitor;
 }
 
-IContext* Sched::
+es::Context* Sched::
 getRoot()
 {
     Process* current(Process::getCurrentProcess());
     return current->getRoot();
 }
 
-IStream* Sched::
+es::Stream* Sched::
 getInput()
 {
     Process* current(Process::getCurrentProcess());
     return current->getInput();
 }
 
-IStream* Sched::
+es::Stream* Sched::
 getOutput()
 {
     Process* current(Process::getCurrentProcess());
     return current->getOutput();
 }
 
-IStream* Sched::
+es::Stream* Sched::
 getError()
 {
     Process* current(Process::getCurrentProcess());
@@ -259,13 +259,13 @@ trace(bool on)
 }
 
 void Sched::
-setCurrent(IContext* context)
+setCurrent(es::Context* context)
 {
     Process* current(Process::getCurrentProcess());
     return current->setCurrent(context);
 }
 
-IContext* Sched::
+es::Context* Sched::
 getCurrent()
 {
     Process* current(Process::getCurrentProcess());
@@ -306,31 +306,31 @@ void* Sched::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICurrentThread::iid()) == 0)
+    if (strcmp(riid, es::CurrentThread::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        objectPtr = static_cast<es::CurrentThread*>(this);
     }
-    else if (strcmp(riid, ICurrentProcess::iid()) == 0)
+    else if (strcmp(riid, es::CurrentProcess::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentProcess*>(this);
+        objectPtr = static_cast<es::CurrentProcess*>(this);
     }
-    else if (strcmp(riid, IRuntime::iid()) == 0)
+    else if (strcmp(riid, es::Runtime::iid()) == 0)
     {
-        objectPtr = static_cast<IRuntime*>(this);
+        objectPtr = static_cast<es::Runtime*>(this);
     }
-    else if (strcmp(riid, ICallback::iid()) == 0)
+    else if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        objectPtr = static_cast<es::CurrentThread*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

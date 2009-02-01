@@ -25,13 +25,11 @@
 #include <string.h>
 #include <es/base/IService.h>
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 static int CR = '\r';
 static int LF = '\n';
@@ -39,7 +37,7 @@ static int BS = 0x08;
 
 static bool done = false;
 
-void command(Handle<IStream> console, char* buf, int size)
+void command(Handle<es::Stream> console, char* buf, int size)
 {
     int len = strlen("echo ");
     if (len < size && memcmp("echo ", buf, len) == 0)
@@ -64,7 +62,7 @@ void command(Handle<IStream> console, char* buf, int size)
     {
         char message[] = "suspend this console, then exit the client process.\n";
         console->write(message, strlen(message));
-        Handle<IService> service = console;
+        Handle<es::Service> service = console;
         ASSERT(service);
         service->stop();
 
@@ -86,11 +84,11 @@ int main(int argc, char* argv[])
 
     // System()->trace(true);
 
-    Handle<ICurrentThread> currentThread = System()->currentThread();
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
     // check if the console is ready.
-    Handle<IStream> console = 0;
+    Handle<es::Stream> console = 0;
     while (!console)
     {
         console = nameSpace->lookup("device/console");
@@ -106,7 +104,7 @@ int main(int argc, char* argv[])
     char japanese[] = "これはテストです。";
     console->write(japanese, strlen(japanese));
 
-    Handle<IService> service = console;
+    Handle<es::Service> service = console;
     TEST(service);
     service->stop();
     service->start();

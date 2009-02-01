@@ -33,7 +33,7 @@ struct CheckList
     int count;
 };
 
-void test(Handle<IContext> level1)
+void test(Handle<es::Context> level1)
 {
     // On Joliet compliant media, however,
     // the number of levels in the hierarchy may exceed eight.
@@ -53,17 +53,17 @@ void test(Handle<IContext> level1)
     long pathLen = 0;
 
     TEST(level1);
-    Handle<IContext>    level2 = level1->lookup("level2");
+    Handle<es::Context>    level2 = level1->lookup("level2");
     TEST(level2);
-    Handle<IContext>    level3 = level2->lookup("level3");
+    Handle<es::Context>    level3 = level2->lookup("level3");
     TEST(level3);
-    Handle<IContext>    level4 = level3->lookup("level4");
+    Handle<es::Context>    level4 = level3->lookup("level4");
     TEST(level4);
-    Handle<IContext>    level5 = level4->lookup("level5");
+    Handle<es::Context>    level5 = level4->lookup("level5");
     TEST(level5);
-    Handle<IContext>    level6 = level5->lookup("level6");
+    Handle<es::Context>    level6 = level5->lookup("level6");
     TEST(level6);
-    Handle<IContext>    level7 = level6->lookup("level7");
+    Handle<es::Context>    level7 = level6->lookup("level7");
     TEST(level7);
 
     pathLen += strlen("level2") + 1;
@@ -75,12 +75,12 @@ void test(Handle<IContext> level1)
     pathLen += strlen("level8.txt");
     TEST(pathLen <= 240);
 
-    Handle<IFile>       fileLevel8 = level7->lookup("level8.txt");
+    Handle<es::File>       fileLevel8 = level7->lookup("level8.txt");
     TEST(fileLevel8);
 
     char buf[32];
 
-    Handle<IStream>  stream = fileLevel8->getStream();
+    Handle<es::Stream>  stream = fileLevel8->getStream();
     TEST(stream);
 
     long ret = stream->read(buf, sizeof(buf));
@@ -120,22 +120,22 @@ void test(Handle<IContext> level1)
     pathLen += strlen("level7") + 1;
     pathLen += strlen("level8") + 1;
 
-    Handle<IContext> level8 = level7->lookup("level8");
+    Handle<es::Context> level8 = level7->lookup("level8");
     TEST(pathLen <= 240);
     TEST(level8);
 }
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -143,12 +143,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

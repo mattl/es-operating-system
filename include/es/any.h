@@ -41,7 +41,7 @@ struct AnyBase
         float           floatValue;
         double          doubleValue;  // ES extension
         const char*     stringValue;  // DOMString in UTF-8
-        es::IInterface* objectValue;
+        es::Interface*  objectValue;
     };
     int type;
 };
@@ -174,7 +174,7 @@ public:
         type = TypeString;
     }
 
-    Any(es::IInterface* value)
+    Any(es::Interface* value)
     {
         objectValue = value;
         type = TypeObject;
@@ -279,7 +279,7 @@ public:
         return stringValue;
     }
 
-    operator es::IInterface*() const
+    operator es::Interface*() const
     {
         if (getType() != TypeObject)
         {
@@ -316,7 +316,7 @@ Any apply(int argc, Any* argv, uint64_t (*function)());
 Any apply(int argc, Any* argv, float (*function)());
 Any apply(int argc, Any* argv, double (*function)());
 Any apply(int argc, Any* argv, const char* (*function)());
-Any apply(int argc, Any* argv, es::IInterface* (*function)());
+Any apply(int argc, Any* argv, es::Interface* (*function)());
 
 long long evaluate(const Any& variant);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,13 @@
 
 const u8 DIXInterface::macAllHost[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0x01 };
 
-DIXInterface::DIXInterface(INetworkInterface* networkInterface) :
+DIXInterface::DIXInterface(es::NetworkInterface* networkInterface) :
     networkInterface(networkInterface, true),
     stream(this->networkInterface),
     dixReceiver(this),
     inReceiver(this),
     arpReceiver(this),
-    Interface(networkInterface, &dixAccessor, &dixReceiver)
+    NetworkInterface(networkInterface, &dixAccessor, &dixReceiver)
 {
     u8 mac[6];
     networkInterface->getMacAddress(mac);

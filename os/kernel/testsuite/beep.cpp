@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,11 +35,11 @@ unsigned notes[] =
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IBeep> speaker = root->lookup("device/beep");
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Beep> speaker = root->lookup("device/beep");
 
     for (int i = 0; i < 8; ++i)
     {

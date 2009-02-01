@@ -145,7 +145,7 @@ Canvas::~Canvas()
 u8* Canvas::
 getData()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     if (!updated)
     {
         return NULL;
@@ -194,14 +194,14 @@ dirtyAllStyles()
 Any Canvas::
 getStrokeStyle(void* strokeStyle, int strokeStyleLength)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     return currentState()->getStyle(STYLE_STROKE, strokeStyle, strokeStyleLength);
 }
 
 void Canvas::
 setStrokeStyle(const Any strokeStyle)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     currentState()->setStyle(STYLE_STROKE, strokeStyle);
     dirtyStyle[STYLE_STROKE] = true;
 }
@@ -209,26 +209,26 @@ setStrokeStyle(const Any strokeStyle)
 Any Canvas::
 getFillStyle(void* fillStyle, int fillStyleLength)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     return currentState()->getStyle(STYLE_FILL, fillStyle, fillStyleLength);
 }
 
 void Canvas::
 setFillStyle(const Any fillStyle)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     currentState()->setStyle(STYLE_FILL, fillStyle);
     dirtyStyle[STYLE_FILL] = true;
 }
 
-ICanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createLinearGradient(float x0, float y0, float x1, float y1)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = NULL;
     pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
-    ICanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -237,14 +237,14 @@ createLinearGradient(float x0, float y0, float x1, float y1)
     return gradient;
 }
 
-ICanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = 0;
     pattern = cairo_pattern_create_radial(x0, y0, r0, x1, y1, r1);
-    ICanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -256,7 +256,7 @@ createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 void Canvas::
 arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (anticlockwise)
     {
@@ -277,21 +277,21 @@ arcTo(float x1, float y1, float x2, float y2, float radius)
 void Canvas::
 beginPath()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_new_path(cr);
 }
 
 void Canvas::
 bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_curve_to(cr, cp1x, cp1y, cp2x, cp2y, x, y);
 }
 
 void Canvas::
 clearRect(float x, float y, float width, float height)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_save(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
@@ -306,21 +306,21 @@ clearRect(float x, float y, float width, float height)
 void Canvas::
 clip()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_clip(cr);
 }
 
 void Canvas::
 closePath()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_close_path(cr);
 }
 
 void Canvas::
 fill()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     applyStyle(STYLE_FILL);
     cairo_fill_preserve(cr);
@@ -330,7 +330,7 @@ fill()
 void Canvas::
 fillRect(float x, float y, float width, float height)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_new_path (cr);
     cairo_rectangle (cr, x, y, width, height);
@@ -341,13 +341,13 @@ fillRect(float x, float y, float width, float height)
 }
 
 u8* Canvas::
-allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight)
+allocateBitmapData(es::File* image, u32* imageWidth, u32* imageHeight)
 {
     // [check] support only 24-bit bitmap format, now.
     u32 coreHeaderSize = 14;
     u32 infoHeaderSize = 40;
 
-    Handle<IStream> stream = image->getStream();
+    Handle<es::Stream> stream = image->getStream();
     u32 size = stream->getSize();
     if (size < coreHeaderSize + infoHeaderSize)
     {
@@ -412,14 +412,14 @@ allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight)
 float Canvas::
 getGlobalAlpha()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     return currentState()->globalAlpha;
 }
 
 int Canvas::
 getGlobalCompositeOperation(char* operation, int len)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_operator_t cairo_op = cairo_get_operator(cr);
 
@@ -451,14 +451,14 @@ getGlobalCompositeOperation(char* operation, int len)
 float Canvas::
 getMiterLimit()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     return cairo_get_miter_limit(cr);
 }
 
 int Canvas::
 getLineCap(char* capStyle, int len)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_line_cap_t cap = cairo_get_line_cap(cr);
 
     if (cap == CAIRO_LINE_CAP_BUTT && strlen("butt") + 1 < len)
@@ -476,7 +476,7 @@ getLineCap(char* capStyle, int len)
 int Canvas::
 getLineJoin(char* joinStyle, int len)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_line_join_t j = cairo_get_line_join(cr);
 
     if (j == CAIRO_LINE_JOIN_ROUND && strlen("round") + 1 < len)
@@ -494,28 +494,28 @@ getLineJoin(char* joinStyle, int len)
 float Canvas::
 getLineWidth()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     return cairo_get_line_width(cr);
 }
 
 void Canvas::
 lineTo(float x, float y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_line_to (cr, x, y);
 }
 
 void Canvas::
 moveTo(float x, float y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_move_to (cr, x, y);
 }
 
 void Canvas::
 quadraticCurveTo(float cpx, float cpy, float x, float y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     double cx, cy;
     cairo_get_current_point(cr, &cx, &cy);
@@ -531,14 +531,14 @@ quadraticCurveTo(float cpx, float cpy, float x, float y)
 void Canvas::
 rect(float x, float y, float width, float height)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_rectangle(cr, x, y, width, height);
 }
 
 void Canvas::
 restore()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     styleStack.removeLast();
     lastStyle = -1;
@@ -550,14 +550,14 @@ restore()
 void  Canvas::
 rotate(float angle)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_rotate(cr, angle);
 }
 
 void Canvas::
 save()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_save(cr);
 
     ContextState* state = new ContextState(currentState());
@@ -567,21 +567,21 @@ save()
 void Canvas::
 scale(float scaleW, float scaleH)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_scale(cr, scaleW, scaleH);
 }
 
 void Canvas::
 setGlobalAlpha(float alpha)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     currentState()->globalAlpha = alpha;
 }
 
 int Canvas::
 setGlobalCompositeOperation(const char* operation)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_operator_t cairo_op;
 
@@ -617,21 +617,21 @@ setGlobalCompositeOperation(const char* operation)
 void Canvas::
 setMiterLimit(float limit)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_set_miter_limit(cr, limit);
 }
 
 void Canvas::
 setLineWidth(float width)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_set_line_width (cr, width);
 }
 
 int Canvas::
 setLineCap(const char* capStyle)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_line_cap_t cap;
     if (strcmp(capStyle, "butt") == 0)
         cap = CAIRO_LINE_CAP_BUTT;
@@ -649,7 +649,7 @@ setLineCap(const char* capStyle)
 int Canvas::
 setLineJoin(const char* joinStyle)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_line_join_t j;
 
     if (strcmp(joinStyle, "round") == 0)
@@ -668,7 +668,7 @@ setLineJoin(const char* joinStyle)
 void Canvas::
 stroke()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     applyStyle(STYLE_STROKE);
     cairo_stroke (cr);
     updated = true;
@@ -677,7 +677,7 @@ stroke()
 void Canvas::
 strokeRect(float x, float y, float width, float height)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_new_path(cr);
     cairo_rectangle(cr, x, y, width, height);
 
@@ -689,7 +689,7 @@ strokeRect(float x, float y, float width, float height)
 void Canvas::
 translate(float tx, float ty)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     cairo_translate(cr, tx, ty);
 }
 
@@ -708,7 +708,7 @@ getMozTextStyle(char* style, int len)
 int Canvas::
 setMozTextStyle(const char* style)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     textStyle = style;
 
@@ -760,7 +760,7 @@ setMozTextStyle(const char* style)
 void Canvas::
 mozDrawText(const char* textToDraw)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     applyStyle(STYLE_FILL);
     cairo_show_text(cr, textToDraw);
@@ -771,7 +771,7 @@ mozDrawText(const char* textToDraw)
 float Canvas::
 mozMeasureText(const char* textToMeasure)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_text_extents_t te;
     cairo_text_extents(cr, textToMeasure, &te);
@@ -781,7 +781,7 @@ mozMeasureText(const char* textToMeasure)
 void Canvas::
 mozPathText(const char* textToPath)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     cairo_text_path(cr, textToPath);
 }
@@ -799,7 +799,7 @@ mozTextAlongPath(const char* textToDraw, bool stroke)
 void CanvasGradient::
 addColorStop(float offset, const char* color)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (offset < 0.0 || 1.0 < offset)
     {

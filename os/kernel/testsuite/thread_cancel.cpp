@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,20 +36,20 @@ void* infiniteLoop(void*)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
-    IThread* thread;
+    es::Thread* thread;
     thread = new Thread(infiniteLoop,     // thread function
                         0,                // argument to thread function
-                        IThread::Normal - 1, // priority
+                        es::Thread::Normal - 1, // priority
                         Stack,            // stack
                         sizeof(Stack));   // stack size
 
     thread->start();
-    TEST(thread->getState() == IThread::RUNNABLE);
+    TEST(thread->getState() == es::Thread::RUNNABLE);
     thread->cancel();
-    // TEST(thread->getState() == IThread::TERMINATED);
+    // TEST(thread->getState() == es::Thread::TERMINATED);
     thread->release();
 
     esReport("done.\n");

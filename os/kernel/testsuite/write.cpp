@@ -41,7 +41,7 @@ static void SetData(u8* buf, long size)
     }
 }
 
-static long PacketWrite(IStream* stream, long size, long offset, long packetSize)
+static long PacketWrite(es::Stream* stream, long size, long offset, long packetSize)
 {
     long ret;
     long len = 0;
@@ -83,14 +83,14 @@ static long Verify(long size, long offset, MemoryStream* backingStore, long pack
         return -1;
     }
 
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     if (!cache)
     {
         esReport("Unable to create cache.\n");
         return -1;
     }
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     if (!stream)
     {
         esReport("Unable to create stream.\n");
@@ -107,7 +107,7 @@ static long Verify(long size, long offset, MemoryStream* backingStore, long pack
     cache->release();
 
     // read at once.
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size, offset);
     if (ret != size)
@@ -138,7 +138,7 @@ int main()
 {
     int result = -1;
 
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
     esReport("Check write().\n");

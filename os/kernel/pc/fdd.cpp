@@ -41,7 +41,7 @@ FloppyDrive(FloppyController* ctlr, u8 drive) :
     gpl = 0x1b;
     fgpl = 0x54;
 
-    alarm = IAlarm::createInstance();
+    alarm = es::Alarm::createInstance();
 
     alarm->setEnabled(false);
     alarm->setInterval(10000000);
@@ -138,7 +138,7 @@ recalibrate()
 long long FloppyDrive::
 getPosition()
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     long sectorSize = 128 * (1 << recordLength);
     return sectorSize * ((2 * cylinder + head) * eot + record - 1);
@@ -147,7 +147,7 @@ getPosition()
 void FloppyDrive::
 setPosition(long long offset)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     long sectorSize = 128 * (1 << recordLength);
     long sector = offset / sectorSize;
@@ -177,7 +177,7 @@ setPosition(long long offset)
 int FloppyDrive::
 read(void* dst, int count)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     int sectorSize = 128 * (1 << recordLength);
     if (count < sectorSize)
@@ -191,7 +191,7 @@ read(void* dst, int count)
     }
 
     on();
-    ctlr->dmac->setup(dmaBuffer, sectorSize, IDmac::READ);
+    ctlr->dmac->setup(dmaBuffer, sectorSize, es::Dmac::READ);
     ctlr->dmac->start();
     ctlr->issue(this, FloppyController::READ, NULL);
     ctlr->dmac->stop();
@@ -212,7 +212,7 @@ read(void* dst, int count)
 int FloppyDrive::
 read(void* dst, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     if (isChanged())
     {
@@ -238,7 +238,7 @@ read(void* dst, int count, long long offset)
 int FloppyDrive::
 write(const void* src, int count)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     int sectorSize = 128 * (1 << recordLength);
     if (count < sectorSize)
@@ -253,7 +253,7 @@ write(const void* src, int count)
 
     on();
     memmove(dmaBuffer, src, sectorSize);
-    ctlr->dmac->setup(dmaBuffer, sectorSize, IDmac::WRITE);
+    ctlr->dmac->setup(dmaBuffer, sectorSize, es::Dmac::WRITE);
     ctlr->dmac->start();
     ctlr->issue(this, FloppyController::WRITE, NULL);
     ctlr->dmac->stop();
@@ -273,7 +273,7 @@ write(const void* src, int count)
 int FloppyDrive::
 write(const void* src, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     if (isChanged())
     {
@@ -299,7 +299,7 @@ write(const void* src, int count, long long offset)
 long long FloppyDrive::
 getSize()
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     long long size = 80 * 2 * eot * 128 * (1 << recordLength);
     return size;
@@ -308,7 +308,7 @@ getSize()
 void FloppyDrive::
 setSize(long long size)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     //                         rate
     // 1440: 512 * 18 * 2 * 80    0
@@ -334,7 +334,7 @@ flush()
 int FloppyDrive::
 initialize()
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     int sectorSize = 128 * (1 << recordLength);
 
@@ -352,7 +352,7 @@ initialize()
             *bp++ = recordLength;
         }
 
-        ctlr->dmac->setup(dmaBuffer, 4 * eot, IDmac::WRITE);
+        ctlr->dmac->setup(dmaBuffer, 4 * eot, es::Dmac::WRITE);
         ctlr->dmac->start();
         ctlr->issue(this, FloppyController::FORMAT, 0);
         ctlr->dmac->stop();
@@ -375,7 +375,7 @@ initialize()
 void FloppyDrive::
 getGeometry(Geometry* geometry)
 {
-    Synchronized<IMonitor*> method(ctlr->monitor);
+    Synchronized<es::Monitor*> method(ctlr->monitor);
 
     geometry->cylinders = 80;
     geometry->heads = 2;
@@ -401,23 +401,23 @@ void* FloppyDrive::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IDiskManagement::iid()) == 0)
+    if (strcmp(riid, es::DiskManagement::iid()) == 0)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        objectPtr = static_cast<es::DiskManagement*>(this);
     }
-    else if (strcmp(riid, IStream::iid()) == 0)
+    else if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        objectPtr = static_cast<es::DiskManagement*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

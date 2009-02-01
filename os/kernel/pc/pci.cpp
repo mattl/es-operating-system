@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@
 // #define VERBOSE
 
 Pci::
-Pci(Mps* mps, IContext* device) :
+Pci(Mps* mps, es::Context* device) :
     mps(mps),
     maxDevice(0),
     device(device)
@@ -93,7 +93,7 @@ attach(int bus, int dev, ConfigurationSpaceHeader* csp)
                 Dp8390d* ne2000 = new Dp8390d(bus,
                                               csp->baseAddressRegisters[0] & ~1,
                                               irq);
-                device->bind("ethernet", static_cast<IStream*>(ne2000));
+                device->bind("ethernet", static_cast<es::Stream*>(ne2000));
                 ne2000->release();
             }
         }
@@ -115,10 +115,10 @@ attach(int bus, int dev, ConfigurationSpaceHeader* csp)
                 Es1370* es1370 = new Es1370(bus,
                                             csp->baseAddressRegisters[0] & ~1,
                                             irq);
-                ASSERT(static_cast<IStream*>(&es1370->inputLine));
-                ASSERT(static_cast<IStream*>(&es1370->outputLine));
-                device->bind("soundInput", static_cast<IStream*>(&es1370->inputLine));
-                device->bind("soundOutput", static_cast<IStream*>(&es1370->outputLine));
+                ASSERT(static_cast<es::Stream*>(&es1370->inputLine));
+                ASSERT(static_cast<es::Stream*>(&es1370->outputLine));
+                device->bind("soundInput", static_cast<es::Stream*>(&es1370->inputLine));
+                device->bind("soundOutput", static_cast<es::Stream*>(&es1370->outputLine));
                 es1370->release();
             }
         }

@@ -44,27 +44,25 @@ class Dmac
     int     shift;
 
 public:
-
-
-    class Chan : public es::IDmac
+    class Chan : public es::Dmac
     {
-        Dmac*   dmac;
+        ::Dmac* dmac;
         u8      chan;
 
     public:
-        // IDmac
+        // es::Dmac
         void setup(void* addr, int count, u8 mode);
         void start();
         void stop();
         bool isDone();
         int getCount();
 
-        // IInterface
+        // es::Interface
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
 
-        friend class Dmac;
+        friend class ::Dmac;
     };
 
 

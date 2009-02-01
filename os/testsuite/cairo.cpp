@@ -1,6 +1,6 @@
 /*
  * Copyright 2008 Chis Dan Ionut
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,15 +29,15 @@
 #define WIDTH   1024
 #define HEIGHT  768
 
-using namespace es;
 
-extern ICurrentProcess* System();
 
-Handle<IStream> fb;
+extern es::CurrentProcess* System();
+
+Handle<es::Stream> fb;
 
 void init()
 {
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
     fb = root->lookup("device/framebuffer");
 }
 

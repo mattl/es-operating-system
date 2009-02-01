@@ -48,8 +48,8 @@ public:
     {
         return 0;
     };
-    virtual void addInterface(Interface* interface) = 0;
-    virtual IInternetAddress* selectSourceAddress(IInternetAddress* dst)
+    virtual void addInterface(NetworkInterface* interface) = 0;
+    virtual es::InternetAddress* selectSourceAddress(es::InternetAddress* dst)
     {
         return 0;
     }
@@ -59,21 +59,21 @@ public:
 };
 
 class Socket :
-    public IMulticastSocket,
-    public ISelectable,
+    public es::MulticastSocket,
+    public es::Selectable,
     public InetReceiver,
     public InetMessenger
 {
 public:
     static const int INTERFACE_MAX = 8;
 
-    static IResolver*       resolver;
-    static IInternetConfig* config;
-    static IContext*        interface;
+    static es::Resolver*        resolver;
+    static es::InternetConfig*  config;
+    static es::Context*         interface;
 
 private:
     static AddressFamily::List  addressFamilyList;
-    static Interface*           interfaces[INTERFACE_MAX];
+    static NetworkInterface*    interfaces[INTERFACE_MAX];
     static Timer*               timer;
 
     Ref             ref;
@@ -89,7 +89,7 @@ private:
     Collection<Address*>    addresses;
 
     // Asynchronous I/O
-    IMonitor*       selector;
+    es::Monitor*    selector;
     bool            blocking;
 
 public:
@@ -124,9 +124,9 @@ public:
         return af->getProtocol(this);
     }
 
-    static int addInterface(INetworkInterface* networkInterface);
-    static void removeInterface(INetworkInterface* networkInterface);
-    static Interface* getInterface(int scopeID)
+    static int addInterface(es::NetworkInterface* networkInterface);
+    static void removeInterface(es::NetworkInterface* networkInterface);
+    static NetworkInterface* getInterface(int scopeID)
     {
         if (scopeID < 1 || INTERFACE_MAX <= scopeID)
         {
@@ -134,7 +134,7 @@ public:
         }
         return interfaces[scopeID];
     }
-    static int getScopeID(INetworkInterface* networkInterface)
+    static int getScopeID(es::NetworkInterface* networkInterface)
     {
         for (int id = 1; id < INTERFACE_MAX; ++id)
         {
@@ -195,7 +195,7 @@ public:
     {
         return family;
     }
-    IInternetAddress* getLocalAddress()
+    es::InternetAddress* getLocalAddress()
     {
         return getLocal();
     }
@@ -207,7 +207,7 @@ public:
     {
         return protocol;
     }
-    IInternetAddress* getRemoteAddress()
+    es::InternetAddress* getRemoteAddress()
     {
         return getRemote();
     }
@@ -243,14 +243,14 @@ public:
     long long getTimeout();
     void setTimeout(long long timeSpan);
 
-    ISocket* accept();
-    void bind(IInternetAddress* addr, int port);
+    es::Socket* accept();
+    void bind(es::InternetAddress* addr, int port);
     void close();
-    void connect(IInternetAddress* addr, int port);
+    void connect(es::InternetAddress* addr, int port);
     void listen(int backlog);
     int read(void* dst, int count);
-    int recvFrom(void* dst, int count, int flags, IInternetAddress** addr, int* port);
-    int sendTo(const void* src, int count, int flags, IInternetAddress* addr, int port);
+    int recvFrom(void* dst, int count, int flags, es::InternetAddress** addr, int* port);
+    int sendTo(const void* src, int count, int flags, es::InternetAddress* addr, int port);
     void shutdownInput();
     void shutdownOutput();
     int write(const void* src, int count);
@@ -272,14 +272,14 @@ public:
     bool isWritable();
 
     // ISelectable
-    int add(IMonitor* selector);
-    int remove(IMonitor* selector);
+    int add(es::Monitor* selector);
+    int remove(es::Monitor* selector);
 
     // IMulticastSocket
     bool isLoopbackMode();
     void setLoopbackMode(bool disable);
-    void joinGroup(IInternetAddress* addr);
-    void leaveGroup(IInternetAddress* addr);
+    void joinGroup(es::InternetAddress* addr);
+    void leaveGroup(es::InternetAddress* addr);
 
     //
     // IInterface

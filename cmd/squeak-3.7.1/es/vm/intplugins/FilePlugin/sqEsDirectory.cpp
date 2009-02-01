@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,9 +45,9 @@
 #include <es/naming/IContext.h>
 #include <es/handle.h>
 
-using namespace es;
 
-extern Handle<IContext> gRoot;
+
+extern Handle<es::Context> gRoot;
 
 extern "C"
 {
@@ -100,7 +100,7 @@ int dir_Create(char *pathString, int pathStringLength)
     }
     sqFilenameFromString(cPathName, pathString, pathStringLength);
 
-    IContext* subcontext;
+    es::Context* subcontext;
     subcontext = gRoot->createSubcontext(cPathName);
     if (!subcontext)
     {
@@ -164,20 +164,20 @@ int dir_Lookup(char *pathString, int pathStringLength, int index /* starting at 
 
     /* get file or directory info */
     int i;
-    Handle<IIterator> iter(gRoot->list(cPathName));
+    Handle<es::Iterator> iter(gRoot->list(cPathName));
     if (!iter)
     {
         return BAD_PATH;
     }
     for (i = 1; iter->hasNext(); ++i)
     {
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         if (i == index)
         {
             binding->getName(name, MAX_PATH);
             *nameLength = strlen(name);
 
-            Handle<IFile> file(binding);
+            Handle<es::File> file(binding);
             if (file)
             {
                 long long tick;
@@ -187,7 +187,7 @@ int dir_Lookup(char *pathString, int pathStringLength, int index /* starting at 
                 *modificationDate = convertToSqueakTime(tick);
             }
 
-            Handle<IContext> context(binding);
+            Handle<es::Context> context(binding);
             if (context)
             {
                 *isDirectory = true;
@@ -195,7 +195,7 @@ int dir_Lookup(char *pathString, int pathStringLength, int index /* starting at 
             }
             else
             {
-                Handle<IStream> stream(file->getStream());  // XXX Check exception
+                Handle<es::Stream> stream(file->getStream());  // XXX Check exception
                 if (stream)
                 {
                     *isDirectory = false;

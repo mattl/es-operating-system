@@ -25,16 +25,16 @@
 
 #include "../IEventQueue.h"
 
-using namespace es;
 
-int esInit(IInterface** nameSpace);
-IStream* esReportStream();
+
+int esInit(es::Interface** nameSpace);
+es::Stream* esReportStream();
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile> file)
+void startProcess(Handle<es::Context> root, Handle<es::Process> process, Handle<es::File> file)
 {
     TEST(root);
     TEST(process);
@@ -55,52 +55,52 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
 
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
-    Handle<IContext> classStore(nameSpace->lookup("class"));
+    Handle<es::Context> classStore(nameSpace->lookup("class"));
 
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         nameSpace->bind("file", root);
 
         // start event manager process.
-        Handle<IProcess> eventProcess;
-        eventProcess = IProcess::createInstance();
+        Handle<es::Process> eventProcess;
+        eventProcess = es::Process::createInstance();
         TEST(eventProcess);
-        Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
+        Handle<es::File> eventElf = nameSpace->lookup("file/eventManager.elf");
         TEST(eventElf);
         startProcess(nameSpace, eventProcess, eventElf);
 
         // start console process.
-        Handle<IProcess> consoleProcess;
-        consoleProcess =IProcess::createInstance();
+        Handle<es::Process> consoleProcess;
+        consoleProcess =es::Process::createInstance();
         TEST(consoleProcess);
-        Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
+        Handle<es::File> consoleElf = nameSpace->lookup("file/console.elf");
         TEST(consoleElf);
         startProcess(nameSpace, consoleProcess, consoleElf);
 
         // start console client process.
-        Handle<IProcess> consoleClientProcess;
-        consoleClientProcess =IProcess::createInstance();
+        Handle<es::Process> consoleClientProcess;
+        consoleClientProcess =es::Process::createInstance();
         TEST(consoleClientProcess);
 
-        Handle<IFile> consoleClientElf = nameSpace->lookup("file/consoleClient.elf");
+        Handle<es::File> consoleClientElf = nameSpace->lookup("file/consoleClient.elf");
         TEST(consoleClientElf);
         startProcess(nameSpace, consoleClientProcess, consoleClientElf);
 

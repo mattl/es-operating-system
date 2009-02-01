@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -683,7 +683,7 @@ StateListen::input(InetMessenger* m, StreamReceiver* s)
 
     // Clone new socket
     ASSERT(s->socket);
-    Socket* socket = new Socket(s->socket->getAddressFamily(), ISocket::Stream);
+    Socket* socket = new Socket(s->socket->getAddressFamily(), es::Socket::Stream);
     socket->setLocal(local);
     socket->setLocalPort(m->getLocalPort());
     socket->setRemote(Handle<Address>(m->getRemote()));
@@ -942,7 +942,7 @@ StateSynReceived::input(InetMessenger* m, StreamReceiver* s)
             if (s->listening)
             {
                 StreamReceiver* listening = s->listening;
-                Synchronized<IMonitor*> method(listening->monitor);
+                Synchronized<es::Monitor*> method(listening->monitor);
 
                 listening->accepted.addLast(s);
                 listening->notify();

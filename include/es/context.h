@@ -30,16 +30,16 @@ class Binding;
 class Context;
 class Iterator;
 
-class Binding : public es::IBinding
+class Binding : public es::Binding
 {
     friend class Context;
     friend class Iterator;
 
-    es::IMonitor*  monitor;
-    Ref         ref;
-    char*       name;
-    IInterface* object;
-    Context*    context;
+    es::Monitor*   monitor;
+    Ref            ref;
+    char*          name;
+    es::Interface* object;
+    Context*       context;
 
     void hide();
     void detach();
@@ -48,29 +48,29 @@ public:
     Link<Binding>   link;
 
 public:
-    Binding(const char* name, IInterface* object);
+    Binding(const char* name, Interface* object);
     ~Binding();
 
     void* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
-    IInterface* getObject();
-    void setObject(IInterface* object);
+    es::Interface* getObject();
+    void setObject(es::Interface* object);
     int getName(char* name, int len);
 
     typedef ::List<Binding, &Binding::link> List;
 };
 
 // In Context, the first binding points to the Context itself named "".
-class Context : public es::IContext
+class Context : public es::Context
 {
     friend class Binding;
     friend class Iterator;
 
-    es::IMonitor*   monitor;
-    Ref             ref;
-    Binding::List   bindingList;
+    es::Monitor*  monitor;
+    Ref           ref;
+    Binding::List bindingList;
 
     static bool isDelimitor(int c);
     static bool isPathname(const char* name);
@@ -89,13 +89,13 @@ public:
     unsigned int addRef();
     unsigned int release();
 
-    es::IBinding* bind(const char* name, es::IInterface* object);
-    es::IContext* createSubcontext(const char* name);
+    es::Binding* bind(const char* name, es::Interface* object);
+    es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::IInterface* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    es::IIterator* list(const char* name);
+    es::Iterator* list(const char* name);
 
     static const char* iid()
     {
@@ -104,11 +104,11 @@ public:
     }
 };
 
-class Iterator : public es::IIterator
+class Iterator : public es::Iterator
 {
-    es::IMonitor*  monitor;
-    Ref         ref;
-    Binding*    binding;
+    es::Monitor* monitor;
+    Ref          ref;
+    Binding*     binding;
 
 public:
     Iterator(Binding* binding);
@@ -119,7 +119,7 @@ public:
     unsigned int release();
 
     bool hasNext();
-    es::IInterface* next();
+    es::Interface* next();
     int remove();
 };
 

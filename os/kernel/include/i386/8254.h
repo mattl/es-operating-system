@@ -26,7 +26,7 @@
 #include <es/device/IBeep.h>
 #include "alarm.h"
 
-class Pit : public es::ICallback, public es::IBeep
+class Pit : public es::Callback, public es::Beep
 {
     friend DateTime DateTime::getNow();
 

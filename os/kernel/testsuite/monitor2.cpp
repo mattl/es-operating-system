@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@
 
 void* child2(void* param)
 {
-    IMonitor** monitor = (IMonitor**) param;
+    es::Monitor** monitor = (es::Monitor**) param;
 
     monitor[1]->lock();
     monitor[0]->lock();
@@ -43,7 +43,7 @@ void* child2(void* param)
 
 void* child2timeout(void* param)
 {
-    IMonitor** monitor = (IMonitor**) param;
+    es::Monitor** monitor = (es::Monitor**) param;
     monitor[0]->lock();
     DateTime start = DateTime::getNow();
     monitor[0]->wait(10000000);
@@ -65,8 +65,8 @@ void* test2(void* id)
 {
     void* val;
     long count;
-    IMonitor* monitor[2];
-    IThread* thread;
+    es::Monitor* monitor[2];
+    es::Thread* thread;
 
     esReport("'%s'\n", id);
 
@@ -77,7 +77,7 @@ void* test2(void* id)
     monitor[1]->lock();
     thread = new Thread(child2timeout,    // thread function
                         monitor,          // argument to thread function
-                        IThread::Normal); // priority
+                        es::Thread::Normal); // priority
     thread->start();
 
     val = thread->join();
@@ -95,7 +95,7 @@ void* test2(void* id)
     monitor[1]->lock();
     thread = new Thread(child2,           // thread function
                         monitor,          // argument to thread function
-                        IThread::Normal); // priority
+                        es::Thread::Normal); // priority
     thread->start();
     monitor[1]->wait();
 
@@ -103,7 +103,7 @@ void* test2(void* id)
 #ifdef VERBOSE
     esReport("notifyAll\n");
 #endif // VERBOSE
-    TEST(thread->getState() != IThread::TERMINATED);
+    TEST(thread->getState() != es::Thread::TERMINATED);
     monitor[0]->notifyAll();
     monitor[0]->unlock();
     monitor[1]->unlock();
@@ -123,13 +123,13 @@ char* id = "hello.";
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
     // check wait(s64 timeout).
-    IThread* thread2 = new Thread(test2,            // thread function
+    es::Thread* thread2 = new Thread(test2,            // thread function
                                   id,               // argument to thread function
-                                  IThread::Normal); // priority
+                                  es::Thread::Normal); // priority
     thread2->start();
     void* val = thread2->join();
     TEST(val == 0);

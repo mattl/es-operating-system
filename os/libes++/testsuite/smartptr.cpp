@@ -23,7 +23,7 @@
 
 using namespace es;
 
-class A : public ICallback
+class A : public Callback
 {
     Ref ref;
 
@@ -36,19 +36,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ICallback*>(this);
+            objectPtr = static_cast<Callback*>(this);
         }
-        else if (strcmp(riid, ICallback::iid()) == 0)
+        else if (strcmp(riid, Callback::iid()) == 0)
         {
-            objectPtr = static_cast<ICallback*>(this);
+            objectPtr = static_cast<Callback*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -111,13 +111,13 @@ int main()
     A a;
     C c;
 
-    printf("sizeof(IInterface) :%d\n", sizeof(IInterface));
+    printf("sizeof(Interface) :%d\n", sizeof(Interface));
     printf("sizeof(A) :%d\n", sizeof(A));
 
-    printf("isInterface(IInterface) :%d\n", IsInterface<IInterface>::Value);
+    printf("isInterface(Interface) :%d\n", IsInterface<Interface>::Value);
     printf("isInterface(A) :%d\n", IsInterface<A>::Value);
 
-    Handle<ICallback> hcb(&a, true);
+    Handle<Callback> hcb(&a, true);
     Handle<B> hc(&c, true);
 
     Handle<A> ha(hcb);

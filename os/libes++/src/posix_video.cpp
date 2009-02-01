@@ -79,7 +79,7 @@ u16 VideoBuffer::xHotSpot(0);
 u16 VideoBuffer::yHotSpot(0);
 
 VideoBuffer::
-VideoBuffer(IContext* device) :
+VideoBuffer(es::Context* device) :
     Stream(-1)
 {
     monitor = esCreateMonitor();
@@ -96,8 +96,8 @@ VideoBuffer(IContext* device) :
     xPosition = xResolution / 2;
     yPosition = yResolution / 2;
 
-    device->bind("framebuffer", static_cast<IStream*>(this));
-    device->bind("cursor", static_cast<ICursor*>(this));
+    device->bind("framebuffer", static_cast<es::Stream*>(this));
+    device->bind("cursor", static_cast<es::Cursor*>(this));
 }
 
 VideoBuffer::
@@ -112,7 +112,7 @@ VideoBuffer::
 int VideoBuffer::
 show()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     int show = count.increment();
     if (show == 1)
@@ -126,7 +126,7 @@ show()
 int VideoBuffer::
 hide()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     int show = count.decrement();
     if (show == 0)
@@ -145,7 +145,7 @@ move(int dx, int dy)
 void VideoBuffer::
 getPosition(int* x, int* y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     *x = xPosition;
     *y = yPosition;
@@ -154,7 +154,7 @@ getPosition(int* x, int* y)
 void VideoBuffer::
 setPosition(int x, int y)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (x == xPosition && y == yPosition)
     {
@@ -196,7 +196,7 @@ setPosition(int x, int y)
 void VideoBuffer::
 setPattern(const unsigned int data[32], const unsigned int mask[32], u16 xHotSpot, u16 yHotSpot)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (0 < count)
     {
@@ -459,27 +459,27 @@ void* VideoBuffer::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICursor::iid()) == 0)
+    if (strcmp(riid, es::Cursor::iid()) == 0)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        objectPtr = static_cast<es::Cursor*>(this);
     }
-    else if (strcmp(riid, IStream::iid()) == 0)
+    else if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICursor*>(this);
+        objectPtr = static_cast<es::Cursor*>(this);
     }
-    else if (strcmp(riid, IPageable::iid()) == 0)
+    else if (strcmp(riid, es::Pageable::iid()) == 0)
     {
-        objectPtr = static_cast<IPageable*>(this);
+        objectPtr = static_cast<es::Pageable*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
 
     if (getfd() == -1)
     {
@@ -598,7 +598,7 @@ init()
 
     setfd(fd);
 
-    IThread* thread = esCreateThread(start, this);
+    es::Thread* thread = esCreateThread(start, this);
     thread->start();
 }
 

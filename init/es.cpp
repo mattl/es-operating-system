@@ -45,15 +45,15 @@
 #include "fatStream.h"
 #include "iso9660Stream.h"
 
-using namespace es;
 
-int esInit(IInterface** nameSpace);
-extern void esRegisterInternetProtocol(IContext* context);
-extern void esRegisterDHCPClient(IContext* context);
 
-IStream* esReportStream();
+int esInit(es::Interface** nameSpace);
+extern void esRegisterInternetProtocol(es::Context* context);
+extern void esRegisterDHCPClient(es::Context* context);
 
-void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile> file)
+es::Stream* esReportStream();
+
+void startProcess(Handle<es::Context> root, Handle<es::Process> process, Handle<es::File> file)
 {
     ASSERT(root);
     ASSERT(process);
@@ -72,14 +72,14 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
     process->start(file);
 }
 
-void init(Handle<IContext> root)
+void init(Handle<es::Context> root)
 {
-    Handle<IIterator>   iter;
-    Handle<IFile>       file;
+    Handle<es::Iterator>   iter;
+    Handle<es::File>       file;
     long long           size = 0;
 
     // get console.
-    Handle<IStream> console = 0;
+    Handle<es::Stream> console = 0;
     while (!console)
     {
         console = root->lookup("device/console");
@@ -95,8 +95,8 @@ void init(Handle<IContext> root)
     size = file->getSize();
     esReport("main size: %lld\n", size);
 
-    Handle<IProcess> process;
-    process = IProcess::createInstance();
+    Handle<es::Process> process;
+    process = es::Process::createInstance();
     ASSERT(process);
     process->setRoot(root);
     process->setCurrent(root);
@@ -108,10 +108,10 @@ void init(Handle<IContext> root)
     esReport("esjs exited.\n");
 }
 
-int initNetwork(Handle<IContext> context)
+int initNetwork(Handle<es::Context> context)
 {
     // Get DIX interface
-    Handle<INetworkInterface> ethernetInterface = context->lookup("device/ethernet");
+    Handle<es::NetworkInterface> ethernetInterface = context->lookup("device/ethernet");
     if (!ethernetInterface)
     {
         return -1;
@@ -120,10 +120,10 @@ int initNetwork(Handle<IContext> context)
     esRegisterInternetProtocol(context);
 
     // Lookup resolver object
-    Handle<IResolver> resolver = context->lookup("network/resolver");
+    Handle<es::Resolver> resolver = context->lookup("network/resolver");
 
     // Lookup internet config object
-    Handle<IInternetConfig> config = context->lookup("network/config");
+    Handle<es::InternetConfig> config = context->lookup("network/config");
 
     // Setup DIX interface
     ethernetInterface->start();
@@ -132,7 +132,7 @@ int initNetwork(Handle<IContext> context)
 
     esRegisterDHCPClient(context);
 
-    Handle<IService> service = context->lookup("network/interface/2/dhcp");
+    Handle<es::Service> service = context->lookup("network/interface/2/dhcp");
     if (service)
     {
         service->start();
@@ -141,7 +141,7 @@ int initNetwork(Handle<IContext> context)
 #if 0
     esSleep(120000000);
 
-    Handle<IInternetAddress> host = config->getAddress(dixID);
+    Handle<es::InternetAddress> host = config->getAddress(dixID);
     if (host)
     {
         InAddr addr;
@@ -162,42 +162,42 @@ int initNetwork(Handle<IContext> context)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
     initNetwork(nameSpace);
 
     FatFileSystem::initializeConstructor();
     Iso9660FileSystem::initializeConstructor();
 
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root = fatFileSystem->getRoot();
+        Handle<es::Context> root = fatFileSystem->getRoot();
 
         nameSpace->bind("file", root);
 
         // start event manager process.
-        Handle<IProcess> eventProcess;
-        eventProcess = IProcess::createInstance();
-        Handle<IFile> eventElf = nameSpace->lookup("file/eventManager.elf");
+        Handle<es::Process> eventProcess;
+        eventProcess = es::Process::createInstance();
+        Handle<es::File> eventElf = nameSpace->lookup("file/eventManager.elf");
         ASSERT(eventElf);
         startProcess(nameSpace, eventProcess, eventElf);
 
         // start console process.
-        Handle<IProcess> consoleProcess;
-        consoleProcess =IProcess::createInstance();
-        Handle<IFile> consoleElf = nameSpace->lookup("file/console.elf");
+        Handle<es::Process> consoleProcess;
+        consoleProcess =es::Process::createInstance();
+        Handle<es::File> consoleElf = nameSpace->lookup("file/console.elf");
         ASSERT(consoleElf);
         startProcess(nameSpace, consoleProcess, consoleElf);
 

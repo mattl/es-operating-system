@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,12 +29,12 @@
 #include <es/net/IInternetConfig.h>
 #include <es/net/IResolver.h>
 
-using namespace es;
 
-extern int esInit(IInterface** nameSpace);
-extern void esRegisterInternetProtocol(IContext* context);
 
-void printAddress(IInternetAddress* address)
+extern int esInit(es::Interface** nameSpace);
+extern void esRegisterInternetProtocol(es::Context* context);
+
+void printAddress(es::InternetAddress* address)
 {
     if (address)
     {
@@ -57,20 +57,20 @@ void printAddress(IInternetAddress* address)
 
 int main()
 {
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
-    Handle<IContext> context(root);
+    Handle<es::Context> context(root);
 
     esRegisterInternetProtocol(context);
 
     // Create resolver object
-    Handle<IResolver> resolver = context->lookup("network/resolver");
+    Handle<es::Resolver> resolver = context->lookup("network/resolver");
 
     // Create internet config object
-    Handle<IInternetConfig> config = context->lookup("network/config");
+    Handle<es::InternetConfig> config = context->lookup("network/config");
 
     // Setup DIX interface
-    Handle<INetworkInterface> ethernetInterface = context->lookup("device/ethernet");
+    Handle<es::NetworkInterface> ethernetInterface = context->lookup("device/ethernet");
     ethernetInterface->start();
     int dixID = config->addInterface(ethernetInterface);
     esReport("dixID: %d\n", dixID);
@@ -78,24 +78,24 @@ int main()
     InAddr addr, addrRouter, addrNameServer;
     // Register host address (192.168.2.40)
     addr.aton("192.168.2.40");
-    Handle<IInternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof(InAddr), dixID);
+    Handle<es::InternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof(InAddr), dixID);
     config->addAddress(host, 16);
     esSleep(90000000);  // Wait for the host address to be settled.
 
     // Register a default router (192.168.2.1)
     addrRouter.aton("192.168.2.1");
-    Handle<IInternetAddress> router = resolver->getHostByAddress(&addrRouter.addr, sizeof(InAddr), dixID);
+    Handle<es::InternetAddress> router = resolver->getHostByAddress(&addrRouter.addr, sizeof(InAddr), dixID);
     config->addRouter(router);
 
     // Register a domain name server (192.168.2.1)
     addrNameServer.aton("192.168.2.1");
-    Handle<IInternetAddress> nameServer = resolver->getHostByAddress(&addrNameServer.addr, sizeof(InAddr), dixID);
+    Handle<es::InternetAddress> nameServer = resolver->getHostByAddress(&addrNameServer.addr, sizeof(InAddr), dixID);
     config->addNameServer(nameServer);
 
     config->addSearchDomain("nintendo.com");
     config->addSearchDomain("google.com");
 
-    Handle<IInternetAddress> address;
+    Handle<es::InternetAddress> address;
 
     // will resolve to www.nintendo.com
     address = resolver->getHostByName("www", AF_INET);

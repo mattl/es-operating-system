@@ -27,9 +27,7 @@
 #include <es/interlocked.h>
 #include <es/base/ICache.h>
 
-using namespace es;
-
-class MemoryStream : public IStream
+class MemoryStream : public es::Stream
 {
     Ref     ref;
     size_t  size;
@@ -154,19 +152,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IStream::iid()) == 0)
+        if (strcmp(riid, es::Stream::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 

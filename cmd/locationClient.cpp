@@ -23,30 +23,28 @@
 #include <es/base/IProcess.h>
 #include "location.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 int main(int argc, char* argv[])
 {
     esReport("This is the Binder client process.\n");
     System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
-    Handle<IContext> classStore = nameSpace->lookup("class");
+    Handle<es::Context> nameSpace = System()->getRoot();
+    Handle<es::Context> classStore = nameSpace->lookup("class");
     TEST(classStore);
 
-    // TODO: Setup ILocation constructor
+    // TODO: Setup es::Location constructor
 
     // Create binder objects.
-    Handle<ILocation> location[2];
+    Handle<es::Location> location[2];
     for (int i(0); i < 2; ++i)
     {
-        location[i] = ILocation::createInstance();
+        location[i] = es::Location::createInstance();
         TEST(location[i]);
 
         char name[14];
@@ -59,9 +57,9 @@ int main(int argc, char* argv[])
         location[i]->getName(name, sizeof(name));
         esReport("%s\n", name);
 
-        Point point = { i, -i };
+        es::Point point = { i, -i };
         location[i]->move(&point);
-        memset(&point, 0, sizeof(Point));
+        memset(&point, 0, sizeof(es::Point));
         location[i]->get(&point);
         esReport("point: (%d, %d)\n", point.x, point.y);
     }

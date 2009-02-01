@@ -317,12 +317,12 @@ start(Line* line)
     if (line == &inputLine)
     {
         cmd = SET_INPUT_SAMPLING_RATE;
-        mode = IDmac::READ | IDmac::AUTO_INITIALIZE;
+        mode = es::Dmac::READ | es::Dmac::AUTO_INITIALIZE;
     }
     else if (line == &outputLine)
     {
         cmd = SET_OUTPUT_SAMPLING_RATE;
-        mode = IDmac::WRITE | IDmac::AUTO_INITIALIZE;
+        mode = es::Dmac::WRITE | es::Dmac::AUTO_INITIALIZE;
     }
     else
     {
@@ -433,19 +433,19 @@ void* SoundBlaster16::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

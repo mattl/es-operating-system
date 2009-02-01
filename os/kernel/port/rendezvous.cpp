@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ sleep(Delegate* delegate)
     {
         lock();
 
-        ASSERT(current->state == IThread::RUNNING);
+        ASSERT(current->state == es::Thread::RUNNING);
         if (delegate->invoke(0))
         {
             unlock();
@@ -40,7 +40,7 @@ sleep(Delegate* delegate)
 #endif
         current->lock();
         queue.addPrio(current);
-        current->state = IThread::WAITING;
+        current->state = es::Thread::WAITING;
         current->rendezvous = this;
 
         // Note the current thread is kept locked in order not to be waken up
@@ -66,14 +66,14 @@ wakeup(Delegate* delegate)
             Thread* thread = queue.getFirst();
             if (thread->tryLock())
             {
-                ASSERT(thread->state != IThread::TERMINATED);
+                ASSERT(thread->state != es::Thread::TERMINATED);
                 ASSERT(thread->rendezvous == this);
 #ifdef VERBOSE
                 esReport("wakeup[%d]: %p\n", Core::getCurrentCore()->getID(), thread);
 #endif
                 queue.remove(thread);
                 thread->rendezvous = 0;
-                thread->state = IThread::RUNNABLE;
+                thread->state = es::Thread::RUNNABLE;
                 thread->setRun();
                 thread->unlock();
             }
@@ -129,5 +129,5 @@ int Thread::Rendezvous::
 getPriority()
 {
     Thread* blocked = queue.getFirst();
-    return blocked ? blocked->priority : IThread::Lowest;
+    return blocked ? blocked->priority : es::Thread::Lowest;
 }

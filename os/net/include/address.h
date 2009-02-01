@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,11 +24,9 @@
 #include <es/net/IInternetAddress.h>
 #include "conduit.h"
 
-using namespace es;
-
 class Socket;
 
-class Address : public IInternetAddress
+class Address : public es::InternetAddress
 {
     u8                      mac[6];
     Collection<Socket*>     sockets;

@@ -32,10 +32,8 @@
 
 namespace es
 {
-    void registerConstructor(const char* iid, IInterface* constructor);
+    void registerConstructor(const char* iid, es::Interface* constructor);
 }  // namespace es
-
-using namespace es;
 
 static __thread void* stopCfa;
 static __thread jmp_buf stopBuf;
@@ -59,13 +57,13 @@ long long _syscall(void* self, void* base, int m, va_list ap)
 
 static Broker<_syscall, 100> broker __attribute__ ((init_priority (101)));
 
-class System : public ICurrentProcess
+class System : public es::CurrentProcess
 {
-    struct CurrentThread : public ICurrentThread
+    struct CurrentThread : public es::CurrentThread
     {
-        ICurrentThread* currentThread;
+        es::CurrentThread* currentThread;
 
-        CurrentThread(ICurrentThread* currentThread) :
+        CurrentThread(es::CurrentThread* currentThread) :
             currentThread(currentThread)
         {
         }
@@ -120,16 +118,16 @@ class System : public ICurrentProcess
         }
     };
 
-    ICurrentProcess* currentProcess;
+    es::CurrentProcess* currentProcess;
     CurrentThread    current;
 
 public:
     System() :
-        currentProcess(reinterpret_cast<ICurrentProcess*>(&(broker.getInterfaceTable()[0]))),
+        currentProcess(reinterpret_cast<es::CurrentProcess*>(&(broker.getInterfaceTable()[0]))),
         current(currentProcess->currentThread())
     {
-        IRuntime* runtime;
-        runtime = reinterpret_cast<IRuntime*>(currentProcess->queryInterface(IRuntime::iid()));
+        es::Runtime* runtime;
+        runtime = reinterpret_cast<es::Runtime*>(currentProcess->queryInterface(es::Runtime::iid()));
         if (runtime)
         {
             runtime->setStartup(reinterpret_cast<void*>(start)); // [check] cast.
@@ -138,23 +136,23 @@ public:
         }
 
         // Update constructors.
-        if (Handle<IContext> root = currentProcess->getRoot())
+        if (Handle<es::Context> root = currentProcess->getRoot())
         {
-            if (Handle<IIterator> iterator = root->list("class"))
+            if (Handle<es::Iterator> iterator = root->list("class"))
             {
                 while (iterator->hasNext())
                 {
-                    if (Handle<IBinding> binding = iterator->next())
+                    if (Handle<es::Binding> binding = iterator->next())
                     {
                         char iid[1024];
                         char ciid[1024];
                         binding->getName(iid, sizeof iid);
                         strcpy(ciid, iid);
                         strcat(ciid, "::Constructor");
-                        if (IInterface* unknown = binding->getObject())
+                        if (es::Interface* unknown = binding->getObject())
                         {
                             void* constructor = unknown->queryInterface(ciid);
-                            registerConstructor(iid, reinterpret_cast<IInterface*>(constructor));
+                            registerConstructor(iid, reinterpret_cast<es::Interface*>(constructor));
                             unknown->release();
                         }
                     }
@@ -168,7 +166,7 @@ public:
         currentProcess->exit(status);
     }
 
-    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, es::Pageable* pageable, long long offset)
     {
         return currentProcess->map(start, length, prot, flags, pageable, offset);
     }
@@ -178,14 +176,14 @@ public:
         currentProcess->unmap(start, length);
     }
 
-    ICurrentThread* currentThread()
+    es::CurrentThread* currentThread()
     {
         current.addRef();
         return &current;
     }
 
-    // IThread* createThread(void* (*start)(void* param), void* param) // [check] function pointer.
-    IThread* createThread(void* start, void* param)
+    // es::Thread* createThread(void* (*start)(void* param), void* param) // [check] function pointer.
+    es::Thread* createThread(void* start, void* param)
     {
         return currentProcess->createThread(start, param);
     }
@@ -195,27 +193,27 @@ public:
         currentProcess->yield();
     }
 
-    IMonitor* createMonitor()
+    es::Monitor* createMonitor()
     {
         return currentProcess->createMonitor();
     }
 
-    IContext* getRoot()
+    es::Context* getRoot()
     {
         return currentProcess->getRoot();
     }
 
-    IStream* getInput()
+    es::Stream* getInput()
     {
         return currentProcess->getInput();
     }
 
-    IStream* getOutput()
+    es::Stream* getOutput()
     {
         return currentProcess->getOutput();
     }
 
-    IStream* getError()
+    es::Stream* getError()
     {
         return currentProcess->getError();
     }
@@ -235,12 +233,12 @@ public:
         return currentProcess->trace(on);
     }
 
-    void setCurrent(IContext* context)
+    void setCurrent(es::Context* context)
     {
         return currentProcess->setCurrent(context);
     }
 
-    IContext* getCurrent()
+    es::Context* getCurrent()
     {
         return currentProcess->getCurrent();
     }
@@ -276,9 +274,9 @@ public:
 
 static System current __attribute__((init_priority(1001)));    // After InterfaceStore
 
-ICurrentProcess* System() __attribute__((weak));
+es::CurrentProcess* System() __attribute__((weak));
 
-ICurrentProcess* System()
+es::CurrentProcess* System()
 {
     return &current;
 }

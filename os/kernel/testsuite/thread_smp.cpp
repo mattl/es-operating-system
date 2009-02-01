@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,12 +35,12 @@ void* test(void*)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
-    IThread* thread = new Thread(test,              // thread function
+    es::Thread* thread = new Thread(test,              // thread function
                                  0,                 // argument to pass
-                                 IThread::Normal);  // priority
+                                 es::Thread::Normal);  // priority
     thread->start();
 
     for (int i = 0; i < 20; ++i)

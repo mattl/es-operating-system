@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -189,7 +189,7 @@ zeroCluster(u32 clus)
 u32 FatFileSystem::
 allocCluster(u32 n, bool zero)
 {
-    Synchronized<IMonitor*> method(fatMonitor);
+    Synchronized<es::Monitor*> method(fatMonitor);
 
     if (n == 0 || freeCount < n)
     {
@@ -251,7 +251,7 @@ freeCluster(u32 clus)
 u32 FatFileSystem::
 clusEntryVal(u32 n)
 {
-    Synchronized<IMonitor*> method(fatMonitor);
+    Synchronized<es::Monitor*> method(fatMonitor);
 
     u32 fatOffset;
     u8 buf[4];
@@ -301,7 +301,7 @@ clusEntryVal(u32 n)
 void FatFileSystem::
 setClusEntryVal(u32 n, u32 v)
 {
-    Synchronized<IMonitor*> method(fatMonitor);
+    Synchronized<es::Monitor*> method(fatMonitor);
 
     // ASSERT(2 <= n);
     ASSERT(!isEof(n));

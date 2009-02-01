@@ -34,20 +34,20 @@
 
 #include "eventManager.h"
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 namespace
 {
     Interlocked registered = 0;
 };
 
-class EventManager : public IEventQueue
+class EventManager : public es::EventQueue
 {
     static const int WIDTH  = 1024; // [check] how to determine this parameter?
     static const int HEIGHT = 768;  // [check]
@@ -58,7 +58,7 @@ class EventManager : public IEventQueue
     static const int AUTO_REPEAT_DELAY = 20;
 
     Ref ref;
-    IMonitor* monitor;
+    es::Monitor* monitor;
 
     int keyBuf[KEYBUF_SIZE];    /* circular buffer */
     Ring keyRing;
@@ -78,7 +78,7 @@ class EventManager : public IEventQueue
     int x;
     int y;
 
-    Handle<ICursor> cursor;
+    Handle<es::Cursor> cursor;
     static int id;
 
     void keyDown(u8 key)
@@ -100,7 +100,7 @@ class EventManager : public IEventQueue
         if (key)
         {
             {
-                Synchronized<IMonitor*> method(monitor);
+                Synchronized<es::Monitor*> method(monitor);
                 KeyboardEvent event;
 
                 event.type = EventTypeKeyboard;
@@ -125,7 +125,7 @@ class EventManager : public IEventQueue
         key = translate(key);
         if (key)
         {
-            Synchronized<IMonitor*> method(monitor);
+            Synchronized<es::Monitor*> method(monitor);
 
             KeyboardEvent event;
 
@@ -142,7 +142,7 @@ class EventManager : public IEventQueue
 
     void mouse(u8 button, int x, int y)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         using namespace UsageID;
 
@@ -473,7 +473,7 @@ public:
         key[0] = 0;
         memset(key + 1, 255, 8);
 
-        Handle<IContext> root = System()->getRoot();
+        Handle<es::Context> root = System()->getRoot();
         cursor = root->lookup("device/cursor");
     }
 
@@ -486,7 +486,7 @@ public:
     }
 
     //
-    // IEventQueue
+    // es::EventQueue
     //
     void getEvent(InputEvent* event)
     {
@@ -496,7 +496,7 @@ public:
             return;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         int count = eventRing.read(event, sizeof(InputEvent));
         if (count != sizeof(InputEvent))
@@ -513,7 +513,7 @@ public:
             return 0;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         int stroke;
         int count = keyRing.read(&stroke, sizeof(int));
@@ -527,7 +527,7 @@ public:
             return 0;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         int stroke;
         int count = keyRing.peek(&stroke, sizeof(int));
@@ -541,7 +541,7 @@ public:
             return 0;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         return (modifiers << 3) |
                ((button & 1) ? RedButtonBit : 0) |
@@ -556,7 +556,7 @@ public:
             return 0;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         return (x << 16) | y;
     }
 
@@ -567,7 +567,7 @@ public:
             return false;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         bool notify(false);
 
         using namespace UsageID;
@@ -659,7 +659,7 @@ public:
             return false;
         }
 
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         u8* data = (u8*) eventData;
         bool notify(false);
 
@@ -714,7 +714,7 @@ public:
 
     bool wait(long long timeout)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         if (registered && eventRing.getUsed() == 0)
         {
@@ -734,19 +734,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            objectPtr = static_cast<es::EventQueue*>(this);
         }
-        else if (strcmp(riid, IEventQueue::iid()) == 0)
+        else if (strcmp(riid, es::EventQueue::iid()) == 0)
         {
-            objectPtr = static_cast<IEventQueue*>(this);
+            objectPtr = static_cast<es::EventQueue*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -777,25 +777,25 @@ public:
     }
 };
 
-static void* inputProcess(Handle<IContext> nameSpace)
+static void* inputProcess(Handle<es::Context> nameSpace)
 {
     using namespace UsageID;
 
     // Create Event manager objects.
-    Handle<IEventQueue> eventQueue = new EventManager;
+    Handle<es::EventQueue> eventQueue = new EventManager;
     ASSERT(eventQueue);
 
     // register the event queue.
-    Handle<IContext> device = nameSpace->lookup("device");
+    Handle<es::Context> device = nameSpace->lookup("device");
     ASSERT(device);
-    IBinding* ret = device->bind("event", static_cast<IEventQueue*>(eventQueue));
+    es::Binding* ret = device->bind("event", static_cast<es::EventQueue*>(eventQueue));
     ASSERT(ret);
 
-    Handle<IStream> keyboard(nameSpace->lookup("device/keyboard"));
+    Handle<es::Stream> keyboard(nameSpace->lookup("device/keyboard"));
     ASSERT(keyboard);
-    Handle<IStream> mouse(nameSpace->lookup("device/mouse"));
+    Handle<es::Stream> mouse(nameSpace->lookup("device/mouse"));
     ASSERT(mouse);
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
     int x;
     int y;
@@ -827,16 +827,16 @@ int main(int argc, char* argv[])
     esReport("This is the Event manager server process.\n");
     // System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
-    // Register IEventQueue interface.
-    Handle<IInterfaceStore> interfaceStore = nameSpace->lookup("interface");
+    // Register es::EventQueue interface.
+    Handle<es::InterfaceStore> interfaceStore = nameSpace->lookup("interface");
     interfaceStore->add(IEventQueueInfo, IEventQueueInfoSize);
 
     inputProcess(nameSpace);
 
-    // Unregister IEventQueue interface.
-    interfaceStore->remove(IEventQueue::iid());
+    // Unregister es::EventQueue interface.
+    interfaceStore->remove(es::EventQueue::iid());
 
     esReport("Event manager is terminated.\n");
     // System()->trace(false);

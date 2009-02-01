@@ -21,11 +21,11 @@
 #include <es/exception.h>
 #include <es/base/IProcess.h>
 
-using namespace es;
 
-ICurrentProcess* System();
 
-class Test : public IInterface
+es::CurrentProcess* System();
+
+class Test : public es::Interface
 {
     Ref ref;
 
@@ -33,15 +33,15 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IInterface*>(this);
+            objectPtr = static_cast<es::Interface*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -78,8 +78,8 @@ int main(int argc, char* argv[])
         esReport("errorCode: %d\n", errorCode);
     }
 
-    Handle<IStream> output(System()->getOutput());
-    Handle<IBinding> binding(output);
+    Handle<es::Stream> output(System()->getOutput());
+    Handle<es::Binding> binding(output);
     binding->setObject(&test);
     binding->setObject(0);
 }

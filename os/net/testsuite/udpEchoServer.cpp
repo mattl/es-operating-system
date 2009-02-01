@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,23 +28,23 @@
 #include <es/net/IResolver.h>
 #include <es/net/arp.h>
 
-using namespace es;
 
-extern int esInit(IInterface** nameSpace);
-extern void esRegisterInternetProtocol(IContext* context);
 
-Handle<IResolver> resolver;
+extern int esInit(es::Interface** nameSpace);
+extern void esRegisterInternetProtocol(es::Context* context);
+
+Handle<es::Resolver> resolver;
 
 char buffer[64*1024];
 
 // UDP Echo service - RFC 862
-void echo(IInternetAddress* host)
+void echo(es::InternetAddress* host)
 {
-    Handle<ISocket> socket = host->socket(AF_INET, ISocket::Datagram, 7);
+    Handle<es::Socket> socket = host->socket(AF_INET, es::Socket::Datagram, 7);
 
     for (;;)
     {
-        IInternetAddress* remoteAddress;
+        es::InternetAddress* remoteAddress;
         int remotePort;
 
         int len = socket->recvFrom(buffer, sizeof buffer, 0, &remoteAddress, &remotePort);
@@ -72,9 +72,9 @@ void echo(IInternetAddress* host)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    Handle<IContext> context(root);
+    Handle<es::Context> context(root);
 
     esRegisterInternetProtocol(context);
 
@@ -82,10 +82,10 @@ int main()
     resolver = context->lookup("network/resolver");
 
     // Create internet config object
-    Handle<IInternetConfig> config = context->lookup("network/config");
+    Handle<es::InternetConfig> config = context->lookup("network/config");
 
     // Setup DIX interface
-    Handle<INetworkInterface> nic = context->lookup("device/ethernet");
+    Handle<es::NetworkInterface> nic = context->lookup("device/ethernet");
     nic->start();
     int dixID = config->addInterface(nic);
     esReport("dixID: %d\n", dixID);
@@ -94,7 +94,7 @@ int main()
 
     // Register host address (192.168.2.40)
     InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
-    Handle<IInternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof addr, dixID);
+    Handle<es::InternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof addr, dixID);
     config->addAddress(host, 16);
     esSleep(90000000);  // Wait for the host address to be settled.
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@
 
 u8 buf[4096] __attribute__ ((aligned (4096)));
 
-void testDisk(Handle<IStream> disk)
+void testDisk(Handle<es::Stream> disk)
 {
     long count;
 
@@ -46,16 +46,16 @@ void testDisk(Handle<IStream> disk)
     esReport("!\n");
 }
 
-void PrintPartitions(IContext* context)
+void PrintPartitions(es::Context* context)
 {
     char name[16];
-    IDiskManagement::Partition params;
+    es::DiskManagement::Partition params;
     esReport("boot type offset   size\n");
-    Handle<IIterator> iter = context->list("");
-    Handle<IBinding> binding;
+    Handle<es::Iterator> iter = context->list("");
+    Handle<es::Binding> binding;
     while ((binding = iter->next()))
     {
-        Handle<IDiskManagement> diskManagement = binding->getObject();
+        Handle<es::DiskManagement> diskManagement = binding->getObject();
         TEST(diskManagement);
         diskManagement->getLayout(&params);
         TEST(0 < binding->getName(name, sizeof(name)));
@@ -66,7 +66,7 @@ void PrintPartitions(IContext* context)
                  params.partitionLength,
                  name);
 
-        Handle<IStream> stream = context->lookup(name);
+        Handle<es::Stream> stream = context->lookup(name);
         TEST(stream);
         long long size;
         size = stream->getSize();
@@ -79,33 +79,33 @@ void PrintPartitions(IContext* context)
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IIterator> iterator = root->list("device/ata");
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Iterator> iterator = root->list("device/ata");
     while (iterator->hasNext())
     {
         char name[16];
 
-        Handle<IBinding> binding = iterator->next();
+        Handle<es::Binding> binding = iterator->next();
         binding->getName(name, sizeof name);
         esReport("%s\n", name);
 
-        Handle<IContext> channel = binding->getObject();
-        Handle<IIterator> iterator = channel->list("");
+        Handle<es::Context> channel = binding->getObject();
+        Handle<es::Iterator> iterator = channel->list("");
         while (iterator->hasNext())
         {
-            Handle<IBinding> binding = iterator->next();
+            Handle<es::Binding> binding = iterator->next();
             binding->getName(name, sizeof name);
             esReport("    %s\n", name);
         }
     }
 
-    Handle<IStream> disk(root->lookup("device/ata/channel0/device0"));
+    Handle<es::Stream> disk(root->lookup("device/ata/channel0/device0"));
     testDisk(disk);
 
-    Handle<IContext> partiton(root->lookup("device/ata/channel0/device0"));
+    Handle<es::Context> partiton(root->lookup("device/ata/channel0/device0"));
     if (partiton)
     {
         esReport("partiton test\n");

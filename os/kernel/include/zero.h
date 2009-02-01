@@ -21,9 +21,7 @@
 #include <es/ref.h>
 #include <es/base/IStream.h>
 
-using namespace es;
-
-class Zero : public IStream
+class Zero : public es::Stream
 {
     Ref ref;
 

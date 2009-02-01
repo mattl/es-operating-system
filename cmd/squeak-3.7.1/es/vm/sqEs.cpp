@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +52,7 @@
 #include <es/naming/IContext.h>
 #include "../IEventQueue.h"
 
-using namespace es;
+
 
 #ifndef _DEBUG
 #define FPRINTF(...)    (__VA_ARGS__)
@@ -60,7 +60,7 @@ using namespace es;
 #define FPRINTF(...)    esReport(__VA_ARGS__)
 #endif
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 extern "C"
 {
@@ -84,7 +84,7 @@ extern void* networkProcess(void* param);
 static const DateTime Epoch(1901, 1, 1);
 
 /*** Variables ***/
-Handle<IContext> gRoot;
+Handle<es::Context> gRoot;
 
 /*** Variables -- image and path names ***/
 #define IMAGE_NAME_SIZE 300
@@ -98,7 +98,7 @@ char vmPath[VMPATH_SIZE + 1];  /* full path to interpreter's directory */
 
 /*** I/O Primitives ***/
 
-static IBeep* gIbeep;
+static es::Beep* gIbeep;
 int (ioMSecs)(void);
 
 int ioBeep(void)
@@ -113,11 +113,11 @@ int ioBeep(void)
 
 int ioExit(void)
 {
-    Handle<IContext> root = System()->getRoot();
-    Handle<ICursor> cursor = root->lookup("device/cursor");
+    Handle<es::Context> root = System()->getRoot();
+    Handle<es::Cursor> cursor = root->lookup("device/cursor");
     cursor->hide();
 
-    Handle<IService> console = root->lookup("/device/console");
+    Handle<es::Service> console = root->lookup("/device/console");
     if (console)
     {
         console->start();
@@ -407,7 +407,7 @@ int ioDisablePowerManager(int disableIfNonZero)
 
 // #define USE_MMAP
 
-IFile* imageFile;
+es::File* imageFile;
 
 void* sqAllocateMemory(int minHeapSize, int desiredHeapSize)
 {
@@ -415,10 +415,10 @@ void* sqAllocateMemory(int minHeapSize, int desiredHeapSize)
     return new(std::nothrow) u8[desiredHeapSize];
 #else
     // Map imageFile.
-    IPageable* pageable = imageFile->getPageable();
+    es::Pageable* pageable = imageFile->getPageable();
     void* addr = System()->map(0, desiredHeapSize,
-                               ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                               ICurrentProcess::MAP_PRIVATE,
+                               es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                               es::CurrentProcess::MAP_PRIVATE,
                                pageable, 0);
     pageable->release();
     imageFile->release();
@@ -430,7 +430,7 @@ void* sqAllocateMemory(int minHeapSize, int desiredHeapSize)
 int sqImageFileClose(sqImageFile f)
 {
     FPRINTF("%s(%p);\n", __func__, f);
-    IStream* stream = (IStream*) f;
+    es::Stream* stream = (es::Stream*) f;
     stream->release();
     return 0;
 }
@@ -438,17 +438,17 @@ int sqImageFileClose(sqImageFile f)
 sqImageFile sqImageFileOpen(char *fileName, char *mode)
 {
     FPRINTF("%s(\"%s\", \"%s\");\n", __func__, fileName, mode);
-    IInterface* interface = gRoot->lookup(fileName);
-    imageFile = reinterpret_cast<IFile*>(interface->queryInterface(IFile::iid()));
+    es::Interface* interface = gRoot->lookup(fileName);
+    imageFile = reinterpret_cast<es::File*>(interface->queryInterface(es::File::iid()));
     interface->release();
-    IStream* stream = imageFile->getStream();
+    es::Stream* stream = imageFile->getStream();
     return (sqImageFile) stream;
 }
 
 squeakFileOffsetType sqImageFilePosition(sqImageFile f)
 {
     FPRINTF("%s(%p) :", __func__, f);
-    IStream* stream = (IStream*) f;
+    es::Stream* stream = (es::Stream*) f;
     long long pos;
     pos = stream->getPosition();
     FPRINTF("%lld", pos);
@@ -465,7 +465,7 @@ size_t sqImageFileRead(void *ptr, size_t elementSize, size_t count, sqImageFile 
         return elementSize * count;
     }
 #endif
-    IStream* stream = (IStream*) f;
+    es::Stream* stream = (es::Stream*) f;
     size_t len = stream->read(ptr, elementSize * count);
     FPRINTF(" %d\n", len);
     return (0 < len) ? len / elementSize : len;
@@ -474,7 +474,7 @@ size_t sqImageFileRead(void *ptr, size_t elementSize, size_t count, sqImageFile 
 squeakFileOffsetType sqImageFileSeek(sqImageFile f, squeakFileOffsetType pos)
 {
     FPRINTF("%s(%lld)\n", __func__, pos);
-    IStream* stream = (IStream*) f;
+    es::Stream* stream = (es::Stream*) f;
     stream->setPosition(pos);
     return pos;
 }
@@ -482,7 +482,7 @@ squeakFileOffsetType sqImageFileSeek(sqImageFile f, squeakFileOffsetType pos)
 size_t sqImageFileWrite(void *ptr, size_t elementSize, size_t count, sqImageFile f)
 {
     FPRINTF("%s(%d, %d) : ", __func__, elementSize, count);
-    IStream* stream = (IStream*) f;
+    es::Stream* stream = (es::Stream*) f;
     size_t len = stream->write(ptr, elementSize * count);
     FPRINTF("%d\n", len);
     return (0 < len) ? len / elementSize : len;
@@ -492,15 +492,15 @@ int main()
 {
     esReport("Squeak3.7\n");
 
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
 
-    Handle<IService> console = root->lookup("/device/console");
+    Handle<es::Service> console = root->lookup("/device/console");
     if (console)
     {
         console->stop();
     }
 
-    Handle<IBeep> beep = root->lookup("device/beep");
+    Handle<es::Beep> beep = root->lookup("device/beep");
 
     gIbeep = beep;
 
@@ -510,11 +510,11 @@ int main()
 
     gRoot = root->lookup("file");
 #if 1
-    Handle<IIterator> iter = gRoot->list("");
+    Handle<es::Iterator> iter = gRoot->list("");
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         esReport("'%s'\n", name);
     }
@@ -538,16 +538,16 @@ int main()
 
     initInputProcess();
 
-    IThread* audioThread = System()->createThread(reinterpret_cast<void*>(audioProcess), 0);
-    audioThread->setPriority(IThread::Normal + 1);
+    es::Thread* audioThread = System()->createThread(reinterpret_cast<void*>(audioProcess), 0);
+    audioThread->setPriority(es::Thread::Normal + 1);
     audioThread->start();
 
-    IThread* recordThread = System()->createThread(reinterpret_cast<void*>(recordProcess), 0);
-    recordThread->setPriority(IThread::Normal + 1);
+    es::Thread* recordThread = System()->createThread(reinterpret_cast<void*>(recordProcess), 0);
+    recordThread->setPriority(es::Thread::Normal + 1);
     recordThread->start();
 
-    IThread* networkThread = System()->createThread(reinterpret_cast<void*>(networkProcess), 0);
-    networkThread->setPriority(IThread::Normal + 2);
+    es::Thread* networkThread = System()->createThread(reinterpret_cast<void*>(networkProcess), 0);
+    networkThread->setPriority(es::Thread::Normal + 2);
     networkThread->start();
 
     // Run Squeak

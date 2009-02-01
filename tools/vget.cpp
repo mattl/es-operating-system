@@ -31,9 +31,9 @@
 
 u8 sec[512];
 
-void get(Handle<IContext> root, char* filename)
+void get(Handle<es::Context> root, char* filename)
 {
-    Handle<IFile> file(root->lookup(filename));
+    Handle<es::File> file(root->lookup(filename));
     if (!file)
     {
         esReport("Could not open %s\n", filename);
@@ -57,7 +57,7 @@ void get(Handle<IContext> root, char* filename)
         exit(EXIT_FAILURE);
     }
 
-    Handle<IStream> stream(file->getStream());
+    Handle<es::Stream> stream(file->getStream());
     long size = stream->getSize();
     while (0 < size)
     {
@@ -74,10 +74,10 @@ void get(Handle<IContext> root, char* filename)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
     if (argc < 3)
     {
@@ -85,9 +85,9 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
-    Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = IFatFileSystem::createInstance();
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>(argv[1]));
+    Handle<es::FileSystem> fatFileSystem;
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
 
     long long freeSpace;
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         get(root, argv[2]);

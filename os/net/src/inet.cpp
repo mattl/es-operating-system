@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@
 #include "resolver.h"
 #include "inetConfig.h"
 
-void esRegisterInternetProtocol(IContext* context)
+void esRegisterInternetProtocol(es::Context* context)
 {
     Socket::initialize();
 
@@ -35,14 +35,14 @@ void esRegisterInternetProtocol(IContext* context)
 
     // Register resolver interface
     Socket::resolver = new Resolver;
-    Handle<IBinding>(context->bind("network/resolver", Socket::resolver));
+    Handle<es::Binding>(context->bind("network/resolver", Socket::resolver));
 
     // Register config interface
     Socket::config = new InternetConfig;
-    Handle<IBinding>(context->bind("network/config", Socket::config));
+    Handle<es::Binding>(context->bind("network/config", Socket::config));
 
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
+    Handle<es::NetworkInterface> loopbackInterface = context->lookup("device/loopback");
     int scopeID = Socket::config->addInterface(loopbackInterface);
 
     // Register localhost address

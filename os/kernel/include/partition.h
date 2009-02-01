@@ -34,7 +34,7 @@
 class PartitionContext;
 class PartitionIterator;
 
-class PartitionStream : public es::IStream, public es::IDiskManagement
+class PartitionStream : public es::Stream, public es::DiskManagement
 {
     Ref                     ref;
     PartitionContext*       context;
@@ -92,7 +92,7 @@ public:
     unsigned int release();
 };
 
-class PartitionContext : public es::IPartition
+class PartitionContext : public es::Partition
 {
     friend class PartitionStream;
     friend class PartitionIterator;
@@ -101,7 +101,7 @@ class PartitionContext : public es::IPartition
 
     Ref                 ref;
     Monitor             monitor;
-    es::IStream*        disk;
+    es::Stream*         disk;
     PartitionStreamList partitionList;
 
     PartitionStream* createPartition(const char* name, u8 type);
@@ -111,7 +111,7 @@ class PartitionContext : public es::IPartition
     PartitionStream* lookupPartitionStream(u8 type, u8 number);
     PartitionStream* lookupPartitionStream(const char* name);
     int getId(const char* name, const char* prefix);
-    int getGeometry(es::IDiskManagement::Geometry* geometry);
+    int getGeometry(es::DiskManagement::Geometry* geometry);
     const char* getPrefix(const char* name);
     int getType(const char* name);
     int clearBootRecord(PartitionStream* stream);
@@ -141,17 +141,17 @@ public:
         PartitionStream::Partition* partition);
 
     // IContext
-    es::IBinding* bind(const char* name, es::IInterface* object);
-    es::IContext* createSubcontext(const char* name);
+    es::Binding* bind(const char* name, es::Interface* object);
+    es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::IInterface* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    es::IIterator* list(const char* name);
+    es::Iterator* list(const char* name);
 
     // IPartition
     int initialize();
-    int mount(es::IStream* disk);
+    int mount(es::Stream* disk);
     int unmount();
 
     void* queryInterface(const char* riid);
@@ -206,10 +206,10 @@ public:
     };
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Partition::Constructor
     {
     public:
-        es::IPartition* createInstance();
+        es::Partition* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -218,7 +218,7 @@ public:
     static void initializeConstructor();
 };
 
-class PartitionIterator : public es::IIterator, public es::IBinding
+class PartitionIterator : public es::Iterator, public es::Binding
 {
     typedef List<PartitionStream, &PartitionStream::link>   PartitionStreamList;
 
@@ -232,12 +232,12 @@ public:
 
     // IIterator
     bool hasNext();
-    es::IInterface* next();
+    es::Interface* next();
     int remove();
 
     // IBinding
-    es::IInterface* getObject();
-    void setObject(es::IInterface* object);
+    es::Interface* getObject();
+    void setObject(es::Interface* object);
     int getName(char* name, int len);
 
     void* queryInterface(const char* riid);

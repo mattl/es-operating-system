@@ -24,7 +24,7 @@
 
 // #define VERBOSE
 
-using namespace es;
+
 using namespace ATAttachment;
 using namespace Register;
 
@@ -44,7 +44,7 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
     using namespace DeviceIdentification;
     using namespace Status;
 
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 
     if (!identify(signature))
     {
@@ -158,7 +158,7 @@ AtaDevice::
 {
     if (partition)
     {
-        Handle<IPartition> handle(partition);
+        Handle<es::Partition> handle(partition);
         handle->unmount();
         partition->release();
     }
@@ -284,17 +284,17 @@ setLayout(const Partition* partition)
     // [check] throw excpetion.
 }
 
-IPartition* AtaDevice::
+es::Partition* AtaDevice::
 getPartition()
 {
     if (!partition)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
-        partition = IPartition::createInstance();
+        partition = es::Partition::createInstance();
         if (partition)
         {
-            Handle<IPartition> handle(partition);
+            Handle<es::Partition> handle(partition);
             if (handle)
             {
                 handle->mount(this);
@@ -304,8 +304,8 @@ getPartition()
     return partition;
 }
 
-IBinding* AtaDevice::
-bind(const char* name, IInterface* object)
+es::Binding* AtaDevice::
+bind(const char* name, es::Interface* object)
 {
     if (!getPartition())
     {
@@ -314,7 +314,7 @@ bind(const char* name, IInterface* object)
     return partition->bind(name, object);
 }
 
-IContext* AtaDevice::
+es::Context* AtaDevice::
 createSubcontext(const char* name)
 {
     if (!getPartition())
@@ -334,7 +334,7 @@ destroySubcontext(const char* name)
     return partition->destroySubcontext(name);
 }
 
-IInterface* AtaDevice::
+es::Interface* AtaDevice::
 lookup(const char* name)
 {
     if (!getPartition())
@@ -364,7 +364,7 @@ unbind(const char* name)
     return partition->unbind(name);
 }
 
-IIterator* AtaDevice::
+es::Iterator* AtaDevice::
 list(const char* name)
 {
     if (!getPartition())
@@ -378,27 +378,27 @@ void* AtaDevice::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IDiskManagement::iid()) == 0)
+    else if (strcmp(riid, es::DiskManagement::iid()) == 0)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        objectPtr = static_cast<es::DiskManagement*>(this);
     }
-    else if (strcmp(riid, IContext::iid()) == 0 && getPartition())
+    else if (strcmp(riid, es::Context::iid()) == 0 && getPartition())
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

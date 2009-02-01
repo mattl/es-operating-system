@@ -351,7 +351,7 @@ class StreamReceiver :
     //
 
     State*      state;
-    IMonitor*   monitor;
+    es::Monitor*   monitor;
     u8*         recvBuf;
     Ring        recvRing;
     u8*         sendBuf;
@@ -606,7 +606,7 @@ public:
 
         listening(0)
     {
-        monitor = IMonitor::createInstance();
+        monitor = es::Monitor::createInstance();
 
         initRto();
     }

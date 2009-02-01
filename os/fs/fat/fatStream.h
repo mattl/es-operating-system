@@ -45,14 +45,13 @@
 #include <es/device/IFatFileSystem.h>
 #include "fat.h"
 
-using namespace es;
 using namespace LittleEndian;
 
 class FatStream;
 class FatFileSystem;
 class FatIterator;
 
-class FatStream : public IFile, public IStream, public IContext, public IBinding
+class FatStream : public es::File, public es::Stream, public es::Context, public es::Binding
 {
     friend class FatFileSystem;
     friend class FatIterator;
@@ -68,8 +67,8 @@ class FatStream : public IFile, public IStream, public IContext, public IBinding
     Link<FatStream> linkHash;
 
     Ref         ref;
-    IMonitor*   monitor;
-    ICache*     cache;
+    es::Monitor*   monitor;
+    es::Cache*     cache;
     FatStream*  parent;
 
     u32         dirClus;    // the first cluster of the parent directory. Zero if this node is the root.
@@ -89,9 +88,9 @@ public:
     ~FatStream();
 
     // fatContext.cpp
-    static bool findNext(IStream* dir, u8* fcb, u16* fileName,
+    static bool findNext(es::Stream* dir, u8* fcb, u16* fileName,
                          int freeRequired, int& freeOffset, u32& freeSize);
-    static bool findNext(IStream* dir, u8* fcb, u16* fileName);
+    static bool findNext(es::Stream* dir, u8* fcb, u16* fileName);
     static FatStream* lookup(FatStream* stream, const char*& name);
     bool isEmpty();
     bool isRoot();
@@ -99,7 +98,7 @@ public:
     int remove();
     int hashCode() const;
 
-    // IFile
+    // es::File
     unsigned int getAttributes();
     long long getCreationTime();
     long long getLastAccessTime();
@@ -113,10 +112,10 @@ public:
     bool isDirectory();
     bool isFile();
     bool isHidden();
-    IStream* getStream();
-    IPageable* getPageable();
+    es::Stream* getStream();
+    es::Pageable* getPageable();
 
-    // IStream
+    // es::Stream
     long long getPosition();
     void setPosition(long long pos);
     long long getSize();
@@ -127,21 +126,21 @@ public:
     int write(const void* src, int count, long long offset);
     void flush();
 
-    // IBinding
-    IInterface* getObject();
-    void setObject(IInterface* object);
+    // es::Binding
+    es::Interface* getObject();
+    void setObject(es::Interface* object);
     int getName(char* name, int len);
 
-    // IContext
-    IBinding* bind(const char* name, IInterface* object);
-    IContext* createSubcontext(const char* name);
+    // es::Context
+    es::Binding* bind(const char* name, es::Interface* object);
+    es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    IInterface* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    IIterator* list(const char* name);
+    es::Iterator* list(const char* name);
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
@@ -158,7 +157,7 @@ private:
     bool isRemoved();
 };
 
-class FatFileSystem : public IFatFileSystem
+class FatFileSystem : public es::FatFileSystem
 {
     typedef List<FatStream, &FatStream::linkHash>   FatStreamChain;
     typedef List<FatStream, &FatStream::linkChain>  FatStreamList;
@@ -166,18 +165,18 @@ class FatFileSystem : public IFatFileSystem
     friend class PartitionStream;
 
     Ref             ref;
-    IStream*        partition;
-    IPageSet*       pageSet;
-    ICache*         diskCache;
-    IStream*        diskStream;
+    es::Stream*        partition;
+    es::PageSet*       pageSet;
+    es::Cache*         diskCache;
+    es::Stream*        diskStream;
     FatStream*      root;
 
-    IMonitor*       hashMonitor;    // monitor for the hash table and standby list
+    es::Monitor*       hashMonitor;    // monitor for the hash table and standby list
     size_t          hashSize;
     FatStreamChain* hashTable;
     FatStreamList   standbyList;
 
-    IMonitor*       fatMonitor;     // monitor for FAT
+    es::Monitor*       fatMonitor;     // monitor for FAT
 
     // bpb
     u8      bpb[512];
@@ -225,7 +224,7 @@ public:
 
     // fat.cpp
     FatFileSystem();
-    FatFileSystem(IStream* partition);
+    FatFileSystem(es::Stream* partition);
     ~FatFileSystem();
     FatStream* getRoot();
     FatStream* lookup(u32 dirClus, u32 offset);
@@ -273,33 +272,33 @@ public:
     static int hashCode(u32 dirClus, u32 offset);
 
     // fatFormat.cpp
-    static int format(IStream* partition);
-    static int formatFat12(IStream* partition);
-    static int formatFat16(IStream* partition);
-    static int formatFat32(IStream* partition);
-    static void getGeometry(IStream* partition, IDiskManagement::Geometry* geometry);
+    static int format(es::Stream* partition);
+    static int formatFat12(es::Stream* partition);
+    static int formatFat16(es::Stream* partition);
+    static int formatFat32(es::Stream* partition);
+    static void getGeometry(es::Stream* partition, es::DiskManagement::Geometry* geometry);
     int updateBootCode();
 
-    // IFileSystem
-    void mount(IStream* disk);
+    // es::FileSystem
+    void mount(es::Stream* disk);
     void dismount(void);
-    void getRoot(IContext** root);
+    void getRoot(es::Context** root);
     long long getFreeSpace();
     long long getTotalSpace();
     int checkDisk(bool fixError);
     void format();
     int defrag();
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::FatFileSystem::Constructor
     {
     public:
-        IFatFileSystem* createInstance();
+        es::FatFileSystem* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -308,7 +307,7 @@ public:
     static void initializeConstructor();
 };
 
-class FatIterator : public IIterator
+class FatIterator : public es::Iterator
 {
     Ref         ref;
     FatStream*  stream;
@@ -320,7 +319,7 @@ public:
     ~FatIterator();
 
     bool hasNext(void);
-    IInterface* next();
+    es::Interface* next();
     int remove(void);
 
     void* queryInterface(const char* riid);

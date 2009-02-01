@@ -23,7 +23,7 @@
 
 // #define VERBOSE
 
-using namespace es;
+
 using namespace BigEndian;
 using namespace ATAttachment;
 using namespace Register;
@@ -109,7 +109,7 @@ readCapacity()
 int AtaPacketDevice::
 read(void* dst, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     using namespace Features;
 
     if (size < offset)
@@ -140,7 +140,7 @@ read(void* dst, int count, long long offset)
 int AtaPacketDevice::
 write(const void* src, int count, long long offset)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     using namespace Features;
 
     if (size < offset)
@@ -220,7 +220,7 @@ preventAllowMediumRemoval(bool prevent, bool persistent)
 int AtaPacketDevice::
 eject()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return startStopUnit(0, 1, 0, 0);
 }
@@ -228,7 +228,7 @@ eject()
 int AtaPacketDevice::
 load()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return startStopUnit(0, 1, 1, 0);
 }
@@ -236,7 +236,7 @@ load()
 int AtaPacketDevice::
 lock()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return preventAllowMediumRemoval(true);
 }
@@ -244,7 +244,7 @@ lock()
 int AtaPacketDevice::
 unlock()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return preventAllowMediumRemoval(false);
 }
@@ -253,27 +253,27 @@ void* AtaPacketDevice::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IDiskManagement::iid()) == 0)
+    else if (strcmp(riid, es::DiskManagement::iid()) == 0)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        objectPtr = static_cast<es::DiskManagement*>(this);
     }
-    else if (strcmp(riid, IRemovableMedia::iid()) == 0 && removal)
+    else if (strcmp(riid, es::RemovableMedia::iid()) == 0 && removal)
     {
-        objectPtr = static_cast<IRemovableMedia*>(this);
+        objectPtr = static_cast<es::RemovableMedia*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -292,7 +292,7 @@ release()
 bool AtaPacketDevice::
 detect()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!removal)
     {

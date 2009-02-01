@@ -28,7 +28,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static void TestFileSystem(Handle<IContext> root)
+static void TestFileSystem(Handle<es::Context> root)
 {
     const char* nameList[] =
     {
@@ -123,7 +123,7 @@ static void TestFileSystem(Handle<IContext> root)
         int len = strlen(nameList[i]);
         esReport("create \"%s\" (len %d)\n", nameList[i], len);
 
-        Handle<IFile> file = root->lookup(nameList[i]);
+        Handle<es::File> file = root->lookup(nameList[i]);
         if (!file)
         {
             file = root->bind(nameList[i], 0);
@@ -133,7 +133,7 @@ static void TestFileSystem(Handle<IContext> root)
             TEST(file->canWrite());
             TEST(!file->isHidden());
 
-            Handle<IStream>     stream;
+            Handle<es::Stream>     stream;
             stream = file->getStream();
             long ret = stream->write("0123456789\n", 11);
             TEST(ret == 11);
@@ -149,7 +149,7 @@ static void TestFileSystem(Handle<IContext> root)
 
     // create a file with the path.
     root->createSubcontext("dir");
-    Handle<IFile> file = root->bind("dir/abc", 0);
+    Handle<es::File> file = root->bind("dir/abc", 0);
     TEST(file);
     file = 0;
 
@@ -187,7 +187,7 @@ static void TestFileSystem(Handle<IContext> root)
         int len = strlen(wrongNameList[i]);
         esReport("create \"%s\" (len %d)\n", wrongNameList[i], len);
 
-        Handle<IFile> file = root->lookup(wrongNameList[i]);
+        Handle<es::File> file = root->lookup(wrongNameList[i]);
         if (!file)
         {
             try
@@ -208,32 +208,32 @@ static void TestFileSystem(Handle<IContext> root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat32.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat32.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         TestFileSystem(root);
@@ -246,7 +246,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

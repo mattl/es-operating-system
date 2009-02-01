@@ -27,7 +27,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static long TestFileSystem(Handle<IContext> root)
+static long TestFileSystem(Handle<es::Context> root)
 {
     long ret;
     const char* dirList[] =
@@ -42,7 +42,7 @@ static long TestFileSystem(Handle<IContext> root)
         "test.txt",
     };
 
-    Handle<IContext> dir;
+    Handle<es::Context> dir;
 
     // create
     int i;
@@ -57,12 +57,12 @@ static long TestFileSystem(Handle<IContext> root)
     }
 
     long long n = 0;
-    Handle<IIterator>   iter;
+    Handle<es::Iterator>   iter;
     iter = root->list("");
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         esReport("'%s'\n", name);
         ++n;
@@ -77,11 +77,11 @@ static long TestFileSystem(Handle<IContext> root)
         TEST(dir);
     }
 
-    Handle<IContext> dir0 = root->lookup(dirList[0]);
+    Handle<es::Context> dir0 = root->lookup(dirList[0]);
     TEST(dir0);
-    Handle<IContext> dir1 = dir0->lookup(dirList[1]);
+    Handle<es::Context> dir1 = dir0->lookup(dirList[1]);
     TEST(dir1);
-    Handle<IContext> dir2 = dir1->lookup(dirList[2]);
+    Handle<es::Context> dir2 = dir1->lookup(dirList[2]);
     TEST(dir2);
 
     ret = root->destroySubcontext(dirList[0]);
@@ -101,7 +101,7 @@ static long TestFileSystem(Handle<IContext> root)
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         esReport("'%s'\n", name);
         ++n;
@@ -114,32 +114,32 @@ static long TestFileSystem(Handle<IContext> root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/floppy");
+    Handle<es::Stream> disk = nameSpace->lookup("device/floppy");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("2hd.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("2hd.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         TestFileSystem(root);
@@ -152,7 +152,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,13 +27,13 @@
 
 // object - In general, object is possibly null. For Iso9660Stream, however,
 // object must be NULL.
-IBinding* Iso9660Stream::
-bind(const char* name, IInterface* object)
+es::Binding* Iso9660Stream::
+bind(const char* name, es::Interface* object)
 {
     return 0;
 }
 
-IContext* Iso9660Stream::
+es::Context* Iso9660Stream::
 createSubcontext(const char* name)
 {
     return 0;
@@ -45,7 +45,7 @@ destroySubcontext(const char* name)
     return -1;
 }
 
-IInterface* Iso9660Stream::
+es::Interface* Iso9660Stream::
 lookup(const char* name)
 {
     Iso9660Stream* stream(lookupPathName(name));
@@ -53,7 +53,7 @@ lookup(const char* name)
     {
         return 0;
     }
-    return static_cast<IContext*>(stream);
+    return static_cast<es::Context*>(stream);
 }
 
 int Iso9660Stream::
@@ -68,7 +68,7 @@ unbind(const char* name)
     return -1;
 }
 
-IIterator* Iso9660Stream::
+es::Iterator* Iso9660Stream::
 list(const char* name)
 {
     Handle<Iso9660Stream> stream(lookupPathName(name));

@@ -35,7 +35,7 @@ namespace es
 namespace posix
 {
 
-class VideoBuffer : public ICursor, public Stream
+class VideoBuffer : public es::Cursor, public Stream
 {
     u16     xResolution;
     u16     yResolution;
@@ -47,15 +47,15 @@ class VideoBuffer : public ICursor, public Stream
     long    size;
 
     // mouse cursor
-    IMonitor*   monitor;
-    Interlocked count;
-    static u32  data[32];
-    static u32  mask[32];
-    static u16  xHotSpot;
-    static u16  yHotSpot;
-    u16         xPosition;
-    u16         yPosition;
-    u32         background[32][32];
+    es::Monitor*    monitor;
+    Interlocked     count;
+    static u32      data[32];
+    static u32      mask[32];
+    static u16      xHotSpot;
+    static u16      yHotSpot;
+    u16             xPosition;
+    u16             yPosition;
+    u32             background[32][32];
 
     void init();
 
@@ -66,7 +66,7 @@ class VideoBuffer : public ICursor, public Stream
     void draw();
 
 public:
-    VideoBuffer(IContext* device);
+    VideoBuffer(es::Context* device);
     ~VideoBuffer();
 
     // IStream

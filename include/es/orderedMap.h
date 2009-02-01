@@ -24,9 +24,7 @@
 #include <es/tree.h>
 #include <es/util/IOrderedMap.h>
 
-using namespace es;
-
-class OrderedMap : public IOrderedMap
+class OrderedMap : public es::OrderedMap
 {
     typedef Tree<std::string, std::string> MapTree;
     MapTree tree;
@@ -120,19 +118,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IOrderedMap::iid()) == 0)
+        if (strcmp(riid, es::OrderedMap::iid()) == 0)
         {
-            objectPtr = static_cast<IOrderedMap*>(this);
+            objectPtr = static_cast<es::OrderedMap*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IOrderedMap*>(this);
+            objectPtr = static_cast<es::OrderedMap*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 

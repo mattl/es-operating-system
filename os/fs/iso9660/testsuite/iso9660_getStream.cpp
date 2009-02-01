@@ -43,16 +43,16 @@ static void SetData(u8* buf, long long size)
     }
 }
 
-void test(Handle<IContext> root)
+void test(Handle<es::Context> root)
 {
-    Handle<IFile>    dir;
+    Handle<es::File>    dir;
     dir = root->lookup("data");
     TEST(dir && dir->isDirectory());
 
     // check the stream of a directory is not available.
     try
     {
-        Handle<IStream> dirStream = dir->getStream();
+        Handle<es::Stream> dirStream = dir->getStream();
         TEST(!dirStream);
     }
     catch (SystemException<EPERM>& e)
@@ -61,24 +61,24 @@ void test(Handle<IContext> root)
     }
 
     // check the stream of a file is available.
-    Handle<IContext> data = dir;
-    Handle<IFile> file = data->lookup("image");
+    Handle<es::Context> data = dir;
+    Handle<es::File> file = data->lookup("image");
     TEST(file && file->isFile());
-    Handle<IStream> stream = file->getStream();
+    Handle<es::Stream> stream = file->getStream();
     TEST(stream);
 }
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -86,12 +86,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,9 +48,9 @@
 #include <es/naming/IContext.h>
 #include "../IEventQueue.h"
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 #define WIDTH   1024
 #define HEIGHT  768
@@ -93,12 +93,12 @@ extern "C"
 
 /*** Variables -- Event Recording ***/
 
-Handle<IEventQueue> gEventQueue __attribute__ ((init_priority (1001)));
+Handle<es::EventQueue> gEventQueue __attribute__ ((init_priority (1001)));
 
 Cursor mouseCursor;
 
-Handle<IPageable> framebuffer;
-Handle<ICursor> cursor;
+Handle<es::Pageable> framebuffer;
+Handle<es::Cursor> cursor;
 int bpp;
 void* framebufferPtr;
 
@@ -196,7 +196,7 @@ int ioGetNextEvent(sqInputEvent* event)
     ioProcessEvents();  // process all pending events
     ASSERT(gEventQueue);
 
-    IEventQueue::InputEvent inputEvent;
+    es::EventQueue::InputEvent inputEvent;
     gEventQueue->getEvent(&inputEvent);
     if (inputEvent.type)
     {
@@ -383,7 +383,7 @@ int ioSetFullScreen(int fullScreen)
 
 void initInputProcess()
 {
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
 
     gEventQueue = root->lookup("device/event");
     ASSERT(gEventQueue);
@@ -393,8 +393,8 @@ void initInputProcess()
     long long size;
     size = framebuffer->getSize();
     framebufferPtr = System()->map(0, size,
-                                   ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                                   ICurrentProcess::MAP_SHARED,
+                                   es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                                   es::CurrentProcess::MAP_SHARED,
                                    framebuffer, 0);
     bpp = 8 * (size / (WIDTH * HEIGHT));
 

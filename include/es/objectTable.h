@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class ObjectTable
         }
     };
 
-    es::IMonitor*   monitor;
+es::Monitor*        monitor;
     int             free;                 // free descriptor number (-1 if none)
     Ref             refs[capacity];
     Element*        entries[capacity];    // the actual entries (LSB = 1 if free)
@@ -142,7 +142,7 @@ class ObjectTable
 
     Element* remove(int index)
     {
-        Synchronized<es::IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         ASSERT(0 <= index && index < size());
         ASSERT(!isFree(index));
@@ -167,7 +167,7 @@ class ObjectTable
     }
 
 public:
-    ObjectTable(es::IMonitor* monitor) :
+    ObjectTable(es::Monitor* monitor) :
         monitor(monitor),
         free(-1)
     {
@@ -194,7 +194,7 @@ public:
     // If key has been added already, the reference count for that entry is incremented by one.
     int add(const K& key)
     {
-        Synchronized<es::IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         size_t i = key.hash() % size();
         for (Element* elm = table[i]; elm; elm = elm->next)

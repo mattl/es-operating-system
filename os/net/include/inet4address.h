@@ -359,9 +359,9 @@ public:
         pathMTU = std::max(68, mtu);
     }
 
-    IInternetAddress* getNext();
+    es::InternetAddress* getNext();
 
-    IInterface* socket(int type, int protocol, int port);
+    es::Interface* socket(int type, int protocol, int port);
 
     // IInterface
     void* queryInterface(const char* riid);

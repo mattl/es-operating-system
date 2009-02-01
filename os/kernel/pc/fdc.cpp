@@ -22,12 +22,12 @@
 #include "io.h"
 
 FloppyController::
-FloppyController(IDmac* dmac, u16 base, u8 irq) :
+FloppyController(es::Dmac* dmac, u16 base, u8 irq) :
     base(base),
     current(0),
     dmac(dmac)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 
     // motor off
     for (int i = 3; 0 <= i; --i)
@@ -177,19 +177,19 @@ void* FloppyController::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

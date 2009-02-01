@@ -29,7 +29,6 @@
 #include "partition.h"
 
 using namespace LittleEndian;
-using namespace es;
 
 //
 // PartitionIterator
@@ -66,7 +65,7 @@ hasNext()
     return false;
 }
 
-IInterface* PartitionIterator::
+es::Interface* PartitionIterator::
 next()
 {
     Monitor::Synchronized method(context->monitor);
@@ -80,7 +79,7 @@ next()
         {
             ++ipos;
             addRef();
-            return static_cast<IBinding*>(this);
+            return static_cast<es::Binding*>(this);
         }
     }
     return 0;
@@ -92,7 +91,7 @@ remove()
     // remove() removes the previous item.
     PartitionStreamList::Iterator iter = context->partitionList.begin();
     char name[PartitionContext::MAX_PREFIX_LEN + 4];
-    Handle<IBinding> binding;
+    Handle<es::Binding> binding;
 
     --ipos;           // ipos is decremented in order to get the previous item.
     binding = next(); // ipos is restored because next() increments ipos.
@@ -115,10 +114,10 @@ remove()
 }
 
 //
-// PartitionIterator : IBinding
+// PartitionIterator : es::Binding
 //
 
-IInterface* PartitionIterator::
+es::Interface* PartitionIterator::
 getObject()
 {
     Monitor::Synchronized method(context->monitor);
@@ -131,14 +130,14 @@ getObject()
         if (++i == ipos)
         {
             stream->addRef();
-            return static_cast<IStream*>(stream);
+            return static_cast<es::Stream*>(stream);
         }
     }
     return 0;
 }
 
 void PartitionIterator::
-setObject(IInterface* object)
+setObject(es::Interface* object)
 {
     esThrow(EACCES); // [check] appropriate?
 }
@@ -197,30 +196,30 @@ getName(char* name, int len)
 }
 
 //
-// PartitionIterator : IInterface
+// PartitionIterator : es::Interface
 //
 
 void* PartitionIterator::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIterator::iid()) == 0)
+    if (strcmp(riid, es::Iterator::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, IBinding::iid()) == 0)
+    else if (strcmp(riid, es::Binding::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

@@ -110,13 +110,13 @@ isReachable(long long timeout)
 {
 }
 
-IInternetAddress* Inet6Address::
+es::InternetAddress* Inet6Address::
 getNext()
 {
     return 0;
 }
 
-IInterface* Inet6Address::
+es::Interface* Inet6Address::
 socket(int type, int protocol)
 {
     return 0;

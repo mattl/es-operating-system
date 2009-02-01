@@ -47,10 +47,10 @@ static void SetData(u8* buf, long size)
 
 static void InitMemoryStream(MemoryStream* backingStore, long size, long offset)
 {
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     TEST(cache);
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     TEST(stream);
 
     SetData(WriteBuf, size);
@@ -67,7 +67,7 @@ static void InitMemoryStream(MemoryStream* backingStore, long size, long offset)
     stream->release();
     cache->release();
 
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size, offset);
     TEST(ret == size);
@@ -83,10 +83,10 @@ static void InitMemoryStream(MemoryStream* backingStore, long size, long offset)
 
 int main()
 {
-    ICache* cache;
-    IStream* stream;
+    es::Cache* cache;
+    es::Stream* stream;
     int result = -1;
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
 
@@ -99,7 +99,7 @@ int main()
     InitMemoryStream(backingStore, PAGE_SIZE, 0);
 
     // Write data and invalidate them.
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     TEST(cache);
     stream = cache->getStream();
     TEST(stream);
@@ -113,7 +113,7 @@ int main()
     cache->release();
 
     // check the momory stream is not modified.
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     TEST(cache);
     stream = cache->getStream();
     TEST(stream);

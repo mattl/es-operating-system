@@ -38,9 +38,9 @@
 
 const InAddr DHCPHdr::magicCookie = { htonl(99 << 24 | 130 << 16 | 83 << 8 | 99) };
 
-extern int esInit(IInterface** nameSpace);
-extern IThread* esCreateThread(void* (*start)(void* param), void* param);
-extern void esRegisterInternetProtocol(IContext* context);
+extern int esInit(es::Interface** nameSpace);
+extern es::Thread* esCreateThread(void* (*start)(void* param), void* param);
+extern void esRegisterInternetProtocol(es::Context* context);
 
 static const int MaxDomainName = 256;
 static const int MaxStaticRoute = 1;
@@ -74,7 +74,7 @@ struct DHCPInfo
     DHCPStaticRoute staticRoute[MaxStaticRoute];    // DHCPOption::StaticRoute
 };
 
-class DHCPControl : public IService
+class DHCPControl : public es::Service
 {
     static const int MinWait = 4;   // [sec] -1 to +1
     static const int MaxWait = 64;  // [sec]
@@ -82,15 +82,15 @@ class DHCPControl : public IService
 
     Ref                         ref;
 
-    Handle<IResolver>           resolver;
-    Handle<IInternetConfig>     config;
+    Handle<es::Resolver>           resolver;
+    Handle<es::InternetConfig>     config;
     int                         scopeID;
     u8                          chaddr[16]; // Client hardware address
 
-    Handle<ISocket>             socket;
-    Handle<IInternetAddress>    host;
-    Handle<IInternetAddress>    server;
-    Handle<IInternetAddress>    limited;
+    Handle<es::Socket>             socket;
+    Handle<es::InternetAddress>    host;
+    Handle<es::InternetAddress>    server;
+    Handle<es::InternetAddress>    limited;
 
     volatile bool               enabled;
 
@@ -528,7 +528,7 @@ class DHCPControl : public IService
     }
 
 public:
-    DHCPControl(IContext* context, int scopeID, u8 chaddr[16]) :
+    DHCPControl(es::Context* context, int scopeID, u8 chaddr[16]) :
         scopeID(scopeID),
         enabled(false),
         state(DHCPState::Init),
@@ -557,8 +557,8 @@ public:
         xid = (u32) DateTime::getNow().getTicks();
         xid ^= *(u32*) chaddr;
 
-        Handle<IInternetAddress> any = resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), scopeID);
-        socket = any->socket(AF_INET, ISocket::Datagram, DHCPHdr::ClientPort);
+        Handle<es::InternetAddress> any = resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), scopeID);
+        socket = any->socket(AF_INET, es::Socket::Datagram, DHCPHdr::ClientPort);
         u8 type = 0;
 
         // Send DHCPDISCOVER
@@ -635,7 +635,7 @@ public:
         // XXX Send decline if configuration was failed.
 
         // Register a default router (info.router)
-        Handle<IInternetAddress> router;
+        Handle<es::InternetAddress> router;
         if (!IN_IS_ADDR_UNSPECIFIED(info.router))
         {
             router = resolver->getHostByAddress(&info.router.addr, sizeof(InAddr), scopeID);
@@ -643,7 +643,7 @@ public:
         }
 
         // Register a domain name server (info.dns[0])
-        Handle<IInternetAddress> nameServer;
+        Handle<es::InternetAddress> nameServer;
         if (!IN_IS_ADDR_UNSPECIFIED(info.dns[0]))
         {
             nameServer = resolver->getHostByAddress(&info.dns[0].addr, sizeof(InAddr), 0);
@@ -670,7 +670,7 @@ public:
         }
 
         socket->close();
-        socket = host->socket(AF_INET, ISocket::Datagram, DHCPHdr::ClientPort);
+        socket = host->socket(AF_INET, es::Socket::Datagram, DHCPHdr::ClientPort);
         server = resolver->getHostByAddress(&info.server, sizeof(InAddr), scopeID);
 
         while (enabled)
@@ -784,9 +784,9 @@ public:
     {
         if (!enabled)
         {
-            IThread* thread = esCreateThread(run, this);
+            es::Thread* thread = esCreateThread(run, this);
             thread->start();
-            thread->setPriority(IThread::Highest - 2);
+            thread->setPriority(es::Thread::Highest - 2);
             thread->release();
         }
         return enabled;
@@ -806,19 +806,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IService::iid()) == 0)
+        if (strcmp(riid, es::Service::iid()) == 0)
         {
-            objectPtr = static_cast<IService*>(this);
+            objectPtr = static_cast<es::Service*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IService*>(this);
+            objectPtr = static_cast<es::Service*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -847,15 +847,15 @@ public:
     }
 };
 
-void esRegisterDHCPClient(IContext* context)
+void esRegisterDHCPClient(es::Context* context)
 {
     for (int scopeID = 1; scopeID < Socket::INTERFACE_MAX; ++scopeID)
     {
         char path[48];
         sprintf(path, "network/interface/%u/interface", scopeID);
 
-        Handle<INetworkInterface> nic = context->lookup(path);
-        if (!nic || nic->getType() == INetworkInterface::Loopback)
+        Handle<es::NetworkInterface> nic = context->lookup(path);
+        if (!nic || nic->getType() == es::NetworkInterface::Loopback)
         {
             continue;
         }
@@ -866,6 +866,6 @@ void esRegisterDHCPClient(IContext* context)
 
         sprintf(path, "network/interface/%u/dhcp", scopeID);
         esReport("esRegisterDHCPClient: %s\n", path);
-        Handle<IBinding> binding = context->bind(path, dhcp);
+        Handle<es::Binding> binding = context->bind(path, dhcp);
     }
 }

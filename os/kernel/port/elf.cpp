@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 #include "elfFile.h"
 
 Elf::
-Elf(IFile* elf) :
+Elf(es::File* elf) :
     elf(elf),
     sectionNameOffset(0)
 {

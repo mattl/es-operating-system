@@ -29,35 +29,33 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    IInterface* getConstructor(const char* iid);
+    Interface* getConstructor(const char* iid);
     extern unsigned char* defaultInterfaceInfo[];
     extern size_t defaultInterfaceCount;
 }  // namespace es
 
-extern es::ICurrentProcess* System();
-
-using namespace es;
+extern es::CurrentProcess* System();
 
 int main(int argc, char* argv[])
 {
-    printf("%p\n", getConstructor(IAlarm::iid()));
-    printf("%p\n", IAlarm::getConstructor());
-    if (getConstructor(IAlarm::iid()) != reinterpret_cast<IInterface*>(IAlarm::getConstructor()))
+    printf("%p\n", es::getConstructor(es::Alarm::iid()));
+    printf("%p\n", es::Alarm::getConstructor());
+    if (es::getConstructor(es::Alarm::iid()) != reinterpret_cast<es::Interface*>(es::Alarm::getConstructor()))
     {
         return EXIT_FAILURE;
     }
 
-    IAlarm* alarm = IAlarm::createInstance();
+    es::Alarm* alarm = es::Alarm::createInstance();
     alarm->isPeriodic();
     alarm->release();
 
-    printf("%p\n", getConstructor(ICache::iid()));
-    printf("%p\n", getConstructor(IMonitor::iid()));
-    printf("%p\n", getConstructor(IPageSet::iid()));
-    printf("%p\n", getConstructor(IProcess::iid()));
-    printf("%p\n", getConstructor(IFatFileSystem::iid()));
-    printf("%p\n", getConstructor(IIso9660FileSystem::iid()));
-    printf("%p\n", getConstructor(IPartition::iid()));
+    printf("%p\n", es::getConstructor(es::Cache::iid()));
+    printf("%p\n", es::getConstructor(es::Monitor::iid()));
+    printf("%p\n", es::getConstructor(es::PageSet::iid()));
+    printf("%p\n", es::getConstructor(es::Process::iid()));
+    printf("%p\n", es::getConstructor(es::FatFileSystem::iid()));
+    printf("%p\n", es::getConstructor(es::Iso9660FileSystem::iid()));
+    printf("%p\n", es::getConstructor(es::Partition::iid()));
 
     printf("done.\n");
     return EXIT_SUCCESS;

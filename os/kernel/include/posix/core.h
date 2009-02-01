@@ -25,48 +25,46 @@
 #include <es/base/IProcess.h>
 #include <es/base/IThread.h>
 
-using namespace es;
-
 class Core;
 class Thread;
 class Monitor;
 class SpinLock;
 
-class Core : public ICurrentThread, public ICurrentProcess
+class Core : public es::CurrentThread, public es::CurrentProcess
 {
     Ref ref;
 
 public:
-    // ICurrentProcess
+    // es::CurrentProcess
     void exit(int status);
-    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset);
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, es::Pageable* pageable, long long offset);
     void unmap(void* start, long long length);
-    ICurrentThread* currentThread();
-    IThread* createThread(void* (*start)(void* param), void* param);
+    es::CurrentThread* currentThread();
+    es::Thread* createThread(void* (*start)(void* param), void* param);
     void yield();
-    IMonitor* createMonitor();
-    IContext* getRoot();
-    IStream* getInput();
-    IStream* getOutput();
-    IStream* getError();
+    es::Monitor* createMonitor();
+    es::Context* getRoot();
+    es::Stream* getInput();
+    es::Stream* getOutput();
+    es::Stream* getError();
     void* setBreak(long long increment);
     long long getNow();
     void setStartup(void (*startup)(void* (*start)(void* param), void* param));
 
-    // ICurrentThread
+    // es::CurrentThread
     void exit(const void* val);
     void sleep(long long timeout);
     int setCancelState(int state);
     int setCancelType(int type);
     void testCancel();
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
 
-class Monitor : public IMonitor
+class Monitor : public es::Monitor
 {
     Ref             ref;
     pthread_mutex_t mutex;
@@ -76,7 +74,7 @@ public:
     Monitor();
     ~Monitor();
 
-    // IMonitor
+    // es::Monitor
     void lock();
     bool tryLock();
     void unlock();
@@ -85,7 +83,7 @@ public:
     void notify();
     void notifyAll();
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
@@ -109,10 +107,10 @@ public:
     };
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Monitor::Constructor
     {
     public:
-        IMonitor* createInstance();
+        es::Monitor* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -121,14 +119,14 @@ public:
     static void initializeConstructor();
 };
 
-class Thread : public IThread
+class Thread : public es::Thread
 {
     static pthread_key_t cleanupKey;
     static const int MaxSpecific = 32;
     static void (*dtorTable[MaxSpecific])(void*);
 
     Ref             ref;
-    IThread::State  state;
+    es::Thread::State  state;
     int             priority;
     void*         (*run)(void*);
     void*           param;
@@ -148,7 +146,7 @@ public:
         void* stack = 0, unsigned stackSize = 0);
     ~Thread();
 
-    // IThread
+    // es::Thread
     int getState();
     void start();
     int getPriority();
@@ -156,7 +154,7 @@ public:
     void* join();
     void cancel();
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
@@ -196,19 +194,8 @@ class SpinLock : public Monitor
 
 #include "cache.h"
 
-int esInit(IInterface** nameSpace);
-IThread* esCreateThread(void* (*start)(void* param), void* param);
-IMonitor* esCreateMonitor();
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int stricmp(const char *s1, const char *s2);
-int strnicmp(const char *s1, const char *s2, size_t n);
-
-#ifdef __cplusplus
-}
-#endif
+int esInit(es::Interface** nameSpace);
+es::Thread* esCreateThread(void* (*start)(void* param), void* param);
+es::Monitor* esCreateMonitor();
 
 #endif // NINTENDO_ES_KERNEL_POSIX_CORE_H_INCLUDED

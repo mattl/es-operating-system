@@ -19,8 +19,6 @@
 #include <errno.h>
 #include "cache.h"
 
-using namespace es;
-
 void Cache::Constructor::
 add(Cache* cache)
 {
@@ -120,7 +118,7 @@ run(void* param)
 
 Cache::
 Constructor::Constructor() :
-    thread(run, this, IThread::Normal)
+    thread(run, this, es::Thread::Normal)
 {
     addRef();   // for thread
 
@@ -135,14 +133,14 @@ Constructor::~Constructor()
     ASSERT(changedList.isEmpty());
 }
 
-ICache* Cache::
-Constructor::createInstance(IStream* backingStore)
+es::Cache* Cache::
+Constructor::createInstance(es::Stream* backingStore)
 {
     return new Cache(this, backingStore, PageTable::pageSet);
 }
 
-ICache* Cache::
-Constructor::createInstance(IStream* backingStore, IPageSet* pageSet)
+es::Cache* Cache::
+Constructor::createInstance(es::Stream* backingStore, es::PageSet* pageSet)
 {
     PageSet* ps = dynamic_cast<PageSet*>(pageSet);
     if (!ps)
@@ -156,19 +154,19 @@ void* Cache::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICache::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Cache::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<ICache::IConstructor*>(this);
+        objectPtr = static_cast<es::Cache::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICache::IConstructor*>(this);
+        objectPtr = static_cast<es::Cache::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -199,5 +197,5 @@ initializeConstructor()
 {
     // cf. -fthreadsafe-statics for g++
     Constructor* constructor = new Constructor;
-    ICache::setConstructor(constructor);
+    es::Cache::setConstructor(constructor);
 }

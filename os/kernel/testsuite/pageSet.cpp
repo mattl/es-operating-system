@@ -32,7 +32,7 @@
 #define PAGE_SIZE         (4 * 1024LL)
 #define NON_RESERVED_PAGE  4
 
-void WriteCache(ICache* cache, unsigned long numPage)
+void WriteCache(es::Cache* cache, unsigned long numPage)
 {
 #ifdef VERBOSE
     esReport("Write %u pages\n", numPage);
@@ -48,7 +48,7 @@ void WriteCache(ICache* cache, unsigned long numPage)
 #ifdef VERBOSE
     esReport("size %llu\n", size);
 #endif // VERBOSE
-        Handle<IStream> stream = cache->getStream();
+        Handle<es::Stream> stream = cache->getStream();
         TEST(stream);
 
         long long ret = stream->write(buf, size, 0);
@@ -64,7 +64,7 @@ void WriteCache(ICache* cache, unsigned long numPage)
     }
 }
 
-void CheckAssociatedPage(ICache* cache, unsigned long numPage)
+void CheckAssociatedPage(es::Cache* cache, unsigned long numPage)
 {
     unsigned long pageCount;
     pageCount = cache->getPageCount();
@@ -76,7 +76,7 @@ void CheckAssociatedPage(ICache* cache, unsigned long numPage)
 
 int main()
 {
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
 
     unsigned long initialMaxFreeCount = PageTable::getFreeCount();
@@ -90,7 +90,7 @@ int main()
     esReport("Reserve (maxFreeCount - NON_RESERVED_PAGE) pages.\n");
 #endif
     // Reserve (maxFreeCount - NON_RESERVED_PAGE) pages.
-    Handle<IPageSet> pageSet = IPageSet::createInstance();
+    Handle<es::PageSet> pageSet = es::PageSet::createInstance();
     unsigned long reserved = maxFreeCount - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -106,13 +106,13 @@ int main()
     // Cache1 uses the reserved pages.
     MemoryStream* backingStore1 = new MemoryStream(0);
     TEST(backingStore1);
-    Handle<ICache> cache1 = ICache::createInstance(backingStore1, pageSet);
+    Handle<es::Cache> cache1 = es::Cache::createInstance(backingStore1, pageSet);
     TEST(cache1);
 
     // Cache2 uses non-reserved pages.
     MemoryStream* backingStore2 = new MemoryStream(0);
     TEST(backingStore2);
-    Handle<ICache> cache2 = ICache::createInstance(backingStore2);
+    Handle<es::Cache> cache2 = es::Cache::createInstance(backingStore2);
     TEST(cache2);
 
     CheckAssociatedPage(cache1, 0);

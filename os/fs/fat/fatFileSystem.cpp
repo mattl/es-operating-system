@@ -29,8 +29,6 @@
 #include <es.h>
 #include "fatStream.h"
 
-using namespace es;
-
 u8* FatFileSystem::zero;
 
 bool FatFileSystem::
@@ -202,7 +200,7 @@ getRoot()
 FatStream* FatFileSystem::
 lookup(u32 dirClus, u32 offset)
 {
-    Synchronized<IMonitor*> method(hashMonitor);
+    Synchronized<es::Monitor*> method(hashMonitor);
 
     FatStream* stream;
     FatStreamChain::Iterator iter =
@@ -221,7 +219,7 @@ lookup(u32 dirClus, u32 offset)
 void FatFileSystem::
 add(FatStream* stream)
 {
-    Synchronized<IMonitor*> method(hashMonitor);
+    Synchronized<es::Monitor*> method(hashMonitor);
 
     if (!stream->isRoot())
     {
@@ -232,7 +230,7 @@ add(FatStream* stream)
 void FatFileSystem::
 remove(FatStream* stream)
 {
-    Synchronized<IMonitor*> method(hashMonitor);
+    Synchronized<es::Monitor*> method(hashMonitor);
 
     if (!stream->isRoot() && !stream->isRemoved())
     {
@@ -243,7 +241,7 @@ remove(FatStream* stream)
 void FatFileSystem::
 activate(FatStream* stream)
 {
-    Synchronized<IMonitor*> method(hashMonitor);
+    Synchronized<es::Monitor*> method(hashMonitor);
 
     ASSERT(standbyList.contains(stream));
     standbyList.remove(stream);
@@ -252,7 +250,7 @@ activate(FatStream* stream)
 void FatFileSystem::
 standBy(FatStream* stream)
 {
-    Synchronized<IMonitor*> method(hashMonitor);
+    Synchronized<es::Monitor*> method(hashMonitor);
 
     ASSERT(!standbyList.contains(stream));
     standbyList.addLast(stream);
@@ -310,13 +308,13 @@ init()
     hashSize = 20;
     hashTable = new FatStreamChain[hashSize];
 
-    hashMonitor = IMonitor::createInstance();
-    fatMonitor =IMonitor::createInstance();
+    hashMonitor = es::Monitor::createInstance();
+    fatMonitor =es::Monitor::createInstance();
 
     // We must reserve a few pages for diskCache so that
     // we can access to FAT to write back file streams
     // under any low memory condition.
-    pageSet = IPageSet::createInstance();
+    pageSet = es::PageSet::createInstance();
     pageSet->reserve(1);
 }
 
@@ -338,7 +336,7 @@ FatFileSystem() :
 }
 
 FatFileSystem::
-FatFileSystem(IStream* partition) :
+FatFileSystem(es::Stream* partition) :
     partition(0),
     pageSet(0),
     diskCache(0),
@@ -368,7 +366,7 @@ FatFileSystem::
 }
 
 void FatFileSystem::
-mount(IStream* disk)
+mount(es::Stream* disk)
 {
     if (!disk)
     {
@@ -501,7 +499,7 @@ mount(IStream* disk)
     zero = new u8[bytsPerClus]; // XXX
     memset(zero, 0, bytsPerClus);
 
-    diskCache = ICache::createInstance(partition, pageSet);
+    diskCache = es::Cache::createInstance(partition, pageSet);
     diskCache->setSectorSize(bytsPerSec);
     diskStream = diskCache->getStream();
 
@@ -606,7 +604,7 @@ dismount(void)
 }
 
 void FatFileSystem::
-getRoot(IContext** root)
+getRoot(es::Context** root)
 {
     if (root)
     {
@@ -640,7 +638,7 @@ format()
         esThrow(EALREADY);
     }
 
-    IStream* p = partition;
+    es::Stream* p = partition;
     p->addRef();
 
     dismount();
@@ -660,23 +658,23 @@ void* FatFileSystem::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IFatFileSystem::iid()) == 0)
+    if (strcmp(riid, es::FatFileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFatFileSystem*>(this);
+        objectPtr = static_cast<es::FatFileSystem*>(this);
     }
-    if (strcmp(riid, IFileSystem::iid()) == 0)
+    if (strcmp(riid, es::FileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IFatFileSystem*>(this);
+        objectPtr = static_cast<es::FatFileSystem*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IFatFileSystem*>(this);
+        objectPtr = static_cast<es::FatFileSystem*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -698,7 +696,7 @@ release()
     return count;
 }
 
-IFatFileSystem* FatFileSystem::Constructor::
+es::FatFileSystem* FatFileSystem::Constructor::
 createInstance()
 {
     return new FatFileSystem;
@@ -708,19 +706,19 @@ void* FatFileSystem::Constructor::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IFatFileSystem::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::FatFileSystem::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IFatFileSystem::IConstructor*>(this);
+        objectPtr = static_cast<es::FatFileSystem::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IFatFileSystem::IConstructor*>(this);
+        objectPtr = static_cast<es::FatFileSystem::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -740,5 +738,5 @@ void FatFileSystem::
 initializeConstructor()
 {
     static Constructor constructor;
-    IFatFileSystem::setConstructor(&constructor);
+    es::FatFileSystem::setConstructor(&constructor);
 }

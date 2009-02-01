@@ -22,18 +22,16 @@
 #include <es/base/IMonitor.h>
 #include "core.h"
 
-using namespace es;
-
 //
 // Binding Implementation
 //
 
-Binding::Binding(const char* name, IInterface* object) :
+Binding::Binding(const char* name, es::Interface* object) :
     monitor(0),
     object(object),
     context(0)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
     size_t len = strlen(name);
     this->name = new char[len + 1];
     strcpy(this->name, name);
@@ -61,9 +59,9 @@ Binding::~Binding()
     }
 }
 
-IInterface* Binding::getObject()
+es::Interface* Binding::getObject()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (object)
     {
@@ -72,9 +70,9 @@ IInterface* Binding::getObject()
     return object;
 }
 
-void Binding::setObject(IInterface* unknown)
+void Binding::setObject(es::Interface* unknown)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (object)
     {
@@ -89,7 +87,7 @@ void Binding::setObject(IInterface* unknown)
 
 int Binding::getName(char* name, int len)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!this->name)
     {
@@ -106,7 +104,7 @@ void Binding::hide()
     bool deleted(false);
 
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         if (name)
         {
             delete[] name;
@@ -124,7 +122,7 @@ void Binding::hide()
 // Detachs this binding from the context.
 void Binding::detach()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (context)
     {
@@ -137,28 +135,28 @@ void Binding::detach()
 void* Binding::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IBinding::iid()) == 0)
+    if (strcmp(riid, es::Binding::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
-unsigned int Binding::addRef(void)
+unsigned int Binding::addRef()
 {
     return ref.addRef();
 }
 
-unsigned int Binding::release(void)
+unsigned int Binding::release()
 {
     unsigned int count = ref.release();
     if (count == 0)
@@ -221,7 +219,7 @@ long Context::parse(const char* name, char* component, size_t len)
 Context::Context() :
     monitor(0)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
     Binding* binding = new Binding("", this);
     if (binding)
     {
@@ -243,7 +241,7 @@ Context::~Context()
 
 Binding* Context::getFirst()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     Binding* binding = bindingList.getFirst();
     if (binding)
@@ -255,7 +253,7 @@ Binding* Context::getFirst()
 
 Binding* Context::walk(const char* component)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     Binding::List::Iterator iter = bindingList.begin();
     while (Binding* next = iter.next())
@@ -264,7 +262,7 @@ Binding* Context::walk(const char* component)
         {
             continue;
         }
-        if (stricmp(component, next->name) == 0)
+        if (strcasecmp(component, next->name) == 0)
         {
             next->addRef();
             return next;
@@ -275,7 +273,7 @@ Binding* Context::walk(const char* component)
 
 void Context::remove(Binding* binding)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (binding && binding->context == this)
     {
@@ -315,7 +313,7 @@ Binding* Context::walk(Context* context, const char*& name)
         binding = next;
         name += len;
 
-        IInterface* object = binding->getObject();
+        es::Interface* object = binding->getObject();
         if (!object)
         {
             break;
@@ -332,7 +330,7 @@ Binding* Context::walk(Context* context, const char*& name)
     return binding;
 }
 
-IBinding* Context::bind(const char* name, IInterface* unknown)
+es::Binding* Context::bind(const char* name, es::Interface* unknown)
 {
     if (*name == 0)
     {
@@ -365,9 +363,9 @@ IBinding* Context::bind(const char* name, IInterface* unknown)
         return binding;
     }
 
-    IInterface* object = binding->getObject();
+    es::Interface* object = binding->getObject();
     binding->release();
-    Handle<IContext> hcontext(object);
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         return 0;
@@ -375,7 +373,7 @@ IBinding* Context::bind(const char* name, IInterface* unknown)
     return hcontext->bind(name, unknown);
 }
 
-IInterface* Context::lookup(const char* name)
+es::Interface* Context::lookup(const char* name)
 {
     Binding* binding(walk(this, name));
     if (!binding)
@@ -383,14 +381,14 @@ IInterface* Context::lookup(const char* name)
         return 0;
     }
 
-    IInterface* object = binding->getObject();
+    es::Interface* object = binding->getObject();
     binding->release();
     if (*name == 0)
     {
         return object;
     }
 
-    Handle<IContext> hcontext(object);
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         return 0;
@@ -408,14 +406,14 @@ int Context::rename(const char* oldName, const char* newName)
     // XXX
 
     // lookup oldName
-    IInterface* object = lookup(oldName);
+    es::Interface* object = lookup(oldName);
     if (!object)
     {
         return -1;
     }
 
     // bind object found to newName
-    IBinding* binding = bind(newName, object);
+    es::Binding* binding = bind(newName, object);
     if (!binding)
     {
         object->release();
@@ -448,9 +446,9 @@ int Context::unbind(const char* name)
         return 0;
     }
 
-    IInterface* object = binding->getObject();
+    es::Interface* object = binding->getObject();
     binding->release();
-    Handle<IContext> hcontext(object);
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         return -1;
@@ -458,7 +456,7 @@ int Context::unbind(const char* name)
     return hcontext->unbind(name);
 }
 
-IIterator* Context::list(const char* name)
+es::Iterator* Context::list(const char* name)
 {
     Binding* binding(walk(this, name));
     if (!binding)
@@ -466,7 +464,7 @@ IIterator* Context::list(const char* name)
         return 0;
     }
 
-    IInterface* object = binding->getObject();
+    es::Interface* object = binding->getObject();
     binding->release();
     if (!object)
     {
@@ -478,14 +476,14 @@ IIterator* Context::list(const char* name)
     if (context)
     {
         binding = context->getFirst();
-        IIterator* iterator = new ::Iterator(binding);
+        es::Iterator* iterator = new ::Iterator(binding);
         binding->release();
         object->release();
         context->release();
         return iterator;
     }
 
-    Handle<IContext> hcontext(object);
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         return 0;
@@ -493,7 +491,7 @@ IIterator* Context::list(const char* name)
     return hcontext->list(name);
 }
 
-IContext* Context::createSubcontext(const char* name)
+es::Context* Context::createSubcontext(const char* name)
 {
     if (*name == 0)
     {
@@ -531,9 +529,9 @@ IContext* Context::createSubcontext(const char* name)
         return context;
     }
 
-    IInterface* object = binding->getObject();
+    es::Interface* object = binding->getObject();
     binding->release();
-    Handle<IContext> hcontext(object);
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         return 0;
@@ -554,8 +552,8 @@ int Context::destroySubcontext(const char* name)
         return -1;
     }
 
-    IInterface* object = binding->getObject();
-    Handle<IContext> hcontext(object);
+    es::Interface* object = binding->getObject();
+    Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
         binding->release();
@@ -574,13 +572,13 @@ int Context::destroySubcontext(const char* name)
 void* Context::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IContext::iid()) == 0)
+    if (strcmp(riid, es::Context::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
     else if (strcmp(riid, Context::iid()) == 0)
     {
@@ -590,16 +588,16 @@ void* Context::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
-unsigned int Context::addRef(void)
+unsigned int Context::addRef()
 {
     return ref.addRef();
 }
 
-unsigned int Context::release(void)
+unsigned int Context::release()
 {
     unsigned int count = ref.release();
     if (count == 1)     // 1 for "" entry
@@ -618,7 +616,7 @@ Iterator::Iterator(Binding* binding) :
     monitor(0),
     binding(binding)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
     binding->addRef();
 }
 
@@ -630,9 +628,9 @@ Iterator::~Iterator()
     }
 }
 
-bool Iterator::hasNext(void)
+bool Iterator::hasNext()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     ASSERT(binding->context);
     Context* context(binding->context);
@@ -651,9 +649,9 @@ bool Iterator::hasNext(void)
     return false;
 }
 
-IInterface* Iterator::next()
+es::Interface* Iterator::next()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     ASSERT(binding->context);
     Context* context(binding->context);
@@ -676,9 +674,9 @@ IInterface* Iterator::next()
     return 0;
 }
 
-int Iterator::remove(void)
+int Iterator::remove()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     ASSERT(binding->context);
     Context* context(binding->context);
@@ -703,28 +701,28 @@ int Iterator::remove(void)
 void* Iterator::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIterator::iid()) == 0)
+    if (strcmp(riid, es::Iterator::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
-unsigned int Iterator::addRef(void)
+unsigned int Iterator::addRef()
 {
     return ref.addRef();
 }
 
-unsigned int Iterator::release(void)
+unsigned int Iterator::release()
 {
     unsigned int count = ref.release();
     if (count == 0)

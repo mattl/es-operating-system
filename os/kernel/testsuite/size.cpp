@@ -33,7 +33,7 @@ int main()
     long long pageTableSize = 32 * 1024LL;       // 32KB
     long long hugeSize = 9223372036854775807LL;  // LLONG_MAX
 
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
 
@@ -42,10 +42,10 @@ int main()
     MemoryStream* backingStore = new MemoryStream(16);
     TEST(backingStore);
 
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     TEST(cache);
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     TEST(stream);
 
     long long size;
@@ -96,7 +96,7 @@ int main()
         size = 1024LL;
         stream->setSize(size);
     }
-    // check ICache->getSize() and setSize().
+    // check es::Cache->getSize() and setSize().
     long long cacheSize;
 
     try

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,10 +86,10 @@ public:
     bool output(InetMessenger* m, Conduit* c);
 };
 
-class DIXInterface : public Interface
+class DIXInterface : public NetworkInterface
 {
-    Handle<INetworkInterface>   networkInterface;
-    Handle<IStream>             stream;
+    Handle<es::NetworkInterface>   networkInterface;
+    Handle<es::Stream>             stream;
 
     DIXAccessor         dixAccessor;
     DIXReceiver         dixReceiver;
@@ -103,7 +103,7 @@ class DIXInterface : public Interface
     static const u8 macAllHost[6];
 
 public:
-    DIXInterface(INetworkInterface* networkInterface);
+    DIXInterface(es::NetworkInterface* networkInterface);
 
     Conduit* addAddressFamily(AddressFamily* af, Conduit* c)
     {

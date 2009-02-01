@@ -73,7 +73,7 @@
 #include <es/base/IStream.h>
 #include <es/util/ICanvasRenderingContext2D.h>
 
-using namespace es;
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -85,12 +85,12 @@ extern "C" {
 }
 #endif
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
-class CanvasPattern : public ICanvasPattern
+class CanvasPattern : public es::CanvasPattern
 {
     Ref ref;
-    IMonitor* monitor;
+    es::Monitor* monitor;
     cairo_pattern_t* pattern;
     u8* imageData;
 
@@ -119,7 +119,7 @@ public:
 
     void apply(const void* context)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         ASSERT(context);
         cairo_t* cr = static_cast<cairo_t*>(const_cast<void*>(context)); // [check]
@@ -129,19 +129,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, ICanvasPattern::iid()) == 0)
+        if (strcmp(riid, es::CanvasPattern::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasPattern*>(this);
+            objectPtr = static_cast<es::CanvasPattern*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasPattern*>(this);
+            objectPtr = static_cast<es::CanvasPattern*>(this);
         }
         else
         {
             return 0;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -163,10 +163,10 @@ public:
     }
 };
 
-class CanvasGradient : public ICanvasGradient
+class CanvasGradient : public es::CanvasGradient
 {
     Ref ref;
-    IMonitor* monitor;
+    es::Monitor* monitor;
     cairo_pattern_t* pattern;
 
 public:
@@ -190,7 +190,7 @@ public:
 
     void apply(const void* context)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         ASSERT(context);
         cairo_t* cr = static_cast<cairo_t*>(const_cast<void*>(context)); // [check]
@@ -202,19 +202,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, ICanvasGradient::iid()) == 0)
+        if (strcmp(riid, es::CanvasGradient::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasGradient*>(this);
+            objectPtr = static_cast<es::CanvasGradient*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasGradient*>(this);
+            objectPtr = static_cast<es::CanvasGradient*>(this);
         }
         else
         {
             return 0;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -236,10 +236,10 @@ public:
     }
 };
 
-class Canvas : public ICanvasRenderingContext2D
+class Canvas : public es::CanvasRenderingContext2D
 {
     Ref ref;
-    IMonitor* monitor;
+    es::Monitor* monitor;
     Interlocked updated;
 
     cairo_surface_t* surface;
@@ -339,13 +339,13 @@ class Canvas : public ICanvasRenderingContext2D
 
         Any getStyle(int whichStyle, void* style, int styleLength)
         {
-            if (ICanvasGradient* gradient = gradientStyles[whichStyle])
+            if (es::CanvasGradient* gradient = gradientStyles[whichStyle])
             {
                 gradient->addRef();
                 return Any(gradient);
             }
 
-            if (ICanvasPattern* pattern = patternStyles[whichStyle])
+            if (es::CanvasPattern* pattern = patternStyles[whichStyle])
             {
                 pattern->addRef();
                 return Any(pattern);
@@ -380,7 +380,7 @@ class Canvas : public ICanvasRenderingContext2D
     u32 lastStyle;
     bool dirtyStyle[STYLE_MAX];
 
-    u8* allocateBitmapData(IFile* image, u32* imageWidth, u32* imageHeight);
+    u8* allocateBitmapData(es::File* image, u32* imageWidth, u32* imageHeight);
     void applyStyle(u32 aWhichStyle);
     void dirtyAllStyles();
 
@@ -422,8 +422,8 @@ public:
     void setStrokeStyle(const Any strokeStyle);
     Any getFillStyle(void* fillStyle, int fillStyleLength);
     void setFillStyle(const Any fillStyle);
-    ICanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
-    ICanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    es::CanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
+    es::CanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     float getLineWidth();
     void setLineWidth(float lineWidth);
     int getLineCap(char* lineCap, int lineCapLength);
@@ -470,19 +470,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, ICanvasRenderingContext2D::iid()) == 0)
+        if (strcmp(riid, es::CanvasRenderingContext2D::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasRenderingContext2D*>(this);
+            objectPtr = static_cast<es::CanvasRenderingContext2D*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ICanvasRenderingContext2D*>(this);
+            objectPtr = static_cast<es::CanvasRenderingContext2D*>(this);
         }
         else
         {
             return 0;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 

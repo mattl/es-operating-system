@@ -25,7 +25,7 @@
 #include <es/ring.h>
 #include "thread.h"
 
-class Uart : public IStream, public ICallback
+class Uart : public es::Stream, public es::Callback
 {
     static const u8 IER = 1;
     static const u8 IIR = 2;   // read

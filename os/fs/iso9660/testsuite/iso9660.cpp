@@ -26,11 +26,11 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-void test(Handle<IContext> root)
+void test(Handle<es::Context> root)
 {
-    Handle<IIterator>   iter;
-    Handle<IFile>       file;
-    Handle<IStream>     stream;
+    Handle<es::Iterator>   iter;
+    Handle<es::File>       file;
+    Handle<es::Stream>     stream;
     long long           size = 0;
 
     // List the root directory
@@ -38,7 +38,7 @@ void test(Handle<IContext> root)
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         esReport("'%s'\n", name);
     }
@@ -56,15 +56,15 @@ void test(Handle<IContext> root)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -72,12 +72,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

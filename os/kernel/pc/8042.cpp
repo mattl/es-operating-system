@@ -583,7 +583,7 @@ setLED(u8 led)
 }
 
 Keyboard::
-Keyboard(IContext* device) :
+Keyboard(es::Context* device) :
     cmd(0),
     esc(0),
     aux(0xff),
@@ -606,8 +606,8 @@ Keyboard(IContext* device) :
     Core::registerInterruptHandler(IRQ_KEYBOARD, this);
     Core::registerInterruptHandler(IRQ_AUXILIARY_DEVICE, this);
 
-    device->bind("keyboard", static_cast<IStream*>(&keyboardStream));
-    device->bind("mouse", static_cast<IStream*>(&mouseStream));
+    device->bind("keyboard", static_cast<es::Stream*>(&keyboardStream));
+    device->bind("mouse", static_cast<es::Stream*>(&mouseStream));
 }
 
 Keyboard::
@@ -619,19 +619,19 @@ void* Keyboard::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -832,19 +832,19 @@ void* Keyboard::
 Stream::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

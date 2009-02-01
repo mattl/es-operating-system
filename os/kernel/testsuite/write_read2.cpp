@@ -44,14 +44,14 @@ static void SetData(u8* buf, long size)
 
 static long Verify(long size, MemoryStream* backingStore)
 {
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
     if (!cache)
     {
         esReport("Unable to create cache\n");
         return -1;
     }
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
     if (!stream)
     {
         esReport("Unable to create stream\n");
@@ -76,7 +76,7 @@ static long Verify(long size, MemoryStream* backingStore)
     stream->release();
     cache->release();
 
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     stream = cache->getStream();
     ret = stream->read(ReadBuf, size);
     if (ret != size)
@@ -108,7 +108,7 @@ int main()
 {
     int result = 1;
 
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
     esReport("Check read() and write().\n");

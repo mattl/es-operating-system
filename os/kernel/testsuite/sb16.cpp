@@ -32,13 +32,13 @@ extern unsigned char sample8[33210];
 
 int main()
 {
-    IInterface* nameSpace = 0;
+    es::Interface* nameSpace = 0;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IStream> soundOutput = root->lookup("device/soundOutput");
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Stream> soundOutput = root->lookup("device/soundOutput");
     TEST(soundOutput);
-    Handle<IAudioFormat> format(soundOutput);
+    Handle<es::AudioFormat> format(soundOutput);
     TEST(format);
 
     long len;

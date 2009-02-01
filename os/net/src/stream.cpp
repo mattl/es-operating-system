@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,7 +113,7 @@ getDefaultMSS(int mtu)
 bool StreamReceiver::
 input(InetMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     esReport("StreamReceiver::input %s\n", state->getName());
     if (state->input(m, this))
@@ -135,7 +135,7 @@ input(InetMessenger* m, Conduit* c)
 bool StreamReceiver::
 output(InetMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     hole = 0;
     onxt = sendNext;
@@ -145,7 +145,7 @@ output(InetMessenger* m, Conduit* c)
 bool StreamReceiver::
 error(InetMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     int code = m->getErrorCode();
     if (code != ENETUNREACH)
@@ -172,7 +172,7 @@ abort()
 bool StreamReceiver::
 read(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     while (!isReadable())
     {
@@ -216,7 +216,7 @@ read(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 write(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     while (!isWritable())
     {
         if (!socket->isBlocking())
@@ -258,7 +258,7 @@ write(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 accept(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return state->accept(m, this);
 }
@@ -266,7 +266,7 @@ accept(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 listen(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return false;
 }
@@ -274,7 +274,7 @@ listen(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 connect(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return state->connect(m, this);
 }
@@ -282,7 +282,7 @@ connect(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 close(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (socket->getTimeout() == 0 && !socket->isBlocking())
     {
@@ -321,7 +321,7 @@ close(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 shutdownOutput(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     shutwr = true;
     if (state->close(m, this))
@@ -343,7 +343,7 @@ shutdownOutput(SocketMessenger* m, Conduit* c)
 bool StreamReceiver::
 shutdownInput(SocketMessenger* m, Conduit* c)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     shutrd = true;
     notify();

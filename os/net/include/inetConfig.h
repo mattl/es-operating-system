@@ -27,32 +27,32 @@
 #include "inet4.h"
 #include "socket.h"
 
-class InternetConfig : public IInternetConfig
+class InternetConfig : public es::InternetConfig
 {
     Ref                             ref;
-    AddressSet<IInternetAddress>    nameServers;
+    AddressSet<es::InternetAddress>    nameServers;
     Collection<char*>               domains;
 
 public:
     //
     // IInternetConfig
     //
-    void addAddress(IInternetAddress* address, unsigned int prefix);
-    IInternetAddress* getAddress(unsigned int scopeID);
-    void removeAddress(IInternetAddress* address);
+    void addAddress(es::InternetAddress* address, unsigned int prefix);
+    es::InternetAddress* getAddress(unsigned int scopeID);
+    void removeAddress(es::InternetAddress* address);
 
-    void addRouter(IInternetAddress* router);
-    IInternetAddress* getRouter();
-    void removeRouter(IInternetAddress* router);
+    void addRouter(es::InternetAddress* router);
+    es::InternetAddress* getRouter();
+    void removeRouter(es::InternetAddress* router);
 
-    int addInterface(INetworkInterface* networkInterface);
-    IInterface* getInterface(int scopeID);
-    int getScopeID(INetworkInterface* networkInterface);
-    void removeInterface(INetworkInterface* networkInterface);
+    int addInterface(es::NetworkInterface* networkInterface);
+    es::Interface* getInterface(int scopeID);
+    int getScopeID(es::NetworkInterface* networkInterface);
+    void removeInterface(es::NetworkInterface* networkInterface);
 
-    void addNameServer(IInternetAddress* address);
-    IInternetAddress* getNameServer();
-    void removeNameServer(IInternetAddress* address);
+    void addNameServer(es::InternetAddress* address);
+    es::InternetAddress* getNameServer();
+    void removeNameServer(es::InternetAddress* address);
 
     void addSearchDomain(const char* address);
     int getSearchDomain(char* address, int addressLength);

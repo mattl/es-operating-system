@@ -25,7 +25,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-class Foo : public IInterface
+class Foo : public es::Interface
 {
     int ref;
 
@@ -41,15 +41,15 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IInterface*>(this);
+            objectPtr = static_cast<es::Interface*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -81,12 +81,12 @@ static bool IsNameInList(const char** namelist, int num, const char* name)
     return false;
 }
 
-static int test_without_smart_pointer(IContext* context)
+static int test_without_smart_pointer(es::Context* context)
 {
-    IIterator* iterator;
+    es::Iterator* iterator;
     char name[64];
-    IBinding* binding;
-    IInterface* unknown;
+    es::Binding* binding;
+    es::Interface* unknown;
     Foo foo;
 
     binding = context->bind("a", &foo);
@@ -94,13 +94,13 @@ static int test_without_smart_pointer(IContext* context)
     binding = context->bind("b", &foo);
     binding->release();
 
-    IContext* sub = context->createSubcontext("sub");
+    es::Context* sub = context->createSubcontext("sub");
     sub->release();
     binding = context->bind("sub/d", &foo);
     binding->release();
 
     unknown = context->lookup("sub/d");
-    TEST(unknown == static_cast<IInterface*>(&foo));
+    TEST(unknown == static_cast<es::Interface*>(&foo));
     unknown->release();
 
     const char* namelist[] =
@@ -115,7 +115,7 @@ static int test_without_smart_pointer(IContext* context)
     while (iterator->hasNext())
     {
         unknown = iterator->next();
-        binding = reinterpret_cast<IBinding*>(unknown->queryInterface(IBinding::iid()));
+        binding = reinterpret_cast<es::Binding*>(unknown->queryInterface(es::Binding::iid()));
         unknown->release();
         binding->getName(name, sizeof name);
 #ifdef VERBOSE
@@ -149,7 +149,7 @@ static int test_without_smart_pointer(IContext* context)
     while (iterator->hasNext())
     {
         unknown = iterator->next();
-        binding = reinterpret_cast<IBinding*>(unknown->queryInterface(IBinding::iid()));
+        binding = reinterpret_cast<es::Binding*>(unknown->queryInterface(es::Binding::iid()));
         unknown->release();
         binding->getName(name, sizeof name);
 #ifdef VERBOSE
@@ -168,18 +168,18 @@ static int test_without_smart_pointer(IContext* context)
     return 0;
 }
 
-static int test_with_smart_pointer(IContext* _context)
+static int test_with_smart_pointer(es::Context* _context)
 {
 
     char name[64];
     Foo foo;
-    Handle<IBinding> binding;
+    Handle<es::Binding> binding;
 
-    Handle<IContext> context(_context, true);
+    Handle<es::Context> context(_context, true);
     binding = context->bind("a", &foo);
     binding = context->bind("b", &foo);
 
-    Handle<IContext> sub = context->createSubcontext("sub");
+    Handle<es::Context> sub = context->createSubcontext("sub");
     binding = context->bind("sub/d", &foo);
 
     const char* namelist[] =
@@ -190,7 +190,7 @@ static int test_with_smart_pointer(IContext* _context)
     };
 
     int numName = 0;
-    Handle<IIterator> iterator = context->list("");
+    Handle<es::Iterator> iterator = context->list("");
     while (iterator->hasNext())
     {
         binding = iterator->next();
@@ -204,7 +204,7 @@ static int test_with_smart_pointer(IContext* _context)
     iterator = 0;
 
     // check destroySubcontext(), rename() and unbind().
-    Handle<IContext> sub2 = context->createSubcontext("sub2");
+    Handle<es::Context> sub2 = context->createSubcontext("sub2");
     context->destroySubcontext("sub2");
 
     context->rename("a", "c");
@@ -237,9 +237,9 @@ static int test_with_smart_pointer(IContext* _context)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    IContext* context;
+    es::Context* context;
 
     int ret;
     context = new Context;

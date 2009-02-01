@@ -25,16 +25,16 @@
 #include <es/base/IInterfaceStore.h>
 #include "thread.h"
 
-class InterfaceStore : public es::IInterfaceStore
+class InterfaceStore : public es::InterfaceStore
 {
     static unsigned char* defaultInterfaceInfo[];
 
     struct InterfaceData
     {
         Reflect::Interface meta;
-        es::IInterface* (*constructorGetter)();                 // for statically created data
-        void (*constructorSetter)(es::IInterface* constructor); // for statically created data
-        es::IInterface* constructor;                            // for dynamically created data
+        es::Interface* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(es::Interface* constructor); // for statically created data
+        es::Interface* constructor;                            // for dynamically created data
 
         InterfaceData() :
             constructorGetter(0),
@@ -51,7 +51,7 @@ class InterfaceStore : public es::IInterfaceStore
         {
         }
 
-        IInterface* getConstructor() const
+        es::Interface* getConstructor() const
         {
             if (constructor) {
                 return constructor;
@@ -68,7 +68,7 @@ class InterfaceStore : public es::IInterfaceStore
     Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
 
     void registerInterface(Reflect::Module& module);
-    void registerConstructor(const char* iid, es::IInterface* (*getter)(), void (*setter)(es::IInterface*));
+    void registerConstructor(const char* iid, es::Interface* (*getter)(), void (*setter)(es::Interface*));
 
 public:
     InterfaceStore(int capacity = 128);
@@ -81,7 +81,7 @@ public:
         return hashtable.get(iid).meta;
     }
 
-    es::IInterface* getConstructor(const char* iid)
+    es::Interface* getConstructor(const char* iid)
     {
         SpinLock::Synchronized method(spinLock);
 
@@ -169,7 +169,7 @@ extern unsigned char ICanvasRenderingContext2DInfo[];
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    es::IInterface* getConstructor(const char* iid);
+    es::Interface* getConstructor(const char* iid);
     const char* getUniqueIdentifier(const char* iid);
 }  // namespace es
 

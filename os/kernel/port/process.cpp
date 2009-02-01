@@ -22,7 +22,7 @@
 #include "process.h"
 #include "interfaceStore.h"
 
-extern ICurrentProcess* esCurrentProcess();
+extern es::CurrentProcess* esCurrentProcess();
 
 Swap* Process::swap;
 Zero* Process::zero;
@@ -31,7 +31,7 @@ void Process::
 initialize()
 {
     zero = new Zero;
-    ICache* cache = ICache::createInstance(zero);
+    es::Cache* cache = es::Cache::createInstance(zero);
     swap = new Swap(dynamic_cast<Cache*>(cache));
 }
 
@@ -95,7 +95,7 @@ isValid(const void* start, long long length, bool write)
             }
             if (start < map->end)
             {
-                if (write && !(map->prot & ICurrentProcess::PROT_WRITE))
+                if (write && !(map->prot & es::CurrentProcess::PROT_WRITE))
                 {
                     return false;
                 }
@@ -113,7 +113,7 @@ isValid(const void* start, long long length, bool write)
 
 void* Process::
 map(void* start, long long length, unsigned prot, unsigned flags,
-    IPageable* pageable, long long offset)
+    es::Pageable* pageable, long long offset)
 {
     Monitor::Synchronized method(monitor);
 
@@ -128,7 +128,7 @@ map(void* start, long long length, unsigned prot, unsigned flags,
 
 void* Process::
 map(void* start, long long length, unsigned prot, unsigned flags,
-    IPageable* pageable, long long offset, long long size /* in pageable object */,
+    es::Pageable* pageable, long long offset, long long size /* in pageable object */,
     void* min, void* max)
 {
     Map::List::Iterator iter = mapList.begin();
@@ -148,7 +148,7 @@ map(void* start, long long length, unsigned prot, unsigned flags,
     size += Page::pageOffset(offset);
     offset = Page::pageBase(offset);
 
-    if (flags & ICurrentProcess::MAP_FIXED)
+    if (flags & es::CurrentProcess::MAP_FIXED)
     {
         if (start < min)
         {
@@ -368,7 +368,7 @@ validityFault(const void* addr, u32 error)
         return 0;
     }
 
-    if (!(map->flags & ICurrentProcess::MAP_PRIVATE))
+    if (!(map->flags & es::CurrentProcess::MAP_PRIVATE))
     {
         page = 0;
         pte = map->pageable->get(pos);
@@ -431,7 +431,7 @@ protectionFault(const void* addr, u32 error)
 
     if (error & Page::PTEWRITE)
     {
-        if (!(map->prot & ICurrentProcess::PROT_WRITE))
+        if (!(map->prot & es::CurrentProcess::PROT_WRITE))
         {
             // XXX Let Core raise an exception to the process.
             return -1;
@@ -441,7 +441,7 @@ protectionFault(const void* addr, u32 error)
         unsigned long pte(0);
         long long pos(map->getPosition(addr));
 
-        if (!(map->flags & ICurrentProcess::MAP_PRIVATE))
+        if (!(map->flags & es::CurrentProcess::MAP_PRIVATE))
         {
             pte = mmu->get(addr);
             if ((pte & (Page::PTEWRITE | Page::PTEVALID)) == (Page::PTEWRITE | Page::PTEVALID))
@@ -519,11 +519,11 @@ Process() :
     log(false),
     upcallCount(0)
 {
-    ICache* cache = ICache::createInstance(zero);
+    es::Cache* cache = es::Cache::createInstance(zero);
     mmu = new Mmu(dynamic_cast<Cache*>(cache));
     ASSERT(mmu);
 
-    syscallTable[0].set(esCurrentProcess(), ICurrentProcess::iid(), true);
+    syscallTable[0].set(esCurrentProcess(), es::CurrentProcess::iid(), true);
 
     Process* current(Process::getCurrentProcess());
     if (current)
@@ -654,8 +654,8 @@ createThread(const unsigned stackSize)
     // Map a user stack
     void* userStack(static_cast<u8*>(USER_MAX) - ((threadCount + upcallCount + 1) * stackSize));
     userStack = map(userStack, stackSize - Page::SIZE,
-                    ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                    ICurrentProcess::MAP_PRIVATE, 0, 0);
+                    es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                    es::CurrentProcess::MAP_PRIVATE, 0, 0);
     if (!userStack)
     {
         return 0;
@@ -677,7 +677,7 @@ createThread(const unsigned stackSize)
 
     Thread* thread = new Thread(ast,                // thread function
                                 ureg,               // argument to thread function
-                                IThread::Normal,    // priority
+                                es::Thread::Normal,    // priority
                                 stack,              // stack
                                 16*1024);           // stack size
     if (!thread)
@@ -715,7 +715,7 @@ detach(Thread* thread)
     release();
 }
 
-IThread* Process::
+es::Thread* Process::
 createThread(void* (*start)(void* param), void* param)
 {
     Monitor::Synchronized method(monitor);
@@ -757,13 +757,13 @@ start()
 }
 
 void Process::
-start(IFile* file)
+start(es::File* file)
 {
     start(file, 0);
 }
 
 void Process::
-start(IFile* file, const char* argument)
+start(es::File* file, const char* argument)
 {
     Monitor::Synchronized method(monitor);
 
@@ -772,7 +772,7 @@ start(IFile* file, const char* argument)
     const unsigned stackSize = 2*1024*1024;
     Thread* thread(createThread(stackSize));
     ASSERT(thread);
-    syscallTable[1].set(thread, IThread::iid(), true);   // just for reference counting
+    syscallTable[1].set(thread, es::Thread::iid(), true);   // just for reference counting
 
     Elf elf(file);
 
@@ -782,7 +782,7 @@ start(IFile* file, const char* argument)
         return;
     }
 
-    Handle<IPageable> pageable(file->getPageable());
+    Handle<es::Pageable> pageable(file->getPageable());
     if (!pageable)
     {
         esReport("Process::%s - the specified file is not mappable file.\n", __func__);
@@ -812,32 +812,32 @@ start(IFile* file, const char* argument)
             break;
         case PT_LOAD:
             // Map PT_LOAD segment
-            unsigned prot(ICurrentProcess::PROT_NONE);
+            unsigned prot(es::CurrentProcess::PROT_NONE);
             if (phdr.p_flags & PF_X)
             {
-                prot |= ICurrentProcess::PROT_EXEC;
+                prot |= es::CurrentProcess::PROT_EXEC;
             }
             if (phdr.p_flags & PF_W)
             {
-                prot |= ICurrentProcess::PROT_WRITE;
+                prot |= es::CurrentProcess::PROT_WRITE;
             }
             if (phdr.p_flags & PF_R)
             {
-                prot |= ICurrentProcess::PROT_READ;
+                prot |= es::CurrentProcess::PROT_READ;
             }
-            if (prot == ICurrentProcess::PROT_NONE)
+            if (prot == es::CurrentProcess::PROT_NONE)
             {
                 continue;
             }
 
-            unsigned flags(ICurrentProcess::MAP_FIXED);
+            unsigned flags(es::CurrentProcess::MAP_FIXED);
             if (phdr.p_flags & PF_W)
             {
-                flags |= ICurrentProcess::MAP_PRIVATE;
+                flags |= es::CurrentProcess::MAP_PRIVATE;
             }
             else
             {
-                flags |= ICurrentProcess::MAP_SHARED;
+                flags |= es::CurrentProcess::MAP_SHARED;
             }
 
             if (phdr.p_flags & PF_W)
@@ -919,8 +919,8 @@ exit(int status)
         {
             continue;
         }
-        thread->setCancelState(ICurrentThread::CANCEL_ENABLE);
-        thread->setCancelType(ICurrentThread::CANCEL_DEFERRED);
+        thread->setCancelState(es::CurrentThread::CANCEL_ENABLE);
+        thread->setCancelType(es::CurrentThread::CANCEL_DEFERRED);
         thread->cancel();
     }
 
@@ -947,13 +947,13 @@ kill()
     while ((thread = iter.next()))
     {
         ASSERT(thread != Thread::getCurrentThread());
-        thread->setCancelState(ICurrentThread::CANCEL_ENABLE);
-        thread->setCancelType(ICurrentThread::CANCEL_DEFERRED);
+        thread->setCancelState(es::CurrentThread::CANCEL_ENABLE);
+        thread->setCancelType(es::CurrentThread::CANCEL_DEFERRED);
         thread->cancel();
     }
 }
 
-IContext* Process::
+es::Context* Process::
 getRoot()
 {
     Monitor::Synchronized method(monitor);
@@ -966,11 +966,11 @@ getRoot()
 }
 
 void Process::
-setRoot(IContext* root)
+setRoot(es::Context* root)
 {
     Monitor::Synchronized method(monitor);
 
-    IContext* prev(this->root);
+    es::Context* prev(this->root);
     if (root)
     {
         root->addRef();
@@ -982,7 +982,7 @@ setRoot(IContext* root)
     }
 }
 
-IContext* Process::
+es::Context* Process::
 getCurrent()
 {
     Monitor::Synchronized method(monitor);
@@ -995,11 +995,11 @@ getCurrent()
 }
 
 void Process::
-setCurrent(IContext* current)
+setCurrent(es::Context* current)
 {
     Monitor::Synchronized method(monitor);
 
-    IContext* prev(this->current);
+    es::Context* prev(this->current);
     if (current)
     {
         current->addRef();
@@ -1011,7 +1011,7 @@ setCurrent(IContext* current)
     }
 }
 
-IStream* Process::
+es::Stream* Process::
 getInput()
 {
     Monitor::Synchronized method(monitor);
@@ -1024,11 +1024,11 @@ getInput()
 }
 
 void Process::
-setInput(IStream* in)
+setInput(es::Stream* in)
 {
     Monitor::Synchronized method(monitor);
 
-    IStream* prev(this->in);
+    es::Stream* prev(this->in);
     if (in)
     {
         in->addRef();
@@ -1040,7 +1040,7 @@ setInput(IStream* in)
     }
 }
 
-IStream* Process::
+es::Stream* Process::
 getOutput()
 {
     Monitor::Synchronized method(monitor);
@@ -1053,11 +1053,11 @@ getOutput()
 }
 
 void Process::
-setOutput(IStream* out)
+setOutput(es::Stream* out)
 {
     Monitor::Synchronized method(monitor);
 
-    IStream* prev(this->out);
+    es::Stream* prev(this->out);
     if (out)
     {
         out->addRef();
@@ -1069,7 +1069,7 @@ setOutput(IStream* out)
     }
 }
 
-IStream* Process::
+es::Stream* Process::
 getError()
 {
     Monitor::Synchronized method(monitor);
@@ -1082,11 +1082,11 @@ getError()
 }
 
 void Process::
-setError(IStream* error)
+setError(es::Stream* error)
 {
     Monitor::Synchronized method(monitor);
 
-    IStream* prev(this->error);
+    es::Stream* prev(this->error);
     if (error)
     {
         error->addRef();
@@ -1102,19 +1102,19 @@ void* Process::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IInterface::iid()) == 0)
+    if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess*>(this);
+        objectPtr = static_cast<es::Process*>(this);
     }
-    else if (strcmp(riid, IProcess::iid()) == 0)
+    else if (strcmp(riid, es::Process::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess*>(this);
+        objectPtr = static_cast<es::Process*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -1157,7 +1157,7 @@ read(void* dst, int count, long long offset)
          len < count;
          len += n, addr += n, dst = (u8*) dst + n)
     {
-        if (validityFault(addr, ICurrentProcess::PROT_READ) < 0)
+        if (validityFault(addr, es::CurrentProcess::PROT_READ) < 0)
         {
             break;
         }
@@ -1193,11 +1193,11 @@ write(const void* src, int count, long long offset)
          len < count;
          len += n, addr += n, src = (u8*) src + n)
     {
-        if (validityFault(addr, ICurrentProcess::PROT_READ) < 0)
+        if (validityFault(addr, es::CurrentProcess::PROT_READ) < 0)
         {
             break;
         }
-        if (protectionFault(addr, ICurrentProcess::PROT_WRITE) < 0)
+        if (protectionFault(addr, es::CurrentProcess::PROT_WRITE) < 0)
         {
             break;
         }
@@ -1222,7 +1222,7 @@ write(const void* src, int count, long long offset)
     return len;
 }
 
-IProcess* Process::Constructor::createInstance()
+es::Process* Process::Constructor::createInstance()
 {
     return new Process;
 }
@@ -1230,19 +1230,19 @@ IProcess* Process::Constructor::createInstance()
 void* Process::Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IProcess::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Process::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess::IConstructor*>(this);
+        objectPtr = static_cast<es::Process::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess::IConstructor*>(this);
+        objectPtr = static_cast<es::Process::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -1260,5 +1260,5 @@ void Process::
 initializeConstructor()
 {
     static Constructor constructor;
-    IProcess::setConstructor(&constructor);
+    es::Process::setConstructor(&constructor);
 }

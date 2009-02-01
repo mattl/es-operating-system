@@ -346,9 +346,9 @@ Dp8390d(u8 bus, unsigned base, int irq) :
     sending(0),
     overflow(false)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 
-    alarm = IAlarm::createInstance();
+    alarm = es::Alarm::createInstance();
     alarm->setEnabled(false);
     alarm->setInterval(160000);
     alarm->setPeriodic(false);
@@ -395,7 +395,7 @@ Dp8390d::
 int Dp8390d::
 start()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (enabled)
     {
@@ -415,7 +415,7 @@ start()
 int Dp8390d::
 stop()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!enabled)
     {
@@ -452,7 +452,7 @@ stop()
 bool Dp8390d::
 isPromiscuousMode()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return rcr & RCR_PRO;
 }
@@ -460,7 +460,7 @@ isPromiscuousMode()
 void Dp8390d::
 setPromiscuousMode(bool on)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (on == ((rcr & RCR_PRO) ? true : false))
     {
@@ -502,7 +502,7 @@ setPromiscuousMode(bool on)
 int Dp8390d::
 addMulticastAddress(const u8 macaddr[6])
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!(*macaddr & 0x01))
     {
@@ -542,7 +542,7 @@ addMulticastAddress(const u8 macaddr[6])
 int Dp8390d::
 removeMulticastAddress(const u8 macaddr[6])
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!(*macaddr & 0x01))
     {
@@ -582,7 +582,7 @@ removeMulticastAddress(const u8 macaddr[6])
 void Dp8390d::
 getMacAddress(u8 mac[6])
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     memmove(mac, this->mac, sizeof(this->mac));
 }
@@ -590,7 +590,7 @@ getMacAddress(u8 mac[6])
 bool Dp8390d::
 getLinkState()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     u8 config0;
     {
@@ -607,7 +607,7 @@ getLinkState()
 void Dp8390d::
 getStatistics(Statistics* statistics)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     *statistics = this->statistics;
 };
@@ -619,7 +619,7 @@ getStatistics(Statistics* statistics)
 int Dp8390d::
 read(void* dst, int count)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     while (enabled && (overflow || sending || isRingEmpty()))
     {
@@ -675,7 +675,7 @@ read(void* dst, int count)
 int Dp8390d::
 write(const void* src, int count)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!src || count <= 0 || MAX_SIZE - 4 < count)
     {
@@ -816,23 +816,23 @@ queryInterface(const char* riid)
 {
     void* object;
 
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        object = static_cast<IStream*>(this);
+        object = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, INetworkInterface::iid()) == 0)
+    else if (strcmp(riid, es::NetworkInterface::iid()) == 0)
     {
-        object = static_cast<INetworkInterface*>(this);
+        object = static_cast<es::NetworkInterface*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        object = static_cast<INetworkInterface*>(this);
+        object = static_cast<es::NetworkInterface*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(object)->addRef();
+    static_cast<es::Interface*>(object)->addRef();
     return object;
 }
 

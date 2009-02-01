@@ -27,7 +27,7 @@
 #include <es/interlocked.h>
 #include "i386/core.h"
 
-class Dp8390d : public INetworkInterface, public IStream, public ICallback
+class Dp8390d : public es::NetworkInterface, public es::Stream, public es::Callback
 {
     static const int MIN_SIZE = 64;
     static const int MAX_SIZE = 1518;
@@ -181,7 +181,7 @@ class Dp8390d : public INetworkInterface, public IStream, public ICallback
     };
 
     Lock        spinLock;       // for invoke()
-    IMonitor*   monitor;
+    es::Monitor*   monitor;
     Ref         ref;
 
     u8          bus;
@@ -198,7 +198,7 @@ class Dp8390d : public INetworkInterface, public IStream, public ICallback
     int         sending;        // The number of octets being sent. Zero if not sending.
     bool        sendingUcast;   // True if sending a ucast packet.
 
-    IAlarm*     alarm;
+    es::Alarm*     alarm;
     bool        overflow;
     bool        resend;
 
@@ -244,7 +244,7 @@ public:
     // INetworkInterface
     int getType()
     {
-        return INetworkInterface::Ethernet;
+        return es::NetworkInterface::Ethernet;
     }
     int start();
     int stop();

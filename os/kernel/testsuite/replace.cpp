@@ -44,7 +44,7 @@ static void setData(u8* buf, long size, u8 shift)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
 
@@ -53,7 +53,7 @@ int main()
     esReport("maxPage: %lu\n", maxPage);
 #endif // VERBOSE
     // Reserved all pages except for NON_RESERVER_PAGE pages.
-    Handle<IPageSet> pageSet = IPageSet::createInstance();
+    Handle<es::PageSet> pageSet = es::PageSet::createInstance();
     unsigned long long reserved = maxPage - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -79,10 +79,10 @@ int main()
 
     MemoryStream* backingStore;
     MemoryStream* backingStore2;
-    IStream* stream1;
-    IStream* stream2;
-    ICache* cache1;
-    ICache* cache2;
+    es::Stream* stream1;
+    es::Stream* stream2;
+    es::Cache* cache1;
+    es::Cache* cache2;
     unsigned long long pageCount1;
     unsigned long long pageCount2;
 
@@ -90,7 +90,7 @@ int main()
     {
         backingStore = new MemoryStream;
         TEST(backingStore);
-        cache1 = ICache::createInstance(backingStore);
+        cache1 = es::Cache::createInstance(backingStore);
         TEST(cache1);
         stream1 = cache1->getStream();
         TEST(stream1);
@@ -98,7 +98,7 @@ int main()
 
         backingStore2 = new MemoryStream;
         TEST(backingStore2);
-        cache2 = ICache::createInstance(backingStore2);
+        cache2 = es::Cache::createInstance(backingStore2);
         TEST(cache2);
         stream2 = cache2->getStream();
         TEST(stream2);

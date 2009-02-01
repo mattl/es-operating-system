@@ -36,7 +36,7 @@ static void SetData(u8* buf, long long size)
     }
 }
 
-static long TestReadWrite(Handle<IStream> stream, long long& size)
+static long TestReadWrite(Handle<es::Stream> stream, long long& size)
 {
     u8* writeBuf;
     u8* readBuf;
@@ -64,14 +64,14 @@ static long TestReadWrite(Handle<IStream> stream, long long& size)
 }
 
 
-static long TestFileSystem(Handle<IContext> root)
+static long TestFileSystem(Handle<es::Context> root)
 {
-    Handle<IFile>       file;
+    Handle<es::File>       file;
 
     const char* filename = "test.txt";
 
     file = root->bind(filename, 0);
-    Handle<IStream> stream = file->getStream();
+    Handle<es::Stream> stream = file->getStream();
 
     long long sizeWritten = 6 * 1024LL;
     long ret = TestReadWrite(stream, sizeWritten);
@@ -99,32 +99,32 @@ static long TestFileSystem(Handle<IContext> root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat32.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat32.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         long ret = TestFileSystem(root);
@@ -138,7 +138,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

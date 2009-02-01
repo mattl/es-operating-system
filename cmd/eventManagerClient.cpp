@@ -22,23 +22,21 @@
 #include <es/usage.h>
 #include "eventManager.h"
 
-using namespace es;
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 int main(int argc, char* argv[])
 {
     esReport("This is the Event manager client process.\n");
 
     // System()->trace(true);
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
-    Handle<IContext> nameSpace = System()->getRoot();
-    Handle<IEventQueue> eventQueue = 0;
+    Handle<es::Context> nameSpace = System()->getRoot();
+    Handle<es::EventQueue> eventQueue = 0;
 
     while (!eventQueue)
     {

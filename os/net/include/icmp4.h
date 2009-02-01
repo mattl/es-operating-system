@@ -93,7 +93,7 @@ public:
 
 class ICMPEchoReplyReceiver : public InetReceiver
 {
-    IMonitor*       monitor;
+    es::Monitor*       monitor;
     Adapter*        adapter;
     Inet4Address*   addr;
     bool            replied;
@@ -103,7 +103,7 @@ public:
         addr(addr),
         replied(false)
     {
-        monitor = IMonitor::createInstance();
+        monitor = es::Monitor::createInstance();
     }
     ~ICMPEchoReplyReceiver()
     {
@@ -117,13 +117,13 @@ public:
 
     bool wait(s64 timeout)
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         monitor->wait(timeout);
     }
 
     void notify()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         replied = true;
         monitor->notifyAll();
     }

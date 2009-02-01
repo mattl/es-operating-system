@@ -32,9 +32,9 @@
 
 u8 sec[512];
 
-static IContext* checkDestinationPath(char* dst, Handle<IContext> root)
+static es::Context* checkDestinationPath(char* dst, Handle<es::Context> root)
 {
-    Handle<IContext> currentDir = root;
+    Handle<es::Context> currentDir = root;
     char buf[1024];
     ASSERT(strlen(dst)+1 <= sizeof(buf));
     memmove(buf, dst, strlen(dst)+1);
@@ -51,7 +51,7 @@ static IContext* checkDestinationPath(char* dst, Handle<IContext> root)
         }
         else
         {
-            Handle<IFile> last = currentDir->lookup(path);
+            Handle<es::File> last = currentDir->lookup(path);
             if (!last || last->isFile())
             {
                 return 0; // This indicates destination filename is specified.
@@ -60,10 +60,10 @@ static IContext* checkDestinationPath(char* dst, Handle<IContext> root)
             break;
         }
 
-        Handle<IInterface> interface = currentDir->lookup(path);
+        Handle<es::Interface> interface = currentDir->lookup(path);
         if (interface)
         {
-            Handle<IFile> file = interface;
+            Handle<es::File> file = interface;
             if (file->isFile())
             {
                 esReport("Error: invalid path. %s is a file.\n", path);
@@ -74,7 +74,7 @@ static IContext* checkDestinationPath(char* dst, Handle<IContext> root)
         }
         else
         {
-            Handle<IContext> dir = interface;
+            Handle<es::Context> dir = interface;
             currentDir = currentDir->createSubcontext(path);
             ASSERT(currentDir);
         }
@@ -99,7 +99,7 @@ static const char* getFilename(const char* p)
     return p;
 }
 
-void copy(Handle<IContext> root, char* filename, char* dst)
+void copy(Handle<es::Context> root, char* filename, char* dst)
 {
     FILE* f = fopen(filename, "rb");
     if (f == 0)
@@ -109,7 +109,7 @@ void copy(Handle<IContext> root, char* filename, char* dst)
     }
 
     const char* p;
-    Handle<IContext> currentDir = checkDestinationPath(dst, root);
+    Handle<es::Context> currentDir = checkDestinationPath(dst, root);
     if (currentDir)
     {
         p = getFilename(filename);
@@ -120,12 +120,12 @@ void copy(Handle<IContext> root, char* filename, char* dst)
         currentDir = root;
     }
 
-    Handle<IFile> file(currentDir->bind(p, 0));
+    Handle<es::File> file(currentDir->bind(p, 0));
     if (!file)
     {
         file = currentDir->lookup(p);
     }
-    Handle<IStream> stream(file->getStream());
+    Handle<es::Stream> stream(file->getStream());
     stream->setSize(0);
     for (;;)
     {
@@ -151,10 +151,10 @@ void copy(Handle<IContext> root, char* filename, char* dst)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
     if (argc < 3)
     {
@@ -162,9 +162,9 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
-    Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = IFatFileSystem::createInstance();
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>(argv[1]));
+    Handle<es::FileSystem> fatFileSystem;
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
 
     long long freeSpace;
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
 
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
         root = fatFileSystem->getRoot();
         char* dst = (char*) (3 < argc ? argv[3] : "");
         copy(root, argv[2], dst);

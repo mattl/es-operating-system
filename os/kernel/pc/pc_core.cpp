@@ -34,7 +34,7 @@ namespace
 {
     // The NullPic class is only used until the Pic class object for 8259 or
     // the Apic class object for APIC are constructed.
-    class NullPic : public IPic
+    class NullPic : public es::Pic
     {
         Ref ref;
     public:
@@ -73,19 +73,19 @@ namespace
         void* queryInterface(const char* riid)
         {
             void* objectPtr;
-            if (strcmp(riid, IPic::iid()) == 0)
+            if (strcmp(riid, es::Pic::iid()) == 0)
             {
-                objectPtr = static_cast<IPic*>(this);
+                objectPtr = static_cast<es::Pic*>(this);
             }
-            else if (strcmp(riid, IInterface::iid()) == 0)
+            else if (strcmp(riid, es::Interface::iid()) == 0)
             {
-                objectPtr = static_cast<IPic*>(this);
+                objectPtr = static_cast<es::Pic*>(this);
             }
             else
             {
                 return NULL;
             }
-            static_cast<IInterface*>(objectPtr)->addRef();
+            static_cast<es::Interface*>(objectPtr)->addRef();
             return objectPtr;
         }
         unsigned int addRef()
@@ -119,8 +119,8 @@ bool Core::sse;
 Segdesc Core::idt[256] __attribute__ ((aligned (16)));
 SegdescLoc Core::idtLoc(sizeof idt - 1, idt);
 Lock Core::spinLock;
-ICallback* Core::exceptionHandlers[255];
-IPic* Core::pic = &nullPic;
+es::Callback* Core::exceptionHandlers[255];
+es::Pic* Core::pic = &nullPic;
 u8 Core::isaBus;
 
 extern "C"
@@ -637,7 +637,7 @@ reschedule(void* param)
             ASSERT(current->core == core);
             switch (current->getState())
             {
-              case IThread::TERMINATED:
+              case es::Thread::TERMINATED:
                 if (core->currentFPU == current)
                 {
                     disableFPU();
@@ -645,7 +645,7 @@ reschedule(void* param)
                 current->unlock();
                 current->release();
                 break;
-              case IThread::RUNNING:
+              case es::Thread::RUNNING:
                 current->setRun();
                 // FALL THROUGH
               default:
@@ -924,7 +924,7 @@ dispatchException(Ureg* ureg)
             if (pic->ack(ureg->trap))
             {
                 // x = splLo();     // Enable interrupts
-                ICallback* callback = core->exceptionHandlers[ureg->trap];
+                es::Callback* callback = core->exceptionHandlers[ureg->trap];
                 if (callback)
                 {
                     callback->invoke(ureg->trap);
@@ -952,7 +952,7 @@ dispatchException(Ureg* ureg)
 }
 
 long Core::
-registerExceptionHandler(u8 exceptionNumber, ICallback* callback)
+registerExceptionHandler(u8 exceptionNumber, es::Callback* callback)
 {
     Lock::Synchronized method(spinLock);
 
@@ -960,7 +960,7 @@ registerExceptionHandler(u8 exceptionNumber, ICallback* callback)
     {
         return -1;
     }
-    ICallback* old = exceptionHandlers[exceptionNumber];
+    es::Callback* old = exceptionHandlers[exceptionNumber];
     exceptionHandlers[exceptionNumber] = callback;
     callback->addRef();
     if (old)
@@ -971,12 +971,12 @@ registerExceptionHandler(u8 exceptionNumber, ICallback* callback)
 }
 
 long Core::
-unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback)
+unregisterExceptionHandler(u8 exceptionNumber, es::Callback* callback)
 {
     Lock::Synchronized method(spinLock);
 
     long rc;
-    ICallback* old = exceptionHandlers[exceptionNumber];
+    es::Callback* old = exceptionHandlers[exceptionNumber];
     if (!callback || old == callback)
     {
         exceptionHandlers[exceptionNumber] = 0;
@@ -994,7 +994,7 @@ unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback)
 }
 
 long Core::
-registerInterruptHandler(u8 bus, u8 irq, ICallback* callback)
+registerInterruptHandler(u8 bus, u8 irq, es::Callback* callback)
 {
     Lock::Synchronized method(spinLock);
 
@@ -1016,7 +1016,7 @@ registerInterruptHandler(u8 bus, u8 irq, ICallback* callback)
 }
 
 long Core::
-unregisterInterruptHandler(u8 bus, u8 irq, ICallback* callback)
+unregisterInterruptHandler(u8 bus, u8 irq, es::Callback* callback)
 {
     Lock::Synchronized method(spinLock);
 
@@ -1031,7 +1031,7 @@ unregisterInterruptHandler(u8 bus, u8 irq, ICallback* callback)
         return -1;
     }
 
-    ICallback* old = exceptionHandlers[vec];
+    es::Callback* old = exceptionHandlers[vec];
     ASSERT(old == callback);
     pic->shutdown(bus, irq);
     old->release();

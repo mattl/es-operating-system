@@ -25,7 +25,7 @@
 #include <es/device/INetworkInterface.h>
 #include "thread.h"
 
-class Loopback : public es::INetworkInterface, public es::IStream
+class Loopback : public es::NetworkInterface, public es::Stream
 {
     Ref     ref;
     Monitor monitor;
@@ -62,13 +62,13 @@ public:
     {
         return true;
     }
-    void getStatistics(es::INetworkInterface::Statistics* statistics)
+    void getStatistics(es::NetworkInterface::Statistics* statistics)
     {
-        memset(statistics, 0, sizeof(es::INetworkInterface::Statistics));
+        memset(statistics, 0, sizeof(es::NetworkInterface::Statistics));
     }
     int getType()
     {
-        return es::INetworkInterface::Loopback;
+        return es::NetworkInterface::Loopback;
     }
     int removeMulticastAddress(const unsigned char mac[6])
     {

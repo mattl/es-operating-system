@@ -30,16 +30,14 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-using namespace es;
+es::CurrentProcess* System();
 
-ICurrentProcess* System();
-
-class Location : public ILocation
+class Location : public es::Location
 {
     static int  id;
 
     Ref         ref;
-    Point       point;
+    es::Point   point;
     char        name[14];
 
 public:
@@ -54,17 +52,17 @@ public:
     {
     }
 
-    void set(const Point* point)
+    void set(const es::Point* point)
     {
         this->point = *point;
     }
 
-    void get(Point* point)
+    void get(es::Point* point)
     {
         *point = this->point;
     }
 
-    void move(const Point* direction)
+    void move(const es::Point* direction)
     {
         point.x += direction->x;
         point.y += direction->y;
@@ -89,19 +87,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IInterface::iid()) == 0)
+        if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ILocation*>(this);
+            objectPtr = static_cast<es::Location*>(this);
         }
-        else if (strcmp(riid, ILocation::iid()) == 0)
+        else if (strcmp(riid, es::Location::iid()) == 0)
         {
-            objectPtr = static_cast<ILocation*>(this);
+            objectPtr = static_cast<es::Location*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -122,10 +120,10 @@ public:
     }
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Location::Constructor
     {
     public:
-        ILocation* createInstance();
+        es::Location* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -134,7 +132,7 @@ public:
     static Constructor constructor;
 };
 
-ILocation* Location::Constructor::createInstance()
+es::Location* Location::Constructor::createInstance()
 {
     return new Location;
 }
@@ -142,19 +140,19 @@ ILocation* Location::Constructor::createInstance()
 void* Location::Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ILocation::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Location::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<ILocation::IConstructor*>(this);
+        objectPtr = static_cast<es::Location::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ILocation::IConstructor*>(this);
+        objectPtr = static_cast<es::Location::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -177,25 +175,25 @@ int main(int argc, char* argv[])
     esReport("This is the Location server process.\n");
     System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
-    // Register ILocation interface.
-    Handle<IInterfaceStore> interfaceStore = nameSpace->lookup("interface");
+    // Register es::Location interface.
+    Handle<es::InterfaceStore> interfaceStore = nameSpace->lookup("interface");
     TEST(interfaceStore);
     interfaceStore->add(ILocationInfo, ILocationInfoSize);
 
     // Register Location factory.
-    Handle<IContext> classStore = nameSpace->lookup("class");
+    Handle<es::Context> classStore = nameSpace->lookup("class");
     TEST(classStore);
-    classStore->bind(ILocation::iid(), ILocation::getConstructor());
+    classStore->bind(es::Location::iid(), es::Location::getConstructor());
 
     // Create a client process.
-    Handle<IProcess> client;
-    client = IProcess::createInstance();
+    Handle<es::Process> client;
+    client = es::Process::createInstance();
     TEST(client);
 
     // Start the client process.
-    Handle<IFile> file = nameSpace->lookup("file/locationClient.elf");
+    Handle<es::File> file = nameSpace->lookup("file/locationClient.elf");
     TEST(file);
     client->start(file);
 
@@ -203,7 +201,7 @@ int main(int argc, char* argv[])
     client->wait();
 
     // Unregister Location factory.
-    classStore->unbind(ILocation::iid());
+    classStore->unbind(es::Location::iid());
 
     System()->trace(false);
 }

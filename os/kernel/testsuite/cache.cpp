@@ -42,13 +42,13 @@ int main()
     long long size;
     long len;
 
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
 
     MemoryStream* backingStore = new MemoryStream(0);
-    ICache* cache = ICache::createInstance(backingStore);
+    es::Cache* cache = es::Cache::createInstance(backingStore);
 
-    IStream* stream = cache->getStream();
+    es::Stream* stream = cache->getStream();
 
     stream->write(Pattern, 8);
     size = stream->getSize();
@@ -69,7 +69,7 @@ int main()
     size = backingStore->getSize();
     TEST(size == 16);
 
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     stream = cache->getStream();
     size = stream->getSize();
     TEST(size == 16);
@@ -92,7 +92,7 @@ int main()
     cache->release();
 
     // Test input/output streams
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
 
     stream = cache->getInputStream();
     len = 0;
@@ -123,7 +123,7 @@ int main()
     cache->release();
 
     // Test sector size
-    cache = ICache::createInstance(backingStore);
+    cache = es::Cache::createInstance(backingStore);
     int sectorSize = 512;
     cache->setSectorSize(sectorSize);
     sectorSize = cache->getSectorSize();

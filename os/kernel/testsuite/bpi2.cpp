@@ -27,7 +27,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-class AlarmCallback : public ICallback
+class AlarmCallback : public es::Callback
 {
     int ref;
 public:
@@ -44,10 +44,10 @@ public:
 
 namespace
 {
-    IThread* ThreadHi;
-    IThread* ThreadMid;
-    IMonitor* MonitorA;
-    IMonitor* MonitorB;
+    es::Thread* ThreadHi;
+    es::Thread* ThreadMid;
+    es::Monitor* MonitorA;
+    es::Monitor* MonitorB;
     bool Flag = false;
 };
 
@@ -96,15 +96,15 @@ static void* Lo(void* param)
 
 int main()
 {
-    IInterface* ns = NULL;
+    es::Interface* ns = NULL;
     esInit(&ns);
 
-    Handle<IAlarm> alarm = IAlarm::createInstance();
+    Handle<es::Alarm> alarm = es::Alarm::createInstance();
 
     AlarmCallback* alarmCallback = new AlarmCallback;
     alarm->setInterval(50000000LL);
     alarm->setEnabled(true);
-    alarm->setCallback(static_cast<ICallback*>(alarmCallback));
+    alarm->setCallback(static_cast<es::Callback*>(alarmCallback));
 
     MonitorA = new Monitor();
     MonitorB = new Monitor();
@@ -112,11 +112,11 @@ int main()
 
     ThreadHi = new Thread(Hi,                 // thread function
                           0,                  // argument to thread function
-                          IThread::Normal+2); // priority
+                          es::Thread::Normal+2); // priority
 
     ThreadMid = new Thread(Mid,               // thread function
                            0,                 // argument to thread function
-                           IThread::Normal+1);// priority
+                           es::Thread::Normal+1);// priority
     TEST(ThreadHi && ThreadMid);
 
     Lo(0);
@@ -157,19 +157,19 @@ void* AlarmCallback::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

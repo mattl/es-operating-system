@@ -22,17 +22,15 @@
 #include <es/base/IMonitor.h>
 #include "line.h"
 
-using namespace es;
-
 Line::
-Line(ICallback* callback, u8 bits, u8 channels, u8 rate) :
+Line(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     callback(callback),
     bits(bits),
     channels(channels),
     rate(rate),
     ring(buffer, sizeof buffer)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 }
 
 Line::
@@ -130,27 +128,27 @@ void* Line::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IStream::iid()) == 0)
+    else if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IAudioFormat::iid()) == 0)
+    else if (strcmp(riid, es::AudioFormat::iid()) == 0)
     {
-        objectPtr = static_cast<IAudioFormat*>(this);
+        objectPtr = static_cast<es::AudioFormat*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -173,7 +171,7 @@ release()
 }
 
 InputLine::
-InputLine(ICallback* callback, u8 bits, u8 channels, u8 rate) :
+InputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     Line(callback, bits, channels, rate)
 {
 }
@@ -188,7 +186,7 @@ read(void* dst, int count)
 {
     callback->invoke(0);
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         if (count <= 0)
         {
@@ -214,7 +212,7 @@ write(const void* src, int count)
 }
 
 OutputLine::
-OutputLine(ICallback* callback, u8 bits, u8 channels, u8 rate) :
+OutputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     Line(callback, bits, channels, rate)
 {
 }
@@ -237,7 +235,7 @@ int OutputLine::
 write(const void* src, int count)
 {
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
 
         if (count <= 0)
         {

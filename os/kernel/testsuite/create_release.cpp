@@ -39,7 +39,7 @@ int main()
 {
     long long size;
 
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
 
     MemoryStream* backingStore = new MemoryStream(0);
@@ -52,8 +52,8 @@ int main()
 #ifdef VERBOSE
         esReport("%d\n", i);
 #endif // VERBOSE
-        ICache* cache = ICache::createInstance(backingStore);
-        IStream* stream = cache->getStream();
+        es::Cache* cache = es::Cache::createInstance(backingStore);
+        es::Stream* stream = cache->getStream();
 
         stream->write(Pattern, 8);
         size = stream->getSize();

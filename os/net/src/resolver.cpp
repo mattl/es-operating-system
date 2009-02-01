@@ -113,7 +113,7 @@ Control::ptr(u16 id, InAddr addr)
     return opt - query;
 }
 
-IInternetAddress* Resolver::
+es::InternetAddress* Resolver::
 Control::resolve(const char* hostName)
 {
     u16 xid = id.increment();
@@ -188,7 +188,7 @@ Control::resolve(const char* hostName)
                 continue;
             }
             InAddr addr = *reinterpret_cast<InAddr*>(opt + DNSRR::Size);
-            IInternetAddress* host = Socket::resolver->getHostByAddress(&addr.addr, sizeof(InAddr), 0);
+            es::InternetAddress* host = Socket::resolver->getHostByAddress(&addr.addr, sizeof(InAddr), 0);
             return host;
         }
     }
@@ -263,13 +263,13 @@ Control::copyName(const u8* dns, const u8* ptr, const u8* end, char* name)
 }
 
 Resolver::
-Control::Control(IInternetAddress* server) :
+Control::Control(es::InternetAddress* server) :
     server(server)
 {
     memset(suffix, 0, sizeof suffix);
 
-    Handle<IInternetAddress> any = Socket::resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), server->getScopeID());
-    socket = any->socket(AF_INET, ISocket::Datagram, 0);
+    Handle<es::InternetAddress> any = Socket::resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), server->getScopeID());
+    socket = any->socket(AF_INET, es::Socket::Datagram, 0);
     socket->connect(server, DNSHdr::Port);
 }
 
@@ -279,7 +279,7 @@ Control::~Control()
     socket->close();
 }
 
-IInternetAddress* Resolver::
+es::InternetAddress* Resolver::
 Control::getHostByName(const char* hostName, int addressFamily)
 {
     if (!hostName)
@@ -301,7 +301,7 @@ Control::getHostByName(const char* hostName, int addressFamily)
             return 0;
     }
 
-    IInternetAddress* host = 0;
+    es::InternetAddress* host = 0;
 
     // XXX for each nameserver
         // resolve fully qualified domain name
@@ -329,7 +329,7 @@ Control::getHostByName(const char* hostName, int addressFamily)
 }
 
 bool Resolver::
-Control::getHostName(IInternetAddress* address, char* hostName, unsigned int nlen)
+Control::getHostName(es::InternetAddress* address, char* hostName, unsigned int nlen)
 {
     InAddr addr;
 
@@ -416,7 +416,7 @@ Control::getHostName(IInternetAddress* address, char* hostName, unsigned int nle
 bool Resolver::
 setup()
 {
-    Handle<IInternetAddress> nameServer = Socket::config->getNameServer();
+    Handle<es::InternetAddress> nameServer = Socket::config->getNameServer();
     if (!nameServer)
     {
         if (control)
@@ -436,10 +436,10 @@ setup()
     return true;
 }
 
-IInternetAddress* Resolver::
+es::InternetAddress* Resolver::
 getHostByName(const char* hostName, int addressFamily)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!setup())
     {
@@ -450,9 +450,9 @@ getHostByName(const char* hostName, int addressFamily)
 }
 
 int Resolver::
-getHostName(char* hostName, int len, IInternetAddress* address)
+getHostName(char* hostName, int len, es::InternetAddress* address)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (!setup())
     {
@@ -463,7 +463,7 @@ getHostName(char* hostName, int len, IInternetAddress* address)
 }
 
 // Note DNS is not queried.
-IInternetAddress* Resolver::
+es::InternetAddress* Resolver::
 getHostByAddress(const void* address, int len, unsigned int scopeID)
 {
     if (len == sizeof(InAddr))  // AF_INET
@@ -522,19 +522,19 @@ void* Resolver::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IResolver::iid()) == 0)
+    if (strcmp(riid, es::Resolver::iid()) == 0)
     {
-        objectPtr = static_cast<IResolver*>(this);
+        objectPtr = static_cast<es::Resolver*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IResolver*>(this);
+        objectPtr = static_cast<es::Resolver*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -560,7 +560,7 @@ Resolver::
 Resolver() :
     control(0)
 {
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 }
 
 Resolver::

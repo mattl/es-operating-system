@@ -19,7 +19,7 @@
 #include "inetConfig.h"
 
 void InternetConfig::
-addAddress(IInternetAddress* address, unsigned int prefix)
+addAddress(es::InternetAddress* address, unsigned int prefix)
 {
     int af = address->getAddressFamily();
     switch (af)
@@ -36,7 +36,7 @@ addAddress(IInternetAddress* address, unsigned int prefix)
     }
 }
 
-IInternetAddress* InternetConfig::
+es::InternetAddress* InternetConfig::
 getAddress(unsigned int scopeID)
 {
     InFamily* family = static_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
@@ -48,7 +48,7 @@ getAddress(unsigned int scopeID)
 }
 
 void InternetConfig::
-removeAddress(IInternetAddress* address)
+removeAddress(es::InternetAddress* address)
 {
     int af = address->getAddressFamily();
     switch (af)
@@ -66,7 +66,7 @@ removeAddress(IInternetAddress* address)
 }
 
 void InternetConfig::
-addRouter(IInternetAddress* router)
+addRouter(es::InternetAddress* router)
 {
     int af = router->getAddressFamily();
     switch (af)
@@ -82,14 +82,14 @@ addRouter(IInternetAddress* router)
     }
 }
 
-IInternetAddress* InternetConfig::getRouter()
+es::InternetAddress* InternetConfig::getRouter()
 {
     InFamily* inFamily = dynamic_cast<InFamily*>(Socket::getAddressFamily(AF_INET));
     return inFamily->getRouter();
 }
 
 void InternetConfig::
-removeRouter(IInternetAddress* router)
+removeRouter(es::InternetAddress* router)
 {
     int af = router->getAddressFamily();
     switch (af)
@@ -106,7 +106,7 @@ removeRouter(IInternetAddress* router)
 }
 
 int InternetConfig::
-addInterface(INetworkInterface* networkInterface)
+addInterface(es::NetworkInterface* networkInterface)
 {
     int scopeID = Socket::addInterface(networkInterface);
     if (0 < scopeID && Socket::interface)
@@ -114,45 +114,45 @@ addInterface(INetworkInterface* networkInterface)
         char name[3];
         sprintf(name, "%d", scopeID);
         esReport("addInterface: %s\n", name);
-        Handle<IContext> folder(Socket::interface->createSubcontext(name));
-        Handle<IBinding>(folder->bind("interface", networkInterface));
+        Handle<es::Context> folder(Socket::interface->createSubcontext(name));
+        Handle<es::Binding>(folder->bind("interface", networkInterface));
     }
     return scopeID;
 }
 
-IInterface* InternetConfig::
+es::Interface* InternetConfig::
 getInterface(int scopeID)
 {
-    Interface* interface = Socket::getInterface(scopeID);
+    NetworkInterface* interface = Socket::getInterface(scopeID);
     return interface->getNetworkInterface();
 }
 
 int InternetConfig::
-getScopeID(INetworkInterface* networkInterface)
+getScopeID(es::NetworkInterface* networkInterface)
 {
     return Socket::getScopeID(networkInterface);
 }
 
 void InternetConfig::
-removeInterface(INetworkInterface* networkInterface)
+removeInterface(es::NetworkInterface* networkInterface)
 {
     Socket::removeInterface(networkInterface);
 }
 
 void InternetConfig::
-addNameServer(IInternetAddress* address)
+addNameServer(es::InternetAddress* address)
 {
     nameServers.addAddress(address);
 }
 
-IInternetAddress* InternetConfig::
+es::InternetAddress* InternetConfig::
 getNameServer()
 {
     return nameServers.getAddress();
 }
 
 void InternetConfig::
-removeNameServer(IInternetAddress* address)
+removeNameServer(es::InternetAddress* address)
 {
     nameServers.removeAddress(address);
 }
@@ -216,19 +216,19 @@ void* InternetConfig::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IInternetConfig::iid()) == 0)
+    if (strcmp(riid, es::InternetConfig::iid()) == 0)
     {
-        objectPtr = static_cast<IInternetConfig*>(this);
+        objectPtr = static_cast<es::InternetConfig*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IInternetConfig*>(this);
+        objectPtr = static_cast<es::InternetConfig*>(this);
     }
     else
     {
         return 0;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

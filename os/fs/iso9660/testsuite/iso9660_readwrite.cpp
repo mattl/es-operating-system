@@ -28,7 +28,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static long PacketRead(IStream* stream, long long size, long numPacket, bool useOffset)
+static long PacketRead(es::Stream* stream, long long size, long numPacket, bool useOffset)
 {
 #ifdef VERBOSE
     esReport("size %lld bytes, numPacket %d, useOffset %d\n", size, numPacket, useOffset);
@@ -97,19 +97,19 @@ static long PacketRead(IStream* stream, long long size, long numPacket, bool use
     return 0;
 }
 
-void test(Handle<IContext> root)
+void test(Handle<es::Context> root)
 {
     long long           size = 0;
 
-    Handle<IContext>    dir = root->lookup("data");
+    Handle<es::Context>    dir = root->lookup("data");
     TEST(dir);
 
-    Handle<IFile>       file = dir->lookup("image");
+    Handle<es::File>       file = dir->lookup("image");
         TEST(file);
 
     size = file->getSize();
     u8* buf = new u8[size];
-    Handle<IStream> stream = file->getStream();
+    Handle<es::Stream> stream = file->getStream();
     long long ret = stream->read(buf, size);
     TEST(ret == size);
 
@@ -143,15 +143,15 @@ void test(Handle<IContext> root)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -159,12 +159,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

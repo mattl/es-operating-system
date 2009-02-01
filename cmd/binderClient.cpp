@@ -22,28 +22,28 @@
 #include <es/naming/IBinding.h>
 #include "binder.h"
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 int main(int argc, char* argv[])
 {
     esReport("This is the Binder client process.\n");
     System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
     Handle<IClassStore> classStore = nameSpace->lookup("class");
     TEST(classStore);
 
     // Create binder objects.
-    Handle<IBinding> binder[2];
+    Handle<es::Binding> binder[2];
     for (int i(0); i < 2; ++i)
     {
-        binder[i] = reinterpret_cast<IBinding*>(
+        binder[i] = reinterpret_cast<es::Binding*>(
             classStore->createInstance(CLSID_Binder,
                                        binder[i]->iid()));
         TEST(binder[i]);

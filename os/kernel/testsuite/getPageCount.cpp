@@ -43,7 +43,7 @@ static void SetData(u8* buf, long size)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
 
     esInit(&root);
 
@@ -52,7 +52,7 @@ int main()
     esReport("Check getPageCount().\n");
 
     // Reserved all pages except for NON_RESERVER_PAGE pages.
-    Handle<IPageSet> pageSet = IPageSet::createInstance();
+    Handle<es::PageSet> pageSet = es::PageSet::createInstance();
     unsigned long reserved = maxFreeCount - NON_RESERVED_PAGE;
     pageSet->reserve(reserved);
 
@@ -70,14 +70,14 @@ int main()
         return 1;
     }
 
-    ICache* cache1 = ICache::createInstance(backingStore);
+    es::Cache* cache1 = es::Cache::createInstance(backingStore);
     if (!cache1)
     {
         esReport("Bad alloc. (cache)\n");
         return 1;
     }
 
-    IStream* stream1 = cache1->getStream();
+    es::Stream* stream1 = cache1->getStream();
     if (!stream1)
     {
         esReport("Bad alloc. (stream1)\n");
@@ -91,14 +91,14 @@ int main()
         return 1;
     }
 
-    ICache* cache2 = ICache::createInstance(backingStore2);
+    es::Cache* cache2 = es::Cache::createInstance(backingStore2);
     if (!cache2)
     {
         esReport("Bad alloc. (cache2)\n");
         return 1;
     }
 
-    IStream* stream2 = cache2->getStream();
+    es::Stream* stream2 = cache2->getStream();
     if (!stream2)
     {
         esReport("Bad alloc. (stream2)\n");

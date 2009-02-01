@@ -26,7 +26,7 @@
 #include <es/device/ICursor.h>
 #include "thread.h"
 
-class Vesa : public es::IStream, public es::ICursor, public es::IPageable
+class Vesa : public es::Stream, public es::Cursor, public es::Pageable
 {
     // VESA SuperVGA information block
     enum VbeInfoBlock
@@ -113,7 +113,7 @@ class Vesa : public es::IStream, public es::ICursor, public es::IPageable
 
 public:
     Vesa(u8* vbeInfoBlock, u8* modeInfoBlock, u8* font,
-         es::IContext* device);
+         es::Context* device);
 
     // IStream
     long long getPosition();

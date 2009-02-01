@@ -27,11 +27,11 @@
 #include <es/naming/IContext.h>
 #include "thread.h"
 
-class Keyboard : public es::ICallback
+class Keyboard : public es::Callback
 {
     typedef int (Keyboard::*Reader)(void* dst, int count);
 
-    class Stream : public es::IStream
+    class Stream : public es::Stream
     {
         Keyboard*   keyboard;
         Reader      reader;
@@ -136,7 +136,7 @@ class Keyboard : public es::ICallback
     static s8 clamp(int n);
 
 public:
-    Keyboard(es::IContext* device);
+    Keyboard(es::Context* device);
     ~Keyboard();
 
     void setLED(u8 led);

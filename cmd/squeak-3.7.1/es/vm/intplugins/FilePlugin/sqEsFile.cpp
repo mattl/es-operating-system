@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@
 #include <es/base/IStream.h>
 #include <es/naming/IContext.h>
 
-using namespace es;
+
 
 #ifndef _DEBUG
 #define FPRINTF(...)    (__VA_ARGS__)
@@ -56,11 +56,11 @@ extern "C"
     #include "FilePlugin.h"
 }
 
-extern Handle<IContext> gRoot;
+extern Handle<es::Context> gRoot;
 
-static IStream* getStream(SQFile* f)
+static es::Stream* getStream(SQFile* f)
 {
-    return reinterpret_cast<IStream*>(f->file);
+    return reinterpret_cast<es::Stream*>(f->file);
 }
 
 /***
@@ -118,7 +118,7 @@ int sqFileAtEnd(SQFile* f)
         return interpreterProxy->success(false);
     }
 
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     long long position;
     position = stream->getPosition();
     return position == f->fileSize;
@@ -134,7 +134,7 @@ int sqFileClose(SQFile* f)
         return interpreterProxy->success(false);
     }
 
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     stream->release();
 
     f->file = NULL;
@@ -181,7 +181,7 @@ squeakFileOffsetType sqFileGetPosition(SQFile* f)
         return interpreterProxy->success(false);
     }
 
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     long long position;
     position = stream->getPosition();
     FPRINTF("%d\n", position);
@@ -235,7 +235,7 @@ int sqFileOpen(SQFile* f, int sqFileNameIndex, int sqFileNameSize, int writeFlag
     }
     sqFilenameFromString(cFileName, sqFileNameIndex, sqFileNameSize);
 
-    IInterface* node = gRoot->lookup(cFileName);
+    es::Interface* node = gRoot->lookup(cFileName);
 
     if (!node && writeFlag)
     {
@@ -243,8 +243,8 @@ int sqFileOpen(SQFile* f, int sqFileNameIndex, int sqFileNameSize, int writeFlag
     }
     if (node)
     {
-        IFile* file;
-        file = reinterpret_cast<IFile*>(node->queryInterface(IFile::iid()));
+        es::File* file;
+        file = reinterpret_cast<es::File*>(node->queryInterface(es::File::iid()));
         if (!file)
         {
             f->file = 0;
@@ -273,7 +273,7 @@ int sqFileOpen(SQFile* f, int sqFileNameIndex, int sqFileNameSize, int writeFlag
     {
         f->sessionID = thisSession;
         // compute and cache file size
-        IStream* stream = getStream(f);
+        es::Stream* stream = getStream(f);
         long long size;
         size = stream->getSize();
         f->fileSize = size;
@@ -301,7 +301,7 @@ size_t sqFileReadIntoAt(SQFile* f, size_t count, int byteArrayIndex, size_t star
     }
 
     dst = (char*) (byteArrayIndex + startIndex);
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     bytesRead = stream->read(dst, count);
     f->lastOp = READ_OP;
     return bytesRead;
@@ -342,7 +342,7 @@ int sqFileSetPosition(SQFile* f, squeakFileOffsetType position)
         return interpreterProxy->success(false);
     }
 
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     stream->setPosition(position);
     f->lastOp = UNCOMMITTED;
     return 1;
@@ -386,7 +386,7 @@ size_t sqFileWriteFromAt(SQFile *f, size_t count, int byteArrayIndex, size_t sta
     }
 
     src = (char*) (byteArrayIndex + startIndex);
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     bytesWritten = stream->write(src, count);
 
     // update file size
@@ -410,7 +410,7 @@ int sqFileFlush(SQFile* f)
         FPRINTF("%s: failed.\n", __func__);
         return interpreterProxy->success(false);
     }
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     stream->flush();
     return 1;
 }
@@ -424,7 +424,7 @@ int sqFileTruncate(SQFile* f, squeakFileOffsetType offset)
         FPRINTF("%s: failed.\n", __func__);
         return interpreterProxy->success(false);
     }
-    IStream* stream = getStream(f);
+    es::Stream* stream = getStream(f);
     stream->setSize(offset);
 
     // update file size

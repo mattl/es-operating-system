@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ class Core
     friend class Process;
     friend class Thread;
     friend struct Xreg;
-    friend int esInit(IInterface** nameSpace);
+    friend int esInit(es::Interface** nameSpace);
 
     // Thread control block (a read-only region from the user level threads)
     struct Tcb
@@ -82,8 +82,8 @@ private:
 
     // 8259/APIC related
     static Lock         spinLock;
-    static ICallback*   exceptionHandlers[255];
-    static IPic*        pic;
+    static es::Callback*   exceptionHandlers[255];
+    static es::Pic*        pic;
     static u8           isaBus;     // ISA Bus #
 
 public:
@@ -110,17 +110,17 @@ public:
     static void reschedule(void* param);
     static void dispatchException(Ureg* ureg);
 
-    static long registerExceptionHandler(u8 exceptionNumber, ICallback* callback);
-    static long unregisterExceptionHandler(u8 exceptionNumber, ICallback* callback);
+    static long registerExceptionHandler(u8 exceptionNumber, es::Callback* callback);
+    static long unregisterExceptionHandler(u8 exceptionNumber, es::Callback* callback);
 
-    static long registerInterruptHandler(u8 bus, u8 irq, ICallback* callback);
-    static long unregisterInterruptHandler(u8 bus, u8 irq, ICallback* callback);
+    static long registerInterruptHandler(u8 bus, u8 irq, es::Callback* callback);
+    static long unregisterInterruptHandler(u8 bus, u8 irq, es::Callback* callback);
 
-    static long registerInterruptHandler(u8 irq, ICallback* callback)
+    static long registerInterruptHandler(u8 irq, es::Callback* callback)
     {
         return registerInterruptHandler(isaBus, irq, callback);
     }
-    static long unregisterInterruptHandler(u8 irq, ICallback* callback)
+    static long unregisterInterruptHandler(u8 irq, es::Callback* callback)
     {
         return unregisterInterruptHandler(isaBus, irq, callback);
     }
@@ -157,7 +157,7 @@ public:
 
 } __attribute__ ((aligned (16)));
 
-int esInit(IInterface** nameSpace);
-IThread* esCreateThread(void* (*start)(void* param), void* param);
+int esInit(es::Interface** nameSpace);
+es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 
 #endif  // NINTENDO_ES_KERNEL_I386_CORE_H_INCLUDED

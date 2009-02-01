@@ -36,25 +36,25 @@ struct AttributeEntry
 
 static AttributeEntry AttrList[] =
 {
-   {"R", IFile::ReadOnly}, // "ReadOnly",
-   {"H", IFile::Hidden},   // "Hidden",
-   {"D", IFile::Directory} // "Directory",
+   {"R", es::File::ReadOnly}, // "ReadOnly",
+   {"H", es::File::Hidden},   // "Hidden",
+   {"D", es::File::Directory} // "Directory",
 };
 
 static AttributeEntry DirList[] =
 {
-    {"dir",              IFile::ReadOnly | IFile::Directory | IFile::Hidden},
-    {"dir2",             IFile::ReadOnly | IFile::Directory},
-    {"System",           IFile::ReadOnly | IFile::Directory},
-    {"hiden2",           IFile::ReadOnly | IFile::Hidden},
-    {"system_file",      IFile::ReadOnly | IFile::Hidden},
-    {"archive",          IFile::ReadOnly},
-    {"file01",           IFile::ReadOnly},
-    {"file02",           IFile::ReadOnly},
-    {"file03",           IFile::ReadOnly},
-    {"hidden",           IFile::ReadOnly},
-    {"none",             IFile::ReadOnly},
-    {"readonly_archive", IFile::ReadOnly}
+    {"dir",              es::File::ReadOnly | es::File::Directory | es::File::Hidden},
+    {"dir2",             es::File::ReadOnly | es::File::Directory},
+    {"System",           es::File::ReadOnly | es::File::Directory},
+    {"hiden2",           es::File::ReadOnly | es::File::Hidden},
+    {"system_file",      es::File::ReadOnly | es::File::Hidden},
+    {"archive",          es::File::ReadOnly},
+    {"file01",           es::File::ReadOnly},
+    {"file02",           es::File::ReadOnly},
+    {"file03",           es::File::ReadOnly},
+    {"hidden",           es::File::ReadOnly},
+    {"none",             es::File::ReadOnly},
+    {"readonly_archive", es::File::ReadOnly}
 };
 
 static void PrintAttribute(unsigned int attr)
@@ -68,24 +68,24 @@ static void PrintAttribute(unsigned int attr)
     esReport("]");
 }
 
-void test(Handle<IContext> root)
+void test(Handle<es::Context> root)
 {
-    Handle<IContext>    dir = root->lookup("attribute");
+    Handle<es::Context>    dir = root->lookup("attribute");
     TEST(dir);
 
     // test getAttribute().
     unsigned int attr;
     long long n = 0;
     int i;
-    Handle<IIterator>   iter;
+    Handle<es::Iterator>   iter;
     iter = dir->list("");
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         ++n;
-        Handle<IFile> file = binding->getObject();
+        Handle<es::File> file = binding->getObject();
 
         try
         {
@@ -111,13 +111,13 @@ void test(Handle<IContext> root)
         }
         TEST(found);
 
-        if (DirList[i].attr & IFile::ReadOnly)
+        if (DirList[i].attr & es::File::ReadOnly)
         {
             TEST(file->canRead());
             TEST(!file->canWrite());
         }
 
-        if (DirList[i].attr & IFile::Directory)
+        if (DirList[i].attr & es::File::Directory)
         {
             TEST(file->isDirectory());
             TEST(!file->isFile());
@@ -128,17 +128,17 @@ void test(Handle<IContext> root)
             TEST(file->isFile());
         }
 
-        if (DirList[i].attr & IFile::Hidden)
+        if (DirList[i].attr & es::File::Hidden)
         {
             TEST(file->isHidden());
         }
     }
 
     // test setAttribute().
-    Handle<IFile> file = dir->lookup("file01");
+    Handle<es::File> file = dir->lookup("file01");
     TEST(file);
 
-    attr = (IFile::ReadOnly | IFile::Hidden);
+    attr = (es::File::ReadOnly | es::File::Hidden);
     int ret = 0;
     try
     {
@@ -161,20 +161,20 @@ void test(Handle<IContext> root)
     }
     TEST(ret == 0);
 
-    TEST(attr == IFile::ReadOnly);
+    TEST(attr == es::File::ReadOnly);
 }
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel1/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel1/device0");
 #else
-    IStream* disk = new VDisk(static_cast<char*>("isotest.iso"));
+    es::Stream* disk = new VDisk(static_cast<char*>("isotest.iso"));
 #endif
     TEST(disk);
     long long diskSize;
@@ -182,12 +182,12 @@ int main(int argc, char* argv[])
     esReport("diskSize: %lld\n", diskSize);
     TEST(0 < diskSize);
 
-    Handle<IFileSystem> isoFileSystem;
-    isoFileSystem = IIso9660FileSystem::createInstance();
+    Handle<es::FileSystem> isoFileSystem;
+    isoFileSystem = es::Iso9660FileSystem::createInstance();
     TEST(isoFileSystem);
     isoFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = isoFileSystem->getRoot();
         TEST(root);

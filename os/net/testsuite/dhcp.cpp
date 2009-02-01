@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,40 +35,40 @@
 #include <es/net/dns.h>
 #include <es/net/udp.h>
 
-using namespace es;
 
-extern int esInit(IInterface** nameSpace);
-extern IThread* esCreateThread(void* (*start)(void* param), void* param);
-extern void esRegisterInternetProtocol(IContext* context);
-extern void esRegisterDHCPClient(IContext* context);
+
+extern int esInit(es::Interface** nameSpace);
+extern es::Thread* esCreateThread(void* (*start)(void* param), void* param);
+extern void esRegisterInternetProtocol(es::Context* context);
+extern void esRegisterDHCPClient(es::Context* context);
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    Handle<IContext> context(root);
+    Handle<es::Context> context(root);
 
     esRegisterInternetProtocol(context);
 
     // Lookup resolver object
-    Handle<IResolver> resolver = context->lookup("network/resolver");
+    Handle<es::Resolver> resolver = context->lookup("network/resolver");
 
     // Lookup internet config object
-    Handle<IInternetConfig> config = context->lookup("network/config");
+    Handle<es::InternetConfig> config = context->lookup("network/config");
 
     // Setup DIX interface
-    Handle<INetworkInterface> ethernetInterface = context->lookup("device/ethernet");
+    Handle<es::NetworkInterface> ethernetInterface = context->lookup("device/ethernet");
     ethernetInterface->start();
     int dixID = config->addInterface(ethernetInterface);
     esReport("dixID: %d\n", dixID);
 
     esRegisterDHCPClient(context);
 
-    Handle<IService> service = context->lookup("network/interface/2/dhcp");
+    Handle<es::Service> service = context->lookup("network/interface/2/dhcp");
     service->start();
     esSleep(120000000);
 
-    Handle<IInternetAddress> host = config->getAddress(dixID);
+    Handle<es::InternetAddress> host = config->getAddress(dixID);
     if (host)
     {
         InAddr addr;
@@ -78,7 +78,7 @@ int main()
         esReport("host: %d.%d.%d.%d\n", (u8) (h >> 24), (u8) (h >> 16), (u8) (h >> 8), (u8) h);
     }
 
-    Handle<IInternetAddress> address = resolver->getHostByName("www.nintendo.com", AF_INET);
+    Handle<es::InternetAddress> address = resolver->getHostByName("www.nintendo.com", AF_INET);
     if (address)
     {
         InAddr addr;

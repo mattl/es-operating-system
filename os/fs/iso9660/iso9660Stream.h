@@ -34,14 +34,14 @@
 #include <es/naming/IContext.h>
 #include "iso9660.h"
 
-using namespace es;
+
 
 class Iso9660FileSystem;
 class Iso9660Iterator;
 class Iso9660Stream;
 class Iso9660StreamUcs2;
 
-class Iso9660Stream : public IStream, public IContext, public IBinding, public IFile
+class Iso9660Stream : public es::Stream, public es::Context, public es::Binding, public es::File
 {
     friend class Iso9660FileSystem;
     friend class Iso9660Iterator;
@@ -51,7 +51,7 @@ class Iso9660Stream : public IStream, public IContext, public IBinding, public I
     Link<Iso9660Stream> link;
 
     Ref                 ref;
-    ICache*             cache;
+    es::Cache*             cache;
     Iso9660Stream*      parent;
     u32                 dirLocation;
     u32                 offset;
@@ -67,7 +67,7 @@ public:
     bool isRoot();
     int hashCode() const;
 
-    bool findNext(IStream* dir, u8* record);
+    bool findNext(es::Stream* dir, u8* record);
     virtual Iso9660Stream* lookupPathName(const char*& name);
 
     // IFile
@@ -84,8 +84,8 @@ public:
     bool isDirectory();
     bool isFile();
     bool isHidden();
-    IStream* getStream();
-    IPageable* getPageable();
+    es::Stream* getStream();
+    es::Pageable* getPageable();
 
     // IStream
     long long getPosition();
@@ -99,18 +99,18 @@ public:
     void flush();
 
     // IBinding
-    IInterface* getObject();
-    void setObject(IInterface* object);
+    es::Interface* getObject();
+    void setObject(es::Interface* object);
     int getName(char* name, int len);
 
     // IContext
-    IBinding* bind(const char* name, IInterface* object);
-    IContext* createSubcontext(const char* name);
+    es::Binding* bind(const char* name, es::Interface* object);
+    es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    IInterface* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
-    IIterator* list(const char* name);
+    es::Iterator* list(const char* name);
 
     // IInterface
     void* queryInterface(const char* riid);
@@ -131,14 +131,14 @@ public:
     int getName(char* name, int len);
 };
 
-class Iso9660FileSystem : public IIso9660FileSystem
+class Iso9660FileSystem : public es::Iso9660FileSystem
 {
     typedef List<Iso9660Stream, &Iso9660Stream::link> Iso9660StreamChain;
     friend class Iso9660Stream;
 
     Ref                 ref;
-    IStream*            disk;
-    ICache*             diskCache;
+    es::Stream*            disk;
+    es::Cache*             diskCache;
     Iso9660Stream*      root;
     const char*         escapeSequences;
     u8                  rootRecord[256];
@@ -153,7 +153,7 @@ public:
     static const char* ucs2EscapeSequences[3];
 
     Iso9660FileSystem();
-    Iso9660FileSystem(IStream* disk);
+    Iso9660FileSystem(es::Stream* disk);
     ~Iso9660FileSystem();
 
     void init();
@@ -172,9 +172,9 @@ public:
     static bool isDelimitor(int c);
 
     // IFileSystem
-    void mount(IStream* disk);
+    void mount(es::Stream* disk);
     void dismount();
-    void getRoot(IContext** root);
+    void getRoot(es::Context** root);
     long long getFreeSpace();
     long long getTotalSpace();
     int checkDisk(bool fixError);
@@ -187,10 +187,10 @@ public:
     unsigned int release();
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Iso9660FileSystem::Constructor
     {
     public:
-        IIso9660FileSystem* createInstance();
+        es::Iso9660FileSystem* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -199,7 +199,7 @@ public:
     static void initializeConstructor();
 };
 
-class Iso9660Iterator : public IIterator
+class Iso9660Iterator : public es::Iterator
 {
     Ref             ref;
     Iso9660Stream*  stream;
@@ -211,7 +211,7 @@ public:
     ~Iso9660Iterator();
 
     bool hasNext();
-    IInterface* next();
+    es::Interface* next();
     int remove();
 
     void* queryInterface(const char* riid);

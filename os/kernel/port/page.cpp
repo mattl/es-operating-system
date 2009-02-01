@@ -19,8 +19,6 @@
 #include <new>
 #include "cache.h"
 
-using namespace es;
-
 Page::
 Page(void* pointer) :
     ref(0),
@@ -47,7 +45,7 @@ set(Cache* cache, long long offset)
 }
 
 int Page::
-fill(IStream* backingStore)
+fill(es::Stream* backingStore)
 {
     int len = SIZE;
 
@@ -75,7 +73,7 @@ fill(IStream* backingStore)
 }
 
 int Page::
-sync(IStream* backingStore, int sectorSize)
+sync(es::Stream* backingStore, int sectorSize)
 {
     if (!cache->clean(this))
     {

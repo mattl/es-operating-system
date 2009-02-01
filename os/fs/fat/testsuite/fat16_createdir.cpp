@@ -28,7 +28,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static long TestFileSystem(Handle<IContext>    root)
+static long TestFileSystem(Handle<es::Context>    root)
 {
     const char* dirList[] =
     {
@@ -123,7 +123,7 @@ static long TestFileSystem(Handle<IContext>    root)
         int len = strlen(dirList[i]);
         esReport("create \"%s\" (len %d)\n", dirList[i], len);
 
-        Handle<IFile> file = root->lookup(dirList[i]);
+        Handle<es::File> file = root->lookup(dirList[i]);
         if (!file)
         {
             file = root->createSubcontext(dirList[i]);
@@ -140,7 +140,7 @@ static long TestFileSystem(Handle<IContext>    root)
         TEST(strcmp(created, dirList[i]) == 0);
     }
 
-    Handle<IFile> dir = root->createSubcontext("abc");
+    Handle<es::File> dir = root->createSubcontext("abc");
     TEST(dir);
     dir = 0;
     dir = root->createSubcontext("abc/def");
@@ -150,15 +150,15 @@ static long TestFileSystem(Handle<IContext>    root)
     TEST(dir);
     dir = 0;
 
-    Handle<IContext> abc  = root->lookup("abc");
+    Handle<es::Context> abc  = root->lookup("abc");
     TEST(abc);
-    Handle<IIterator>   iter;
+    Handle<es::Iterator>   iter;
     iter = abc->list("");
     long n = 0;
     while (iter->hasNext())
     {
         char name[1024];
-        Handle<IBinding> binding(iter->next());
+        Handle<es::Binding> binding(iter->next());
         binding->getName(name, sizeof name);
         TEST(strcmp(name, "def") == 0 || strcmp(name, "ghi") == 0);
         ++n;
@@ -196,7 +196,7 @@ static long TestFileSystem(Handle<IContext>    root)
 
         try
         {
-            Handle<IFile> file = root->createSubcontext(wrongDirList[i]);
+            Handle<es::File> file = root->createSubcontext(wrongDirList[i]);
             TEST(!file);
         }
         catch (SystemException<EACCES>& e)
@@ -226,32 +226,32 @@ static long TestFileSystem(Handle<IContext>    root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         TestFileSystem(root);
@@ -264,7 +264,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,18 +29,18 @@ using namespace LittleEndian;
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-IDiskManagement::Geometry VDiskGeometry;
+es::DiskManagement::Geometry VDiskGeometry;
 
-void PrintPartitions(IContext* context)
+void PrintPartitions(es::Context* context)
 {
     char name[16];
-    IDiskManagement::Partition params;
+    es::DiskManagement::Partition params;
     esReport("boot type offset   size\n");
-    Handle<IIterator> iter = context->list("");
-    Handle<IBinding> binding;
+    Handle<es::Iterator> iter = context->list("");
+    Handle<es::Binding> binding;
     while ((binding = iter->next()))
     {
-        Handle<IDiskManagement> diskManagement = binding->getObject();
+        Handle<es::DiskManagement> diskManagement = binding->getObject();
         TEST(diskManagement);
         diskManagement->getLayout(&params);
         TEST(0 < binding->getName(name, sizeof(name)));
@@ -51,7 +51,7 @@ void PrintPartitions(IContext* context)
                  params.partitionLength,
                  name);
 
-        Handle<IStream> stream = context->lookup(name);
+        Handle<es::Stream> stream = context->lookup(name);
         TEST(stream);
         long long size;
         size = stream->getSize();
@@ -76,9 +76,9 @@ enum
     MBR_TotalSectors = 12           // in LBA
 };
 
-void PrintBR(IStream* disk)
+void PrintBR(es::Stream* disk)
 {
-    IDiskManagement::Geometry geometry = VDiskGeometry;
+    es::DiskManagement::Geometry geometry = VDiskGeometry;
 
     // Read MBR
     u8 mbr[geometry.bytesPerSector];
@@ -156,23 +156,23 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>(argv[1]));
-    Handle<IDiskManagement> dm = disk;
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>(argv[1]));
+    Handle<es::DiskManagement> dm = disk;
     dm->getGeometry(&VDiskGeometry);
 
     PrintBR(disk);
 
-    Handle<IPartition> partition = new PartitionContext();
+    Handle<es::Partition> partition = new PartitionContext();
     TEST(partition);
 
     // mount
     TEST(partition->mount(disk) == 0);
     {
         esReport("mounted partitions.\n");
-        Handle<IContext> context = partition;
+        Handle<es::Context> context = partition;
         PrintPartitions(context);
     }
     // unmount

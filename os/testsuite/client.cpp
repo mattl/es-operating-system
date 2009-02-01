@@ -25,9 +25,9 @@
 #include <es/base/IStream.h>
 #include <es/naming/IContext.h>
 
-using namespace es;
 
-extern ICurrentProcess* System();
+
+extern es::CurrentProcess* System();
 
 int main()
 {
@@ -40,18 +40,18 @@ int main()
         sleep(1);
     }
 
-    Handle<IStream> output = System()->getOutput();
+    Handle<es::Stream> output = System()->getOutput();
     output->write("hello!\n", 7);
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
 
-    Handle<IIterator> iterator = nameSpace->list("");
+    Handle<es::Iterator> iterator = nameSpace->list("");
     while (iterator->hasNext())
     {
         char name[128];
 
-        Handle<IBinding> binding = iterator->next();
+        Handle<es::Binding> binding = iterator->next();
         int len = binding->getName(name, sizeof name);
         name[len++] = '\n';
         output->write(name, len);

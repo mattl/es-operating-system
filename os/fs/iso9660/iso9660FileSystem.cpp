@@ -53,7 +53,7 @@ Iso9660FileSystem() :
 }
 
 Iso9660FileSystem::
-Iso9660FileSystem(IStream* disk) :
+Iso9660FileSystem(es::Stream* disk) :
     disk(0)
 {
     init();
@@ -143,7 +143,7 @@ isDelimitor(int c)
 }
 
 void Iso9660FileSystem::
-mount(IStream* disk)
+mount(es::Stream* disk)
 {
     if (!disk)
     {
@@ -161,10 +161,10 @@ mount(IStream* disk)
     bytsPerSec = 2048;
     escapeSequences = 0;
 
-    diskCache = ICache::createInstance(disk);
+    diskCache = es::Cache::createInstance(disk);
     diskCache->setSectorSize(2048);
 
-    Handle<IStream> stream(diskCache->getInputStream());
+    Handle<es::Stream> stream(diskCache->getInputStream());
     stream->setPosition(16 * bytsPerSec);
 
     u8 vd[2048];
@@ -282,7 +282,7 @@ dismount(void)
 }
 
 void Iso9660FileSystem::
-getRoot(IContext** root)
+getRoot(es::Context** root)
 {
     if (root)
     {
@@ -323,23 +323,23 @@ void* Iso9660FileSystem::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIso9660FileSystem::iid()) == 0)
+    if (strcmp(riid, es::Iso9660FileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IIso9660FileSystem*>(this);
+        objectPtr = static_cast<es::Iso9660FileSystem*>(this);
     }
-    if (strcmp(riid, IFileSystem::iid()) == 0)
+    if (strcmp(riid, es::FileSystem::iid()) == 0)
     {
-        objectPtr = static_cast<IIso9660FileSystem*>(this);
+        objectPtr = static_cast<es::Iso9660FileSystem*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIso9660FileSystem*>(this);
+        objectPtr = static_cast<es::Iso9660FileSystem*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;;
 }
 
@@ -362,7 +362,7 @@ release()
 }
 
 
-IIso9660FileSystem* Iso9660FileSystem::Constructor::
+es::Iso9660FileSystem* Iso9660FileSystem::Constructor::
 createInstance()
 {
     return new Iso9660FileSystem;
@@ -372,19 +372,19 @@ void* Iso9660FileSystem::Constructor::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIso9660FileSystem::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Iso9660FileSystem::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IIso9660FileSystem::IConstructor*>(this);
+        objectPtr = static_cast<es::Iso9660FileSystem::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIso9660FileSystem::IConstructor*>(this);
+        objectPtr = static_cast<es::Iso9660FileSystem::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -404,5 +404,5 @@ void Iso9660FileSystem::
 initializeConstructor()
 {
     static Constructor constructor;
-    IIso9660FileSystem::setConstructor(&constructor);
+    es::Iso9660FileSystem::setConstructor(&constructor);
 }

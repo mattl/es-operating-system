@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ const DateTime FatFileSystem::wane(2107, 12, 31, 23, 59, 59, 99);
 void FatStream::
 setCreationTime(DateTime d)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (d < FatFileSystem::epoch)
     {
@@ -59,7 +59,7 @@ setCreationTime(DateTime d)
 void FatStream::
 setLastAccessTime(DateTime d)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (d < FatFileSystem::epoch)
     {
@@ -77,7 +77,7 @@ setLastAccessTime(DateTime d)
 void FatStream::
 setLastWriteTime(DateTime d)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (d < FatFileSystem::epoch)
     {
@@ -97,7 +97,7 @@ setLastWriteTime(DateTime d)
 void FatStream::
 setAttributes(unsigned int attributes)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     attributes &= (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
     fcb[DIR_Attr] &= ~(ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
@@ -107,7 +107,7 @@ setAttributes(unsigned int attributes)
 void FatStream::
 setCreationTime(long long time)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     try
     {
@@ -123,7 +123,7 @@ setCreationTime(long long time)
 void FatStream::
 setLastAccessTime(long long time)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     try
     {
@@ -139,7 +139,7 @@ setLastAccessTime(long long time)
 void FatStream::
 setLastWriteTime(long long time)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     try
     {
@@ -155,7 +155,7 @@ setLastWriteTime(long long time)
 unsigned int FatStream::
 getAttributes()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     return fcb[DIR_Attr] & (ATTR_READ_ONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_DIRECTORY | ATTR_ARCHIVE);
 }
@@ -163,7 +163,7 @@ getAttributes()
 long long FatStream::
 getCreationTime()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     DateTime d;
     try
@@ -186,7 +186,7 @@ getCreationTime()
 long long FatStream::
 getLastAccessTime()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     DateTime d;
     try
@@ -205,7 +205,7 @@ getLastAccessTime()
 long long FatStream::
 getLastWriteTime()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     DateTime d;
     try
@@ -253,7 +253,7 @@ isHidden()
     return FatFileSystem::isHidden(fcb);
 }
 
-IStream* FatStream::
+es::Stream* FatStream::
 getStream()
 {
     if (FatFileSystem::isDirectory(fcb))
@@ -270,7 +270,7 @@ getStream()
     }
 }
 
-IPageable* FatStream::
+es::Pageable* FatStream::
 getPageable()
 {
     if (FatFileSystem::isDirectory(fcb))
@@ -278,7 +278,7 @@ getPageable()
         esThrow(EPERM);
     }
 
-    IPageable* pageable;
-    pageable = reinterpret_cast<IPageable*>(cache->queryInterface(IPageable::iid()));
+    es::Pageable* pageable;
+    pageable = reinterpret_cast<es::Pageable*>(cache->queryInterface(es::Pageable::iid()));
     return pageable;
 }

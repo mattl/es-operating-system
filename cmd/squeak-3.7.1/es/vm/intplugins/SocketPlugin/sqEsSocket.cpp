@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,9 +54,9 @@
 
 typedef unsigned long u_long;
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 /* sqUnixSocket.c -- Unix socket support
  *
@@ -183,17 +183,17 @@ static u_long localHostAddress; /* GROSS IPv4 ASSUMPTION! */
 
 struct privateSocketStruct
 {
-  Handle<ISocket> s;              /* Unix socket */
+  Handle<es::Socket> s;              /* Unix socket */
   int connSema;                   /* connection io notification semaphore */
   int readSema;                   /* read io notification semaphore */
   int writeSema;                  /* write io notification semaphore */
   int sockState;                  /* connection + data state */
   int sockError;                  /* errno after socket error */
   unsigned poll;                  /* poll flags */
-  Handle<IInternetAddress> peer;  /* default send/recv address for UDP */
+  Handle<es::InternetAddress> peer;  /* default send/recv address for UDP */
   int peerPort;                   /* default send/recv port for UDP */
   int multiListen;                /* whether to listen for multiple connections */
-  Handle<ISocket> acceptedSock;   /* a connection that has been accepted */
+  Handle<es::Socket> acceptedSock;   /* a connection that has been accepted */
 };
 
 
@@ -238,7 +238,7 @@ static int  resolverSema= 0;
 
 static Selector* selector;
 
-static Handle<IResolver> resolver;
+static Handle<es::Resolver> resolver;
 static char resolverBuffer[MAXHOSTNAMELEN];
 
 /*** module initialisation/shutdown ***/
@@ -267,7 +267,7 @@ static const char *addrToName(int netAddress)
   lastError= 0;         /* for the resolver */
 
   InAddr saddr= { htonl(netAddress) };
-  Handle<IInternetAddress> inetAddr = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
+  Handle<es::InternetAddress> inetAddr = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
   if (inetAddr && (0 <= inetAddr->getHostName(resolverBuffer, MAXHOSTNAMELEN)))
   {
     return resolverBuffer;
@@ -282,7 +282,7 @@ static int nameToAddr(char *hostName)
 {
   lastError= 0;         /* ditto */
 
-  if (Handle<IInternetAddress> address = resolver->getHostByName(hostName, AF_INET))
+  if (Handle<es::InternetAddress> address = resolver->getHostByName(hostName, AF_INET))
   {
     InAddr saddr;
     address->getAddress(&saddr.addr, sizeof(saddr));
@@ -306,7 +306,7 @@ static int socketValid(SocketPtr s)
           0 if read would block, or
          -1 if the socket is no longer connected */
 
-static int socketReadable(ISocket* s)
+static int socketReadable(es::Socket* s)
 {
   if (s->isReadable())
     {
@@ -321,7 +321,7 @@ static int socketReadable(ISocket* s)
 
 /* answer whether the socket can be written without blocking */
 
-static int socketWritable(ISocket* s)
+static int socketWritable(es::Socket* s)
 {
   if (s->isWritable())
     {
@@ -335,7 +335,7 @@ static int socketWritable(ISocket* s)
 
 /* answer the error condition on the given socket */
 
-static int socketError(ISocket* socket)
+static int socketError(es::Socket* socket)
 {
   return socket->getLastError();
 }
@@ -351,7 +351,7 @@ static int socketError(ISocket* socket)
 static void acceptHandler(void *data)
 {
   privateSocketStruct *pss= (privateSocketStruct *)data;
-  Handle<ISocket> socket = pss->s;
+  Handle<es::Socket> socket = pss->s;
   FPRINTF("acceptHandler(%p, %p, %d)\n", socket.get(), data, socket->isAcceptable());
   if (socket->isAcceptable())
     {
@@ -362,7 +362,7 @@ static void acceptHandler(void *data)
           pss->sockError= socketError(socket);
           pss->sockState= Invalid;
           pss->s= 0;
-          Handle<ISelectable> selectable(socket);
+          Handle<es::Selectable> selectable(socket);
           selector->remove(selectable);
           socket->close();
           esReport("acceptHandler: aborting server %p pss=%p\n", socket.get(), pss);
@@ -370,7 +370,7 @@ static void acceptHandler(void *data)
         }
       else
         {
-          ISocket* newSock= socket->accept();
+          es::Socket* newSock= socket->accept();
           if (newSock) /* -- connection accepted */
             {
               pss->sockState= Connected;
@@ -382,7 +382,7 @@ static void acceptHandler(void *data)
               else /* traditional listen -- replace server with client in-place */
                 {
                   socket->setBlocking(true);
-                  Handle<ISelectable> selectable(socket);
+                  Handle<es::Selectable> selectable(socket);
                   selector->remove(selectable);
                   socket->close();
                   pss->s= newSock;
@@ -400,7 +400,7 @@ static void acceptHandler(void *data)
 static void connectHandler(void *data)
 {
   privateSocketStruct *pss= (privateSocketStruct *)data;
-  Handle<ISocket> socket = pss->s;
+  Handle<es::Socket> socket = pss->s;
   FPRINTF("connectHandler(%p, %p, %d)\n", socket.get(), data, socket->isConnectable());
   if (socket->isConnectable())
   {
@@ -427,7 +427,7 @@ static void connectHandler(void *data)
             pss->sockState= Connected;
           }
       }
-    // Handle<ISelectable> selectable(socket);
+    // Handle<es::Selectable> selectable(socket);
     // selector->remove(selectable);
     pss->poll &= ~PollConnect;
     notify(pss, CONN_NOTIFY);
@@ -440,10 +440,10 @@ static void connectHandler(void *data)
 static void readHandler(void *data)
 {
   privateSocketStruct *pss= (privateSocketStruct *)data;
-  Handle<ISocket> socket = pss->s;
+  Handle<es::Socket> socket = pss->s;
 //  FPRINTF("readHandler(%p, %p, %d)\n", socket.get(), data, socket->isReadable());
 
-  // Handle<ISelectable> selectable(socket);
+  // Handle<es::Selectable> selectable(socket);
   int n= socketReadable(socket);
   FPRINTF("readHandler(%p, %p, %d)\n", socket.get(), data, n);
   if (n == -1)
@@ -483,10 +483,10 @@ static void readHandler(void *data)
 static void writeHandler(void *data)
 {
   privateSocketStruct *pss= (privateSocketStruct *)data;
-  Handle<ISocket> socket = pss->s;
+  Handle<es::Socket> socket = pss->s;
   FPRINTF("writeHandler(%p, %p, %d)\n", socket.get(), data, socket->isWritable());
 
-  // Handle<ISelectable> selectable(socket);
+  // Handle<es::Selectable> selectable(socket);
   int n= socketWritable(socket);
   if (n == -1)
     {
@@ -509,14 +509,14 @@ static void writeHandler(void *data)
 static void closeHandler(void *data)
 {
   privateSocketStruct *pss= (privateSocketStruct *)data;
-  Handle<ISocket> socket = pss->s;
+  Handle<es::Socket> socket = pss->s;
   FPRINTF("closeHandler(%p, %p, %d)\n", socket.get(), data, socket->isClosed());
   socket->setBlocking(false);
   socket->setTimeout(0);
   socket->close();
   pss->sockState= Unconnected;
   pss->s= 0;
-  Handle<ISelectable> selectable(socket);
+  Handle<es::Selectable> selectable(socket);
   selector->remove(selectable);
   notify(pss, CONN_NOTIFY);
 }
@@ -557,12 +557,12 @@ int sqNetworkInit(int resolverSemaIndex)
   if (0 != thisNetSession)
     return 0;  /* already initialised */
 
-  Handle<IContext> context = System()->getRoot();
+  Handle<es::Context> context = System()->getRoot();
   resolver = context->lookup("network/resolver");
 
-  Handle<ICurrentThread> currentThread = System()->currentThread();
-  Handle<IInternetConfig> config = context->lookup("network/config");
-  Handle<IInternetAddress> localhost;
+  Handle<es::CurrentThread> currentThread = System()->currentThread();
+  Handle<es::InternetConfig> config = context->lookup("network/config");
+  Handle<es::InternetAddress> localhost;
   for (int i = 0; !localhost && i < 20; ++i)
   {
     localhost = config->getAddress(2);   // Assume DIX
@@ -622,20 +622,20 @@ void sqSocketCreateNetTypeSocketTypeRecvBytesSendBytesSemaIDReadSemaIDWriteSemaI
      int recvBufSize, int sendBufSize,
      int semaIndex, int readSemaIndex, int writeSemaIndex)
 {
-  Handle<ISocket> newSocket;
+  Handle<es::Socket> newSocket;
   privateSocketStruct *pss;
-  Handle<IInternetAddress> any = resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), 0);
+  Handle<es::InternetAddress> any = resolver->getHostByAddress(&InAddrAny.addr, sizeof(InAddr), 0);
 
   s->sessionID= 0;
   if (TCPSocketType == socketType)
     {
       /* --- TCP --- */
-      newSocket = any->socket(AF_INET, ISocket::Stream, 0);
+      newSocket = any->socket(AF_INET, es::Socket::Stream, 0);
     }
   else if (UDPSocketType == socketType)
     {
       /* --- UDP --- */
-      IInterface* p = any->socket(AF_INET, ISocket::Datagram, 0);
+      es::Interface* p = any->socket(AF_INET, es::Socket::Datagram, 0);
       newSocket = p;
     }
   if (!newSocket)
@@ -743,7 +743,7 @@ void sqSocketListenOnPortBacklogSizeInterface(SocketPtr s, int port, int backlog
   FPRINTF("listenOnPortBacklogSize(%p, %d)\n", SOCKET(s).get(), backlogSize);
 
   InAddr saddr = { htonl(addr) };
-  Handle<IInternetAddress> address = resolver->getHostByAddress(&saddr.addr, sizeof(InAddr), 0);
+  Handle<es::InternetAddress> address = resolver->getHostByAddress(&saddr.addr, sizeof(InAddr), 0);
   SOCKET(s)->bind(address, port);
   if (TCPSocketType == s->socketType)
     {
@@ -752,7 +752,7 @@ void sqSocketListenOnPortBacklogSizeInterface(SocketPtr s, int port, int backlog
       SOCKETSTATE(s) = WaitingForConnection;
       SOCKET(s)->setBlocking(false);
       PSP(s)->poll |= PollAccept;   /* R => accept() */
-      Handle<ISelectable> selectable(SOCKET(s));
+      Handle<es::Selectable> selectable(SOCKET(s));
       selector->add(selectable, pollHandler, (void*) PSP(s));
     }
   else
@@ -775,7 +775,7 @@ void sqSocketConnectToPort(SocketPtr s, int addr, int port)
     return;
   FPRINTF("connectTo(%p)\n", SOCKET(s).get());
   InAddr saddr = { htonl(addr) };
-  Handle<IInternetAddress> address = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
+  Handle<es::InternetAddress> address = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
 
   if (UDPSocketType == s->socketType)
     {
@@ -805,7 +805,7 @@ void sqSocketConnectToPort(SocketPtr s, int addr, int port)
             {
               /* asynchronous connection in progress */
               SOCKETSTATE(s)= WaitingForConnection;
-              Handle<ISelectable> selectable(SOCKET(s));
+              Handle<es::Selectable> selectable(SOCKET(s));
               PSP(s)->poll |= PollConnect;  /* W => connect() */
               selector->add(selectable, pollHandler, (void*) PSP(s));  /* W => connect() */
             }
@@ -922,7 +922,7 @@ void sqSocketCloseConnection(SocketPtr s)
     {
       /* asynchronous close in progress */
       SOCKETSTATE(s)= ThisEndClosed;
-      Handle<ISelectable> selectable;
+      Handle<es::Selectable> selectable;
       PSP(s)->poll |= PollClose;
       selector->add(selectable, pollHandler, (void*) PSP(s));  /* => close() done */
       FPRINTF("closeConnection: deferred [aioHandle is set]\n");
@@ -984,7 +984,7 @@ int sqSocketLocalAddress(SocketPtr s)
   if (!socketValid(s))
     return -1;
   InAddr saddr;
-  Handle<IInternetAddress> address = SOCKET(s)->getLocalAddress();
+  Handle<es::InternetAddress> address = SOCKET(s)->getLocalAddress();
   if (!address || !address->getAddress(&saddr.addr, sizeof(saddr)))
     return 0;
   return ntohl(saddr.addr);
@@ -998,7 +998,7 @@ int sqSocketRemoteAddress(SocketPtr s)
   if (!socketValid(s))
     return -1;
 
-  Handle<IInternetAddress> address;
+  Handle<es::InternetAddress> address;
   if (TCPSocketType == s->socketType)
     {
       /* --- TCP --- */
@@ -1070,7 +1070,7 @@ int sqSocketReceiveDataAvailable(SocketPtr s)
     {
       FPRINTF("receiveDataAvailable(%p): socket not connected\n", SOCKET(s).get());
     }
-  Handle<ISelectable> selectable(SOCKET(s));
+  Handle<es::Selectable> selectable(SOCKET(s));
   PSP(s)->poll |= PollReceive;
   selector->add(selectable, pollHandler, (void*) PSP(s));
   FPRINTF("receiveDataAvailable(%p) -> false [aioHandle is set]\n", SOCKET(s).get());
@@ -1087,7 +1087,7 @@ int sqSocketSendDone(SocketPtr s)
   if (SOCKETSTATE(s) == Connected)
     {
       if (socketWritable(SOCKET(s)) == 1) return true;
-      Handle<ISelectable> selectable(SOCKET(s));
+      Handle<es::Selectable> selectable(SOCKET(s));
       PSP(s)->poll |= PollSend;
       selector->add(selectable, pollHandler, (void*) PSP(s));
     }
@@ -1108,7 +1108,7 @@ int sqSocketReceiveDataBufCount(SocketPtr s, int buf, int bufSize)
   if (UDPSocketType == s->socketType)
     {
       /* --- UDP --- */
-      IInternetAddress* peer;
+      es::InternetAddress* peer;
       nread= SOCKET(s)->recvFrom((void *)buf, bufSize, 0, &peer, &SOCKETPEERPORT(s));
       if (nread <= 0)
         {
@@ -1213,7 +1213,7 @@ int sqSocketReceiveUDPDataBufCountaddressportmoreFlag
     {
       FPRINTF("recvFrom(%p)\n", SOCKET(s).get());
 
-      IInternetAddress* from;
+      es::InternetAddress* from;
       int nread= SOCKET(s)->recvFrom((void *)buf, bufSize, 0, &from, port);
       if (nread >= 0)
         {
@@ -1244,7 +1244,7 @@ int sqSockettoHostportSendDataBufCount(SocketPtr s, int address, int port,
       FPRINTF("sendTo(%p)\n", SOCKET(s).get());
 
       InAddr saddr = { htonl(address) };
-      Handle<IInternetAddress> to = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
+      Handle<es::InternetAddress> to = resolver->getHostByAddress(&saddr.addr, sizeof(saddr), 0);
 
       int nsent= SOCKET(s)->sendTo((void *)buf, bufSize, 0, to, port);
       if (nsent >= 0)

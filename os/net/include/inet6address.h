@@ -196,8 +196,8 @@ public:
     bool isLoopback();
     bool isMulticast();
     bool isReachable(long long timeout);
-    IInternetAddress* getNext();
-    IInterface* socket(int type, int protocol);
+    es::InternetAddress* getNext();
+    es::Interface* socket(int type, int protocol);
 
     // IInterface
     void* queryInterface(const char* riid);

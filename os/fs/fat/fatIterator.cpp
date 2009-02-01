@@ -30,8 +30,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 FatIterator::
 FatIterator(FatStream* stream) :
     stream(stream)
@@ -57,10 +55,10 @@ FatIterator::
 bool FatIterator::
 hasNext(void)
 {
-    Synchronized<IMonitor*> method(stream->monitor);
+    Synchronized<es::Monitor*> method(stream->monitor);
 
     ASSERT(stream->isDirectory());
-    Handle<IStream> dir(stream->cache->getStream());
+    Handle<es::Stream> dir(stream->cache->getStream());
     dir->setPosition(ipos);
 
     u8 fcb[32];
@@ -69,13 +67,13 @@ hasNext(void)
 }
 
 // Dot and dotdot entries are not reported.
-IInterface* FatIterator::
+es::Interface* FatIterator::
 next()
 {
-    Synchronized<IMonitor*> method(stream->monitor);
+    Synchronized<es::Monitor*> method(stream->monitor);
 
     ASSERT(stream->isDirectory());
-    Handle<IStream> dir(stream->cache->getStream());
+    Handle<es::Stream> dir(stream->cache->getStream());
     dir->setPosition(ipos);
 
     u8 fcb[32];
@@ -91,16 +89,16 @@ next()
     {
         next = new FatStream(stream->fileSystem, stream, ipos - 32, fcb);
     }
-    return static_cast<IBinding*>(next);
+    return static_cast<es::Binding*>(next);
 }
 
 // XXX wrong semantics?
 int FatIterator::
 remove(void)
 {
-    Synchronized<IMonitor*> method(stream->monitor);
+    Synchronized<es::Monitor*> method(stream->monitor);
 
-    IInterface* found = next();
+    es::Interface* found = next();
     if (found)
     {
         FatStream* s = dynamic_cast<FatStream*>(found);
@@ -117,19 +115,19 @@ void* FatIterator::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIterator::iid()) == 0)
+    if (strcmp(riid, es::Iterator::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

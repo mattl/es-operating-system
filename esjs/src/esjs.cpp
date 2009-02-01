@@ -22,7 +22,7 @@
 #include "esjs.h"
 #include "parser.h"
 
-using namespace es;
+
 
 //
 // yacc declarations
@@ -42,7 +42,7 @@ extern FILE* yyin;
 
 int yylex(YYSTYPE* yylval);
 
-extern ICurrentProcess* System();
+extern es::CurrentProcess* System();
 
 namespace
 {
@@ -77,7 +77,7 @@ int strLex(char* buffer, int max_size)
     return len;
 }
 
-static IStream* lexStream;
+static es::Stream* lexStream;
 
 int streamLex(char* buffer, int max_size)
 {
@@ -115,7 +115,7 @@ void setSource(const std::string& s)
     lexStream = 0;
 }
 
-void setSource(IStream* stream)
+void setSource(es::Stream* stream)
 {
     lexStream = stream;
 }
@@ -222,7 +222,7 @@ int report(const char* spec, ...)
     va_list list;
 
     va_start(list, spec);
-    IStream* output(System()->getOutput());
+    es::Stream* output(System()->getOutput());
     Formatter formatter(output);
     formatter.setMode(Formatter::Mode::ECMAScript);
     int count = formatter.format(spec, list);
@@ -246,15 +246,15 @@ int main(int argc, char* argv[])
     }
     report("%s %s\n", argv[0], argv[1]);
 
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
 #ifdef __es__
-    Handle<IFile> file = root->lookup(argv[1]);
+    Handle<es::File> file = root->lookup(argv[1]);
     if (!file)
     {
         report("Could not open '%s'.\n", argv[1]);
         return EXIT_FAILURE;
     }
-    Handle<IStream> stream = file->getStream();
+    Handle<es::Stream> stream = file->getStream();
     if (!stream)
     {
         report("Could not open '%s'.\n", argv[1]);

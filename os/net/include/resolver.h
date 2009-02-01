@@ -31,7 +31,7 @@
 #include "inet4.h"
 #include "socket.h"
 
-class Resolver : public IResolver
+class Resolver : public es::Resolver
 {
     class Control
     {
@@ -40,8 +40,8 @@ class Resolver : public IResolver
         static const int MaxQuery = 3;
         static const int MaxSearch = 3; // max search domains used
 
-        Handle<IInternetAddress>    server;
-        Handle<ISocket>             socket;
+        Handle<es::InternetAddress>    server;
+        Handle<es::Socket>             socket;
 
         char        suffix[DNSHdr::NameMax];
         Interlocked id;
@@ -50,20 +50,20 @@ class Resolver : public IResolver
 
         int a(u16 id, const char* hostName);
         int ptr(u16 id, InAddr addr);
-        IInternetAddress* resolve(const char* hostName);
+        es::InternetAddress* resolve(const char* hostName);
 
         static u8* skipName(const u8* ptr, const u8* end);
         static bool copyName(const u8* dns, const u8* ptr, const u8* end, char* name);
 
     public:
-        Control(IInternetAddress* server);
+        Control(es::InternetAddress* server);
         ~Control();
-        IInternetAddress* getHostByName(const char* hostName, int addressFamily);
-        bool getHostName(IInternetAddress* address, char* hostName, unsigned int len);
+        es::InternetAddress* getHostByName(const char* hostName, int addressFamily);
+        bool getHostName(es::InternetAddress* address, char* hostName, unsigned int len);
     };
 
     Ref         ref;
-    IMonitor*   monitor;
+    es::Monitor*   monitor;
     Control*    control;
 
     bool setup();
@@ -75,9 +75,9 @@ public:
     //
     // IResolver
     //
-    IInternetAddress* getHostByName(const char* hostName, int addressFamily);
-    IInternetAddress* getHostByAddress(const void* address, int len, unsigned int scopeID);
-    int getHostName(char* hostName, int len, IInternetAddress* address);
+    es::InternetAddress* getHostByName(const char* hostName, int addressFamily);
+    es::InternetAddress* getHostByAddress(const void* address, int len, unsigned int scopeID);
+    int getHostName(char* hostName, int len, es::InternetAddress* address);
 
     //
     // IInterface

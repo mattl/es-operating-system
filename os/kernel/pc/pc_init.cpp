@@ -57,13 +57,13 @@ void putDebugChar(int ch);
 
 namespace
 {
-    IContext*       root;
-    IContext*       classStore;
+    es::Context*       root;
+    es::Context*       classStore;
     InterfaceStore* interfaceStore;
     Sched*          sched;
     Pit*            pit;
-    IRtc*           rtc;
-    IStream*        reportStream;
+    es::Rtc*           rtc;
+    es::Stream*        reportStream;
     Dmac*           master;
     Dmac*           slave;
     Pic*            pic;
@@ -72,7 +72,7 @@ namespace
     u8              loopbackBuffer[64 * 1024];
     Uart*           uart;
     Pci*            pci;
-    IStream*        stubStream;
+    es::Stream*        stubStream;
 };
 
 const int Page::SIZE = 4096;
@@ -150,7 +150,7 @@ extern int main(int, char* []);
 extern void set_debug_traps(void);
 extern void breakpoint(void);
 
-int esInit(IInterface** nameSpace)
+int esInit(es::Interface** nameSpace)
 {
     set_debug_traps();
 
@@ -260,9 +260,9 @@ int esInit(IInterface** nameSpace)
 #endif
 
     // Create the default thread (stack top: 0x80010000)
-    Thread* thread = new Thread(0, 0, IThread::Normal,
+    Thread* thread = new Thread(0, 0, es::Thread::Normal,
                                 (void*) 0x80009000, 0x80010000 - 0x80009000);
-    thread->state = IThread::RUNNING;
+    thread->state = es::Thread::RUNNING;
     thread->sched = sched;
     thread->func = (void* (*)(void*)) main;
     thread->core = core;
@@ -281,12 +281,12 @@ int esInit(IInterface** nameSpace)
     classStore = root->createSubcontext("class");
 
     // Register IMonitor constructor
-    classStore->bind(IMonitor::iid(), IMonitor::getConstructor());
+    classStore->bind(es::Monitor::iid(), es::Monitor::getConstructor());
 
-    IBinding* binding;
+    es::Binding* binding;
 
     // Create device name space
-    IContext* device = root->createSubcontext("device");
+    es::Context* device = root->createSubcontext("device");
     binding = device->bind("rtc", rtc);
     binding->release();
     binding = device->bind("cga", cga);
@@ -294,7 +294,7 @@ int esInit(IInterface** nameSpace)
     device->release();
 
     // Create network name space
-    IContext* network = root->createSubcontext("network");
+    es::Context* network = root->createSubcontext("network");
     network->release();
 
     // Create class name space
@@ -303,25 +303,25 @@ int esInit(IInterface** nameSpace)
 
     // Create interface store
     interfaceStore = new InterfaceStore;
-    binding = root->bind("interface", static_cast<IInterfaceStore*>(interfaceStore));
+    binding = root->bind("interface", static_cast<es::InterfaceStore*>(interfaceStore));
     binding->release();
 
     // Bind Process constructor
-    classStore->bind(IProcess::iid(), IProcess::getConstructor());
+    classStore->bind(es::Process::iid(), es::Process::getConstructor());
 
     // Bind Cache constructor
     Cache::initializeConstructor();
-    ICache::setConstructor(new Cache::Constructor);
-    classStore->bind(ICache::iid(), ICache::getConstructor());
+    es::Cache::setConstructor(new Cache::Constructor);
+    classStore->bind(es::Cache::iid(), es::Cache::getConstructor());
 
     // Bind PageSet constructor
-    classStore->bind(IPageSet::iid(), IAlarm::getConstructor());
+    classStore->bind(es::PageSet::iid(), es::Alarm::getConstructor());
 
     // Bind Alarm constructor
-    classStore->bind(IAlarm::iid(), IAlarm::getConstructor());
+    classStore->bind(es::Alarm::iid(), es::Alarm::getConstructor());
 
     // Bind Partition constructor
-    classStore->bind(IPartition::iid(), IPartition::getConstructor());
+    classStore->bind(es::Partition::iid(), es::Partition::getConstructor());
 
     slave = new Dmac(0x00, 0x80, 0);
     master = new Dmac(0xc0, 0x88, 1);
@@ -351,7 +351,7 @@ int esInit(IInterface** nameSpace)
         }
     }
 
-    root->bind("device/beep", static_cast<IBeep*>(pit));
+    root->bind("device/beep", static_cast<es::Beep*>(pit));
 
 #ifdef USE_SVGA
     Vesa* vesa = new Vesa((u8*) 0x80008000, (u8*) 0x80008200,
@@ -361,22 +361,22 @@ int esInit(IInterface** nameSpace)
 
     Keyboard* keyboard = new Keyboard(device);
 
-    IContext* ata = root->createSubcontext("device/ata");
+    es::Context* ata = root->createSubcontext("device/ata");
     AtaController* ctlr0 = new AtaController(0x1f0, 0x3f0, 14, 0, ata);
     AtaController* ctlr1 = new AtaController(0x170, 0x370, 15, 0, ata);
 
     FloppyController* fdc = new FloppyController(&slave->chan[2]);
     FloppyDrive* fdd = new FloppyDrive(fdc, 0);
-    root->bind("device/floppy", static_cast<IStream*>(fdd));
+    root->bind("device/floppy", static_cast<es::Stream*>(fdd));
 
 #ifdef USE_SB16
     try
     {
         SoundBlaster16* sb16 = new SoundBlaster16(Core::isaBus, master, slave);
-        ASSERT(static_cast<IStream*>(&sb16->inputLine));
-        ASSERT(static_cast<IStream*>(&sb16->outputLine));
-        root->bind("device/soundInput", static_cast<IStream*>(&sb16->inputLine));
-        root->bind("device/soundOutput", static_cast<IStream*>(&sb16->outputLine));
+        ASSERT(static_cast<es::Stream*>(&sb16->inputLine));
+        ASSERT(static_cast<es::Stream*>(&sb16->outputLine));
+        root->bind("device/soundInput", static_cast<es::Stream*>(&sb16->inputLine));
+        root->bind("device/soundOutput", static_cast<es::Stream*>(&sb16->outputLine));
     }
     catch (...)
     {
@@ -386,19 +386,19 @@ int esInit(IInterface** nameSpace)
 
     // Register the loopback interface
     Loopback* loopback = new Loopback(loopbackBuffer, sizeof loopbackBuffer);
-    device->bind("loopback", static_cast<IStream*>(loopback));
+    device->bind("loopback", static_cast<es::Stream*>(loopback));
 
 #ifdef USE_NE2000ISA
     // Register the Ethernet interface
     Dp8390d* ne2000 = new Dp8390d(Core::isaBus, 0xc100, 10);
-    device->bind("ethernet", static_cast<IStream*>(ne2000));
+    device->bind("ethernet", static_cast<es::Stream*>(ne2000));
 #endif
 
     pci = new Pci(mps, device);
 
 #ifdef USE_COM3
     ASSERT(stubStream);
-    device->bind("com3", static_cast<IStream*>(stubStream));
+    device->bind("com3", static_cast<es::Stream*>(stubStream));
 #endif
 
     Process::initialize();
@@ -472,19 +472,19 @@ int esReportv(const char* spec, va_list list)
     return len;
 }
 
-ICurrentProcess* esCurrentProcess()
+es::CurrentProcess* esCurrentProcess()
 {
     return sched;
 }
 
-IStream* esReportStream()
+es::Stream* esReportStream()
 {
     return reportStream;
 }
 
-IThread* esCreateThread(void* (*start)(void* param), void* param)
+es::Thread* esCreateThread(void* (*start)(void* param), void* param)
 {
-    return new Thread(start, param, IThread::Normal);
+    return new Thread(start, param, es::Thread::Normal);
 }
 
 namespace es
@@ -495,7 +495,7 @@ Reflect::Interface& getInterface(const char* iid)
     return interfaceStore->getInterface(iid);
 }
 
-IInterface* getConstructor(const char* iid)
+es::Interface* getConstructor(const char* iid)
 {
     return interfaceStore->getConstructor(iid);
 }

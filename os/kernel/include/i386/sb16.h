@@ -26,7 +26,7 @@
 #include "8237a.h"
 #include "line.h"
 
-class SoundBlaster16 : public ICallback
+class SoundBlaster16 : public es::Callback
 {
     // DSP I/O Addresses
     static const u8 RESET = 0x6;
@@ -99,8 +99,8 @@ class SoundBlaster16 : public ICallback
     u8              irq;
     u8              chan8;
     u8              chan16;
-    IDmac*          dmac8;      // for 8-bit transfer
-    IDmac*          dmac16;     // for 16-bit transfer
+    es::Dmac*          dmac8;      // for 8-bit transfer
+    es::Dmac*          dmac16;     // for 16-bit transfer
     bool            odd8;       // double buffer indicator
     bool            odd16;      // double buffer indicator
     Line*           line8;

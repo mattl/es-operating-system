@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,32 +28,32 @@
 #include <es/net/IResolver.h>
 #include <es/net/arp.h>
 
-using namespace es;
 
-extern int esInit(IInterface** nameSpace);
-extern void esRegisterInternetProtocol(IContext* context);
+
+extern int esInit(es::Interface** nameSpace);
+extern void esRegisterInternetProtocol(es::Context* context);
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    Handle<IContext> context(root);
+    Handle<es::Context> context(root);
 
     esRegisterInternetProtocol(context);
 
     // Create resolver object
-    Handle<IResolver> resolver = context->lookup("network/resolver");
+    Handle<es::Resolver> resolver = context->lookup("network/resolver");
 
     // Create internet config object
-    Handle<IInternetConfig> config = context->lookup("network/config");
+    Handle<es::InternetConfig> config = context->lookup("network/config");
 
     // Get loopback address
-    Handle<IInternetAddress> loopback = resolver->getHostByAddress(&InAddrLoopback.addr, sizeof InAddrLoopback, 1);
+    Handle<es::InternetAddress> loopback = resolver->getHostByAddress(&InAddrLoopback.addr, sizeof InAddrLoopback, 1);
 
     // Test connect operations
     for (int i = 0; i < 10; ++i)
     {
-        Handle<ISocket> socket = loopback->socket(AF_INET, ISocket::Datagram, 0);
+        Handle<es::Socket> socket = loopback->socket(AF_INET, es::Socket::Datagram, 0);
         socket->connect(loopback, 1024);
         int port = socket->getLocalPort();
         esReport("%d: port = %d\n", i, port);

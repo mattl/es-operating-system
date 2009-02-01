@@ -34,7 +34,7 @@
 #include <es/base/IMonitor.h>
 #include "line.h"
 
-class Es1370 : public ICallback
+class Es1370 : public es::Callback
 {
     Ref   ref;
     u16   base;

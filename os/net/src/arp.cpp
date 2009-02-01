@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -236,7 +236,7 @@ void Inet4Address::
 StateTentative::start(Inet4Address* a)
 {
     // Set the interface MAC address to this address.
-    Interface* nic = Socket::getInterface(a->getScopeID());
+    NetworkInterface* nic = Socket::getInterface(a->getScopeID());
     ASSERT(nic);
     u8 mac[6];
     nic->getMacAddress(mac);

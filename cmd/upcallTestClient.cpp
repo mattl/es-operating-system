@@ -23,13 +23,13 @@
 #include <es/base/IProcess.h>
 #include <es/usage.h>
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 int main(int argc, char* argv[])
 {
@@ -37,11 +37,11 @@ int main(int argc, char* argv[])
 
     // System()->trace(true);
 
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
-    Handle<IStream> server;
+    Handle<es::Stream> server;
     while (!(server = nameSpace->lookup("device/testServer")))
     {
         // wait server for device registration

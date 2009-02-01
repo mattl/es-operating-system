@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +25,15 @@
 #include <es/handle.h>
 #include "iso9660Stream.h"
 
-IInterface* Iso9660Stream::
+es::Interface* Iso9660Stream::
 getObject()
 {
     addRef();
-    return static_cast<IContext*>(this);
+    return static_cast<es::Context*>(this);
 }
 
 void Iso9660Stream::
-setObject(IInterface* object)
+setObject(es::Interface* object)
 {
     esThrow(EACCES); // [check] appropriate?
 }

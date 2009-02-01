@@ -163,7 +163,7 @@ notify()
 int AtaController::
 issue(AtaDevice* device, u8 cmd, void* buffer, int count, long long lba)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     using namespace Device;
     using namespace DeviceControl;
@@ -293,7 +293,7 @@ int AtaController::
 issue(AtaDevice* device, u8* packet, int packetSize,
       void* buffer, int count, u8 features)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     using namespace Device;
     using namespace DeviceControl;
@@ -530,16 +530,16 @@ invoke(int param)
 }
 
 AtaController::
-AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
+AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, es::Context* ata) :
     cmdPort(cmdPort),
     ctlPort(ctlPort),
     irq(irq),
     dma(dma),
-    thread(run, this, IThread::Highest - (irq - 14))
+    thread(run, this, es::Thread::Highest - (irq - 14))
 {
     device[0] = device[1] = 0;
 
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
 
     if (!softwareReset())
     {
@@ -591,7 +591,7 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
         char name[10];
 
         sprintf(name, "channel%d", i);
-        Handle<IContext> channel = ata->lookup(name);
+        Handle<es::Context> channel = ata->lookup(name);
         if (!channel)
         {
             channel = ata->createSubcontext(name);
@@ -599,13 +599,13 @@ AtaController(int cmdPort, int ctlPort, int irq, AtaDma* dma, IContext* ata) :
             {
                 if (device[0])
                 {
-                    Handle<IBinding> binding = channel->bind("device0",
-                                                             static_cast<IStream*>(device[0]));
+                    Handle<es::Binding> binding = channel->bind("device0",
+                                                             static_cast<es::Stream*>(device[0]));
                 }
                 if (device[1])
                 {
-                    Handle<IBinding> binding = channel->bind("device1",
-                                                             static_cast<IStream*>(device[1]));
+                    Handle<es::Binding> binding = channel->bind("device1",
+                                                             static_cast<es::Stream*>(device[1]));
                 }
             }
             break;
@@ -626,19 +626,19 @@ void* AtaController::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICallback::iid()) == 0)
+    if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

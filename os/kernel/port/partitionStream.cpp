@@ -36,7 +36,7 @@ PartitionStream::
 PartitionStream(PartitionContext* context, int id, u8* entry, u8 entryNo, u32 base, PartitionStream* parent) :
     context(context), id(id), parent(parent), entryNo(entryNo)
 {
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
     getGeometry(&geometry);
 
     boot = byte(entry + PartitionContext::MBR_BootIndicator);
@@ -356,7 +356,7 @@ flush()
 }
 
 //
-// PartitionStream : IDiskManagement
+// PartitionStream : es::DiskManagement
 //
 
 int PartitionStream::
@@ -368,7 +368,7 @@ initialize()
 void PartitionStream::
 getGeometry(Geometry* geometry)
 {
-    Handle<IDiskManagement> dm(context->disk, true);
+    Handle<es::DiskManagement> dm(context->disk, true);
     if (dm)
     {
         dm->getGeometry(geometry);
@@ -478,30 +478,30 @@ setLayout(const Partition* constPartition)
 }
 
 //
-// PartitionStream : IInterface
+// PartitionStream : es::Interface
 //
 
 void* PartitionStream::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, IDiskManagement::iid()) == 0)
+    else if (strcmp(riid, es::DiskManagement::iid()) == 0)
     {
-        objectPtr = static_cast<IDiskManagement*>(this);
+        objectPtr = static_cast<es::DiskManagement*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

@@ -93,7 +93,7 @@ Tap::Tap(const char* interfaceName) :
 
     close(s);
 
-    monitor = IMonitor::createInstance();
+    monitor = es::Monitor::createInstance();
     ASSERT(monitor);
 }
 
@@ -107,13 +107,13 @@ Tap::~Tap()
 }
 
 //
-// IStream
+// es::Stream
 //
 
 int Tap::
 start()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (0 <= sd)
     {
@@ -153,7 +153,7 @@ start()
 int Tap::
 stop()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (0 <= sd)
     {
@@ -220,13 +220,13 @@ write(const void* src, int count)
 }
 
 //
-// INetworkInterface
+// es::NetworkInterface
 //
 
 bool Tap::
 isPromiscuousMode()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (sd < 0)
     {
@@ -243,7 +243,7 @@ isPromiscuousMode()
 void Tap::
 setPromiscuousMode(bool on)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (sd < 0)
     {
@@ -268,7 +268,7 @@ setPromiscuousMode(bool on)
 int Tap::
 addMulticastAddress(const unsigned char macaddr[6])
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (sd < 0)
     {
@@ -286,7 +286,7 @@ addMulticastAddress(const unsigned char macaddr[6])
 int Tap::
 removeMulticastAddress(const unsigned char macaddr[6])
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (sd < 0)
     {
@@ -310,7 +310,7 @@ getMacAddress(unsigned char* mac)
 bool Tap::
 getLinkState()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (sd < 0)
     {
@@ -327,36 +327,36 @@ getLinkState()
 void Tap::
 getStatistics(Statistics* statistics)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     *statistics = this->statistics;
 };
 
 //
-// IInterface
+// es::Interface
 //
 
 void* Tap::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, INetworkInterface::iid()) == 0)
+    else if (strcmp(riid, es::NetworkInterface::iid()) == 0)
     {
-        objectPtr = static_cast<INetworkInterface*>(this);
+        objectPtr = static_cast<es::NetworkInterface*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<INetworkInterface*>(this);
+        objectPtr = static_cast<es::NetworkInterface*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

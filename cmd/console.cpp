@@ -33,8 +33,6 @@
 #include "IEventQueue.h"
 #include "canvas.h"
 
-using namespace es;
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -56,15 +54,15 @@ namespace
     };
 };
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
-class Console : public IStream, public IService
+class Console : public es::Stream, public es::Service
 {
     static const int CR = '\r';
     static const int LF = '\n';
     static const int BS = 0x08; // backspace.
 
-    IMonitor* monitor;
+    es::Monitor* monitor;
     Ref ref;
     bool available; // indicate if this console is available.
 
@@ -72,7 +70,7 @@ class Console : public IStream, public IService
     Ring ring;
 
     // framebuffer
-    Handle<IPageable> framebufferMap;
+    Handle<es::Pageable> framebufferMap;
     void* framebuffer;
     // copy of the framebuffer in the main memory.
     u8* textCache;
@@ -86,7 +84,7 @@ class Console : public IStream, public IService
     u32 bottomRightUpdated;
 
     // FreeType
-    Handle<IPageable> fontMap;
+    Handle<es::Pageable> fontMap;
     void* fontBuffer;
     FT_Library library;
     FT_Face    face;
@@ -228,7 +226,7 @@ class Console : public IStream, public IService
     int getScalableParameters();
     void hideCursor();
     void initializeFramebuffer();
-    void initializeFreeType(Handle<IFile> font);
+    void initializeFreeType(Handle<es::File> font);
     void invalidate(int topLeft, int bottomRight);
 
     void nextPosition(FT_Int shift)
@@ -351,7 +349,7 @@ class Console : public IStream, public IService
     }
 
 public:
-    Console(Handle<IFile> font, int fontSize, u8* keyBuffer, int keyBufferSize) :
+    Console(Handle<es::File> font, int fontSize, u8* keyBuffer, int keyBufferSize) :
         fontSize(fontSize), leftMargin(10), topMargin(5), screenWidth(1024), screenHeight(768),
             dpi(72), baselineSkip(0), ring(keyBuffer, keyBufferSize),
                 cursorBlinking(0), cursor(true), blinkingInterval(30), cursorWidth(fontSize/2),
@@ -406,13 +404,13 @@ public:
     }
     bool isAvailable()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         return available;
     }
     void keyInput(char letter);
     bool suspend()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         while (!available && registered)
         {
             monitor->wait();
@@ -456,7 +454,7 @@ public:
 
     void flush()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         if (updated && available)
         {
             u8* frame = (u8*) framebuffer + topLeftUpdated;
@@ -485,7 +483,7 @@ public:
     //
     bool start()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         if (!available)
         {
             refreshScreen();
@@ -497,7 +495,7 @@ public:
 
     bool stop()
     {
-        Synchronized<IMonitor*> method(monitor);
+        Synchronized<es::Monitor*> method(monitor);
         available = false;
         return true;
     }
@@ -505,23 +503,23 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IStream::iid()) == 0)
+        if (strcmp(riid, es::Stream::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IService::iid()) == 0)
+        else if (strcmp(riid, es::Service::iid()) == 0)
         {
-            objectPtr = static_cast<IService*>(this);
+            objectPtr = static_cast<es::Service*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -556,7 +554,7 @@ public:
 int Console::
 write(const void* src, int count)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     if (!available)
     {
         return -1;
@@ -624,7 +622,7 @@ write(const void* src, int count)
 int Console::
 read(void* dst, int count)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
     if (!available)
     {
         return -1;
@@ -825,13 +823,13 @@ clear(u8* screen)
 void Console::
 initializeFramebuffer()
 {
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
     framebufferMap = nameSpace->lookup("device/framebuffer");
     framebufferSize = framebufferMap->getSize();
     framebuffer = System()->map(0, framebufferSize,
-                             ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                             ICurrentProcess::MAP_SHARED,
+                             es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                             es::CurrentProcess::MAP_SHARED,
                              framebufferMap, 0);
     textCache = new u8[framebufferSize];
     screenCache = new u8[framebufferSize];
@@ -847,15 +845,15 @@ initializeFramebuffer()
 }
 
 void Console::
-initializeFreeType(Handle<IFile> font)
+initializeFreeType(Handle<es::File> font)
 {
     ASSERT(font);
     fontMap = font->getPageable();
     ASSERT(fontMap);
     long long size = font->getSize();
     fontBuffer = System()->map(0, size,
-                             ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                             ICurrentProcess::MAP_SHARED,
+                             es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                             es::CurrentProcess::MAP_SHARED,
                              fontMap, 0);
     TEST(fontBuffer);
 
@@ -967,7 +965,7 @@ writeCharacter(FT_ULong charCode)
 void Console::
 keyInput(char letter)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (0 < ring.getUnused())
     {
@@ -992,7 +990,7 @@ clearLine()
 void Console::
 refreshLine()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     clearLine();
     int pos = lineBuf->getPosition();
@@ -1048,7 +1046,7 @@ invalidate(int topLeft, int bottomRight)
 void Console::
 drawCursor(Color& color, FT_Int width)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     const u8 factor = bpp/8;
     FT_Int x = currentPosition.x;
@@ -1105,7 +1103,7 @@ hideCursor()
 void Console::
 displayCursor()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     if (++cursorBlinking < blinkingInterval)
     {
@@ -1139,7 +1137,7 @@ erase()
 void Console::
 compose(u8* data, CanvasInfo* info)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     int factor = bpp / 8;
     int offset = (screenWidth * info->y + info->x) * factor;
@@ -1193,17 +1191,17 @@ int main(int argc, char* argv[])
 {
     // System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::Context> nameSpace = System()->getRoot();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
     // create console.
     int bufSize = 4096;
     u8* keyBuffer = new u8[bufSize];
-    Handle<IFile> font = nameSpace->lookup("file/fonts/sazanami-mincho.ttf");
+    Handle<es::File> font = nameSpace->lookup("file/fonts/sazanami-mincho.ttf");
     Console* console = new Console(font, 12, keyBuffer, bufSize); // font size is set to 12 pt.
 
     // check if the event queue is ready.
-    Handle<IEventQueue> eventQueue = 0;
+    Handle<es::EventQueue> eventQueue = 0;
     while (!eventQueue)
     {
         eventQueue = nameSpace->lookup("device/event");
@@ -1212,9 +1210,9 @@ int main(int argc, char* argv[])
     }
 
     // register this console.
-    Handle<IContext> device = nameSpace->lookup("device");
+    Handle<es::Context> device = nameSpace->lookup("device");
     ASSERT(device);
-    IBinding* ret = device->bind("console", static_cast<IStream*>(console));
+    es::Binding* ret = device->bind("console", static_cast<es::Stream*>(console));
     ASSERT(ret);
 
     // register canvas
@@ -1238,7 +1236,7 @@ int main(int argc, char* argv[])
     surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
-    device->bind("canvas", static_cast<ICanvasRenderingContext2D*>(canvas));
+    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start console.\n");

@@ -22,9 +22,9 @@
 #include <es/ref.h>
 #include <es/base/IStream.h>
 
-using namespace es;
 
-class Cga : public IStream
+
+class Cga : public es::Stream
 {
     static const u32 BASE = 0x800b8000;
 

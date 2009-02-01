@@ -171,19 +171,19 @@ isReachable(long long timeout)
     return inFamily->isReachable(this, timeout);
 }
 
-IInternetAddress* Inet4Address::
+es::InternetAddress* Inet4Address::
 getNext()
 {
     return 0;
 }
 
-IInterface* Inet4Address::
+es::Interface* Inet4Address::
 socket(int type, int protocol, int port)
 {
     Socket* socket = new Socket(type, protocol);
     if (port == 0)
     {
-        return static_cast<ISocket*>(socket);
+        return static_cast<es::Socket*>(socket);
     }
 
     if (isLocalAddress())
@@ -199,7 +199,7 @@ socket(int type, int protocol, int port)
     {
         socket->connect(this, port);
     }
-    return static_cast<ISocket*>(socket);
+    return static_cast<es::Socket*>(socket);
 }
 
 // IInterface
@@ -207,19 +207,19 @@ void* Inet4Address::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IInternetAddress::iid()) == 0)
+    if (strcmp(riid, es::InternetAddress::iid()) == 0)
     {
-        objectPtr = static_cast<IInternetAddress*>(this);
+        objectPtr = static_cast<es::InternetAddress*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IInternetAddress*>(this);
+        objectPtr = static_cast<es::InternetAddress*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

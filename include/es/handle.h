@@ -57,11 +57,11 @@ class IsInterfaceImp
 
     static const bool IsAbstract = sizeof(isAbstract<T>(0)) == sizeof(YesType);
 
-    // IsObject has to deal with ambiguous 'es::IInterface' base classes.
+    // IsObject has to deal with ambiguous 'es::Interface' base classes.
     // See http://groups.google.com/group/comp.lang.c++.moderated/msg/dd6c4e4d5160bd83
     struct C
     {
-        operator es::IInterface const volatile *() const;
+        operator es::Interface const volatile *() const;
         operator T const volatile *();
     };
 
@@ -69,7 +69,7 @@ class IsInterfaceImp
 
     template <typename U>
     static YesType isObject(T const volatile *, U);
-    static NoType isObject(es::IInterface const volatile *, int);
+    static NoType isObject(es::Interface const volatile *, int);
 
     static const bool IsObject = sizeof(isObject(getObject(), 0)) == sizeof(YesType);
 
@@ -78,21 +78,21 @@ public:
 };
 
 template<>
-class IsInterfaceImp<es::IInterface>
+class IsInterfaceImp<es::Interface>
 {
 public:
     static const bool Value = true;
 };
 
 /** If <code>T</code> is an abstruct interface that inherits
- * <code>es::IInterface</code> then <code>IsInterface</code> inherits from
+ * <code>es::Interface</code> then <code>IsInterface</code> inherits from
  * <code>TrueType</code>, otherwise inherits from <code>FalseType</code>.
  */
 template <typename T>
 struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
 {
     /** <code>true</code> if <code>T</code> is an abstruct interface
-     * that inherits from <code>es::IInterface</code>, otherwise
+     * that inherits from <code>es::Interface</code>, otherwise
      * <code>false</code>.
      */
     static const bool Value = IsInterfaceImp<T>::Value;
@@ -102,8 +102,8 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  * interface pointers.
  * <code>Handle</code> has a template parameter, <code>I</code>,
  * which specifies the type of interface to be used.
- * <code>I</code> must be derived from <code>es::IInterface</code> or
- * <code>es::IInterface</code>.
+ * <code>I</code> must be derived from <code>es::Interface</code> or
+ * <code>es::Interface</code>.
  * <p>
  * <code>Handle</code> is smart in that it manages
  * <code>addRef</code>, <code>release</code> and <code>queryInterface</code>
@@ -119,9 +119,9 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  *     IIterator* iterator = context->list("");
  *     while (iterator->hasNext())
  *     {
- *         es::IInterface* unknown = iterator->next();
- *         IBinding* binding;
- *         unknown->queryInterface(IBinding::iid(),
+ *         es::Interface* unknown = iterator->next();
+ *         es::Binding* binding;
+ *         unknown->queryInterface(es::Binding::iid(),
  *                                 reinterpret_cast&lt;void**&gt;(&binding));
  *         unknown->release();
  *         binding->getName(name, sizeof name);
@@ -267,7 +267,7 @@ public:
     template<class J>
     Handle(const Handle<J>& comptr)
     {
-        es::IInterface* unknown = comptr.get();
+        es::Interface* unknown = comptr.get();
         object = cast(unknown, IsInterface<J>());
     }
 

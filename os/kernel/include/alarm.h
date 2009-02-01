@@ -23,7 +23,7 @@
 #include <es/base/IAlarm.h>
 #include "spinlock.h"
 
-class Alarm : public es::IAlarm
+class Alarm : public es::Alarm
 {
     enum
     {
@@ -44,7 +44,7 @@ class Alarm : public es::IAlarm
     };
 
     Ref             ref;
-    es::ICallback*  callback;
+    es::Callback*  callback;
     unsigned        flags;
     long long       interval;
     long long       start;
@@ -89,7 +89,7 @@ public:
     long long getStartTime();
     bool isEnabled();
     bool isPeriodic();
-    void setCallback(es::ICallback* callback);
+    void setCallback(es::Callback* callback);
     void setEnabled(bool enabled);
     void setPeriodic(bool periodic);
     void setInterval(long long interval);
@@ -101,10 +101,10 @@ public:
     unsigned int release();
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Alarm::Constructor
     {
     public:
-        es::IAlarm* createInstance();
+        es::Alarm* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();

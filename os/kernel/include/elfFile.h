@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,17 +24,15 @@
 #include <es/base/IFile.h>
 #include <es/base/IStream.h>
 
-using namespace es;
-
 class Elf
 {
-    Handle<IFile>   elf;
-    Handle<IStream> stream;
-    Elf32_Ehdr      ehdr;
-    Elf32_Off       sectionNameOffset;
+    Handle<es::File>    elf;
+    Handle<es::Stream>  stream;
+    Elf32_Ehdr          ehdr;
+    Elf32_Off           sectionNameOffset;
 
 public:
-    Elf(IFile* elf);
+    Elf(es::File* elf);
 
     Elf32_Shdr* getShdr(Elf32_Half num, Elf32_Shdr* shdr);
     Elf32_Phdr* getPhdr(Elf32_Half num, Elf32_Phdr* phdr);

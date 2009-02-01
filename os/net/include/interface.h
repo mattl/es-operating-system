@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,23 +23,22 @@
 #include <es/base/IThread.h>
 #include <es/device/INetworkInterface.h>
 #include "inet.h"
-#include "interface.h"
 #include "address.h"
 
 class AddressFamily;
 
-IThread* esCreateThread(void* (*start)(void* param), void* param);
+es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 
 /** This class represents a network interface like Ethernet interface,
  *  loopback interface, etc.
  */
-class Interface
+class NetworkInterface
 {
     static const int MRU = 1518;
 
-    Handle<INetworkInterface>   networkInterface;
+    Handle<es::NetworkInterface>   networkInterface;
 
-    IThread*        thread;
+    es::Thread*     thread;
 
     u8              mac[6];             // MAC address
 
@@ -53,7 +52,7 @@ class Interface
     void* vent()
     {
         Handle<InetMessenger> m = new InetMessenger(&InetReceiver::input, MRU);
-        Handle<IStream> stream = networkInterface;
+        Handle<es::Stream> stream = networkInterface;
         for (;;)
         {
             int len = stream->read(m->fix(MRU), MRU);
@@ -79,7 +78,7 @@ class Interface
 
     static void* run(void* param)
     {
-        Interface* interface = static_cast<Interface*>(param);
+        NetworkInterface* interface = static_cast<NetworkInterface*>(param);
         return interface->vent();
     }
 
@@ -87,7 +86,7 @@ protected:
     Mux             mux;
 
 public:
-    Interface(INetworkInterface* networkInterface, Accessor* accessor, Receiver* receiver) :
+    NetworkInterface(es::NetworkInterface* networkInterface, Accessor* accessor, Receiver* receiver) :
         networkInterface(networkInterface, true),
         thread(0),
         accessor(accessor),
@@ -101,7 +100,7 @@ public:
         Conduit::connectAA(&adapter, &mux);
     }
 
-    INetworkInterface* getNetworkInterface()
+    es::NetworkInterface* getNetworkInterface()
     {
         return networkInterface;    // XXX Check reference count
     }
@@ -146,7 +145,7 @@ public:
     void start()
     {
         thread = esCreateThread(run, this);
-        thread->setPriority(IThread::Highest);
+        thread->setPriority(es::Thread::Highest);
         thread->start();
     }
 

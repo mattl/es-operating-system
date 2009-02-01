@@ -28,7 +28,7 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    IInterface* getConstructor(const char* iid);
+    es::Interface* getConstructor(const char* iid);
 }
 
 ObjectValue* constructInterfaceObject();
@@ -40,10 +40,10 @@ ObjectValue* constructSystemObject(void* system);
 
 class InterfacePointerValue : public ObjectValue
 {
-    es::IInterface* object;
+    es::Interface* object;
 
 public:
-    InterfacePointerValue(es::IInterface* object) :
+    InterfacePointerValue(es::Interface* object) :
         object(object)
     {
     }
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    es::IInterface*& getObject()
+    es::Interface*& getObject()
     {
         return object;
     }

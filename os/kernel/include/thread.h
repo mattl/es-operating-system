@@ -139,11 +139,11 @@ class UpcallRecord
     }
 };
 
-class Thread : public es::IThread, public es::ICallback, public Lock
+class Thread : public es::Thread, public es::Callback, public Lock
 {
     friend class Sched;
     friend class Process;
-    friend int esInit(es::IInterface** nameSpace);
+    friend int esInit(es::Interface** nameSpace);
 
 public:
     static Sched*       sched;      // XXX
@@ -204,7 +204,7 @@ public:
         void update(Thread* thread, int effective);
     };
 
-    class Monitor : public es::IMonitor, public es::ICallback
+    class Monitor : public es::Monitor, public es::Callback
     {
         friend class Thread;
 
@@ -264,10 +264,10 @@ public:
         };
 
         // [Constructor]
-        class Constructor : public IConstructor
+        class Constructor : public es::Monitor::Constructor
         {
         public:
-            es::IMonitor* createInstance();
+            es::Monitor* createInstance();
             void* queryInterface(const char* riid);
             unsigned int addRef();
             unsigned int release();
@@ -388,8 +388,8 @@ public:
     static void reschedule();
 };
 
-class Sched : public es::ICurrentThread, public es::ICurrentProcess, public es::IRuntime,
-              public es::ICallback, public Lock
+class Sched : public es::CurrentThread, public es::CurrentProcess, public es::Runtime,
+              public es::Callback, public Lock
 {
     friend class Core;
     friend class Lock;
@@ -399,7 +399,7 @@ class Sched : public es::ICurrentThread, public es::ICurrentProcess, public es::
     Ref                 ref;
     volatile unsigned   runQueueBits;
     bool                runQueueHint;
-    Thread::Queue       runQueue[es::IThread::Highest + 1];
+    Thread::Queue       runQueue[es::Thread::Highest + 1];
 
     static Ref          numCores;
 
@@ -425,23 +425,23 @@ public:
     // ICurrentProcess
     void exit(int status);
     void* map(void* start, long long length, unsigned int prot, unsigned int flags,
-              es::IPageable* pageable, long long offset);
+              es::Pageable* pageable, long long offset);
     void unmap(void* start, long long length);
-    ICurrentThread* currentThread();
+    es::CurrentThread* currentThread();
     // [check] start must be a function pointer.
-    // IThread* createThread(void* (*start)(void* param), void* param);
-    es::IThread* createThread(void* start, void* param);
+    // es::Thread* createThread(void* (*start)(void* param), void* param);
+    es::Thread* createThread(void* start, void* param);
     void yield();
-    es::IMonitor* createMonitor();
-    es::IContext* getRoot();
-    es::IStream* getInput();
-    es::IStream* getOutput();
-    es::IStream* getError();
+    es::Monitor* createMonitor();
+    es::Context* getRoot();
+    es::Stream* getInput();
+    es::Stream* getOutput();
+    es::Stream* getError();
     void* setBreak(long long increment);
     long long getNow();
     bool trace(bool on);
-    void setCurrent(es::IContext* context);
-    es::IContext* getCurrent();
+    void setCurrent(es::Context* context);
+    es::Context* getCurrent();
 
     // IRuntime
     /* [check] function pointer.

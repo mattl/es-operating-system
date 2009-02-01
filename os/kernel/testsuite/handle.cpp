@@ -25,9 +25,9 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-Handle<IContext> classStore;
+Handle<es::Context> classStore;
 
-class Impl : public IInterface
+class Impl : public es::Interface
 {
 public:
     void* queryInterface(const char* riid)
@@ -46,26 +46,26 @@ public:
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    esReport("%d\n", IsInterface<IInterface>::Value);
-    TEST(IsInterface<IInterface>::Value);
+    esReport("%d\n", IsInterface<es::Interface>::Value);
+    TEST(IsInterface<es::Interface>::Value);
 
-    esReport("%d\n", IsInterface<IAlarm>::Value);
-    TEST(IsInterface<IAlarm>::Value);
+    esReport("%d\n", IsInterface<es::Alarm>::Value);
+    TEST(IsInterface<es::Alarm>::Value);
 
     esReport("%d\n", IsInterface<Impl>::Value);
     TEST(!IsInterface<Impl>::Value);
 
-    Handle<IContext> root(nameSpace);
+    Handle<es::Context> root(nameSpace);
 
-    IInterface* obj = root->lookup("class");
+    es::Interface* obj = root->lookup("class");
     classStore = obj;
     ASSERT(classStore);
 
-    Handle<IContext> a(root);
-    Handle<IContext> b(root);
+    Handle<es::Context> a(root);
+    Handle<es::Context> b(root);
     ASSERT(a == b);
 
     esReport("done.\n");

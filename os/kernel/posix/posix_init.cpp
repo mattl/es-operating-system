@@ -42,8 +42,8 @@
 
 namespace
 {
-    IContext* root;
-    IContext* classStore;
+    es::Context* root;
+    es::Context* classStore;
     u8        loopbackBuffer[64 * 1024];
 };
 
@@ -64,10 +64,10 @@ void esInitThread()
 #endif
 
     // Create default thread
-    Thread* thread = new Thread(0, 0, IThread::Normal);
+    Thread* thread = new Thread(0, 0, es::Thread::Normal);
     thread->thread = pthread_self();
-    thread->state = IThread::RUNNABLE;
-    thread->setPriority(IThread::Normal);
+    thread->state = es::Thread::RUNNABLE;
+    thread->setPriority(es::Thread::Normal);
     pthread_setspecific(Thread::cleanupKey, thread);
 
     // Initialize trivial constructors.
@@ -77,7 +77,7 @@ void esInitThread()
     PartitionContext::initializeConstructor();
 }
 
-int esInit(IInterface** nameSpace)
+int esInit(es::Interface** nameSpace)
 {
     if (root)
     {
@@ -97,10 +97,10 @@ int esInit(IInterface** nameSpace)
     }
 
     // Create class name space
-    IContext* classStore = root->createSubcontext("class");
+    es::Context* classStore = root->createSubcontext("class");
 
-    // Register IMonitor constructor
-    classStore->bind(IMonitor::iid(), IMonitor::getConstructor());
+    // Register es::Monitor constructor
+    classStore->bind(es::Monitor::iid(), es::Monitor::getConstructor());
 
     // Initialize the page table
     size_t size = 64 * 1024;
@@ -122,33 +122,33 @@ int esInit(IInterface** nameSpace)
 #endif
     PageTable::init(arena, size);
 
-    // Register IAlarm constructor
-    classStore->bind(IAlarm::iid(), IAlarm::getConstructor());
+    // Register es::Alarm constructor
+    classStore->bind(es::Alarm::iid(), es::Alarm::getConstructor());
 
-    // Register ICache constructor
+    // Register es::Cache constructor
     Cache::initializeConstructor();
-    ICache::setConstructor(new Cache::Constructor);
-    classStore->bind(ICache::iid(), ICache::getConstructor());
+    es::Cache::setConstructor(new Cache::Constructor);
+    classStore->bind(es::Cache::iid(), es::Cache::getConstructor());
 
-    // Register IPartition constructor
-    classStore->bind(IPartition::iid(), IPartition::getConstructor());
+    // Register es::Partition constructor
+    classStore->bind(es::Partition::iid(), es::Partition::getConstructor());
 
     // Register the global page set
-    classStore->bind(IPageSet::iid(), IPageSet::getConstructor());
+    classStore->bind(es::PageSet::iid(), es::PageSet::getConstructor());
 
     // Create device name space
-    IContext* device = root->createSubcontext("device");
+    es::Context* device = root->createSubcontext("device");
 
     // Register the loopback interface
     Loopback* loopback = new Loopback(loopbackBuffer, sizeof loopbackBuffer);
-    device->bind("loopback", static_cast<IStream*>(loopback));
+    device->bind("loopback", static_cast<es::Stream*>(loopback));
 
 #ifdef __linux__
     // Register the Ethernet interface
     try
     {
         Tap* tap = new Tap("eth1");
-        device->bind("ethernet", static_cast<IStream*>(tap));
+        device->bind("ethernet", static_cast<es::Stream*>(tap));
     }
     catch (...)
     {
@@ -158,7 +158,7 @@ int esInit(IInterface** nameSpace)
     device->release();
 
     // Create network name space
-    IContext* network = root->createSubcontext("network");
+    es::Context* network = root->createSubcontext("network");
     network->release();
 
     return 0;
@@ -177,11 +177,11 @@ void esSleep(s64 timeout)
     struct timespec ts;
     Thread* current(Thread::getCurrentThread());
 
-    current->state = IThread::TIMED_WAITING;
+    current->state = es::Thread::TIMED_WAITING;
     ts.tv_sec = timeout / 10000000;
     ts.tv_nsec = (timeout % 10000000) * 100;
     int err = nanosleep(&ts, 0);
-    current->state = IThread::RUNNABLE;
+    current->state = es::Thread::RUNNABLE;
     if (err)
     {
         esThrow(err);
@@ -199,12 +199,12 @@ void esPanic(const char* file, int line, const char* msg, ...)
     exit(EXIT_FAILURE);
 }
 
-IThread* esCreateThread(void* (*start)(void* param), void* param)
+es::Thread* esCreateThread(void* (*start)(void* param), void* param)
 {
-    return new Thread(start, param, IThread::Normal);
+    return new Thread(start, param, es::Thread::Normal);
 }
 
-IMonitor* esCreateMonitor()
+es::Monitor* esCreateMonitor()
 {
     return new Monitor;
 }

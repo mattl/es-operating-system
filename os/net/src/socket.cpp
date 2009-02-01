@@ -25,12 +25,12 @@
 #include "socket.h"
 #include "visualizer.h"
 
-IResolver*          Socket::resolver = 0;
-IInternetConfig*    Socket::config = 0;
-IContext*           Socket::interface = 0;
+es::Resolver*          Socket::resolver = 0;
+es::InternetConfig*    Socket::config = 0;
+es::Context*           Socket::interface = 0;
 
 AddressFamily::List Socket::addressFamilyList;
-Interface*          Socket::interfaces[Socket::INTERFACE_MAX];
+NetworkInterface*   Socket::interfaces[Socket::INTERFACE_MAX];
 Timer*              Socket::timer;
 
 LoopbackAccessor    LoopbackInterface::loopbackAccessor;
@@ -44,7 +44,7 @@ initialize()
 }
 
 int Socket::
-addInterface(INetworkInterface* networkInterface)
+addInterface(es::NetworkInterface* networkInterface)
 {
     int n;
     for (n = 1; n < Socket::INTERFACE_MAX; ++n)
@@ -61,7 +61,7 @@ addInterface(INetworkInterface* networkInterface)
 
     switch (networkInterface->getType())
     {
-      case INetworkInterface::Ethernet:
+      case es::NetworkInterface::Ethernet:
       {
         DIXInterface* dixInterface = new DIXInterface(networkInterface);
         dixInterface->setScopeID(n);
@@ -85,7 +85,7 @@ addInterface(INetworkInterface* networkInterface)
         dixInterface->start();
         break;
       }
-      case INetworkInterface::Loopback:
+      case es::NetworkInterface::Loopback:
       {
         LoopbackInterface* loopbackInterface = new LoopbackInterface(networkInterface);
         loopbackInterface->setScopeID(n);
@@ -116,11 +116,11 @@ addInterface(INetworkInterface* networkInterface)
 }
 
 void Socket::
-removeInterface(INetworkInterface* networkInterface)
+removeInterface(es::NetworkInterface* networkInterface)
 {
     for (int n = 1; n < Socket::INTERFACE_MAX; ++n)
     {
-        Interface* i = interfaces[n];
+        NetworkInterface* i = interfaces[n];
         if (i && i->networkInterface == networkInterface)
         {
             interfaces[n] = 0;
@@ -261,7 +261,7 @@ setReuseAddress(bool on)
 }
 
 void Socket::
-bind(IInternetAddress* addr, int port)
+bind(es::InternetAddress* addr, int port)
 {
     if (isBound())
     {
@@ -292,7 +292,7 @@ bind(IInternetAddress* addr, int port)
 }
 
 void Socket::
-connect(IInternetAddress* addr, int port)
+connect(es::InternetAddress* addr, int port)
 {
     if (isConnected() || addr == 0 || port == 0)
     {
@@ -316,7 +316,7 @@ connect(IInternetAddress* addr, int port)
         // XXX Reserve anon from others
     }
 
-    IInternetAddress* src = 0;
+    es::InternetAddress* src = 0;
     if (!getLocal())    // XXX any
     {
         src = af->selectSourceAddress(addr);
@@ -375,7 +375,7 @@ connect(IInternetAddress* addr, int port)
     }
 }
 
-ISocket* Socket::
+es::Socket* Socket::
 accept()
 {
     SocketMessenger m(this, &SocketReceiver::accept);
@@ -443,7 +443,7 @@ read(void* dst, int count)
 }
 
 int Socket::
-recvFrom(void* dst, int count, int flags, IInternetAddress** addr, int* port)
+recvFrom(void* dst, int count, int flags, es::InternetAddress** addr, int* port)
 {
     if (!adapter)
     {
@@ -475,7 +475,7 @@ recvFrom(void* dst, int count, int flags, IInternetAddress** addr, int* port)
 }
 
 int Socket::
-sendTo(const void* src, int count, int flags, IInternetAddress* addr, int port)
+sendTo(const void* src, int count, int flags, es::InternetAddress* addr, int port)
 {
     if (!adapter)
     {
@@ -621,7 +621,7 @@ setLoopbackMode(bool disable)
 }
 
 void Socket::
-joinGroup(IInternetAddress* addr)
+joinGroup(es::InternetAddress* addr)
 {
     Address* address = static_cast<Address*>(addr);
     if (address->isMulticast())
@@ -632,7 +632,7 @@ joinGroup(IInternetAddress* addr)
 }
 
 void Socket::
-leaveGroup(IInternetAddress* addr)
+leaveGroup(es::InternetAddress* addr)
 {
     Address* address = static_cast<Address*>(addr);
     if (addresses.contains(address))
@@ -656,7 +656,7 @@ notify()
 }
 
 int Socket::
-add(IMonitor* selector)
+add(es::Monitor* selector)
 {
     esReport("Socket::%s(%p) : %p\n", __func__, selector, this->selector);
     if (!selector || this->selector)
@@ -670,7 +670,7 @@ add(IMonitor* selector)
 }
 
 int Socket::
-remove(IMonitor* selector)
+remove(es::Monitor* selector)
 {
     esReport("Socket::%s(%p) : %p\n", __func__, selector, this->selector);
     if (!selector || selector != this->selector)
@@ -691,19 +691,19 @@ void* Socket::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ISocket::iid()) == 0)
+    if (strcmp(riid, es::Socket::iid()) == 0)
     {
-        objectPtr = static_cast<ISocket*>(this);
+        objectPtr = static_cast<es::Socket*>(this);
     }
-    else if (strcmp(riid, ISelectable::iid()) == 0)
+    else if (strcmp(riid, es::Selectable::iid()) == 0)
     {
-        objectPtr = static_cast<ISelectable*>(this);
+        objectPtr = static_cast<es::Selectable*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ISocket*>(this);
+        objectPtr = static_cast<es::Socket*>(this);
     }
-    else if (strcmp(riid, IMulticastSocket::iid()) == 0 && type == ISocket::Datagram)
+    else if (strcmp(riid, es::MulticastSocket::iid()) == 0 && type == es::Socket::Datagram)
     {
         objectPtr = static_cast<Socket*>(this);
     }
@@ -711,7 +711,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

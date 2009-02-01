@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,15 +40,15 @@ static u8 buf[1514];
 
 int main()
 {
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
 
-    Handle<IContext> context = root;
+    Handle<es::Context> context = root;
     TEST(context);
 
-    Handle<IStream> stream(context->lookup("device/ethernet"));
+    Handle<es::Stream> stream(context->lookup("device/ethernet"));
     TEST(stream);
-    Handle<INetworkInterface> nic = stream;
+    Handle<es::NetworkInterface> nic = stream;
     TEST(nic);
 
     u8 mac[6];
@@ -86,7 +86,7 @@ int main()
         esSleep(10000000);
     }
 
-    INetworkInterface::Statistics stat;
+    es::NetworkInterface::Statistics stat;
     nic->getStatistics(&stat);
     esReport("outOctets: %llu\n", stat.outOctets);
     esReport("outUcastPkts: %u\n", stat.outUcastPkts);

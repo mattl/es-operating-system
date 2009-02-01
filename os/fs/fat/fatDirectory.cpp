@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +32,6 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
 extern "C"
 {
     int ffs(int param);
@@ -58,7 +56,7 @@ isEmpty()
 
     u8 ent[32];
     u16 longName[256];
-    Handle<IStream> dir(cache->getStream());
+    Handle<es::Stream> dir(cache->getStream());
     if (!isRoot())
     {
         dir->setPosition(2 * 32);    // Skip dot and dotdot.
@@ -73,7 +71,7 @@ isRemoved()
 }
 
 bool FatStream::
-findNext(IStream* dir, u8* ent, u16* fileName,
+findNext(es::Stream* dir, u8* ent, u16* fileName,
          int freeRequired, int& freeOffset, u32& freeSize)
 {
     int ord = -1;   // The order of long-name entry
@@ -173,7 +171,7 @@ findNext(IStream* dir, u8* ent, u16* fileName,
 }
 
 bool FatStream::
-findNext(IStream* dir, u8* ent, u16* fileName)
+findNext(es::Stream* dir, u8* ent, u16* fileName)
 {
     int freeOffset;
     u32 freeSize;
@@ -202,11 +200,11 @@ lookup(FatStream* stream, const char*& name)
             continue;
         }
 
-        Handle<IStream> dir(stream->cache->getStream());
+        Handle<es::Stream> dir(stream->cache->getStream());
         bool found;
         FatStream* next = 0;
         {
-            Synchronized<IMonitor*> method(stream->monitor);
+            Synchronized<es::Monitor*> method(stream->monitor);
 
             u8 ent[32];
             u16 longName[256];
@@ -253,7 +251,7 @@ lookup(FatStream* stream, const char*& name)
 FatStream* FatStream::
 create(const char* name, u8 attr)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     u16 fileName[256];
     u16 longName[256];
@@ -298,7 +296,7 @@ create(const char* name, u8 attr)
         // 2) the smallest free numeric-trail number for the short name, and
         // 3) the specified long name does not collide with the existing
         // short names and long names.
-        Handle<IStream> dir(cache->getStream());
+        Handle<es::Stream> dir(cache->getStream());
         while (findNext(dir, ent, longName, freeRequired, freeOffset, freeSize) &&
                numericMap != 0xffffffff)
         {
@@ -388,7 +386,7 @@ create(const char* name, u8 attr)
     }
     FatStream* stream = new FatStream(fileSystem, this, off + freeRequired - 32, oem);
     {
-        Synchronized<IMonitor*> method(stream->monitor);  // this shold be safe.
+        Synchronized<es::Monitor*> method(stream->monitor);  // this shold be safe.
 
         stream->setCreationTime(now);
         stream->setLastWriteTime(now);
@@ -396,7 +394,7 @@ create(const char* name, u8 attr)
 
         if (attr & ATTR_DIRECTORY)  // Create a diretory
         {
-            Handle<IStream> dir(stream->cache->getStream());
+            Handle<es::Stream> dir(stream->cache->getStream());
 
             // dot
             memmove(ent + DIR_Name, FatFileSystem::nameDot, 11);
@@ -426,7 +424,7 @@ create(const char* name, u8 attr)
     // Fill in directory entries.
     //
     u8 sum = fileSystem->getChecksum(stream->fcb);
-    Handle<IStream> dir(cache->getStream());
+    Handle<es::Stream> dir(cache->getStream());
     dir->setPosition(off);
     if (lossy)
     {
@@ -461,7 +459,7 @@ create(const char* name, u8 attr)
 int FatStream::
 remove()
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     const u8 e5 = 0xe5;
 
@@ -479,9 +477,9 @@ remove()
     flags |= Removed;
 
     // Clear the directory entry including the long name entries
-    Handle<IStream> dir(parent->cache->getStream());
+    Handle<es::Stream> dir(parent->cache->getStream());
     {
-        Synchronized<IMonitor*> method(parent->monitor);
+        Synchronized<es::Monitor*> method(parent->monitor);
 
         // XXX dir.setPosition(offset - XXX);
         u8 ent[32];

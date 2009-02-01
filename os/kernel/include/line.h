@@ -26,7 +26,7 @@
 #include <es/device/IAudioFormat.h>
 #include "spinlock.h"
 
-class Line : public es::IStream, public es::IAudioFormat, public es::ICallback
+class Line : public es::Stream, public es::AudioFormat, public es::Callback
 {
     Ref         ref;
 
@@ -35,15 +35,15 @@ class Line : public es::IStream, public es::IAudioFormat, public es::ICallback
     u16         rate;
 
 protected:
-    es::IMonitor*   monitor;
-    es::ICallback*  callback;
+    es::Monitor*   monitor;
+    es::Callback*  callback;
 
     Lock        spinLock;
     u8          buffer[8 * 1024];
     Ring        ring;
 
 public:
-    Line(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    Line(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~Line();
 
     int invoke(int);
@@ -73,7 +73,7 @@ public:
 class InputLine : public Line
 {
 public:
-    InputLine(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~InputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);
@@ -82,7 +82,7 @@ public:
 class OutputLine : public Line
 {
 public:
-    OutputLine(es::ICallback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
     virtual ~OutputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);

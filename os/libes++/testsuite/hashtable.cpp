@@ -35,52 +35,52 @@ int main()
     int i;
     bool contains;
 
-    h.add(IProcess::iid(), 1);
-    h.add(IThread::iid(), 2);
-    h.add(IMonitor::iid(), 3);
+    h.add(es::Process::iid(), 1);
+    h.add(es::Thread::iid(), 2);
+    h.add(es::Monitor::iid(), 3);
 
-    i = h.get(IProcess::iid());
-    printf("h.get(IProcess::iid()) : %d\n", i);
+    i = h.get(es::Process::iid());
+    printf("h.get(es::Process::iid()) : %d\n", i);
     ASSERT(i == 1);
-    i = h.get(IThread::iid());
-    printf("h.get(IThread::iid()) : %d\n", i);
+    i = h.get(es::Thread::iid());
+    printf("h.get(es::Thread::iid()) : %d\n", i);
     ASSERT(i == 2);
-    i = h.get(IMonitor::iid());
-    printf("h.get(IMonitor::iid()) : %d\n", i);
+    i = h.get(es::Monitor::iid());
+    printf("h.get(es::Monitor::iid()) : %d\n", i);
     ASSERT(i == 3);
     try
     {
-        i = h.get(IAlarm::iid());
+        i = h.get(es::Alarm::iid());
     }
     catch (Exception& error)
     {
         ASSERT(error.getResult() == ENOENT);
-        printf("h.get(IAlarm::iid()) : exception %d\n", error.getResult());
+        printf("h.get(es::Alarm::iid()) : exception %d\n", error.getResult());
     }
 
-    contains = h.remove(IMonitor::iid());
-    printf("h.remove(IMonitor::iid()) : %d\n", contains);
+    contains = h.remove(es::Monitor::iid());
+    printf("h.remove(es::Monitor::iid()) : %d\n", contains);
     ASSERT(contains == true);
-    contains = h.remove(IMonitor::iid());
-    printf("h.remove(IMonitor::iid()) : %d\n", contains);
+    contains = h.remove(es::Monitor::iid());
+    printf("h.remove(es::Monitor::iid()) : %d\n", contains);
     ASSERT(contains == false);
-    contains = h.contains(IMonitor::iid());
-    printf("h.contains(IMonitor::iid()) : %d\n", contains);
+    contains = h.contains(es::Monitor::iid());
+    printf("h.contains(es::Monitor::iid()) : %d\n", contains);
     ASSERT(contains == false);
 
     try
     {
-        h.add(IProcess::iid(), 5);
+        h.add(es::Process::iid(), 5);
     }
     catch (Exception& error)
     {
         ASSERT(error.getResult() == EEXIST);
-        printf("h.get(IProcess::iid()) : exception %d\n", error.getResult());
+        printf("h.get(es::Process::iid()) : exception %d\n", error.getResult());
     }
 
     h.clear();
-    contains = h.contains(IProcess::iid());
-    printf("h.contains(IProcess::iid()) : %d\n", contains);
+    contains = h.contains(es::Process::iid());
+    printf("h.contains(es::Process::iid()) : %d\n", contains);
     ASSERT(contains == false);
 
     printf("done.\n");

@@ -21,8 +21,6 @@
 #include <es/exception.h>
 #include "cache.h"
 
-using namespace es;
-
 Page* Cache::
 lookupPage(long long offset)
 {
@@ -385,10 +383,10 @@ put(long long offset, unsigned long long pte)
 }
 
 Cache::
-Cache(Cache::Constructor* cacheFactory, IStream* backingStore, PageSet* pageSet) :
+Cache(Cache::Constructor* cacheFactory, es::Stream* backingStore, PageSet* pageSet) :
     cacheFactory(cacheFactory),
     backingStore(backingStore),
-    file(static_cast<IFile*>(backingStore->queryInterface(IFile::iid()))),
+    file(static_cast<es::File*>(backingStore->queryInterface(es::File::iid()))),
     pageSet(pageSet),
     pageCount(0),
     sectorSize(Page::SIZE)
@@ -425,21 +423,21 @@ invalidate()
     }
 }
 
-IStream* Cache::
+es::Stream* Cache::
 getStream()
 {
     Stream* stream = new Stream(this);
     return stream;
 }
 
-IStream* Cache::
+es::Stream* Cache::
 getInputStream()
 {
     InputStream* stream = new InputStream(this);
     return stream;
 }
 
-IStream* Cache::
+es::Stream* Cache::
 getOutputStream()
 {
     OutputStream* stream = new OutputStream(this);
@@ -456,23 +454,23 @@ void* Cache::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICache::iid()) == 0)
+    if (strcmp(riid, es::Cache::iid()) == 0)
     {
-        objectPtr = static_cast<ICache*>(this);
+        objectPtr = static_cast<es::Cache*>(this);
     }
-    else if (strcmp(riid, IPageable::iid()) == 0)
+    else if (strcmp(riid, es::Pageable::iid()) == 0)
     {
-        objectPtr = static_cast<IPageable*>(this);
+        objectPtr = static_cast<es::Pageable*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICache*>(this);
+        objectPtr = static_cast<es::Cache*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-void fill(IStream* fb, u8 r, u8 g, u8 b)
+void fill(es::Stream* fb, u8 r, u8 g, u8 b)
 {
     u8 pixel[3];
 
@@ -38,7 +38,7 @@ void fill(IStream* fb, u8 r, u8 g, u8 b)
     }
 }
 
-void pattern(IStream* fb)
+void pattern(es::Stream* fb)
 {
     u8 pixel[3];
 
@@ -68,14 +68,14 @@ void pattern(IStream* fb)
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IStream> mouse(root->lookup("device/mouse"));
-    Handle<ICursor> cursor(root->lookup("device/cursor"));
-    Handle<IStream> framebuffer(root->lookup("device/framebuffer"));
-    Handle<IPageable> pageable(framebuffer);
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Stream> mouse(root->lookup("device/mouse"));
+    Handle<es::Cursor> cursor(root->lookup("device/cursor"));
+    Handle<es::Stream> framebuffer(root->lookup("device/framebuffer"));
+    Handle<es::Pageable> pageable(framebuffer);
     TEST(pageable);
 
     fill(framebuffer, 255, 0, 0);

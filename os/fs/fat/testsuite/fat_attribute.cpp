@@ -30,11 +30,11 @@
 
 static int AttrList[] =
 {
-    IFile::ReadOnly,
-    IFile::Hidden,
-    IFile::System,
-    IFile::Directory,
-    IFile::Archive
+    es::File::ReadOnly,
+    es::File::Hidden,
+    es::File::System,
+    es::File::Directory,
+    es::File::Archive
 };
 
 static char AttrName[7][8] =
@@ -74,7 +74,7 @@ static void SetData(u8* buf, long long size)
     }
 }
 
-static long TestReadWrite(IStream* stream)
+static long TestReadWrite(es::Stream* stream)
 {
     u8* writeBuf;
     u8* readBuf;
@@ -110,7 +110,7 @@ static long TestReadWrite(IStream* stream)
     return ret;
 }
 
-static int CheckFileAttributes(IFile* file, unsigned int newAttr)
+static int CheckFileAttributes(es::File* file, unsigned int newAttr)
 {
     PrintAttribute(newAttr);
     int ret = 0;
@@ -123,7 +123,7 @@ static int CheckFileAttributes(IFile* file, unsigned int newAttr)
         ret = -1;
     }
 
-    if (newAttr & IFile::Directory)
+    if (newAttr & es::File::Directory)
     {
 #if 0
         if (ret == 0)
@@ -132,19 +132,19 @@ static int CheckFileAttributes(IFile* file, unsigned int newAttr)
             return -1;
         }
 #endif
-        newAttr &= ~IFile::Directory;
+        newAttr &= ~es::File::Directory;
     }
     if (ret < 0)
     {
         return -1;
     }
 
-    if (newAttr & IFile::ReadOnly)
+    if (newAttr & es::File::ReadOnly)
     {
         TEST(!file->canWrite());
     }
 
-    if (newAttr & IFile::Hidden)
+    if (newAttr & es::File::Hidden)
     {
         TEST(file->isHidden());
     }
@@ -164,10 +164,10 @@ static int CheckFileAttributes(IFile* file, unsigned int newAttr)
     }
     TEST(attr == newAttr);
 
-    Handle<IStream> stream = file->getStream();
+    Handle<es::Stream> stream = file->getStream();
 
     ret = TestReadWrite(stream);
-    if (attr & IFile::ReadOnly)
+    if (attr & es::File::ReadOnly)
     {
         if (ret != WRITE_ERROR)
         {
@@ -186,7 +186,7 @@ static int CheckFileAttributes(IFile* file, unsigned int newAttr)
     return 0;
 }
 
-static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
+static int CheckDirectoryAttributes(Handle<es::File> dir, unsigned int newAttr)
 {
     PrintAttribute(newAttr);
     int ret = 0;
@@ -199,7 +199,7 @@ static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
         ret = -1;
     }
 
-    if (!(newAttr & IFile::Directory))
+    if (!(newAttr & es::File::Directory))
     {
 #if 0
         if (ret == 0)
@@ -208,7 +208,7 @@ static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
             return -1;
         }
 #endif
-        newAttr |= IFile::Directory;
+        newAttr |= es::File::Directory;
     }
     if (ret < 0)
     {
@@ -226,13 +226,13 @@ static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
     }
     TEST(attr == newAttr);
 
-    if (newAttr & IFile::ReadOnly)
+    if (newAttr & es::File::ReadOnly)
     {
         TEST(!dir->canWrite());
-        Handle<IContext> testDir = dir;
+        Handle<es::Context> testDir = dir;
         try
         {
-            Handle<IBinding> file = testDir->bind("test.txt", 0);
+            Handle<es::Binding> file = testDir->bind("test.txt", 0);
             TEST(!file);
         }
         catch (SystemException<EACCES>)
@@ -240,7 +240,7 @@ static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
         }
     }
 
-    if (newAttr & IFile::Hidden)
+    if (newAttr & es::File::Hidden)
     {
         TEST(dir->isHidden());
     }
@@ -256,9 +256,9 @@ static int CheckDirectoryAttributes(Handle<IFile> dir, unsigned int newAttr)
 
 static unsigned int GetNextAttribute(unsigned int attr)
 {
-    unsigned int all = (IFile::ReadOnly | IFile::Hidden |
-                         IFile::System | IFile::Directory |
-                         IFile::Archive);
+    unsigned int all = (es::File::ReadOnly | es::File::Hidden |
+                         es::File::System | es::File::Directory |
+                         es::File::Archive);
 
     ++attr;
     while (attr <= all)
@@ -273,11 +273,11 @@ static unsigned int GetNextAttribute(unsigned int attr)
     return 0;
 }
 
-static long TestFileSystem(Handle<IContext> root)
+static long TestFileSystem(Handle<es::Context> root)
 {
     unsigned int newAttr;
 
-    Handle<IFile>       file;
+    Handle<es::File>       file;
 
     const char* filename = "test";
 
@@ -291,7 +291,7 @@ static long TestFileSystem(Handle<IContext> root)
         TEST(CheckFileAttributes(file, newAttr) == 0);
     }
 
-    Handle<IFile>    dir;
+    Handle<es::File>    dir;
     dir = root->createSubcontext("testDir");
 
     newAttr = 0;
@@ -305,32 +305,32 @@ static long TestFileSystem(Handle<IContext> root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/floppy");
+    Handle<es::Stream> disk = nameSpace->lookup("device/floppy");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("2hd.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("2hd.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         long ret = TestFileSystem(root);
@@ -345,7 +345,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

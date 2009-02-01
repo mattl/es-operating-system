@@ -21,8 +21,6 @@
 #include <es/exception.h>
 #include "cache.h"
 
-using namespace es;
-
 PageSet::
 PageSet(PageSet* parent) :
     parent(parent),
@@ -247,7 +245,7 @@ standby(Page* page)
     }
 }
 
-IPageSet* PageSet::
+es::PageSet* PageSet::
 fork()
 {
     void* objectPtr = 0;
@@ -263,19 +261,19 @@ void* PageSet::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IPageSet::iid()) == 0)
+    if (strcmp(riid, es::PageSet::iid()) == 0)
     {
-        objectPtr = static_cast<IPageSet*>(this);
+        objectPtr = static_cast<es::PageSet*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IPageSet*>(this);
+        objectPtr = static_cast<es::PageSet*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -330,7 +328,7 @@ report()
     esReport("\n");
 }
 
-IPageSet* PageSet::
+es::PageSet* PageSet::
 Constructor::createInstance()
 {
     ASSERT(PageTable::pageSet);
@@ -341,19 +339,19 @@ void* PageSet::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IPageSet::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::PageSet::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IPageSet::IConstructor*>(this);
+        objectPtr = static_cast<es::PageSet::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IPageSet::IConstructor*>(this);
+        objectPtr = static_cast<es::PageSet::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -374,5 +372,5 @@ initializeConstructor()
 {
     // cf. -fthreadsafe-statics for g++
     static Constructor constructor;
-    IPageSet::setConstructor(&constructor);
+    es::PageSet::setConstructor(&constructor);
 }

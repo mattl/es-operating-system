@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ static int Shared;
 
 void* child0(void* param)
 {
-    IMonitor** monitor = (IMonitor**) param;
+    es::Monitor** monitor = (es::Monitor**) param;
 
     monitor[0]->lock();
     monitor[1]->lock();
@@ -42,18 +42,18 @@ void* child0(void* param)
 
 void* test0(void*)
 {
-    IMonitor* monitor[2];
+    es::Monitor* monitor[2];
     monitor[0] = new Monitor();
     monitor[1] = new Monitor();
-    IThread* thread = new Thread(child0,           // thread function
+    es::Thread* thread = new Thread(child0,           // thread function
                                  monitor,          // argument to thread function
-                                 IThread::Normal + 1); // priority
+                                 es::Thread::Normal + 1); // priority
     monitor[0]->lock();
     monitor[0]->lock();
     monitor[0]->lock();
     Shared = 0;
 
-    TEST(thread->getState() == IThread::NEW);
+    TEST(thread->getState() == es::Thread::NEW);
     thread->start();
 
     monitor[0]->unlock();
@@ -71,7 +71,7 @@ void* test0(void*)
     }
 
     void* val = thread->join();
-    TEST(thread->getState() == IThread::TERMINATED);
+    TEST(thread->getState() == es::Thread::TERMINATED);
     thread->release();
     TEST(val == 0);
     monitor[0]->release();
@@ -82,12 +82,12 @@ void* test0(void*)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
-    IThread* thread0 = new Thread(test0,            // thread function
+    es::Thread* thread0 = new Thread(test0,            // thread function
                                   0,                // argument to thread function
-                                  IThread::Normal); // priority
+                                  es::Thread::Normal); // priority
     thread0->start();
     void* val = thread0->join();
     TEST(val == 0);

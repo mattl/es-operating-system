@@ -22,9 +22,9 @@
 #include <es/ref.h>
 #include <es/device/IRtc.h>
 
-using namespace es;
 
-class Rtc : public IRtc
+
+class Rtc : public es::Rtc
 {
     friend DateTime DateTime::getNow();
 

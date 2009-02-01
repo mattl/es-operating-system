@@ -30,10 +30,10 @@
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
     if (argc < 2)
     {
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    Handle<IStream> disk;
+    Handle<es::Stream> disk;
     if (argc < 5)
     {
         disk = new VDisk(static_cast<char*>(argv[1]));
@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
         unsigned int sectorsPerTrack = atoi(argv[4]);
         disk = new VDisk(static_cast<char*>(argv[1]), cylinders, heads, sectorsPerTrack);
     }
-    Handle<IFileSystem> fatFileSystem;
-    fatFileSystem = IFatFileSystem::createInstance();
+    Handle<es::FileSystem> fatFileSystem;
+    fatFileSystem = es::FatFileSystem::createInstance();
     try
     {
         fatFileSystem->mount(disk);

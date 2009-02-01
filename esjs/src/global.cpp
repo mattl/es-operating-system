@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -222,7 +222,7 @@ Value* getErrorInstance(const char* name, const char* message)
 // TODO(ishibashi.kenichi): remove later. Temporary test code.
 Value* createOrderedMap()
 {
-    IOrderedMap* map = new OrderedMap;
+    es::OrderedMap* map = new OrderedMap;
     Register<Value> value = new InterfacePointerValue(map);
     Register<ListValue> list = new ListValue;
     list->push(value);

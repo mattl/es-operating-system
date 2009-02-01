@@ -28,7 +28,7 @@
 #include <es/exception.h>
 #include "core.h"
 
-// ICurrentProcess
+// es::CurrentProcess
 
 void Core::
 exit(int status)
@@ -37,7 +37,7 @@ exit(int status)
 }
 
 void* Core::
-map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+map(void* start, long long length, unsigned int prot, unsigned int flags, es::Pageable* pageable, long long offset)
 {
     return 0;
 }
@@ -47,17 +47,17 @@ unmap(void* start, long long length)
 {
 }
 
-ICurrentThread* Core::
+es::CurrentThread* Core::
 currentThread()
 {
     addRef();
     return this;
 }
 
-IThread* Core::
+es::Thread* Core::
 createThread(void* (*run)(void*), void* param)
 {
-    return new Thread(run, param, IThread::Normal);
+    return new Thread(run, param, es::Thread::Normal);
 }
 
 void Core::
@@ -65,31 +65,31 @@ yield()
 {
 }
 
-IMonitor* Core::
+es::Monitor* Core::
 createMonitor()
 {
     return new Monitor;
 }
 
-IContext* Core::
+es::Context* Core::
 getRoot()
 {
     return 0;
 }
 
-IStream* Core::
+es::Stream* Core::
 getInput()
 {
     return 0;
 }
 
-IStream* Core::
+es::Stream* Core::
 getOutput()
 {
     return 0;
 }
 
-IStream* Core::
+es::Stream* Core::
 getError()
 {
     return 0;
@@ -124,7 +124,7 @@ setStartup(void (*startup)(void* (*start)(void* param), void* param))
 {
 }
 
-// ICurrentThread
+// es::CurrentThread
 
 void Core::
 exit(const void* val)
@@ -149,7 +149,7 @@ setCancelState(int state)
     int err;
     int old;
 
-    if (state & ICurrentThread::CANCEL_ENABLE)
+    if (state & es::CurrentThread::CANCEL_ENABLE)
     {
         err = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE , &old);
     }
@@ -164,10 +164,10 @@ setCancelState(int state)
     switch (old)
     {
       case PTHREAD_CANCEL_ENABLE:
-        old = ICurrentThread::CANCEL_ENABLE;
+        old = es::CurrentThread::CANCEL_ENABLE;
         break;
       case PTHREAD_CANCEL_DISABLE:
-        old = ICurrentThread::CANCEL_DISABLE;
+        old = es::CurrentThread::CANCEL_DISABLE;
       default:
         old = 0;
         break;
@@ -181,7 +181,7 @@ setCancelType(int type)
     int err;
     int old;
 
-    if (type & ICurrentThread::CANCEL_ASYNCHRONOUS)
+    if (type & es::CurrentThread::CANCEL_ASYNCHRONOUS)
     {
         err = pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &old);
     }
@@ -196,10 +196,10 @@ setCancelType(int type)
     switch (old)
     {
       case PTHREAD_CANCEL_ASYNCHRONOUS:
-        old = ICurrentThread::CANCEL_ASYNCHRONOUS;
+        old = es::CurrentThread::CANCEL_ASYNCHRONOUS;
         break;
       case PTHREAD_CANCEL_DEFERRED:
-        old = ICurrentThread::CANCEL_DEFERRED;
+        old = es::CurrentThread::CANCEL_DEFERRED;
       default:
         old = 0;
         break;
@@ -217,23 +217,23 @@ void* Core::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, ICurrentThread::iid()) == 0)
+    if (strcmp(riid, es::CurrentThread::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        objectPtr = static_cast<es::CurrentThread*>(this);
     }
-    else if (strcmp(riid, ICurrentProcess::iid()) == 0)
+    else if (strcmp(riid, es::CurrentProcess::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentProcess*>(this);
+        objectPtr = static_cast<es::CurrentProcess*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<ICurrentThread*>(this);
+        objectPtr = static_cast<es::CurrentThread*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

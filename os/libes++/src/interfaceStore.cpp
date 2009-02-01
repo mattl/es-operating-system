@@ -85,9 +85,9 @@ class InterfaceStore
     struct InterfaceData
     {
         Reflect::Interface meta;
-        IInterface* (*constructorGetter)();                 // for statically created data
-        void (*constructorSetter)(IInterface* constructor); // for statically created data
-        IInterface* constructor;                            // for dynamically created data
+        Interface* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(Interface* constructor); // for statically created data
+        Interface* constructor;                            // for dynamically created data
 
         InterfaceData() :
             constructorGetter(0),
@@ -104,7 +104,7 @@ class InterfaceStore
         {
         }
 
-        IInterface* getConstructor() const
+        Interface* getConstructor() const
         {
             if (constructor)
             {
@@ -117,7 +117,7 @@ class InterfaceStore
             return 0;
         }
 
-        void setConstructor(IInterface* constructor)
+        void setConstructor(Interface* constructor)
         {
             if (constructorSetter)
             {
@@ -140,7 +140,7 @@ public:
         return hashtable.get(iid).meta;
     }
 
-    IInterface* getConstructor(const char* iid)
+    Interface* getConstructor(const char* iid)
     {
         try
         {
@@ -157,7 +157,7 @@ public:
         return hashtable.contains(iid);
     }
 
-    void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+    void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*))
     {
         try
         {
@@ -170,7 +170,7 @@ public:
         }
     }
 
-    void registerConstructor(const char* iid, IInterface* constructor)
+    void registerConstructor(const char* iid, Interface* constructor)
     {
         try
         {
@@ -273,22 +273,22 @@ InterfaceStore(int capacity) :
         registerInterface(global);
     }
 
-    registerConstructor(IAlarm::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IAlarm::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IAlarm::setConstructor));
-    registerConstructor(ICache::iid(),
-                        reinterpret_cast<IInterface* (*)()>(ICache::getConstructor), reinterpret_cast<void (*)(IInterface*)>(ICache::setConstructor));
-    registerConstructor(IMonitor::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IMonitor::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IMonitor::setConstructor));
-    registerConstructor(IPageSet::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IPageSet::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IPageSet::setConstructor));
-    registerConstructor(IProcess::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IProcess::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IProcess::setConstructor));
-    registerConstructor(IFatFileSystem::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IFatFileSystem::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IFatFileSystem::setConstructor));
-    registerConstructor(IIso9660FileSystem::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IIso9660FileSystem::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IIso9660FileSystem::setConstructor));
-    registerConstructor(IPartition::iid(),
-                        reinterpret_cast<IInterface* (*)()>(IPartition::getConstructor), reinterpret_cast<void (*)(IInterface*)>(IPartition::setConstructor));
+    registerConstructor(Alarm::iid(),
+                        reinterpret_cast<Interface* (*)()>(Alarm::getConstructor), reinterpret_cast<void (*)(Interface*)>(Alarm::setConstructor));
+    registerConstructor(Cache::iid(),
+                        reinterpret_cast<Interface* (*)()>(Cache::getConstructor), reinterpret_cast<void (*)(Interface*)>(Cache::setConstructor));
+    registerConstructor(Monitor::iid(),
+                        reinterpret_cast<Interface* (*)()>(Monitor::getConstructor), reinterpret_cast<void (*)(Interface*)>(Monitor::setConstructor));
+    registerConstructor(PageSet::iid(),
+                        reinterpret_cast<Interface* (*)()>(PageSet::getConstructor), reinterpret_cast<void (*)(Interface*)>(PageSet::setConstructor));
+    registerConstructor(Process::iid(),
+                        reinterpret_cast<Interface* (*)()>(Process::getConstructor), reinterpret_cast<void (*)(Interface*)>(Process::setConstructor));
+    registerConstructor(FatFileSystem::iid(),
+                        reinterpret_cast<Interface* (*)()>(FatFileSystem::getConstructor), reinterpret_cast<void (*)(Interface*)>(FatFileSystem::setConstructor));
+    registerConstructor(Iso9660FileSystem::iid(),
+                        reinterpret_cast<Interface* (*)()>(Iso9660FileSystem::getConstructor), reinterpret_cast<void (*)(Interface*)>(Iso9660FileSystem::setConstructor));
+    registerConstructor(Partition::iid(),
+                        reinterpret_cast<Interface* (*)()>(Partition::getConstructor), reinterpret_cast<void (*)(Interface*)>(Partition::setConstructor));
 }
 
 namespace
@@ -301,17 +301,17 @@ Reflect::Interface& getInterface(const char* iid)
     return interfaceStore.getInterface(iid);
 }
 
-IInterface* getConstructor(const char* iid)
+Interface* getConstructor(const char* iid)
 {
     return interfaceStore.getConstructor(iid);
 }
 
-void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*))
 {
     return interfaceStore.registerConstructor(iid, getter, setter);
 }
 
-void registerConstructor(const char* iid, IInterface* constructor)
+void registerConstructor(const char* iid, Interface* constructor)
 {
     return interfaceStore.registerConstructor(iid, constructor);
 }

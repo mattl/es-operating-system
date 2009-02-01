@@ -22,28 +22,28 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFatFileSystem.h>
 
-using namespace es;
 
-int esInit(IInterface** nameSpace);
-IStream* esReportStream();
+
+int esInit(es::Interface** nameSpace);
+es::Stream* esReportStream();
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-void test(Handle<IContext> nameSpace)
+void test(Handle<es::Context> nameSpace)
 {
-    Handle<IIterator>   iter;
-    Handle<IFile>       file;
-    Handle<IStream>     stream;
+    Handle<es::Iterator>   iter;
+    Handle<es::File>       file;
+    Handle<es::Stream>     stream;
     long long           size = 0;
 
     file = nameSpace->lookup("file/binder.elf");
     size = file->getSize();
     esReport("server size: %lld\n", size);
 
-    Handle<IProcess> process;
-    process = IProcess::createInstance();
+    Handle<es::Process> process;
+    process = es::Process::createInstance();
     TEST(process);
     process->setRoot(nameSpace);
     process->setInput(esReportStream());
@@ -56,26 +56,26 @@ void test(Handle<IContext> nameSpace)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
 
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
-    Handle<IContext> classStore(nameSpace->lookup("class"));
+    Handle<es::Context> classStore(nameSpace->lookup("class"));
 
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         nameSpace->bind("file", root);

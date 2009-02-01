@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,11 +27,11 @@ u8 sec[512];
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IStream> floppy = root->lookup("device/floppy");
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Stream> floppy = root->lookup("device/floppy");
 
     memset(sec, 0, 512);
 
@@ -40,8 +40,8 @@ int main()
 
     esDump(sec, 512);
 
-    IDiskManagement::Geometry geo;
-    Handle<IDiskManagement> dm(floppy);
+    es::DiskManagement::Geometry geo;
+    Handle<es::DiskManagement> dm(floppy);
     dm->getGeometry(&geo);
     esReport("%d %d %d %d %lld\n",
              geo.heads,

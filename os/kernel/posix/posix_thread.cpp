@@ -132,9 +132,9 @@ join()
         return const_cast<void*>(errorCode);
       default:
         addRef();
-        current->state = IThread::WAITING;
+        current->state = es::Thread::WAITING;
         int err = pthread_join(thread, &rval);
-        current->state = IThread::RUNNABLE;
+        current->state = es::Thread::RUNNABLE;
         release();
         return (!err) ? rval : NULL;
     }
@@ -210,19 +210,19 @@ void* Thread::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IThread::iid()) == 0)
+    if (strcmp(riid, es::Thread::iid()) == 0)
     {
-        objectPtr = static_cast<IThread*>(this);
+        objectPtr = static_cast<es::Thread*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IThread*>(this);
+        objectPtr = static_cast<es::Thread*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

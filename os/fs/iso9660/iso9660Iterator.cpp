@@ -41,7 +41,7 @@ bool Iso9660Iterator::
 hasNext()
 {
     ASSERT(stream->isDirectory());
-    Handle<IStream> dir(stream->cache->getInputStream());
+    Handle<es::Stream> dir(stream->cache->getInputStream());
     dir->setPosition(ipos);
 
     u8 record[255];
@@ -49,11 +49,11 @@ hasNext()
 }
 
 // Dot and dotdot entries are not reported.
-IInterface* Iso9660Iterator::
+es::Interface* Iso9660Iterator::
 next()
 {
     ASSERT(stream->isDirectory());
-    Handle<IStream> dir(stream->cache->getInputStream());
+    Handle<es::Stream> dir(stream->cache->getInputStream());
     dir->setPosition(ipos);
 
     u8 record[255];
@@ -68,7 +68,7 @@ next()
     {
         next = stream->fileSystem->createStream(stream->fileSystem, stream, ipos - record[DR_Length], record);
     }
-    return static_cast<IBinding*>(next);
+    return static_cast<es::Binding*>(next);
 }
 
 int Iso9660Iterator::
@@ -81,19 +81,19 @@ void* Iso9660Iterator::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IIterator::iid()) == 0)
+    if (strcmp(riid, es::Iterator::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IIterator*>(this);
+        objectPtr = static_cast<es::Iterator*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

@@ -29,9 +29,9 @@
 #include <es/device/INetworkInterface.h>
 #include "posix/core.h"
 
-class Tap : public INetworkInterface, public IStream
+class Tap : public es::NetworkInterface, public es::Stream
 {
-    IMonitor*  monitor;
+    es::Monitor*  monitor;
     Ref        ref;
     int        sd;
     u8         mac[6];
@@ -43,10 +43,10 @@ public:
     Tap(const char* interfaceName);
     ~Tap();
 
-    // INetworkInterface
+    // es::NetworkInterface
     int getType()
     {
-        return INetworkInterface::Ethernet;
+        return es::NetworkInterface::Ethernet;
     }
 
     int start();
@@ -69,7 +69,7 @@ public:
         return 1500;
     }
 
-    // IStream
+    // es::Stream
     long long getPosition()
     {
         return 0;
@@ -104,7 +104,7 @@ public:
     {
     }
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();

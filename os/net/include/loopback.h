@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,10 +43,10 @@ public:
 class LoopbackReceiver :
     public InetReceiver
 {
-    Handle<IStream> stream;
+    Handle<es::Stream> stream;
 
 public:
-    LoopbackReceiver(INetworkInterface* loopbackInterface) :
+    LoopbackReceiver(es::NetworkInterface* loopbackInterface) :
         stream(loopbackInterface, true)
     {
         ASSERT(stream);
@@ -69,16 +69,16 @@ public:
     }
 };
 
-class LoopbackInterface : public Interface
+class LoopbackInterface : public NetworkInterface
 {
     static LoopbackAccessor loopbackAccessor;
 
     LoopbackReceiver        loopbackReceiver;
 
 public:
-    LoopbackInterface(INetworkInterface* loopbackInterface) :
+    LoopbackInterface(es::NetworkInterface* loopbackInterface) :
         loopbackReceiver(loopbackInterface),
-        Interface(loopbackInterface, &loopbackAccessor, &loopbackReceiver)
+        NetworkInterface(loopbackInterface, &loopbackAccessor, &loopbackReceiver)
     {
     }
     ~LoopbackInterface()

@@ -43,7 +43,7 @@ Iso9660Stream(Iso9660FileSystem* fileSystem, Iso9660Stream* parent, u32 offset, 
 
     // XXX interleave
 
-    cache = ICache::createInstance(this);
+    cache = es::Cache::createInstance(this);
     fileSystem->add(this);
 }
 
@@ -152,7 +152,7 @@ flush()
 }
 
 bool Iso9660Stream::
-findNext(IStream* dir, u8* record)
+findNext(es::Stream* dir, u8* record)
 {
     ASSERT(isDirectory());
     while (0 < dir->read(record, 1))
@@ -182,27 +182,27 @@ void* Iso9660Stream::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (isDirectory() && strcmp(riid, IContext::iid()) == 0)
+    if (isDirectory() && strcmp(riid, es::Context::iid()) == 0)
     {
-        objectPtr = static_cast<IContext*>(this);
+        objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, IFile::iid()) == 0)
+    else if (strcmp(riid, es::File::iid()) == 0)
     {
-        objectPtr = static_cast<IFile*>(this);
+        objectPtr = static_cast<es::File*>(this);
     }
-    else if (strcmp(riid, IBinding::iid()) == 0)
+    else if (strcmp(riid, es::Binding::iid()) == 0)
     {
-        objectPtr = static_cast<IBinding*>(this);
+        objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

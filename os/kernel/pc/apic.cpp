@@ -384,19 +384,19 @@ void* Apic::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IPic::iid()) == 0)
+    if (strcmp(riid, es::Pic::iid()) == 0)
     {
-        objectPtr = static_cast<IPic*>(this);
+        objectPtr = static_cast<es::Pic*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IPic*>(this);
+        objectPtr = static_cast<es::Pic*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

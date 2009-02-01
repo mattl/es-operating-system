@@ -25,9 +25,7 @@
 #include <es/ref.h>
 #include <es/base/IProcess.h>
 
-using namespace es;
-
-extern ICurrentProcess* System();
+extern es::CurrentProcess* System();
 
 extern "C"
 {
@@ -49,7 +47,7 @@ int esReport(const char* spec, ...)
 
 int esReportv(const char* spec, va_list list)
 {
-    IStream* output(System()->getOutput());
+    es::Stream* output(System()->getOutput());
     Formatter textOutput(output);
     int count = textOutput.format(spec, list);
     output->release();

@@ -34,7 +34,7 @@
 #include <es/base/IService.h>
 #include "canvas2d.h"
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
@@ -54,10 +54,10 @@ namespace
     };
 };
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
 // C++ version of the figure script
-void figure(ICanvasRenderingContext2D* canvas)
+void figure(es::CanvasRenderingContext2D* canvas)
 {
     // Bar graph
     float top = 50.0f;
@@ -175,13 +175,13 @@ void figure(ICanvasRenderingContext2D* canvas)
 
 int main(int argc, char* argv[])
 {
-    Handle<IContext> nameSpace = System()->getRoot();
+    Handle<es::Context> nameSpace = System()->getRoot();
 
-    Handle<IStream> framebuffer(nameSpace->lookup("device/framebuffer"));
+    Handle<es::Stream> framebuffer(nameSpace->lookup("device/framebuffer"));
     void* mapping = System()->map(0, framebuffer->getSize(),
-                                  ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                                  ICurrentProcess::MAP_SHARED,
-                                  Handle<IPageable>(framebuffer), 0);
+                                  es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                                  es::CurrentProcess::MAP_SHARED,
+                                  Handle<es::Pageable>(framebuffer), 0);
 
     // Register canvas
     cairo_surface_t* surface;
@@ -197,8 +197,8 @@ int main(int argc, char* argv[])
         sizeof(u32) * canvasInfo.width);
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
-    Handle<IContext> device = nameSpace->lookup("device");
-    device->bind("canvas", static_cast<ICanvasRenderingContext2D*>(canvas));
+    Handle<es::Context> device = nameSpace->lookup("device");
+    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start canvas.\n");
@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
     else
     {
         // Create a child process.
-        Handle<IProcess> child = IProcess::createInstance();
+        Handle<es::Process> child = es::Process::createInstance();
         TEST(child);
 
         // Start the child process.
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
             param += argv[i];
             param += " ";
         }
-        Handle<IFile> file = nameSpace->lookup(argv[1]);
+        Handle<es::File> file = nameSpace->lookup(argv[1]);
         if (file)
         {
             child->setRoot(nameSpace);

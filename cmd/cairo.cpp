@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,25 +22,25 @@
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 #define WIDTH   1024
 #define HEIGHT  768
 
-Handle<IPageable> framebuffer;
+Handle<es::Pageable> framebuffer;
 u8* framebufferPtr;
 
 void init()
 {
-    Handle<IContext> root = System()->getRoot();
+    Handle<es::Context> root = System()->getRoot();
     framebuffer = root->lookup("device/framebuffer");
     long long size;
     size = framebuffer->getSize();
     framebufferPtr = (u8*) System()->map(0, size,
-                                 ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                                 ICurrentProcess::MAP_SHARED,
+                                 es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                                 es::CurrentProcess::MAP_SHARED,
                                  framebuffer, 0);
 }
 

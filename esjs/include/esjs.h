@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -3335,6 +3335,6 @@ SourceElements* getProgram();
 void setProgram(SourceElements* elements);
 
 void setSource(const std::string& s);
-void setSource(es::IStream* stream);
+void setSource(es::Stream* stream);
 
 #endif  // NINTENDO_ESJS_H_INCLUDED

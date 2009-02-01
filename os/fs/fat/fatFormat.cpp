@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,8 +30,6 @@
 #include <es/exception.h>
 #include <es/handle.h>
 #include "fatStream.h"
-
-using namespace es;
 
 extern "C"
 {
@@ -101,7 +99,7 @@ namespace
 int FatFileSystem::
 updateBootCode()
 {
-    IDiskManagement::Geometry geometry;
+    es::DiskManagement::Geometry geometry;
 
     getGeometry(partition, &geometry);
 
@@ -144,7 +142,7 @@ updateBootCode()
 }
 
 int FatFileSystem::
-format(IStream* partition)
+format(es::Stream* partition)
 {
     long long size;
     size = partition->getSize();
@@ -174,9 +172,9 @@ format(IStream* partition)
 }
 
 void FatFileSystem::
-getGeometry(IStream* partition, IDiskManagement::Geometry* geometry)
+getGeometry(es::Stream* partition, es::DiskManagement::Geometry* geometry)
 {
-    Handle<IDiskManagement> dm(partition, true);
+    Handle<es::DiskManagement> dm(partition, true);
     if (dm)
     {
         try
@@ -222,10 +220,10 @@ getGeometry(IStream* partition, IDiskManagement::Geometry* geometry)
 //   hidden sectors                      0     0     0     0     0     0     0
 
 int FatFileSystem::
-formatFat12(IStream* partition)
+formatFat12(es::Stream* partition)
 {
-    IDiskManagement::Geometry geometry;
-    IDiskManagement::Partition layout;
+    es::DiskManagement::Geometry geometry;
+    es::DiskManagement::Partition layout;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -298,10 +296,10 @@ formatFat12(IStream* partition)
 }
 
 int FatFileSystem::
-formatFat16(IStream* partition)
+formatFat16(es::Stream* partition)
 {
-    IDiskManagement::Geometry geometry;
-    IDiskManagement::Partition layout;
+    es::DiskManagement::Geometry geometry;
+    es::DiskManagement::Partition layout;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -329,7 +327,7 @@ formatFat16(IStream* partition)
                    (geometry.bytesPerSector / 2);
     ASSERT(0 <= diff);
 
-    Handle<IDiskManagement> dm(partition, true);
+    Handle<es::DiskManagement> dm(partition, true);
     if (dm)
     {
         try
@@ -393,10 +391,10 @@ formatFat16(IStream* partition)
 }
 
 int FatFileSystem::
-formatFat32(IStream* partition)
+formatFat32(es::Stream* partition)
 {
-    IDiskManagement::Geometry geometry;
-    IDiskManagement::Partition layout;
+    es::DiskManagement::Geometry geometry;
+    es::DiskManagement::Partition layout;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -424,7 +422,7 @@ formatFat32(IStream* partition)
                    (geometry.bytesPerSector / 4);
     ASSERT(0 <= diff);
 
-    Handle<IDiskManagement> dm(partition, true);
+    Handle<es::DiskManagement> dm(partition, true);
     if (dm)
     {
         try

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@
 
 void* child1(void* param)
 {
-    IMonitor** monitor = (IMonitor**) param;
+    es::Monitor** monitor = (es::Monitor**) param;
 
     monitor[1]->lock();
     monitor[0]->lock();
@@ -45,14 +45,14 @@ void* child1(void* param)
 
 void* test1(void*)
 {
-    IMonitor* monitor[2];
+    es::Monitor* monitor[2];
     monitor[0] = new Monitor();
     monitor[1] = new Monitor();
-    IThread* thread = new Thread(child1,           // thread function
+    es::Thread* thread = new Thread(child1,           // thread function
                                  monitor,          // argument to thread function
-                                 IThread::Normal + 1); // priority
+                                 es::Thread::Normal + 1); // priority
 
-    TEST(thread->getState() == IThread::NEW);
+    TEST(thread->getState() == es::Thread::NEW);
     monitor[1]->lock();
     thread->start();
     TEST(monitor[1]->wait());
@@ -68,7 +68,7 @@ void* test1(void*)
     monitor[0]->unlock();
 
     void* val = thread->join();
-    TEST(thread->getState() == IThread::TERMINATED);
+    TEST(thread->getState() == es::Thread::TERMINATED);
     thread->release();
     TEST(val == 0);
     monitor[0]->release();
@@ -79,13 +79,13 @@ void* test1(void*)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
     // check tryLock()
-    IThread* thread1 = new Thread(test1,            // thread function
+    es::Thread* thread1 = new Thread(test1,            // thread function
                                   0,                // argument to thread function
-                                  IThread::Normal); // priority
+                                  es::Thread::Normal); // priority
     thread1->start();
     void* val = thread1->join();
     TEST(val == 0);

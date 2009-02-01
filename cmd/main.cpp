@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,9 @@
 #include <es/exception.h>
 #include <es/base/IProcess.h>
 
-using namespace es;
 
-ICurrentProcess* System();
+
+es::CurrentProcess* System();
 
 __thread int testA = 3;
 __thread int testB;
@@ -48,7 +48,7 @@ void dtor(void* ptr)
     esReport("dtor(%p);\n", ptr);
 }
 
-IMonitor* m;
+es::Monitor* m;
 
 void* start(void* param)
 {
@@ -72,7 +72,7 @@ void* start(void* param)
 
 #if 1
     esReport("Let's unwind.\n");
-    ICurrentThread* current(System()->currentThread());
+    es::CurrentThread* current(System()->currentThread());
     current->exit(0);
 
     esPanic(__FILE__, __LINE__, "Ooooops\n");
@@ -94,10 +94,10 @@ int main(int argc, char* argv[])
 
     m = System()->createMonitor();
 
-    IThread* thread = System()->createThread((void*) start, 0);
+    es::Thread* thread = System()->createThread((void*) start, 0);
     thread->start();
 
-    ICurrentThread* current(System()->currentThread());
+    es::CurrentThread* current(System()->currentThread());
     current->sleep(30000000);
     // System()->exit(0);
 
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     esReport("main(): %x %x %x\n", testA, testB, &testA);
 
 #if 1
-    current = reinterpret_cast<ICurrentThread*>(current->queryInterface(IInterface::iid()));
+    current = reinterpret_cast<es::CurrentThread*>(current->queryInterface(es::Interface::iid()));
     try
     {
         current->sleep(30000000);   // Should raise an exception.

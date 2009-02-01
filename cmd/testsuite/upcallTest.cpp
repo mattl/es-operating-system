@@ -23,16 +23,16 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFatFileSystem.h>
 
-using namespace es;
 
-int esInit(IInterface** nameSpace);
-IStream* esReportStream();
+
+int esInit(es::Interface** nameSpace);
+es::Stream* esReportStream();
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile> file)
+void startProcess(Handle<es::Context> root, Handle<es::Process> process, Handle<es::File> file)
 {
     TEST(root);
     TEST(process);
@@ -52,43 +52,43 @@ void startProcess(Handle<IContext> root, Handle<IProcess> process, Handle<IFile>
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
 
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
-    Handle<IContext> classStore(nameSpace->lookup("class"));
+    Handle<es::Context> classStore(nameSpace->lookup("class"));
 
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
         nameSpace->bind("file", root);
 
         // start server process.
-        Handle<IProcess> serverProcess;
-        serverProcess = IProcess::createInstance();
+        Handle<es::Process> serverProcess;
+        serverProcess = es::Process::createInstance();
         TEST(serverProcess);
-        Handle<IFile> serverElf = nameSpace->lookup("file/upcallTest.elf");
+        Handle<es::File> serverElf = nameSpace->lookup("file/upcallTest.elf");
         TEST(serverElf);
         startProcess(nameSpace, serverProcess, serverElf);
 
         // start client process.
-        Handle<IProcess> clientProcess;
-        clientProcess = IProcess::createInstance();
+        Handle<es::Process> clientProcess;
+        clientProcess = es::Process::createInstance();
         TEST(clientProcess);
-        Handle<IFile> clientElf = nameSpace->lookup("file/upcallTestClient.elf");
+        Handle<es::File> clientElf = nameSpace->lookup("file/upcallTestClient.elf");
         TEST(clientElf);
 
         startProcess(nameSpace, clientProcess, clientElf);

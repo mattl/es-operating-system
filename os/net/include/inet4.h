@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -192,13 +192,13 @@ public:
         {
             switch (socket->getSocketType())
             {
-            case ISocket::Stream:
+            case es::Socket::Stream:
                 return &tcpProtocol;
                 break;
-            case ISocket::Datagram:
+            case es::Socket::Datagram:
                 return &udpProtocol;
                 break;
-            case ISocket::Raw:
+            case es::Socket::Raw:
                 return &inProtocol;
                 break;
             default:
@@ -216,11 +216,11 @@ public:
         {
             switch (socket->getSocketType())
             {
-            case ISocket::Stream:
+            case es::Socket::Stream:
                 port = &tcpLast;
                 mux = &tcpLocalPortMux;
                 break;
-            case ISocket::Datagram:
+            case es::Socket::Datagram:
                 port = &udpLast;
                 mux = &udpLocalPortMux;
                 break;
@@ -247,12 +247,12 @@ public:
         return 0;
     }
 
-    IInternetAddress* selectSourceAddress(IInternetAddress* dst)
+    es::InternetAddress* selectSourceAddress(es::InternetAddress* dst)
     {
         return selectSourceAddress(dynamic_cast<Inet4Address*>(dst));
     }
 
-    void addInterface(Interface* interface);
+    void addInterface(NetworkInterface* interface);
 
     Inet4Address* getAddress(InAddr addr, int scopeID = 0);
     void addAddress(Inet4Address* address);

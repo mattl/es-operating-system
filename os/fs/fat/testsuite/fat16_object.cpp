@@ -27,7 +27,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static long TestFileSystem(Handle<IContext> root)
+static long TestFileSystem(Handle<es::Context> root)
 {
     const char* dirList[] =
     {
@@ -47,7 +47,7 @@ static long TestFileSystem(Handle<IContext> root)
     for (i = 0; i < sizeof(dirList)/sizeof(dirList[0]); ++i)
     {
         len = strlen(dirList[i]);
-        Handle<IFile> file = root->lookup(dirList[i]);
+        Handle<es::File> file = root->lookup(dirList[i]);
         if (!file)
         {
             file = root->createSubcontext(dirList[i]);
@@ -80,41 +80,41 @@ static long TestFileSystem(Handle<IContext> root)
 
 int main(void)
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
 #ifdef __es__
-    Handle<IStream> disk = nameSpace->lookup("device/ata/channel0/device0");
+    Handle<es::Stream> disk = nameSpace->lookup("device/ata/channel0/device0");
 #else
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
 #endif
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace, totalSpace);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
         root = fatFileSystem->getRoot();
 
-        Handle<IBinding> binding = root;
+        Handle<es::Binding> binding = root;
         TEST(binding);
 
-        Handle<IInterface> interface = binding->getObject();
+        Handle<es::Interface> interface = binding->getObject();
         TEST(interface);
 
-        Handle<IContext> object = interface;
+        Handle<es::Context> object = interface;
         TEST(object);
         TEST(object == root);
 
@@ -134,7 +134,7 @@ int main(void)
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

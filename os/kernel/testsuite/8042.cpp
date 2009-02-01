@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,12 +22,12 @@
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IStream> keyboard(root->lookup("device/keyboard"));
-    Handle<IStream> mouse(root->lookup("device/mouse"));
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Stream> keyboard(root->lookup("device/keyboard"));
+    Handle<es::Stream> mouse(root->lookup("device/mouse"));
 
     esReport("done.\n");    // for testing
 

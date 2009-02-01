@@ -29,8 +29,6 @@
 #include <es/device/IIso9660FileSystem.h>
 #include <es/device/IPartition.h>
 
-using namespace es;
-
 unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 {
     // Base classes first
@@ -82,51 +80,51 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 struct ConstructorAccessors
 {
     const char* iid;
-    IInterface* (*constructorGetter)();                 // for statically created data
-    void (*constructorSetter)(IInterface* constructor); // for statically created data
+    es::Interface* (*constructorGetter)();                 // for statically created data
+    void (*constructorSetter)(es::Interface* constructor); // for statically created data
 };
 
 ConstructorAccessors defaultConstructorInfo[] =
 {
     {
-        IAlarm::iid(),
-        reinterpret_cast<IInterface* (*)()>(IAlarm::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IAlarm::setConstructor)
+        es::Alarm::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Alarm::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Alarm::setConstructor)
     },
     {
-        ICache::iid(),
-        reinterpret_cast<IInterface* (*)()>(ICache::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(ICache::setConstructor)
+        es::Cache::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Cache::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Cache::setConstructor)
     },
     {
-        IMonitor::iid(),
-        reinterpret_cast<IInterface* (*)()>(IMonitor::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IMonitor::setConstructor)
+        es::Monitor::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Monitor::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Monitor::setConstructor)
     },
     {
-        IPageSet::iid(),
-        reinterpret_cast<IInterface* (*)()>(IPageSet::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IPageSet::setConstructor)
+        es::PageSet::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::PageSet::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::PageSet::setConstructor)
     },
     {
-        IProcess::iid(),
-        reinterpret_cast<IInterface* (*)()>(IProcess::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IProcess::setConstructor)
+        es::Process::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Process::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Process::setConstructor)
     },
     {
-        IFatFileSystem::iid(),
-        reinterpret_cast<IInterface* (*)()>(IFatFileSystem::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IFatFileSystem::setConstructor)
+        es::FatFileSystem::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::FatFileSystem::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::FatFileSystem::setConstructor)
     },
     {
-        IIso9660FileSystem::iid(),
-        reinterpret_cast<IInterface* (*)()>(IIso9660FileSystem::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IIso9660FileSystem::setConstructor)
+        es::Iso9660FileSystem::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Iso9660FileSystem::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Iso9660FileSystem::setConstructor)
     },
     {
-        IPartition::iid(),
-        reinterpret_cast<IInterface* (*)()>(IPartition::getConstructor),
-        reinterpret_cast<void (*)(IInterface*)>(IPartition::setConstructor)
+        es::Partition::iid(),
+        reinterpret_cast<es::Interface* (*)()>(es::Partition::getConstructor),
+        reinterpret_cast<void (*)(es::Interface*)>(es::Partition::setConstructor)
     },
 };
 
@@ -149,7 +147,7 @@ registerInterface(Reflect::Module& module)
 }
 
 void InterfaceStore::
-registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*))
+registerConstructor(const char* iid, es::Interface* (*getter)(), void (*setter)(es::Interface*))
 {
     InterfaceData* data = &hashtable.get(iid);
     data->constructorGetter = getter;
@@ -206,19 +204,19 @@ void* InterfaceStore::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IInterfaceStore::iid()) == 0)
+    if (strcmp(riid, es::InterfaceStore::iid()) == 0)
     {
-        objectPtr = static_cast<IInterfaceStore*>(this);
+        objectPtr = static_cast<es::InterfaceStore*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IInterfaceStore*>(this);
+        objectPtr = static_cast<es::InterfaceStore*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

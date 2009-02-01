@@ -24,9 +24,9 @@
 #include <es.h>
 #include "mps.h"
 
-using namespace es;
 
-class Apic : public IPic, public ICallback
+
+class Apic : public es::Pic, public es::Callback
 {
     // Memory mapped registers for accessing IOAPIC registers
     static const int IOREGSEL  = 0x00 / sizeof(u32);

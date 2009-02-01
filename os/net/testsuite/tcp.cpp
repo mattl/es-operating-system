@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,8 +35,8 @@
 #include "udp.h"
 #include "visualizer.h"
 
-extern int esInit(IInterface** nameSpace);
-extern IThread* esCreateThread(void* (*start)(void* param), void* param);
+extern int esInit(es::Interface** nameSpace);
+extern es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 
 Conduit* inProtocol;
 
@@ -54,7 +54,7 @@ static void* serve(void* param)
     Socket* listening = static_cast<Socket*>(param);
     listening->listen(5);
 
-    ISocket* socket;
+    es::Socket* socket;
     while ((socket = listening->accept()) == 0)
     {
     }
@@ -81,9 +81,9 @@ static void* serve(void* param)
 
 int main()
 {
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
-    Handle<IContext> context(root);
+    Handle<es::Context> context(root);
 
     Socket::initialize();
 
@@ -104,12 +104,12 @@ int main()
     InFamily* inFamily = new InFamily;
     esReport("AF: %d\n", inFamily->getAddressFamily());
 
-    Socket raw(AF_INET, ISocket::Raw);
+    Socket raw(AF_INET, es::Socket::Raw);
     inProtocol = inFamily->getProtocol(&raw);
     visualize();
 
     // Setup loopback interface
-    Handle<INetworkInterface> loopbackInterface = context->lookup("device/loopback");
+    Handle<es::NetworkInterface> loopbackInterface = context->lookup("device/loopback");
     int scopeID = Socket::addInterface(loopbackInterface);
 
     // Register localhost address
@@ -118,17 +118,17 @@ int main()
     localhost->start();
     visualize();
 
-    Socket socket(AF_INET, ISocket::Stream);
+    Socket socket(AF_INET, es::Socket::Stream);
     socket.bind(localhost, 54);
     visualize();
 
-    IThread* thread = esCreateThread(serve, &socket);
+    es::Thread* thread = esCreateThread(serve, &socket);
     thread->start();
 
     esSleep(10000000);
 
     // Test bind and connect operations
-    Socket client(AF_INET, ISocket::Stream);
+    Socket client(AF_INET, es::Socket::Stream);
     client.bind(localhost, 53);
     visualize();
 

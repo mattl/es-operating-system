@@ -30,15 +30,15 @@
 #include <es/base/IInterfaceStore.h>
 #include <es/naming/IContext.h>
 
-using namespace es;
+
 
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-ICurrentProcess* System();
+es::CurrentProcess* System();
 
-class TestServer : public IStream
+class TestServer : public es::Stream
 {
 public:
     Ref     ref;
@@ -99,19 +99,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IStream::iid()) == 0)
+        if (strcmp(riid, es::Stream::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IStream*>(this);
+            objectPtr = static_cast<es::Stream*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -138,16 +138,16 @@ int main(int argc, char* argv[])
 
     // System()->trace(true);
 
-    Handle<IContext> nameSpace = System()->getRoot();
-    Handle<ICurrentThread> currentThread = System()->currentThread();
+    Handle<es::Context> nameSpace = System()->getRoot();
+    Handle<es::CurrentThread> currentThread = System()->currentThread();
 
     // create server
     TestServer* server = new TestServer;
 
     // register this console.
-    Handle<IContext> device = nameSpace->lookup("device");
+    Handle<es::Context> device = nameSpace->lookup("device");
     ASSERT(device);
-    IBinding* ret = device->bind("testServer", static_cast<IStream*>(server));
+    es::Binding* ret = device->bind("testServer", static_cast<es::Stream*>(server));
     ASSERT(ret);
     ret->release();
 

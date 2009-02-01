@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -112,7 +112,7 @@ lookupPathName(const char*& name)
         size_t fileNameLen = utf16len(fileName);
 
         bool found;
-        Handle<IStream> dir(stream->cache->getInputStream());
+        Handle<es::Stream> dir(stream->cache->getInputStream());
         u8 record[255];
         while (found = findNext(dir, record))
         {
@@ -168,7 +168,7 @@ getName(char* name, int len)
     {
         u8 record[255];
 
-        Handle<IStream> dir(parent->cache->getInputStream());
+        Handle<es::Stream> dir(parent->cache->getInputStream());
         dir->setPosition(offset);
         if (!parent->findNext(dir, record))
         {

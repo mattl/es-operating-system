@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -363,7 +363,7 @@ void InFamily::joinGroup(Inet4Address* address)
 
     // Add address to NIC mcast table
     int scopeID = address->getScopeID();
-    Interface* interface = Socket::getInterface(scopeID);
+    NetworkInterface* interface = Socket::getInterface(scopeID);
     if (interface)
     {
         u8 mac[6];
@@ -388,7 +388,7 @@ void InFamily::leaveGroup(Inet4Address* address)
 
     // Remove address from NIC mcast table
     int scopeID = address->getScopeID();
-    Interface* interface = Socket::getInterface(scopeID);
+    NetworkInterface* interface = Socket::getInterface(scopeID);
     if (interface)
     {
         u8 mac[6];
@@ -397,7 +397,7 @@ void InFamily::leaveGroup(Inet4Address* address)
     }
 }
 
-void InFamily::addInterface(Interface* interface)
+void InFamily::addInterface(NetworkInterface* interface)
 {
     int scopeID = interface->getScopeID();
 

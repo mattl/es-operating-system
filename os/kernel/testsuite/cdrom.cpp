@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@
 
 u8 buf[2048];
 
-void testDisk(Handle<IStream> disk, long count)
+void testDisk(Handle<es::Stream> disk, long count)
 {
     esReport("disk->read: ");
     long rc = disk->read(buf, count, 0x8000);
@@ -39,34 +39,34 @@ void testDisk(Handle<IStream> disk, long count)
 
 int main()
 {
-    IInterface* nameSpace;
+    es::Interface* nameSpace;
     esInit(&nameSpace);
 
-    Handle<IContext> root(nameSpace);
-    Handle<IIterator> iterator = root->list("device/ata");
+    Handle<es::Context> root(nameSpace);
+    Handle<es::Iterator> iterator = root->list("device/ata");
     while (iterator->hasNext())
     {
         char name[16];
 
-        Handle<IBinding> binding = iterator->next();
+        Handle<es::Binding> binding = iterator->next();
         binding->getName(name, sizeof name);
         esReport("%s\n", name);
 
-        Handle<IContext> channel = binding->getObject();
-        Handle<IIterator> iterator = channel->list("");
+        Handle<es::Context> channel = binding->getObject();
+        Handle<es::Iterator> iterator = channel->list("");
         while (iterator->hasNext())
         {
-            Handle<IBinding> binding = iterator->next();
+            Handle<es::Binding> binding = iterator->next();
             binding->getName(name, sizeof name);
             esReport("    %s\n", name);
         }
     }
 
-    Handle<IStream> disk(root->lookup("device/ata/channel1/device0"));
+    Handle<es::Stream> disk(root->lookup("device/ata/channel1/device0"));
     TEST(disk.get());
 
-    IDiskManagement::Geometry geo;
-    Handle<IDiskManagement> dm(disk);
+    es::DiskManagement::Geometry geo;
+    Handle<es::DiskManagement> dm(disk);
     TEST(dm);
     dm->getGeometry(&geo);
     esReport("%d %d %d %d %lld\n",

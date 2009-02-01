@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,17 +35,15 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-using namespace es;
-
-IInterface* FatStream::
+es::Interface* FatStream::
 getObject()
 {
     addRef();
-    return static_cast<IContext*>(this);
+    return static_cast<es::Context*>(this);
 }
 
 void FatStream::
-setObject(IInterface* object)
+setObject(es::Interface* object)
 {
     esThrow(EACCES); // [check]
 }
@@ -53,7 +51,7 @@ setObject(IInterface* object)
 int FatStream::
 getName(char* name, int len)
 {
-    Synchronized<IMonitor*> method(monitor);
+    Synchronized<es::Monitor*> method(monitor);
 
     int ord = -1;   // The order of long-name entry
     u8 sum;
@@ -71,9 +69,9 @@ getName(char* name, int len)
     }
 
     // Clear the directory entry including the long name entries
-    Handle<IStream> dir(parent->cache->getStream());
+    Handle<es::Stream> dir(parent->cache->getStream());
     {
-        Synchronized<IMonitor*> method(parent->monitor);
+        Synchronized<es::Monitor*> method(parent->monitor);
 
         u8 fcb[32];
         while (dir->read(fcb, 32) == 32 && fcb[0] != 0x00)

@@ -60,12 +60,12 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    void registerConstructor(const char* iid, IInterface* (*getter)(), void (*setter)(IInterface*));
+    void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*));
     const char* getUniqueIdentifier(const char* iid);
 }
 
 using namespace es;
-using namespace posix;
+using namespace es::posix;
 
 namespace
 {
@@ -95,19 +95,19 @@ Broker<callRemote, MAX_IMPORT> importer;
 
 class Process;
 
-class System : public ICurrentProcess
+class System : public es::CurrentProcess
 {
     int         sockfd; // usually 3. the control socket
     int         randfd;
 
     Ref         ref;
-    IStream*    in;     // 0
-    IStream*    out;    // 1
-    IStream*    error;  // 2
-    IContext*   root;
-    IContext*   current;
+    es::Stream*    in;     // 0
+    es::Stream*    out;    // 1
+    es::Stream*    error;  // 2
+    es::Context*   root;
+    es::Context*   current;
 
-    IThread*    front;
+    es::Thread*    front;
 
     std::map<pid_t, Process*>   children;   // list of child started processes. TODO must be guarded by a lock
 
@@ -116,10 +116,10 @@ class System : public ICurrentProcess
 
     struct ExportKey
     {
-        IInterface* object;
+        es::Interface* object;
         const char* iid;
     public:
-        ExportKey(IInterface* object, const char* iid) :
+        ExportKey(es::Interface* object, const char* iid) :
             object(object),
             iid(getUniqueIdentifier(iid))
         {
@@ -130,7 +130,7 @@ class System : public ICurrentProcess
             return hash(object, iid);
         }
 
-        static size_t hash(IInterface* object, const char* iid)
+        static size_t hash(es::Interface* object, const char* iid)
         {
             return reinterpret_cast<size_t>(iid) ^ reinterpret_cast<size_t>(object);
         }
@@ -139,7 +139,7 @@ class System : public ICurrentProcess
     struct Exported
     {
         Ref         ref;
-        IInterface* object;
+        es::Interface* object;
         const char* iid;
         u64         check;
         bool        doRelease;
@@ -308,19 +308,19 @@ public:
         if (0 <= cmd.forkRes.root.object)
         {
             esInitThread();
-            root = static_cast<IContext*>(importObject(cmd.forkRes.root, IContext::iid(), false));
+            root = static_cast<es::Context*>(importObject(cmd.forkRes.root, es::Context::iid(), false));
         }
         else
         {
             // Root
-            IInterface* unknown = 0;
+            es::Interface* unknown = 0;
             esInit(&unknown);
-            root = reinterpret_cast<IContext*>(unknown->queryInterface(IContext::iid()));
+            root = reinterpret_cast<es::Context*>(unknown->queryInterface(es::Context::iid()));
 
             // Register the pseudo framebuffer device
             try
             {
-                Handle<IContext> device = root->lookup("device");
+                Handle<es::Context> device = root->lookup("device");
                 VideoBuffer* buffer = new VideoBuffer(device);
             }
             catch (...)
@@ -329,7 +329,7 @@ public:
 
             int fd = open(".", O_RDONLY);
             Dir* file = new Dir(fd, "");
-            root->bind("file", static_cast<IContext*>(file));
+            root->bind("file", static_cast<es::Context*>(file));
             file->release();
         }
         initializeConstructors();
@@ -337,11 +337,11 @@ public:
         // Import in, out, error
         if (0 <= cmd.forkRes.in.object)
         {
-            in = static_cast<IStream*>(importObject(cmd.forkRes.in, IStream::iid(), false));
+            in = static_cast<es::Stream*>(importObject(cmd.forkRes.in, es::Stream::iid(), false));
         }
         else
         {
-            in = new Stream(0);
+            in = new posix::Stream(0);
 #ifdef __linux__
             struct termio tty;
             ioctl(0, TCGETA, &tty);
@@ -351,24 +351,24 @@ public:
         }
         if (0 <= cmd.forkRes.out.object)
         {
-            out = static_cast<IStream*>(importObject(cmd.forkRes.out, IStream::iid(), false));
+            out = static_cast<es::Stream*>(importObject(cmd.forkRes.out, es::Stream::iid(), false));
         }
         else
         {
-            out = new Stream(1);
+            out = new posix::Stream(1);
         }
         if (0 <= cmd.forkRes.error.object)
         {
-            error = static_cast<IStream*>(importObject(cmd.forkRes.error, IStream::iid(), false));
+            error = static_cast<es::Stream*>(importObject(cmd.forkRes.error, es::Stream::iid(), false));
         }
         else
         {
-            error = new Stream(2);
+            error = new posix::Stream(2);
         }
 
         if (0 <= cmd.forkRes.current.object)
         {
-            current = static_cast<IContext*>(importObject(cmd.forkRes.current, IContext::iid(), false));
+            current = static_cast<es::Context*>(importObject(cmd.forkRes.current, es::Context::iid(), false));
         }
         else
         {
@@ -380,8 +380,8 @@ public:
         {
             try
             {
-                ICanvasRenderingContext2D* canvas = static_cast<ICanvasRenderingContext2D*>(importObject(cmd.forkRes.document, ICanvasRenderingContext2D::iid(), false));
-                Handle<IContext> device = root->lookup("device");
+                es::CanvasRenderingContext2D* canvas = static_cast<es::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, es::CanvasRenderingContext2D::iid(), false));
+                Handle<es::Context> device = root->lookup("device");
                 device->bind("canvas", canvas);
             }
             catch (...)
@@ -444,9 +444,9 @@ public:
         ::exit(status);
     }
 
-    void* map(void* start, long long length, unsigned int prot, unsigned int flags, IPageable* pageable, long long offset)
+    void* map(void* start, long long length, unsigned int prot, unsigned int flags, es::Pageable* pageable, long long offset)
     {
-        if (Stream* stream = dynamic_cast<Stream*>(pageable))
+        if (posix::Stream* stream = dynamic_cast<posix::Stream*>(pageable))
         {
             return mmap(const_cast<void*>(start), length, prot, flags, stream->getfd(), offset);
         }
@@ -461,12 +461,12 @@ public:
         munmap(const_cast<void*>(start), length);
     }
 
-    ICurrentThread* currentThread()
+    es::CurrentThread* currentThread()
     {
     }
 
-    // IThread* esCreateThread(void* (*start)(void* param), void* param)
-    IThread* createThread(void* start, void* param) // [check] start must be a function pointer.
+    // es::Thread* esCreateThread(void* (*start)(void* param), void* param)
+    es::Thread* createThread(void* start, void* param) // [check] start must be a function pointer.
     {
         return esCreateThread((void* (*)(void*)) start, (void*) param);
     }
@@ -475,12 +475,12 @@ public:
     {
     }
 
-    IMonitor* createMonitor()
+    es::Monitor* createMonitor()
     {
         return esCreateMonitor();
     }
 
-    IContext* getRoot()
+    es::Context* getRoot()
     {
         if (root)
         {
@@ -489,7 +489,7 @@ public:
         return root;
     }
 
-    IStream* getInput()
+    es::Stream* getInput()
     {
         if (in)
         {
@@ -498,7 +498,7 @@ public:
         return in;
     }
 
-    IStream* getOutput()
+    es::Stream* getOutput()
     {
         if (out)
         {
@@ -507,7 +507,7 @@ public:
         return out;
     }
 
-    IStream* getError()
+    es::Stream* getError()
     {
         if (error)
         {
@@ -516,7 +516,7 @@ public:
         return error;
     }
 
-    void setCurrent(IContext* context)
+    void setCurrent(es::Context* context)
     {
         if (context)
         {
@@ -529,7 +529,7 @@ public:
         current = context;
     }
 
-    IContext* getCurrent()
+    es::Context* getCurrent()
     {
         if (current)
         {
@@ -566,19 +566,19 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, ICurrentProcess::iid()) == 0)
+        if (strcmp(riid, es::CurrentProcess::iid()) == 0)
         {
-            objectPtr = static_cast<ICurrentProcess*>(this);
+            objectPtr = static_cast<es::CurrentProcess*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<ICurrentProcess*>(this);
+            objectPtr = static_cast<es::CurrentProcess*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -617,7 +617,7 @@ public:
         return v;
     }
 
-    int exportObject(IInterface* object, const char* iid, Capability* cap, bool param)
+    int exportObject(es::Interface* object, const char* iid, Capability* cap, bool param)
     {
         if (!object)
         {
@@ -632,9 +632,9 @@ public:
             // posix implementation directory transfers Dir, File, and Stream file descriptors
             if (Dir* dir = dynamic_cast<Dir*>(object))
             {
-                if (strcmp(iid, IContext::iid()) == 0 ||
-                    strcmp(iid, IFile::iid()) == 0 ||
-                    strcmp(iid, IBinding::iid()) == 0)
+                if (strcmp(iid, es::Context::iid()) == 0 ||
+                    strcmp(iid, es::File::iid()) == 0 ||
+                    strcmp(iid, es::Binding::iid()) == 0)
                 {
                     cap->pid = getpid();
                     cap->object = dup(dir->getfd());
@@ -642,9 +642,9 @@ public:
                     return cap->object;
                 }
             }
-            else if (File* file = dynamic_cast<File*>(object))
+            else if (posix::File* file = dynamic_cast<posix::File*>(object))
             {
-                if (strcmp(iid, IFile::iid()) == 0 || strcmp(iid, IBinding::iid()) == 0)
+                if (strcmp(iid, es::File::iid()) == 0 || strcmp(iid, es::Binding::iid()) == 0)
                 {
                     cap->pid = getpid();
                     cap->object = dup(file->getfd());
@@ -652,9 +652,9 @@ public:
                     return cap->object;
                 }
             }
-            else if (Stream* stream = dynamic_cast<Stream*>(object))
+            else if (posix::Stream* stream = dynamic_cast<posix::Stream*>(object))
             {
-                if (strcmp(iid, IStream::iid()) == 0 || strcmp(iid, IPageable::iid()) == 0)
+                if (strcmp(iid, es::Stream::iid()) == 0 || strcmp(iid, es::Pageable::iid()) == 0)
                 {
                     cap->pid = getpid();
                     cap->object = dup(stream->getfd());
@@ -662,9 +662,9 @@ public:
                     return cap->object;
                 }
             }
-            else if (Iterator* iterator= dynamic_cast<Iterator*>(object))
+            else if (posix::Iterator* iterator= dynamic_cast<posix::Iterator*>(object))
             {
-                if (strcmp(iid, IIterator::iid()) == 0)
+                if (strcmp(iid, es::Iterator::iid()) == 0)
                 {
                     cap->pid = getpid();
                     cap->object = dup(iterator->getfd());
@@ -690,7 +690,7 @@ public:
         return i;
     }
 
-    IInterface* importObject(const Capability& cap, const char* iid, bool param)
+    es::Interface* importObject(const Capability& cap, const char* iid, bool param)
     {
 #ifdef VERBOSE
         printf("importObject: %s : %d\n", iid, param);
@@ -703,21 +703,21 @@ public:
 
         if (cap.check == 0)
         {
-            if (strcmp(iid, IContext::iid()) == 0)
+            if (strcmp(iid, es::Context::iid()) == 0)
             {
-                return static_cast<IContext*>(new Dir(cap.object, ""));
+                return static_cast<es::Context*>(new Dir(cap.object, ""));
             }
-            if (strcmp(iid, IFile::iid()) == 0)
+            if (strcmp(iid, es::File::iid()) == 0)
             {
-                return static_cast<IFile*>(new File(cap.object, ""));
+                return static_cast<es::File*>(new posix::File(cap.object, ""));
             }
-            if (strcmp(iid, IStream::iid()) == 0)
+            if (strcmp(iid, es::Stream::iid()) == 0)
             {
-                return static_cast<IStream*>(new Stream(cap.object));
+                return static_cast<es::Stream*>(new posix::Stream(cap.object));
             }
-            if (strcmp(iid, IIterator::iid()) == 0)   // TODO bk
+            if (strcmp(iid, es::Iterator::iid()) == 0)   // TODO bk
             {
-                return static_cast<IIterator*>(new Iterator(cap.object));
+                return static_cast<es::Iterator*>(new posix::Iterator(cap.object));
             }
             return 0;
         }
@@ -733,7 +733,7 @@ public:
                 imported->addRef();
                 importedTable.put(i);
             }
-            IInterface* object = reinterpret_cast<IInterface*>(&(importer.getInterfaceTable())[i]);
+            es::Interface* object = reinterpret_cast<es::Interface*>(&(importer.getInterfaceTable())[i]);
             return object;
         }
         else
@@ -842,7 +842,7 @@ public:
             }
         }
 
-        const char* iid = IInterface::iid();
+        const char* iid = es::Interface::iid();
         Method** object = reinterpret_cast<Method**>(exported->object);
         int argc = hdr->paramCount;
         Any* argv = hdr->getArgv();
@@ -916,7 +916,7 @@ public:
                     }
                     break;
                 case Any::TypeObject:
-                    if (static_cast<IInterface*>(*argp))
+                    if (static_cast<es::Interface*>(*argp))
                     {
                         // Import object
                         Capability* cap = reinterpret_cast<Capability*>(data);
@@ -924,7 +924,7 @@ public:
                         {
                             cap->object = *fdv++;   // TODO check range
                         }
-                        IInterface* object = importObject(*cap, iid, true); // TODO false?
+                        es::Interface* object = importObject(*cap, iid, true); // TODO false?
                         *argp = Any(object);
                         data += sizeof(Capability);
                     }
@@ -960,7 +960,7 @@ public:
                 iid = type.getInterface().getFullyQualifiedName();
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (static_cast<IInterface*>(*argp))
+                if (static_cast<es::Interface*>(*argp))
                 {
                     // Import object
                     Capability* cap = reinterpret_cast<Capability*>(data);
@@ -968,7 +968,7 @@ public:
                     {
                         cap->object = *fdv++;   // TODO check range
                     }
-                    IInterface* object = importObject(*cap, iid, true); // TODO false?
+                    es::Interface* object = importObject(*cap, iid, true); // TODO false?
                     *argp = Any(object);
                     data += sizeof(Capability);
                 }
@@ -1055,7 +1055,7 @@ public:
             iid = returnType.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject:
-            res.result = apply(argc, argv, (IInterface* (*)()) ((*object)[methodNumber]));
+            res.result = apply(argc, argv, (es::Interface* (*)()) ((*object)[methodNumber]));
             break;
         case Ent::TypeArray:
         case Ent::SpecVoid:
@@ -1064,7 +1064,7 @@ public:
         }
 
         // Export object
-        if (res.result.getType() == Any::TypeObject && static_cast<IInterface*>(res.result))
+        if (res.result.getType() == Any::TypeObject && static_cast<es::Interface*>(res.result))
         {
             Capability* cap = static_cast<Capability*>(resultPtr);
             exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
@@ -1289,14 +1289,14 @@ public:
 
 System current __attribute__((init_priority(1001)));    // After InterfaceStore
 
-class Process : public IProcess
+class Process : public es::Process
 {
     Ref         ref;
-    IStream*    in;     // 0
-    IStream*    out;    // 1
-    IStream*    error;  // 2
-    IContext*   root;
-    IContext*   current;
+    es::Stream*    in;     // 0
+    es::Stream*    out;    // 1
+    es::Stream*    error;  // 2
+    es::Context*   root;
+    es::Context*   current;
     int         pid;
 
     bool        exited;
@@ -1341,7 +1341,7 @@ public:
         }
     }
 
-    // IProcess
+    // es::Process
     void kill()
     {
     }
@@ -1350,22 +1350,22 @@ public:
     {
     }
 
-    void start(IFile* file)
+    void start(es::File* file)
     {
         start(file, "");
     }
 
-    void start(IFile* file, const char* arguments)
+    void start(es::File* file, const char* arguments)
     {
         // export in, out, error, root, context to child
         cmd.cmd = CMD_FORK_RES;
         cmd.pid = getpid();
-        ::current.exportObject(in, IStream::iid(), &cmd.in, false);
-        ::current.exportObject(out, IStream::iid(), &cmd.out, false);
-        ::current.exportObject(error, IStream::iid(), &cmd.error, false);
-        ::current.exportObject(current, IContext::iid(), &cmd.current, false);
-        ::current.exportObject(root, IContext::iid(), &cmd.root, false);
-        ::current.exportObject(0, IInterface::iid(), &cmd.document, false);
+        ::current.exportObject(in, es::Stream::iid(), &cmd.in, false);
+        ::current.exportObject(out, es::Stream::iid(), &cmd.out, false);
+        ::current.exportObject(error, es::Stream::iid(), &cmd.error, false);
+        ::current.exportObject(current, es::Context::iid(), &cmd.current, false);
+        ::current.exportObject(root, es::Context::iid(), &cmd.root, false);
+        ::current.exportObject(0, es::Interface::iid(), &cmd.document, false);
 #ifdef VERBOSE
         cmd.report();
 #endif
@@ -1462,7 +1462,7 @@ public:
             }
             argv[argc] = 0;
 
-            int fd = ((File*) file)->getfd();
+            int fd = ((posix::File*) file)->getfd();
             lseek(fd, 0, SEEK_SET);
 #if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3)
             fexecve(fd, argv, environ);
@@ -1491,7 +1491,7 @@ public:
         return exited;
     }
 
-    void setRoot(IContext* context)
+    void setRoot(es::Context* context)
     {
         if (context)
         {
@@ -1504,7 +1504,7 @@ public:
         root = context;
     }
 
-    void setInput(IStream* stream)
+    void setInput(es::Stream* stream)
     {
         if (stream)
         {
@@ -1517,7 +1517,7 @@ public:
         in = stream;
     }
 
-    void setOutput(IStream* stream)
+    void setOutput(es::Stream* stream)
     {
         if (stream)
         {
@@ -1530,7 +1530,7 @@ public:
         out = stream;
     }
 
-    void setError(IStream* stream)
+    void setError(es::Stream* stream)
     {
         if (stream)
         {
@@ -1543,7 +1543,7 @@ public:
         error = stream;
     }
 
-    void setCurrent(IContext* context)
+    void setCurrent(es::Context* context)
     {
         if (context)
         {
@@ -1556,7 +1556,7 @@ public:
         current = context;
     }
 
-    IContext* getRoot()
+    es::Context* getRoot()
     {
         if (root)
         {
@@ -1565,7 +1565,7 @@ public:
         return root;
     }
 
-    IStream* getInput()
+    es::Stream* getInput()
     {
         if (in)
         {
@@ -1574,7 +1574,7 @@ public:
         return in;
     }
 
-    IStream* getOutput()
+    es::Stream* getOutput()
     {
         if (out)
         {
@@ -1583,7 +1583,7 @@ public:
         return out;
     }
 
-    IStream* getError()
+    es::Stream* getError()
     {
         if (error)
         {
@@ -1592,7 +1592,7 @@ public:
         return error;
     }
 
-    IContext* getCurrent()
+    es::Context* getCurrent()
     {
         if (current)
         {
@@ -1601,23 +1601,23 @@ public:
         return current;
     }
 
-    // IInterface
+    // es::Interface
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, IProcess::iid()) == 0)
+        if (strcmp(riid, es::Process::iid()) == 0)
         {
-            objectPtr = static_cast<IProcess*>(this);
+            objectPtr = static_cast<es::Process*>(this);
         }
-        else if (strcmp(riid, IInterface::iid()) == 0)
+        else if (strcmp(riid, es::Interface::iid()) == 0)
         {
-            objectPtr = static_cast<IProcess*>(this);
+            objectPtr = static_cast<es::Process*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<IInterface*>(objectPtr)->addRef();
+        static_cast<es::Interface*>(objectPtr)->addRef();
         return objectPtr;
     }
 
@@ -1645,10 +1645,10 @@ public:
     }
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::Process::Constructor
     {
     public:
-        IProcess* createInstance();
+        es::Process* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -1657,7 +1657,7 @@ public:
     static void initializeConstructor();
 };
 
-IProcess* Process::Constructor::createInstance()
+es::Process* Process::Constructor::createInstance()
 {
     return new Process;
 }
@@ -1665,19 +1665,19 @@ IProcess* Process::Constructor::createInstance()
 void* Process::Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IProcess::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Process::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess::IConstructor*>(this);
+        objectPtr = static_cast<es::Process::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IProcess::IConstructor*>(this);
+        objectPtr = static_cast<es::Process::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -1723,7 +1723,7 @@ void* System::focus(void* param)
                 ::exit(EXIT_FAILURE);
             }
             // TODO check ThreadCredential and if the thread is created already, just ad fd to its socketMap.
-            IThread* thread = ::current.createThread((void*) servant, (void*) epfd);
+            es::Thread* thread = ::current.createThread((void*) servant, (void*) epfd);
             // client is not waited right now - sendmsg(fd, CMD_CHAN_RES);
             thread->start();
             break;
@@ -1753,7 +1753,7 @@ void* System::focus(void* param)
 
 void System::addChild(pid_t pid, Process* child)
 {
-    // TODO Synchronized<es::IMonitor*> method(monitor);
+    // TODO Synchronized<es::Monitor*> method(monitor);
 
     child->addRef();
     children.insert(std::pair<pid_t, Process*>(pid, child));
@@ -1761,7 +1761,7 @@ void System::addChild(pid_t pid, Process* child)
 
 Process* System::getChild(pid_t pid)
 {
-    // TODO Synchronized<es::IMonitor*> method(monitor);
+    // TODO Synchronized<es::Monitor*> method(monitor);
 
     std::map<pid_t, Process*>::iterator it = children.find(pid);
     if (it != children.end())
@@ -1773,7 +1773,7 @@ Process* System::getChild(pid_t pid)
 
 void System::removeChild(pid_t pid)
 {
-    // TODO Synchronized<es::IMonitor*> method(monitor);
+    // TODO Synchronized<es::Monitor*> method(monitor);
 
     std::map<pid_t, Process*>::iterator it = children.find(pid);
     if (it != children.end())
@@ -1851,7 +1851,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     // In the following implementation, we assume no out or inout attribute is
     // used for parameters.
     // Set up parameters
-    const char* iid = IInterface::iid();
+    const char* iid = es::Interface::iid();
 
     // Set this
     *argp++ = Any(static_cast<intptr_t>(0));  // to be filled by the server
@@ -1901,9 +1901,9 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 break;
             case Any::TypeObject:
-                if (static_cast<IInterface*>(*argp))
+                if (static_cast<es::Interface*>(*argp))
                 {
-                    IInterface* object = static_cast<IInterface*>(*argp);
+                    es::Interface* object = static_cast<es::Interface*>(*argp);
                     current.exportObject(object, iid, capp, true);  // TODO check error
                     iop->iov_base = capp;
                     iop->iov_len = sizeof(Capability);
@@ -1954,7 +1954,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject: {
-            IInterface* object = va_arg(ap, IInterface*);
+            es::Interface* object = va_arg(ap, es::Interface*);
             *argp = Any(object);
             if (object)
             {
@@ -2113,7 +2113,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                             static_cast<int32_t>(rpcmsg.argv[2]));
                     break;
                 case Any::TypeObject:
-                    if (static_cast<IInterface*>(res->result))
+                    if (static_cast<es::Interface*>(res->result))
                     {
                         Capability* cap = static_cast<Capability*>(res->getData());
                         if (cap->check == 0 && (fdmax - fdp) == 1)
@@ -2130,7 +2130,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     }
                     else
                     {
-                        res->result = Any(static_cast<IInterface*>(0));
+                        res->result = Any(static_cast<es::Interface*>(0));
                     }
                     break;
                 }
@@ -2158,7 +2158,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 iid = returnType.getInterface().getFullyQualifiedName();
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (static_cast<IInterface*>(res->result))
+                if (static_cast<es::Interface*>(res->result))
                 {
                     Capability* cap = static_cast<Capability*>(res->getData());
                     if (cap->check == 0 && (fdmax - fdp) == 1)
@@ -2175,7 +2175,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 else
                 {
-                    res->result = Any(static_cast<IInterface*>(0));
+                    res->result = Any(static_cast<es::Interface*>(0));
                 }
                 break;
             case Ent::TypeArray:
@@ -2232,12 +2232,12 @@ void* System::servant(void* param)
 void initializeConstructors()
 {
     static Process::Constructor constructor;
-    IProcess::setConstructor(&constructor);
+    es::Process::setConstructor(&constructor);
 }
 
 }   // namespace
 
-ICurrentProcess* System()
+es::CurrentProcess* System()
 {
     return &current;
 }

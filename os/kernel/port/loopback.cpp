@@ -44,7 +44,7 @@
  */
 
 //
-// IStream
+// es::Stream
 //
 long long Loopback::
 getPosition()
@@ -129,30 +129,30 @@ void Loopback::flush()
 }
 
 //
-// IInterface
+// es::Interface
 //
 
 void* Loopback::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IStream::iid()) == 0)
+    if (strcmp(riid, es::Stream::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, INetworkInterface::iid()) == 0)
+    else if (strcmp(riid, es::NetworkInterface::iid()) == 0)
     {
-        objectPtr = static_cast<INetworkInterface*>(this);
+        objectPtr = static_cast<es::NetworkInterface*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IStream*>(this);
+        objectPtr = static_cast<es::Stream*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 

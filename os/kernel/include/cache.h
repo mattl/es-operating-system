@@ -92,8 +92,8 @@ class Page
 
     void set(Cache* cache, long long offset);
 
-    int fill(es::IStream* backingStore);
-    int sync(es::IStream* backingStore, int sectorSize);
+    int fill(es::Stream* backingStore);
+    int sync(es::Stream* backingStore, int sectorSize);
 
     /** Updates lastUpdated to the current time.
      */
@@ -249,10 +249,10 @@ public:
     friend class PageSet;
     friend class Stream;
 
-    friend int esInit(es::IInterface** nameSpace);
+    friend int esInit(es::Interface** nameSpace);
 };
 
-class PageSet : public es::IPageSet
+class PageSet : public es::PageSet
 {
     typedef List<Page, &Page::linkChain>    PageList;
 
@@ -320,7 +320,7 @@ public:
     // IPageSet
     /** Creates a new PageSet from this page set.
      */
-    IPageSet* fork();
+    es::PageSet* fork();
 
     /** Reserves the reserveCount pages from parent.
      */
@@ -338,10 +338,10 @@ public:
     friend class Stream;
 
     // [Constructor]
-    class Constructor : public IConstructor
+    class Constructor : public es::PageSet::Constructor
     {
     public:
-        IPageSet* createInstance();
+        es::PageSet* createInstance();
         void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
@@ -350,14 +350,14 @@ public:
     static void initializeConstructor();
 };
 
-class Cache : public es::ICache, public es::IPageable
+class Cache : public es::Cache, public es::Pageable
 {
     Monitor             monitor;
     Ref                 ref;
     Link<Cache>         link;
 
 public:
-    class Constructor : public IConstructor
+    class Constructor : public es::Cache::Constructor
     {
         typedef List<Cache, &Cache::link>       CacheList;
 
@@ -383,8 +383,8 @@ public:
         Constructor();
         ~Constructor();
 
-        es::ICache* createInstance(es::IStream* backingStore);
-        es::ICache* createInstance(es::IStream* backingStore, es::IPageSet* pageSet);
+        es::Cache* createInstance(es::Stream* backingStore);
+        es::Cache* createInstance(es::Stream* backingStore, es::PageSet* pageSet);
 
         // IInterface
         void* queryInterface(const char* riid);
@@ -404,8 +404,8 @@ private:
     static const s64 DelayedWrite = 150000000;  // 15 [sec]
 
     Constructor*        cacheFactory;
-    es::IStream*        backingStore;
-    es::IFile*          file;
+    es::Stream*        backingStore;
+    es::File*          file;
     PageSet*            pageSet;
     long long           size;
     PageList            changedList;
@@ -470,7 +470,7 @@ private:
     unsigned long decPageCount();
 
 public:
-    Cache(Cache::Constructor* cacheFactory, es::IStream* backingStore, PageSet* pageSet);
+    Cache(Cache::Constructor* cacheFactory, es::Stream* backingStore, PageSet* pageSet);
     ~Cache();
 
     // IPageable
@@ -482,9 +482,9 @@ public:
     /** Creates a new stream for this cache.
      * @return  IStream interface pointer
      */
-    es::IStream* getStream();
-    es::IStream* getInputStream();
-    es::IStream* getOutputStream();
+    es::Stream* getStream();
+    es::Stream* getInputStream();
+    es::Stream* getOutputStream();
 
     long long getSize();
 
@@ -522,7 +522,7 @@ public:
     static void initializeConstructor();
 };
 
-class Stream : public es::IStream, public es::IFile
+class Stream : public es::Stream, public es::File
 {
     Ref         ref;
     Cache*      cache;
@@ -557,8 +557,8 @@ public:
     bool isFile();
     bool isHidden();
     int getName(char* name, int nameLength);
-    es::IPageable* getPageable();
-    es::IStream* getStream();
+    es::Pageable* getPageable();
+    es::Stream* getStream();
 
     void* queryInterface(const char* riid);
     unsigned int addRef();

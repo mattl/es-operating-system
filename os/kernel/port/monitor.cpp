@@ -268,7 +268,7 @@ wait()
 
     Thread* current = getCurrentThread();
     ASSERT(current);
-    ASSERT(current->state == IThread::RUNNING);
+    ASSERT(current->state == es::Thread::RUNNING);
     if (owner != current)
     {
         Core::splX(x);
@@ -304,13 +304,13 @@ wait(s64 timeout)
 
     Thread* current = getCurrentThread();
     ASSERT(current);
-    ASSERT(current->state == IThread::RUNNING);
+    ASSERT(current->state == es::Thread::RUNNING);
 
     bool expired(false);
     if (0 < timeout)
     {
         current->alarm.setInterval(timeout);
-        current->alarm.setCallback(static_cast<ICallback*>(this));
+        current->alarm.setCallback(static_cast<es::Callback*>(this));
         current->alarm.setEnabled(true);
         wait();
         expired = current->condSleep(0);
@@ -344,23 +344,23 @@ void* Thread::Monitor::
 queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IMonitor::iid()) == 0)
+    if (strcmp(riid, es::Monitor::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        objectPtr = static_cast<es::Monitor*>(this);
     }
-    else if (strcmp(riid, ICallback::iid()) == 0)
+    else if (strcmp(riid, es::Callback::iid()) == 0)
     {
-        objectPtr = static_cast<ICallback*>(this);
+        objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor*>(this);
+        objectPtr = static_cast<es::Monitor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -382,7 +382,7 @@ release()
     return count;
 }
 
-IMonitor* Thread::Monitor::
+es::Monitor* Thread::Monitor::
 Constructor::createInstance()
 {
     return new Monitor;
@@ -392,19 +392,19 @@ void* Thread::Monitor::
 Constructor::queryInterface(const char* riid)
 {
     void* objectPtr;
-    if (strcmp(riid, IMonitor::IConstructor::iid()) == 0)
+    if (strcmp(riid, es::Monitor::Constructor::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+        objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
-    else if (strcmp(riid, IInterface::iid()) == 0)
+    else if (strcmp(riid, es::Interface::iid()) == 0)
     {
-        objectPtr = static_cast<IMonitor::IConstructor*>(this);
+        objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<IInterface*>(objectPtr)->addRef();
+    static_cast<es::Interface*>(objectPtr)->addRef();
     return objectPtr;
 }
 
@@ -425,5 +425,5 @@ initializeConstructor()
 {
     // cf. -fthreadsafe-statics for g++
     static Constructor constructor;
-    IMonitor::setConstructor(&constructor);
+    es::Monitor::setConstructor(&constructor);
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2008 Chis Dan Ionut
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,11 +29,11 @@
 
 u8 pixels[1024 * 768 * BPP];
 
-using namespace es;
 
-extern ICurrentProcess* System();
 
-void fill(IStream* fb, u8 r, u8 g, u8 b)
+extern es::CurrentProcess* System();
+
+void fill(es::Stream* fb, u8 r, u8 g, u8 b)
 {
     for (long offset = 0; offset < 1024 * 768 * BPP; offset += 1024 * 768)
     {
@@ -58,7 +58,7 @@ void fill(void* fb, u8 r, u8 g, u8 b)
     }
 }
 
-void pattern(IStream* fb)
+void pattern(es::Stream* fb)
 {
     long offset;
     for (offset = 0; offset < 1024 * 256 * BPP; offset += BPP)
@@ -88,15 +88,15 @@ void pattern(IStream* fb)
 
 int main()
 {
-    Handle<IContext> root = System()->getRoot();
-    Handle<IStream> mouse(root->lookup("device/mouse"));
-    Handle<ICursor> cursor(root->lookup("device/cursor"));
-    Handle<IStream> framebuffer(root->lookup("device/framebuffer"));
+    Handle<es::Context> root = System()->getRoot();
+    Handle<es::Stream> mouse(root->lookup("device/mouse"));
+    Handle<es::Cursor> cursor(root->lookup("device/cursor"));
+    Handle<es::Stream> framebuffer(root->lookup("device/framebuffer"));
 
     void* mapping = System()->map(0, framebuffer->getSize(),
-                                  ICurrentProcess::PROT_READ | ICurrentProcess::PROT_WRITE,
-                                  ICurrentProcess::MAP_SHARED,
-                                  Handle<IPageable>(framebuffer), 0);
+                                  es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                                  es::CurrentProcess::MAP_SHARED,
+                                  Handle<es::Pageable>(framebuffer), 0);
 
     fill(mapping, 255, 0, 0);
 #ifndef __es__

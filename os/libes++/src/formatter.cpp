@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@
 #include <es/types.h>
 #include <es/formatter.h>
 
-using namespace es;
+
 
 extern "C"
 {
@@ -39,7 +39,7 @@ Formatter(int (*putc)(int, void*), void* opt) throw() :
 }
 
 Formatter::
-Formatter(IStream* stream) throw() :
+Formatter(es::Stream* stream) throw() :
     mode(Mode::C), putc(streamPutc), opt(stream)
 {
     stream->addRef();
@@ -65,7 +65,7 @@ Formatter::
 {
     if (putc == streamPutc)
     {
-        IStream* stream(static_cast<IStream*>(opt));
+        es::Stream* stream(static_cast<es::Stream*>(opt));
         stream->release();
     }
 }

@@ -26,16 +26,16 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-long long writeData(Handle<IContext> root, long long size)
+long long writeData(Handle<es::Context> root, long long size)
 {
-    Handle<IFile> file;
+    Handle<es::File> file;
     file = root->lookup("testfile.txt");
     if (!file)
     {
         file = root->bind("testfile.txt", 0);
     }
     TEST(file);
-    Handle<IStream>  stream = file->getStream();
+    Handle<es::Stream>  stream = file->getStream();
     TEST(stream);
 
     long long filesize;
@@ -53,30 +53,30 @@ long long writeData(Handle<IContext> root, long long size)
 
 int main(int argc, char* argv[])
 {
-    IInterface* ns = 0;
+    es::Interface* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
-    Handle<IContext> nameSpace(ns);
+    Handle<es::Context> nameSpace(ns);
 
-    Handle<IStream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
+    Handle<es::Stream> disk = new VDisk(static_cast<char*>("fat16_5MB.img"));
     long long diskSize;
     diskSize = disk->getSize();
     esReport("diskSize: %lld\n", diskSize);
 
-    Handle<IFileSystem> fatFileSystem;
+    Handle<es::FileSystem> fatFileSystem;
     long long freeSpace0;
     long long totalSpace0;
     long long freeSpace;
     long long totalSpace;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     fatFileSystem->format();
     freeSpace0 = fatFileSystem->getFreeSpace();
     totalSpace0 = fatFileSystem->getTotalSpace();
     esReport("Free space %lld, Total space %lld\n", freeSpace0, totalSpace0);
     {
-        Handle<IContext> root;
+        Handle<es::Context> root;
 
         root = fatFileSystem->getRoot();
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     fatFileSystem->dismount();
     fatFileSystem = 0;
 
-    fatFileSystem = IFatFileSystem::createInstance();
+    fatFileSystem = es::FatFileSystem::createInstance();
     fatFileSystem->mount(disk);
     freeSpace = fatFileSystem->getFreeSpace();
     totalSpace = fatFileSystem->getTotalSpace();

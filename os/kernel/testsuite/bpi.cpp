@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,9 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-static IThread* ThreadHi;
-static IThread* ThreadMid;
-static IMonitor* MonitorA;
+static es::Thread* ThreadHi;
+static es::Thread* ThreadMid;
+static es::Monitor* MonitorA;
 static bool Flag = false;
 
 static void* Hi(void* param)
@@ -84,16 +84,16 @@ int main()
     MonitorA = new Monitor();
     TEST(MonitorA);
 
-    IInterface* root = NULL;
+    es::Interface* root = NULL;
     esInit(&root);
 
     ThreadHi = new Thread(Hi,                 // thread function
                           0,                  // argument to thread function
-                          IThread::Normal+2); // priority
+                          es::Thread::Normal+2); // priority
 
     ThreadMid = new Thread(Mid,               // thread function
                            0,                 // argument to thread function
-                           IThread::Normal+1);// priority
+                           es::Thread::Normal+1);// priority
     Lo(0);
 
     void* val;

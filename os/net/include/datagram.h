@@ -28,7 +28,7 @@
 class DatagramReceiver :
     public SocketReceiver
 {
-    IMonitor*   monitor;
+    es::Monitor*   monitor;
     u8*         recvBuf;
     Ring        recvRing;
     u8*         sendBuf;
@@ -77,7 +77,7 @@ public:
         errorCode(0),
         socket(0)
     {
-        monitor = IMonitor::createInstance();
+        monitor = es::Monitor::createInstance();
     }
 
     ~DatagramReceiver()

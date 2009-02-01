@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ Arena arena;
 
 int main()
 {
-    IInterface* root = 0;
+    es::Interface* root = 0;
     esInit(&root);
 
     void*  a;

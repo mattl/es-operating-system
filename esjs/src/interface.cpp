@@ -28,12 +28,10 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    IInterface* getConstructor(const char* iid);
+    es::Interface* getConstructor(const char* iid);
     extern unsigned char* defaultInterfaceInfo[];
     extern size_t defaultInterfaceCount;
 }  // namespace es
-
-using namespace es;
 
 // #define VERBOSE
 
@@ -47,7 +45,7 @@ class ObjectValue;
 
 #include "interface.h"
 
-extern ICurrentProcess* System();
+extern es::CurrentProcess* System();
 
 namespace
 {
@@ -132,7 +130,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         throw getErrorInstance("TypeError");
     }
 
-    Reflect::Interface interface = getInterface(iid);
+    Reflect::Interface interface = es::getInterface(iid);
     Reflect::Method method(interface.getMethod(number));
     PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
 
@@ -142,7 +140,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     Guid iidv[9];
     Guid* iidp = iidv;
     int ext = 0;    // extra parameter count
-    const char* riid = IInterface::iid();
+    const char* riid = es::Interface::iid();
 
     // Set this
     *argp++ = Any(reinterpret_cast<intptr_t>(self));
@@ -208,7 +206,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 else
                 {
                     // XXX expose ECMAScript object
-                    *argp = Any(static_cast<IInterface*>(0));
+                    *argp = Any(static_cast<es::Interface*>(0));
                 }
                 break;
             default:
@@ -252,7 +250,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             }
             else
             {
-                *argp = Any(static_cast<IInterface*>(0));
+                *argp = Any(static_cast<es::Interface*>(0));
             }
             break;
         case Ent::SpecBool:
@@ -342,10 +340,10 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 value = new StringValue(heap);
                 break;
             case Any::TypeObject:
-                if (IInterface* unknown = static_cast<IInterface*>(result))
+                if (es::Interface* unknown = static_cast<es::Interface*>(result))
                 {
                     ObjectValue* instance = new InterfacePointerValue(unknown);
-                    instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+                    instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
                     value = instance;
                 }
                 else
@@ -416,10 +414,10 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         riid = returnType.getInterface().getFullyQualifiedName();
         // FALL THROUGH
     case Ent::SpecObject:
-        if (IInterface* unknown = apply(argc, argv, (IInterface* (*)()) ((*self)[methodNumber])))
+        if (es::Interface* unknown = apply(argc, argv, (es::Interface* (*)()) ((*self)[methodNumber])))
         {
             ObjectValue* instance = new InterfacePointerValue(unknown);
-            instance->setPrototype(getGlobal()->get(getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+            instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
             value = instance;
         }
         else
@@ -443,7 +441,7 @@ static Value* invoke(const char* iid, int number, InterfacePointerValue* object,
         throw getErrorInstance("TypeError");
     }
     Value* value = invoke(iid, number, self, list);
-    if (strcmp(iid, IInterface::iid()) == 0 && number == 2)   // IInterface::release()
+    if (strcmp(iid, es::Interface::iid()) == 0 && number == 2)   // es::Interface::release()
     {
         object->clearObject();
     }
@@ -531,7 +529,7 @@ public:
         iid(iid),
         number(number)
     {
-        Reflect::Interface interface = getInterface(iid);
+        Reflect::Interface interface = es::getInterface(iid);
         Reflect::Method method(interface.getMethod(number));
 
 #if 0
@@ -703,7 +701,7 @@ public:
         object->setParameterList(arguments);
         object->setScope(getGlobal());
 
-        Reflect::Interface interface = getInterface(iid);
+        Reflect::Interface interface = es::getInterface(iid);
         PRINTF("interface: %s\n", interface.getName());
         for (int i = 0; i < interface.getMethodCount(); ++i)
         {
@@ -779,7 +777,7 @@ public:
         }
         else
         {
-            Reflect::Interface super = getInterface(interface.getFullyQualifiedSuperName());
+            Reflect::Interface super = es::getInterface(interface.getFullyQualifiedSuperName());
             prototype->setPrototype(getGlobal()->get(super.getName())->get("prototype"));
         }
 
@@ -799,7 +797,7 @@ public:
         if (constructor->hasInstance(getThis()))
         {
             // Constructor
-            IInterface* constructor = getConstructor(iid);
+            es::Interface* constructor = es::getConstructor(iid);
             if (!constructor)
             {
                 throw getErrorInstance("TypeError");
@@ -819,9 +817,9 @@ public:
                 throw getErrorInstance("TypeError");
             }
 
-            IInterface* object;
+            es::Interface* object;
             object = self->getObject();
-            if (!object || !(object = reinterpret_cast<IInterface*>(object->queryInterface(iid))))
+            if (!object || !(object = reinterpret_cast<es::Interface*>(object->queryInterface(iid))))
             {
                 // We should throw an error in case called by a new expression.
                 throw getErrorInstance("TypeError");
@@ -879,7 +877,7 @@ public:
         Reflect::Interface interface;
         try
         {
-            interface = getInterface(iid);
+            interface = es::getInterface(iid);
         }
         catch (...)
         {
@@ -1005,9 +1003,9 @@ static void constructSystemObject(Reflect::Module& module)
 
 ObjectValue* constructSystemObject(void* system)
 {
-    for (int i = 0; i < defaultInterfaceCount; ++i)
+    for (int i = 0; i < es::defaultInterfaceCount; ++i)
     {
-        Reflect r(defaultInterfaceInfo[i]);
+        Reflect r(es::defaultInterfaceInfo[i]);
         Reflect::Module global(r.getGlobalModule());
         constructSystemObject(global);
     }

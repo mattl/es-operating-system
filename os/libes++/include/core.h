@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,19 +26,10 @@
 #include <es/base/IThread.h>
 
 void esInitThread();
-int esInit(es::IInterface** nameSpace);
-es::IThread* esCreateThread(void* (*start)(void* param), void* param);
-es::IMonitor* esCreateMonitor();
+int esInit(es::Interface** nameSpace);
+es::Thread* esCreateThread(void* (*start)(void* param), void* param);
+es::Monitor* esCreateMonitor();
 
-extern "C" {
-#endif
-
-size_t strnlen(const char *s, const size_t n);
-int stricmp(const char *s1, const char *s2);
-int strnicmp(const char *s1, const char *s2, size_t n);
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif // NINTENDO_ES_LIBES_CORE_H_INCLUDED
