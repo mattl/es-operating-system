@@ -26,16 +26,13 @@ module es
      */
     interface Thread
     {
-        enum State
-        {
-            NEW,
-            RUNNABLE,
-            RUNNING,
-            BLOCKED,
-            WAITING,
-            TIMED_WAITING,
-            TERMINATED
-        };
+        const long NEW = 0;
+        const long RUNNABLE = 1;
+        const long RUNNING = 2;
+        const long BLOCKED = 3;
+        const long WAITING = 4;
+        const long TIMED_WAITING = 5;
+        const long TERMINATED = 6;
 
         /** The minimum priority that a thread can have.
          */

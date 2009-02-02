@@ -126,7 +126,7 @@ class Thread : public es::Thread
     static void (*dtorTable[MaxSpecific])(void*);
 
     Ref             ref;
-    es::Thread::State  state;
+    int             state;
     int             priority;
     void*         (*run)(void*);
     void*           param;

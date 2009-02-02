@@ -152,7 +152,7 @@ public:
     Link<Thread>        link;
     int                 priority;   // the higher the integer, the higher the priority.
 
-    State               state;
+    int                 state;
     unsigned            attr;
     Core*               core;
 
@@ -303,7 +303,7 @@ public:
 
     ~Thread();
 
-    void setState(State state)
+    void setState(int state)
     {
         this->state = state;
     }
