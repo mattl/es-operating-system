@@ -554,7 +554,7 @@ copyIn(UpcallRecord* record)
     case Ent::SpecVariant:
         // Any op(void* buf, int len);
     case Ent::SpecString:
-        // int op(char* buf, int len, ...);
+        // const char* op(char* buf, int len, ...);
         count = paramp[1];                          // XXX check count
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
         *argp++ = (int) esp;
@@ -562,7 +562,7 @@ copyIn(UpcallRecord* record)
         paramp += 2;
         break;
     case Ent::SpecWString:
-        // int op(wchar_t* buf, int len, ...);
+        // const wchar_t* op(wchar_t* buf, int len, ...);
         count = sizeof(wchar_t) * paramp[1];        // XXX check count
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
         *argp++ = (int) esp;
@@ -741,20 +741,25 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
     case Ent::SpecVariant:
         // Any op(void* buf, int len);
         rc = paramp[1]; // XXX check type and string length if type is string
+        if (record->variant->getType() != Any::TypeString)
+        {
+            break;
+        }
         // FALL THROUGH
     case Ent::SpecString:
-        // int op(char* buf, int len, ...);
+        // const char* op(char* buf, int len, ...);
         count = paramp[1];
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
         if (0 < rc)
         {
-            // XXX check string length
+            // TODO: Check string length
             read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
+            record->ureg.eax = reinterpret_cast<u32>(esp);
         }
         paramp += 2;
         break;
     case Ent::SpecWString:
-        // int op(wchar_t* buf, int len, ...);
+        // const wchar_t* op(wchar_t* buf, int len, ...);
         count = sizeof(wchar_t) * paramp[1];
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
         if (0 < rc)

@@ -238,7 +238,7 @@ public:
     // IBinding
     es::Interface* getObject();
     void setObject(es::Interface* object);
-    int getName(char* name, int len);
+    const char* getName(char* name, int len);
 
     void* queryInterface(const char* riid);
     unsigned int addRef();

@@ -28,8 +28,6 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-
-
 es::CurrentProcess* System();
 
 class Stream : public es::Stream, public es::Binding
@@ -120,12 +118,15 @@ public:
         object = element;
     }
 
-    int getName(char* name, int len)
+    const char* getName(char* name, int len)
     {
-        ASSERT(0 <= len);
+        if (len < 0)
+        {
+            return 0;
+        }
         unsigned count = (len < 7) ? len : 7;
         strncpy(name, "Stream", count);
-        return count;
+        return name;
     }
 
     void* queryInterface(const char* riid)

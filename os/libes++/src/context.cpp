@@ -85,16 +85,16 @@ void Binding::setObject(es::Interface* unknown)
     }
 }
 
-int Binding::getName(char* name, int len)
+const char* Binding::getName(char* name, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     if (!this->name)
     {
-        return -1;
+        return 0;
     }
     strncpy(name, this->name, len);
-    return strlen(name);    // for esjs
+    return name;
 }
 
 // Makes this binding invisible from the context so that iterators can

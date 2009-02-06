@@ -25,8 +25,6 @@
 #include <es/base/IStream.h>
 #include <es/naming/IContext.h>
 
-
-
 extern es::CurrentProcess* System();
 
 int main()
@@ -52,9 +50,11 @@ int main()
         char name[128];
 
         Handle<es::Binding> binding = iterator->next();
-        int len = binding->getName(name, sizeof name);
-        name[len++] = '\n';
-        output->write(name, len);
+        if (binding->getName(name, sizeof name))
+        {
+            output->write(name, strlen(name));
+            output->write("\n", 1);
+        }
     }
     return 0;
 }

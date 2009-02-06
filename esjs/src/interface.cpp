@@ -155,7 +155,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         // Any op(void* buf, int len, ...);
         // FALL THROUGH
     case Ent::SpecString:
-        // int op(xxx* buf, int len, ...);
+        // const char* op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         *argp++ = Any(sizeof(heap));
         break;
@@ -337,7 +337,14 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 value = new NumberValue(static_cast<double>(result));
                 break;
             case Any::TypeString:
-                value = new StringValue(heap);
+                if (const char* string = static_cast<const char*>(result))
+                {
+                    value = new StringValue(string);
+                }
+                else
+                {
+                    value = NullValue::getInstance();
+                }
                 break;
             case Any::TypeObject:
                 if (es::Interface* unknown = static_cast<es::Interface*>(result))
@@ -394,9 +401,18 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         value = new NumberValue(static_cast<intptr_t>(apply(argc, argv, (intptr_t (*)()) ((*self)[methodNumber]))));
         break;
     case Ent::SpecString:
-        heap[0] = '\0';
-        apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
-        value = new StringValue(heap);
+        {
+            heap[0] = '\0';
+            Any result = apply(argc, argv, (const char* (*)()) ((*self)[methodNumber]));
+            if (const char* string = static_cast<const char*>(result))
+            {
+                value = new StringValue(string);
+            }
+            else
+            {
+                value = NullValue::getInstance();
+            }
+        }
         break;
     case Ent::TypeSequence:
         {

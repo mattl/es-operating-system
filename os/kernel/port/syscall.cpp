@@ -246,7 +246,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     case Ent::SpecVariant:
         //  Any op(void* buf, int len);
     case Ent::SpecString:
-        // int op(char* buf, int len, ...);
+        // const char* op(char* buf, int len, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
         {
             throw SystemException<EFAULT>();
@@ -559,6 +559,9 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
         break;
     case Ent::SpecString:
+        result = apply(argc, argv, (const char* (*)()) ((*object)[methodNumber]));
+        // TODO: If the returned string resides in the kernel space, it must be copied out.
+        break;
     case Ent::TypeSequence:
         result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;

@@ -68,12 +68,12 @@ public:
         point.y += direction->y;
     }
 
-    int setName(const char* name)
+    void setName(const char* name)
     {
         strncpy(this->name, name, 13);
     }
 
-    int getName(char* name, int len)
+    const char* getName(char* name, int len)
     {
         unsigned count(strlen(this->name) + 1);
         if (len < count)
@@ -81,7 +81,7 @@ public:
             count = len;
         }
         strncpy(name, this->name, count);
-        return count;
+        return name;
     }
 
     void* queryInterface(const char* riid)

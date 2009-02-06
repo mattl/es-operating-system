@@ -19,8 +19,6 @@
 #include <es/handle.h>
 #include "iso9660Stream.h"
 
-extern "C" int strnicmp(const char *s1, const char *s2, size_t n);
-
 // Get the first pathname component from path to file.
 const char* Iso9660FileSystem::
 splitPath(const char* path, char* file)
@@ -94,9 +92,9 @@ lookupPathName(const char*& name)
         while (found = findNext(dir, record))
         {
             hideFileVersion((char*) record + DR_FileIdentifier, record[DR_FileIdentifierLength]);
-            if (strnicmp(fileName,
-                         (char*) record + DR_FileIdentifier,
-                         record[DR_FileIdentifierLength]) == 0)
+            if (strncasecmp(fileName,
+                            (char*) record + DR_FileIdentifier,
+                            record[DR_FileIdentifierLength]) == 0)
             {
                 // Found fileName.
                 long long pos;
@@ -120,7 +118,7 @@ lookupPathName(const char*& name)
     return stream;
 }
 
-int Iso9660Stream::
+const char* Iso9660Stream::
 getName(char* name, int len)
 {
     u8 record[255];
@@ -139,7 +137,7 @@ getName(char* name, int len)
         dir->setPosition(offset);
         if (!parent->findNext(dir, record))
         {
-            return -1;
+            return 0;
         }
         if (record[DR_FileIdentifierLength] < len)
         {
@@ -151,5 +149,5 @@ getName(char* name, int len)
             memmove(name, record + DR_FileIdentifier, len);
         }
     }
-    return 0;
+    return name;
 }

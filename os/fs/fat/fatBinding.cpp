@@ -48,7 +48,7 @@ setObject(es::Interface* object)
     esThrow(EACCES); // [check]
 }
 
-int FatStream::
+const char* FatStream::
 getName(char* name, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -130,7 +130,7 @@ getName(char* name, int len)
                         }
                     }
                     FatFileSystem::utf16toutf8(l, name);    // XXX error check
-                    return strlen(name);                    // XXX for esjs
+                    return name;
                     break;
                 }
                 ord = -1;

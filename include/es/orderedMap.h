@@ -46,7 +46,7 @@ public:
         return size;
     }
 
-    int getByIndex(char* string, int stringLength, int index)
+    const char* getByIndex(char* string, int stringLength, int index)
     {
         int count = 0;
         MapTree::Iterator it = tree.begin();
@@ -57,7 +57,7 @@ public:
                 std::string& str = node->getValue();
                 int len = std::min((int)str.length(), stringLength);
                 std::memmove(string, str.c_str(), len);
-                return len;
+                return string;
             }
             count++;
         }
@@ -86,7 +86,7 @@ public:
         }
     }
 
-    int get(char* string, int stringLength, const char* name)
+    const char* get(char* string, int stringLength, const char* name)
     {
         std::string key(name);
         try
@@ -94,7 +94,7 @@ public:
             std::string str = tree.get(key);
             int len = std::min((int)str.length(), stringLength);
             std::memmove(string, str.c_str(), len);
-            return len;
+            return string;
         }
         catch (...)
         {

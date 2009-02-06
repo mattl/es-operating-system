@@ -73,8 +73,6 @@
 #include <es/base/IStream.h>
 #include <es/util/ICanvasRenderingContext2D.h>
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -416,8 +414,8 @@ public:
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
     float getGlobalAlpha();
     void setGlobalAlpha(float globalAlpha);
-    int getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
-    int setGlobalCompositeOperation(const char* globalCompositeOperation);
+    const char* getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
+    void setGlobalCompositeOperation(const char* globalCompositeOperation);
     Any getStrokeStyle(void* strokeStyle, int strokeStyleLength);
     void setStrokeStyle(const Any strokeStyle);
     Any getFillStyle(void* fillStyle, int fillStyleLength);
@@ -426,10 +424,10 @@ public:
     es::CanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     float getLineWidth();
     void setLineWidth(float lineWidth);
-    int getLineCap(char* lineCap, int lineCapLength);
-    int setLineCap(const char* lineCap);
-    int getLineJoin(char* lineJoin, int lineJoinLength);
-    int setLineJoin(const char* lineJoin);
+    const char* getLineCap(char* lineCap, int lineCapLength);
+    void setLineCap(const char* lineCap);
+    const char* getLineJoin(char* lineJoin, int lineJoinLength);
+    void setLineJoin(const char* lineJoin);
     float getMiterLimit();
     void setMiterLimit(float miterLimit);
 
@@ -439,8 +437,8 @@ public:
     void setShadowOffsetY(float shadowOffsetY) {}
     float getShadowBlur() {}
     void setShadowBlur(float shadowBlur) {}
-    int getShadowColor(char* shadowColor, int shadowColorLength) {}
-    int setShadowColor(const char* shadowColor) {}
+    const char* getShadowColor(char* shadowColor, int shadowColorLength) {}
+    void setShadowColor(const char* shadowColor) {}
 
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);
@@ -460,8 +458,8 @@ public:
 
     bool isPointInPath(float x, float y) {}
 
-    int getMozTextStyle(char* mozTextStyle, int mozTextStyleLength);
-    int setMozTextStyle(const char* mozTextStyle);
+    const char* getMozTextStyle(char* mozTextStyle, int mozTextStyleLength);
+    void setMozTextStyle(const char* mozTextStyle);
     void mozDrawText(const char* textToDraw);
     float mozMeasureText(const char* textToMeasure);
     void mozPathText(const char* textToPath);

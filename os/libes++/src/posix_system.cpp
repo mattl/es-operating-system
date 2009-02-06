@@ -1038,9 +1038,10 @@ public:
             res.result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
             break;
         case Ent::SpecString:
-            res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
-            if (0 <= static_cast<int32_t>(res.result)) {
-                resultSize = 1 + static_cast<int32_t>(res.result);
+            res.result = apply(argc, argv, (const char* (*)()) ((*object)[methodNumber]));
+            if (static_cast<const char*>(res.result))
+            {
+                resultSize = 1 + strlen(static_cast<const char*>(res.result));  // TODO check length
             }
             else
             {
@@ -1049,7 +1050,7 @@ public:
             break;
         case Ent::TypeSequence:
             res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
-            resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));   // XXX maybe set just the # of elements
+            resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));  // TODO: maybe set just the # of elements
             break;
         case Ent::TypeInterface:
             iid = returnType.getInterface().getFullyQualifiedName();
@@ -1864,7 +1865,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
         // FALL THROUGH
     case Ent::TypeSequence:
     case Ent::SpecString:
-        // int op(xxx* buf, int len, ...);
+        // const char* op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         *argp++ = Any(va_arg(ap, int32_t));
         break;
@@ -2109,8 +2110,11 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 switch (res->result.getType())
                 {
                 case Any::TypeString:
-                    memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
-                            static_cast<int32_t>(rpcmsg.argv[2]));
+                    if (static_cast<const char*>(res->result))
+                    {
+                        res->result = Any(reinterpret_cast<const char*>(static_cast<intptr_t>(rpcmsg.argv[1])));
+                        strcpy(const_cast<char*>(static_cast<const char*>(res->result)), reinterpret_cast<const char*>(res->getData()));  // TODO: Check length
+                    }
                     break;
                 case Any::TypeObject:
                     if (static_cast<es::Interface*>(res->result))
@@ -2139,11 +2143,10 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 res->result = Any(reinterpret_cast<intptr_t>(variant));
                 break;
             case Ent::SpecString:
-                rc = static_cast<int32_t>(res->result);
-                if (0 < rc)
+                if (static_cast<const char*>(res->result))
                 {
-                    memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
-                            rc + 1);
+                    res->result = Any(reinterpret_cast<const char*>(static_cast<intptr_t>(rpcmsg.argv[1])));
+                    strcpy(const_cast<char*>(static_cast<const char*>(res->result)), reinterpret_cast<const char*>(res->getData()));  // TODO: Check length
                 }
                 break;
             case Ent::TypeSequence:

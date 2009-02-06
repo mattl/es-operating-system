@@ -307,9 +307,9 @@ public:
     // IInternetAddress
     int getAddress(void* address, int len);
     int getAddressFamily();
-    int getCanonicalHostName(char* hostName, int len);
-    int getHostAddress(char* hostAddress, int len);
-    int getHostName(char* hostName, int len);
+    const char* getCanonicalHostName(char* hostName, int len);
+    const char* getHostAddress(char* hostAddress, int len);
+    const char* getHostName(char* hostName, int len);
 
     int getScopeID()
     {

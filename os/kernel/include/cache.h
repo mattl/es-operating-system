@@ -556,7 +556,7 @@ public:
     bool isDirectory();
     bool isFile();
     bool isHidden();
-    int getName(char* name, int nameLength);
+    const char* getName(char* name, int nameLength);
     es::Pageable* getPageable();
     es::Stream* getStream();
 

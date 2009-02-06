@@ -153,7 +153,7 @@ lookupPathName(const char*& name)
     return stream;
 }
 
-int Iso9660StreamUcs2::
+const char* Iso9660StreamUcs2::
 getName(char* name, int len)
 {
     if (len == 0)
@@ -172,7 +172,7 @@ getName(char* name, int len)
         dir->setPosition(offset);
         if (!parent->findNext(dir, record))
         {
-            return -1;
+            return 0;
         }
 
         char* dst = name;
@@ -198,5 +198,5 @@ getName(char* name, int len)
             *dst++ = 0;
         }
     }
-    return 0;
+    return name;
 }

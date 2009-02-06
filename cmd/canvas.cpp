@@ -416,7 +416,7 @@ getGlobalAlpha()
     return currentState()->globalAlpha;
 }
 
-int Canvas::
+const char* Canvas::
 getGlobalCompositeOperation(char* operation, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -445,7 +445,7 @@ getGlobalCompositeOperation(char* operation, int len)
 
 #undef CANVAS_OP_TO_CAIRO_OP
 
-    return strlen(operation);
+    return operation;
 }
 
 float Canvas::
@@ -455,7 +455,7 @@ getMiterLimit()
     return cairo_get_miter_limit(cr);
 }
 
-int Canvas::
+const char* Canvas::
 getLineCap(char* capStyle, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -470,10 +470,10 @@ getLineCap(char* capStyle, int len)
     else
         return 0;
 
-    return strlen(capStyle);
+    return capStyle;
 }
 
-int Canvas::
+const char* Canvas::
 getLineJoin(char* joinStyle, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -488,7 +488,7 @@ getLineJoin(char* joinStyle, int len)
     else
         return 0;
 
-    return strlen(joinStyle);
+    return joinStyle;
 }
 
 float Canvas::
@@ -578,7 +578,7 @@ setGlobalAlpha(float alpha)
     currentState()->globalAlpha = alpha;
 }
 
-int Canvas::
+void Canvas::
 setGlobalCompositeOperation(const char* operation)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -607,11 +607,10 @@ setGlobalCompositeOperation(const char* operation)
     else
     {
         esReport("setGlobalCompositeOperation(): invalie operation.(%s)\n", operation);
-        return -1;
+        return;
     }
 
     cairo_set_operator(cr, cairo_op);
-    return 0;
 }
 
 void Canvas::
@@ -628,7 +627,7 @@ setLineWidth(float width)
     cairo_set_line_width (cr, width);
 }
 
-int Canvas::
+void Canvas::
 setLineCap(const char* capStyle)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -640,13 +639,12 @@ setLineCap(const char* capStyle)
     else if (strcmp(capStyle, "square") == 0)
         cap = CAIRO_LINE_CAP_SQUARE;
     else
-        return -1;
+        return;
 
     cairo_set_line_cap (cr, cap);
-    return 0;
 }
 
-int Canvas::
+void Canvas::
 setLineJoin(const char* joinStyle)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -659,10 +657,9 @@ setLineJoin(const char* joinStyle)
     else if (strcmp(joinStyle, "miter") == 0)
         j = CAIRO_LINE_JOIN_MITER;
     else
-        return -1;
+        return;
 
     cairo_set_line_join (cr, j);
-    return 0;
 }
 
 void Canvas::
@@ -693,7 +690,7 @@ translate(float tx, float ty)
     cairo_translate(cr, tx, ty);
 }
 
-int Canvas::
+const char* Canvas::
 getMozTextStyle(char* style, int len)
 {
     if (textStyle.size() < len)
@@ -702,10 +699,10 @@ getMozTextStyle(char* style, int len)
     }
     strncpy(style, textStyle.c_str(), len);
     style[len - 1] = '\0';
-    return len;
+    return style;
 }
 
-int Canvas::
+void Canvas::
 setMozTextStyle(const char* style)
 {
     Synchronized<es::Monitor*> method(monitor);
@@ -754,7 +751,6 @@ setMozTextStyle(const char* style)
 
     cairo_select_font_face (cr, family, slant, weight);
     cairo_set_font_size (cr, size);
-    return 0;
 }
 
 void Canvas::

@@ -129,7 +129,7 @@ public:
     // es::Binding
     es::Interface* getObject();
     void setObject(es::Interface* object);
-    int getName(char* name, int len);
+    const char* getName(char* name, int len);
 
     // es::Context
     es::Binding* bind(const char* name, es::Interface* object);

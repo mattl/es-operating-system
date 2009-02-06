@@ -167,13 +167,13 @@ addSearchDomain(const char* address)
     return;
 }
 
-int InternetConfig::
+const char* InternetConfig::
 getSearchDomain(char* address, int addressLength)
 {
-    return getSearchDomain(address,addressLength, 0);
+    return getSearchDomain(address, addressLength, 0);
 }
 
-int InternetConfig::
+const char* InternetConfig::
 getSearchDomain(char* address, int addressLength, int pos)
 {
     Collection<char*>::Iterator domainIter = domains.begin();
@@ -192,8 +192,8 @@ getSearchDomain(char* address, int addressLength, int pos)
         return 0;
     }
 
-    strcpy(address,ptr);
-    return 1;
+    strncpy(address, ptr, addressLength);
+    return address;
 }
 
 void InternetConfig::

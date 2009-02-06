@@ -142,7 +142,7 @@ setObject(es::Interface* object)
     esThrow(EACCES); // [check] appropriate?
 }
 
-int PartitionIterator::
+const char* PartitionIterator::
 getName(char* name, int len)
 {
     Monitor::Synchronized method(context->monitor);
@@ -170,7 +170,7 @@ getName(char* name, int len)
             }
             else
             {
-                return -1;
+                return 0;
             }
 
             memset(name, len, 0);
@@ -178,21 +178,22 @@ getName(char* name, int len)
             if (stream->isExtendedPartition())
             {
 #ifdef WIN32
-                return _snprintf(name, len, "%s", prefix);
+                _snprintf(name, len, "%s", prefix);
 #else
-                return snprintf(name, len, "%s", prefix);
+                snprintf(name, len, "%s", prefix);
 #endif
+                return name;
             }
 
 #ifdef WIN32
-            return _snprintf(name, len, "%s%u", prefix, id);
+            _snprintf(name, len, "%s%u", prefix, id);
 #else
-            return snprintf(name, len, "%s%u", prefix, id);
+            snprintf(name, len, "%s%u", prefix, id);
 #endif
-            return 0;
+            return name;
         }
     }
-    return -1;
+    return NULL;
 }
 
 //

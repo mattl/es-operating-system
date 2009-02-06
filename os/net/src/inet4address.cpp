@@ -121,17 +121,19 @@ getAddressFamily()
     return AF_INET;
 }
 
-int Inet4Address::
+const char* Inet4Address::
 getCanonicalHostName(char* hostName, int len)
 {
+    return 0;
 }
 
-int Inet4Address::
+const char* Inet4Address::
 getHostAddress(char* hostAddress, int len)
 {
+    return 0;
 }
 
-int Inet4Address::
+const char* Inet4Address::
 getHostName(char* hostName, int len)
 {
     return Socket::resolver->getHostName(hostName, len, this);

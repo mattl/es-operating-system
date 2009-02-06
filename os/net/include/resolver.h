@@ -77,7 +77,7 @@ public:
     //
     es::InternetAddress* getHostByName(const char* hostName, int addressFamily);
     es::InternetAddress* getHostByAddress(const void* address, int len, unsigned int scopeID);
-    int getHostName(char* hostName, int len, es::InternetAddress* address);
+    const char* getHostName(char* hostName, int len, es::InternetAddress* address);
 
     //
     // IInterface

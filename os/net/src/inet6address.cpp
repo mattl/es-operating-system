@@ -64,19 +64,22 @@ getAddressFamily()
     return AF_INET6;
 }
 
-int Inet6Address::
+const char* Inet6Address::
 getCanonicalHostName(char* hostName, int len)
 {
+    return 0;
 }
 
-int Inet6Address::
+const char* Inet6Address::
 getHostAddress(char* hostAddress, int len)
 {
+    return 0;
 }
 
-int Inet6Address::
+const char* Inet6Address::
 getHostName(char* hostName, int len)
 {
+    return 0;
 }
 
 int Inet6Address::

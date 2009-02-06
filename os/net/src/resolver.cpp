@@ -449,17 +449,17 @@ getHostByName(const char* hostName, int addressFamily)
     return control->getHostByName(hostName, addressFamily);
 }
 
-int Resolver::
+const char* Resolver::
 getHostName(char* hostName, int len, es::InternetAddress* address)
 {
     Synchronized<es::Monitor*> method(monitor);
 
-    if (!setup())
+    if (!setup() || !control->getHostName(address, hostName, len))
     {
-        return false;
+        return 0;
     }
 
-    return control->getHostName(address, hostName, len);
+    return hostName;
 }
 
 // Note DNS is not queried.

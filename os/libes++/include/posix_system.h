@@ -306,7 +306,7 @@ public:
         esThrow(EACCES); // [check] appropriate?
     }
 
-    int getName(char* name, int len)
+    const char* getName(char* name, int len)
     {
         const char* p = this->name;
         int i;
@@ -318,7 +318,7 @@ public:
                 break;
             }
         }
-        return i;
+        return name;
     }
 
     //

@@ -34,8 +34,6 @@
 #include <es/naming/IContext.h>
 #include "iso9660.h"
 
-
-
 class Iso9660FileSystem;
 class Iso9660Iterator;
 class Iso9660Stream;
@@ -101,7 +99,7 @@ public:
     // IBinding
     es::Interface* getObject();
     void setObject(es::Interface* object);
-    int getName(char* name, int len);
+    const char* getName(char* name, int len);
 
     // IContext
     es::Binding* bind(const char* name, es::Interface* object);
@@ -128,7 +126,7 @@ public:
     {
     }
     Iso9660Stream* lookupPathName(const char*& name);
-    int getName(char* name, int len);
+    const char* getName(char* name, int len);
 };
 
 class Iso9660FileSystem : public es::Iso9660FileSystem
