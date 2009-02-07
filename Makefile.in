@@ -172,6 +172,7 @@ EXTRA_DIST = \
 	patches/binutils-2.16.1.patch \
 	patches/binutils-2.17.patch \
 	patches/binutils-2.18.patch \
+	patches/binutils-2.19.patch \
 	patches/gcc-4.1.0.patch \
 	patches/gcc-4.1.1.patch \
 	patches/gcc-4.2.1.patch \
