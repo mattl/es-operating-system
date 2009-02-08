@@ -251,9 +251,9 @@ if [ ! -d trunk/cmd/squeak-3.7.1 ];
 then
 	cd src
 	wget http://es-operating-system.googlecode.com/files/squeak-es-3.7.1-0.1.4.tar.gz
-	tar -zxf squeak-es-3.7.1-0.1.4.tar.gz
 	cd ../trunk/cmd
-	ln -s ../../src/squeak-es-3.7.1-0.1.4 squeak-3.7.1
+	tar -zxf ../../src/squeak-es-3.7.1-0.1.4.tar.gz
+	mv squeak-es-3.7.1-0.1.4 squeak-3.7.1
 	cd ../..
 fi
 if [ ! -f src/Squeak3.7-5989-full.zip ];
