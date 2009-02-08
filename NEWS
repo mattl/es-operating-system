@@ -1,6 +1,82 @@
 News about ES releases
 ----------------------
 
+Release 0.1.4  February 8, 2009
+-------------------------------
+
+NOTE: This release is tested with Fedora 9, Fedora 10, and Ubuntu 8.10.
+
+This release improves the Web IDL support, containing updates for esidl,
+esjs, the es kernel, and the 'setup' script.
+
+  esidl
+    * The type of a C++ function return value mapped from 'string' is 
+      changed from 'int' to 'const char*'.
+    * The 'I' prefix added to each C++ interface name has been removed.
+    * The default base object interface name can be specified with the
+      '-object' esidl command line option.
+    * The interface ID is given by the fully qualified name of the interface
+      rather than a DEC GUID. The use of DCE UUID based interface ID through
+      '#pragma ID' has been deprecated.
+    * The 'Constructor' extended attribute is now supported; esidl generates
+      the following definitions inside the specified interface class
+      definition in C++:
+        * 'Constructor' interface class
+        * createInstance() static class methods
+        * getConstructor() and setConstructor() static class methods
+  
+  esjs
+    * Update the 'new' operator to construct a new object instance whose 
+      interface has constructor(s). The 'ClassFactory' interface has been 
+      deprecated.
+  
+  es kernel
+    * Support the Web IDL constructors and the qualified name based 
+      interface IDs.
+  
+  binutils
+    * Update to binutils 2.19.
+  
+  newlib
+    * The "C" POSIX runtime implementation has been updated to use the
+      qualified name based interface IDs.
+      
+  setup
+    * Support Ubuntu (Tested with 8.10).
+    * Install ES SDK under `pwd`/sdk, rather than under /opt/es, by default.
+      
+Examples
+
+  Old esidl style:
+    interface Process : Interface
+    {
+        #pragma ID Process = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
+        // snip
+    };
+
+  New esidl style:
+    [Constructor]
+    interface Process
+    {
+        // snip
+    };
+
+  Old esjs style:
+    classStore = ClassStore(root.lookup("class"));
+    process = classStore.createInstance(CLSID_Process, IID_IProcess);
+
+  New esjs style:
+    process = new Process();
+
+  Old C++ style:
+    IMonitor* monitor = 
+      reinterpret_cast<IMonitor*>(esCreateInstance(CLSID_Monitor, 
+                                                   IMonitor::iid()));
+
+  New C++ style:
+    es::Monitor* monitor = es::Monitor::createInstance();
+
+
 Release 0.1.3  October 25, 2008
 -------------------------------
 

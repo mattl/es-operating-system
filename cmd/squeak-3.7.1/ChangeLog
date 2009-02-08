@@ -1,3 +1,7 @@
+2009-02-07 04:34  Shiki.Okasaka
+
+	* ChangeLog, configure, configure.ac: Set version to 0.1.4.
+
 2009-02-06 11:20  Shiki.Okasaka
 
 	* Makefile.in, aclocal.m4, configure: (configure) : Update with

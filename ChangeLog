@@ -1,3 +1,21 @@
+2009-02-08 05:04  Shiki.Okasaka
+
+	* setup: (setup) : Download Squeak tarballs by default.
+
+2009-02-07 04:34  Shiki.Okasaka
+
+	* ChangeLog, Makefile.in, cmd/configure, cmd/configure.ac,
+	  cmd/squeak-3.7.1/ChangeLog, cmd/squeak-3.7.1/configure,
+	  cmd/squeak-3.7.1/configure.ac, configure, configure.ac,
+	  esidl/configure, esidl/configure.ac, esjs/configure,
+	  esjs/configure.ac, init/configure, init/configure.ac,
+	  os/configure, os/configure.ac, os/npapi/configure.ac,
+	  tools/configure, tools/configure.ac: Set version to 0.1.4.
+
+2009-02-07 04:31  Shiki.Okasaka
+
+	* Makefile.am: (Binutils) : Upgrade to version 2.19.
+
 2009-02-06 14:15  Shiki.Okasaka
 
 	* cmd/canvas.cpp, cmd/canvas.h, cmd/location.cpp, cmd/server.cpp,
