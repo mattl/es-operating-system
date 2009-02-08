@@ -65,18 +65,21 @@ make install-exec
 cd ..
 
 # Binutils
-cd src
-if [ ! -f binutils-2.19.tar.bz2 ];
+if [ ! -f src/binutils-2.19.tar.bz2 ];
 then
+	cd src
 	wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.tar.bz2
+	cd ..
 fi
-if [ ! -d binutils-2.19 ] || [ ! -f ../opt/binutils/Makefile ] || [ -n "`find ../trunk/patches/binutils-2.19.patch -newer ../opt/binutils/Makefile -print`" ];
+if [ ! -d src/binutils-2.19 ] || [ ! -f opt/binutils/Makefile ] || [ -n "`find trunk/patches/binutils-2.19.patch -newer opt/binutils/Makefile -print`" ];
 then
+	cd src
 	rm -rf binutils-2.19
 	tar -jxf binutils-2.19.tar.bz2
 	patch -p0 -d . < ../trunk/patches/binutils-2.19.patch
+	cd ..
 fi
-cd ../opt
+cd opt
 mkdir -p binutils
 cd binutils
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/binutils-2.19.patch -newer Makefile -print`" ];
@@ -88,28 +91,35 @@ fi
 cd ../..
 
 # GCC and Newlib
-cd src
-if [ ! -f gcc-4.3.1.tar.bz2 ]; 
+if [ ! -f src/gcc-4.3.1.tar.bz2 ]; 
 then
+	cd src
 	wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
+	cd ..
 fi
-if [ ! -d gcc-4.3.1 ] || [ ! -f ../opt/gcc/Makefile ] || [ -n "`find ../trunk/patches/gcc-4.3.1.patch -newer ../opt/gcc/Makefile -print`" ];
+if [ ! -d src/gcc-4.3.1 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/gcc-4.3.1.patch -newer opt/gcc/Makefile -print`" ];
 then
+	cd src
 	rm -rf gcc-4.3.1
 	tar -jxf gcc-4.3.1.tar.bz2
 	patch -p0 -d . < ../trunk/patches/gcc-4.3.1.patch
+	cd ..
 fi
-if [ ! -f newlib-1.16.0.tar.gz ]; 
+if [ ! -f src/newlib-1.16.0.tar.gz ]; 
 then
+	cd src
 	wget ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
+	cd ..
 fi
-if [ ! -d newlib-1.16.0 ] || [ ! -f ../opt/gcc/Makefile ] || [ -n "`find ../trunk/patches/newlib-1.16.0.patch -newer ../opt/gcc/Makefile -print`" ];
+if [ ! -d src/newlib-1.16.0 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/newlib-1.16.0.patch -newer opt/gcc/Makefile -print`" ];
 then
+	cd src
 	rm -rf newlib-1.16.0
 	tar -zxf newlib-1.16.0.tar.gz
 	patch -p0 -d . < ../trunk/patches/newlib-1.16.0.patch
+	cd ..
 fi
-cd gcc-4.3.1
+cd src/gcc-4.3.1
 ln -fs ../newlib-1.16.0/newlib .
 ln -fs ../newlib-1.16.0/libgloss .
 cd ../../opt
@@ -237,6 +247,27 @@ make install
 cd ..
 
 # Squeak port for ES
+if [ ! -d trunk/cmd/squeak-3.7.1 ];
+then
+	cd src
+	wget http://es-operating-system.googlecode.com/files/squeak-es-3.7.1-0.1.4.tar.gz
+	tar -zxf squeak-es-3.7.1-0.1.4.tar.gz
+	cd ../trunk/cmd
+	ln -s ../../src/squeak-es-3.7.1-0.1.4 squeak-3.7.1
+	cd ../..
+fi
+if [ ! -f src/Squeak3.7-5989-full.zip ];
+then
+	cd src
+	wget http://ftp.squeak.org/3.7/Squeak3.7-5989-full.zip
+	cd ..
+fi
+if [ ! -f src/SqueakV3.sources.gz ];
+then
+	cd src
+	wget http://ftp.squeak.org/3.7/SqueakV3.sources.gz
+	cd ..
+fi
 if [ -e trunk/cmd/squeak-3.7.1/configure ];
 then
 	cd pc/cmd
@@ -252,13 +283,11 @@ then
 	cd ../../../trunk/cmd/squeak-3.7.1/
 	if [ ! -f Squeak3.7-5989-full.image ]; 
 	then 
-		wget http://ftp.squeak.org/3.7/Squeak3.7-5989-full.zip
-		unzip Squeak3.7-5989-full.zip
+		unzip ../../../src/Squeak3.7-5989-full.zip
 	fi
 	if [ ! -f SqueakV3.sources ]; 
 	then
-		wget http://ftp.squeak.org/3.7/SqueakV3.sources.gz
-		gunzip SqueakV3.sources.gz
+		gunzip -c ../../../src/SqueakV3.sources.gz > SqueakV3.sources
 	fi
 	cd ../../../
 fi
