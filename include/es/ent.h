@@ -236,8 +236,15 @@ namespace Ent
 
     struct Interface
     {
+        // Extended attribute bits
+        static const u32 NoIndexingOperations = 0x00000001;
+        static const u32 Callback =             0x00000002;
+        static const u32 NoInterfaceObject =    0x00000004;
+        static const u32 PrototypeRoot =        0x00000008;
+
         Type type;          // TypeInterface
         u32  name;
+        u32  attr;
         u32  fullyQualifiedName;
         u32  fullyQualifiedBaseName;
         Spec module;
@@ -256,6 +263,7 @@ namespace Ent
                   Spec constructor) :
             type(TypeInterface),
             name(name),
+            attr(0),
             fullyQualifiedName(fullyQualifiedName),
             fullyQualifiedBaseName(fullyQualifiedBaseName),
             module(module),
@@ -326,9 +334,20 @@ namespace Ent
 
     struct Param
     {
-        static const u32 AttrIn = 0u;
-        static const u32 AttrOut = 1u;
-        static const u32 AttrInOut = 2u;
+        static const u32 AttrMask =         0x00000003;
+        static const u32 AttrIn =           0x00000000;
+        static const u32 AttrOut =          0x00000001;
+        static const u32 AttrInOut =        0x00000002;
+        // [Null]
+        static const u32 NullIsEmpty =      0x00000004;
+        static const u32 NullIsNull =       0x00000008;
+        // [Undefined]
+        static const u32 UndefinedIsEmpty = 0x00000010;
+        static const u32 UndefinedIsNull =  0x00000020;
+        // [Optional]
+        static const u32 Optional =         0x00000040;
+        // [Variadic]
+        static const u32 Variadic =         0x00000080;
 
         Spec spec;
         u32  name;
@@ -336,29 +355,46 @@ namespace Ent
 
         bool isInput() const
         {
-            return (attr == AttrIn) ? true : false;
+            return ((attr & AttrMask) == AttrIn) ? true : false;
         }
 
         bool isOutput() const
         {
-            return (attr == AttrOut) ? true : false;
+            return ((attr & AttrMask) == AttrOut) ? true : false;
         }
 
         bool isInOut() const
         {
-            return (attr == AttrInOut) ? true : false;
+            return ((attr & AttrMask) == AttrInOut) ? true : false;
         }
     };
 
     struct Method
     {
-        static const u32 AttrNone = 0u;
-        static const u32 AttrGetter = 1u;
-        static const u32 AttrSetter = 2u;
-        static const u32 IndexGetter = 3u;
-        static const u32 IndexSetter = 4u;
-        static const u32 NameGetter = 5u;
-        static const u32 NameSetter = 6u;
+        static const u32 AttrMask =         0x00000003;
+        static const u32 AttrOperation =    0x00000000;
+        static const u32 AttrGetter =       0x00000001;
+        static const u32 AttrSetter =       0x00000002;
+        // [IndexCreator], [IndexDeleter], [IndexGetter] and [IndexSetter]
+        static const u32 IndexCreator =     0x00000004;
+        static const u32 IndexDeleter =     0x00000008;
+        static const u32 IndexGetter =      0x00000010;
+        static const u32 IndexSetter =      0x00000020;
+        // [NameCreator], [NameDeleter], [NameGetter] and [NameSetter]
+        static const u32 NameCreator =      0x00000040;
+        static const u32 NameDeleter =      0x00000080;
+        static const u32 NameGetter =       0x00000100;
+        static const u32 NameSetter =       0x00000200;
+        // [Null]
+        static const u32 NullIsEmpty =      0x00000400;
+        static const u32 NullIsNull =       0x00000800;
+        // [Stringifies]
+        static const u32 Stringifies =      0x00001000;
+        // [Replaceable]
+        static const u32 Replaceable =      0x00002000;
+        // [Undefined]
+        static const u32 UndefinedIsEmpty = 0x00004000;
+        static const u32 UndefinedIsNull =  0x00008000;
 
         Spec spec;          // return type
         u32  name;
@@ -435,47 +471,38 @@ namespace Ent
 
         bool isOperation() const
         {
-            if ((attr == AttrNone)
-                || (attr == IndexGetter)
-                || (attr == IndexSetter)
-                || (attr == NameGetter)
-                || (attr == NameSetter))
-            {
-                return true;
-            }
-            return false;
+            return ((attr & AttrMask) == AttrOperation) ? true : false;
         }
 
         bool isGetter() const
         {
-            return (attr == AttrGetter) ? true : false;
+            return ((attr & AttrMask) == AttrGetter) ? true : false;
         }
 
         bool isSetter() const
         {
-            return (attr == AttrSetter) ? true : false;
+            return ((attr & AttrMask) == AttrSetter) ? true : false;
         }
 
         bool isIndexGetter() const
         {
-            return (attr == IndexGetter) ? true : false;
+            return (attr & IndexGetter) ? true : false;
         }
 
         bool isIndexSetter() const
         {
-            return (attr == IndexSetter) ? true : false;
+            return (attr & IndexSetter) ? true : false;
         }
 
         bool isNameGetter() const
         {
-            return (attr == NameGetter) ? true : false;
+            return (attr & NameGetter) ? true : false;
         }
 
         bool isNameSetter() const
         {
-            return (attr == NameSetter) ? true : false;
+            return (attr & NameSetter) ? true : false;
         }
-
     };
 
     struct Member
