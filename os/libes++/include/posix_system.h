@@ -308,16 +308,21 @@ public:
 
     const char* getName(char* name, int len)
     {
-        const char* p = this->name;
-        int i;
-        for (i = 0; i < len; ++i)
+        if (len < 1)
         {
-            char c = *name++ = *p++;
+            return 0;
+        }
+        const char* src = this->name;
+        char* dst = name;
+        for (int i = 0; i < len; ++i)
+        {
+            char c = *dst++ = *src++;
             if (c == '\0')
             {
-                break;
+                return name;
             }
         }
+        name[len - 1] = '\0';
         return name;
     }
 
