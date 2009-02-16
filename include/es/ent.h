@@ -237,10 +237,13 @@ namespace Ent
     struct Interface
     {
         // Extended attribute bits
-        static const u32 NoIndexingOperations = 0x00000001;
-        static const u32 Callback =             0x00000002;
-        static const u32 NoInterfaceObject =    0x00000004;
-        static const u32 PrototypeRoot =        0x00000008;
+        static const u32 NoIndexingOperations =     0x00000001;
+        static const u32 CallbackMask =             0x00000006;
+        static const u32 Callback =                 0x00000006;
+        static const u32 CallbackIsFunctionOnly =   0x00000002;
+        static const u32 CallbackIsPropertyOnly =   0x00000004;
+        static const u32 NoInterfaceObject =        0x00000008;
+        static const u32 PrototypeRoot =            0x00000010;
 
         Type type;          // TypeInterface
         u32  name;
