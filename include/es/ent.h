@@ -370,6 +370,11 @@ namespace Ent
         {
             return ((attr & AttrMask) == AttrInOut) ? true : false;
         }
+
+        bool isVariadic() const
+        {
+            return attr & Variadic;
+        }
     };
 
     struct Method
