@@ -35,7 +35,7 @@ host_triplet = @host@
 target_triplet = @target@
 bin_PROGRAMS = trunc$(EXEEXT) bm$(EXEEXT) vformat$(EXEEXT) \
 	vcopy$(EXEEXT) vlist$(EXEEXT) guidgen$(EXEEXT) vget$(EXEEXT) \
-	vdel$(EXEEXT)
+	vdel$(EXEEXT) reflect$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure config.guess \
@@ -67,6 +67,15 @@ guidgen_LDADD = $(LDADD)
 @APPLE_FALSE@	../os/kernel/libeskernel.a \
 @APPLE_FALSE@	../os/libes++/libessup++.a
 @APPLE_TRUE@guidgen_DEPENDENCIES = ../os/fs/fat/libesfat.a \
+@APPLE_TRUE@	../os/kernel/libeskernel.a \
+@APPLE_TRUE@	../os/libes++/libessup++.a
+am_reflect_OBJECTS = reflect.$(OBJEXT)
+reflect_OBJECTS = $(am_reflect_OBJECTS)
+reflect_LDADD = $(LDADD)
+@APPLE_FALSE@reflect_DEPENDENCIES = ../os/fs/fat/libesfat.a \
+@APPLE_FALSE@	../os/kernel/libeskernel.a \
+@APPLE_FALSE@	../os/libes++/libessup++.a
+@APPLE_TRUE@reflect_DEPENDENCIES = ../os/fs/fat/libesfat.a \
 @APPLE_TRUE@	../os/kernel/libeskernel.a \
 @APPLE_TRUE@	../os/libes++/libessup++.a
 am_trunc_OBJECTS = trunc.$(OBJEXT)
@@ -135,12 +144,12 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(bm_SOURCES) $(guidgen_SOURCES) $(trunc_SOURCES) \
-	$(vcopy_SOURCES) $(vdel_SOURCES) $(vformat_SOURCES) \
-	$(vget_SOURCES) $(vlist_SOURCES)
-DIST_SOURCES = $(bm_SOURCES) $(guidgen_SOURCES) $(trunc_SOURCES) \
-	$(vcopy_SOURCES) $(vdel_SOURCES) $(vformat_SOURCES) \
-	$(vget_SOURCES) $(vlist_SOURCES)
+SOURCES = $(bm_SOURCES) $(guidgen_SOURCES) $(reflect_SOURCES) \
+	$(trunc_SOURCES) $(vcopy_SOURCES) $(vdel_SOURCES) \
+	$(vformat_SOURCES) $(vget_SOURCES) $(vlist_SOURCES)
+DIST_SOURCES = $(bm_SOURCES) $(guidgen_SOURCES) $(reflect_SOURCES) \
+	$(trunc_SOURCES) $(vcopy_SOURCES) $(vdel_SOURCES) \
+	$(vformat_SOURCES) $(vget_SOURCES) $(vlist_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -262,6 +271,7 @@ vget_SOURCES = vget.cpp vdisk.h
 vcopy_SOURCES = vcopy.cpp vdisk.h
 vlist_SOURCES = vlist.cpp vdisk.h
 guidgen_SOURCES = guidgen.cpp
+reflect_SOURCES = reflect.cpp
 AM_CPPFLAGS = -I- \
 	-I../include \
 	-I$(srcdir)/../include \
@@ -334,6 +344,9 @@ bm$(EXEEXT): $(bm_OBJECTS) $(bm_DEPENDENCIES)
 guidgen$(EXEEXT): $(guidgen_OBJECTS) $(guidgen_DEPENDENCIES) 
 	@rm -f guidgen$(EXEEXT)
 	$(CXXLINK) $(guidgen_OBJECTS) $(guidgen_LDADD) $(LIBS)
+reflect$(EXEEXT): $(reflect_OBJECTS) $(reflect_DEPENDENCIES) 
+	@rm -f reflect$(EXEEXT)
+	$(CXXLINK) $(reflect_OBJECTS) $(reflect_LDADD) $(LIBS)
 trunc$(EXEEXT): $(trunc_OBJECTS) $(trunc_DEPENDENCIES) 
 	@rm -f trunc$(EXEEXT)
 	$(LINK) $(trunc_OBJECTS) $(trunc_LDADD) $(LIBS)
@@ -361,6 +374,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/guidgen.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/reflect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trunc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcopy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vdel.Po@am__quote@

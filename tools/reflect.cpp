@@ -20,9 +20,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <es/ent.h>
 #include <es/reflect.h>
-#include "utf.h"
 
 void processType(Reflect::Type type)
 {
@@ -169,6 +169,10 @@ void processConstant(Reflect::Constant& c)
     case Ent::SpecChar:
         printf("'%c'", c.getValue<char>());
         break;
+    case Ent::SpecString:
+        printf("\"%s\"", c.getString());
+        break;
+#if 0
     case Ent::SpecWChar:
         if (char* end = utf32to8(c.getValue<wchar_t>(), utf8))
         {
@@ -176,12 +180,10 @@ void processConstant(Reflect::Constant& c)
             printf("L'%s'", utf8);
         }
         break;
-    case Ent::SpecString:
-        printf("\"%s\"", c.getString());
-        break;
     case Ent::SpecWString:
         printf("L\"%s\"", c.getString());
         break;
+#endif
     }
     printf(";\n");
 }
