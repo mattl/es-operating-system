@@ -3,18 +3,18 @@ SUFFIXES = .h .idl
 if ES
 
 %.h %.ent : %.idl
-	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface $<
+	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	esidl -C -isystem $(srcdir) $<
+	esidl -C -isystem $(srcdir) -ent $<
 
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -ent $<
 
 endif !ES
 

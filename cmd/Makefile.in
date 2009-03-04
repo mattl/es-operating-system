@@ -844,7 +844,7 @@ uninstall-am:
 
 
 %.h %.ent: %.idl
-	esidl -I$(srcdir)/../include -include es/base/IInterface.idl -object Interface $<
+	esidl -I$(srcdir)/../include -include es/base/IInterface.idl -object Interface -ent $<
 
 %.c : %.ent
 	mkdir -p $(*D);
