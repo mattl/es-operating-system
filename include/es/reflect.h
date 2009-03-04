@@ -20,7 +20,6 @@
 
 #include <es.h>
 #include <es/ent.h>
-#include <es/types.h>
 #include <cstring>
 
 /**
@@ -28,7 +27,7 @@
  */
 class Reflect
 {
-    u8* ent;
+    uint8_t* ent;
 
 public:
 
@@ -38,7 +37,7 @@ public:
      * @param offset the offset to the record.
      * @return the record.
      */
-    static void* getPointer(u8* ent, u32 offset)
+    static void* getPointer(uint8_t* ent, uint32_t offset)
     {
         return static_cast<void*>(ent + offset);
     }
@@ -50,8 +49,8 @@ public:
      */
     class Type
     {
-        u8* ent;
-        u32 spec;
+        uint8_t* ent;
+        uint32_t spec;
 
     public:
         /**
@@ -59,7 +58,7 @@ public:
          * @param ent the reflection data.
          * @param spec the offset to the type record.
          */
-        Type(u8* ent, u32 spec) :
+        Type(uint8_t* ent, uint32_t spec) :
             ent(ent),
             spec(spec)
         {
@@ -68,14 +67,14 @@ public:
         /**
          * Gets the type of this type descriptor.
          */
-        u32 getType() const
+        uint32_t getType() const
         {
             if (isPrimitive())
             {
                 return spec;
             }
 
-            return *static_cast<u32*>(getPointer(ent, spec));
+            return *static_cast<uint32_t*>(getPointer(ent, spec));
         }
 
         /**
@@ -245,16 +244,16 @@ public:
             case Ent::SpecChar:
             case Ent::SpecS8:
             case Ent::SpecU8:
-                return sizeof(u8);
+                return sizeof(uint8_t);
             case Ent::SpecS16:
             case Ent::SpecU16:
-                return sizeof(u16);
+                return sizeof(uint16_t);
             case Ent::SpecS32:
             case Ent::SpecU32:
-                return sizeof(u32);
+                return sizeof(uint32_t);
             case Ent::SpecS64:
             case Ent::SpecU64:
-                return sizeof(u64);
+                return sizeof(uint64_t);
             case Ent::SpecF32:
                 return sizeof(float);
             case Ent::SpecF64:
@@ -267,8 +266,6 @@ public:
                 return sizeof(wchar_t);
             case Ent::SpecVoid:
                 return 0;
-            case Ent::SpecUuid:
-                return sizeof(Guid);
             case Ent::SpecAny:
             case Ent::SpecObject:
                 return sizeof(void*);
@@ -322,7 +319,7 @@ public:
      */
     class Parameter
     {
-        u8* ent;
+        uint8_t* ent;
         const Ent::Param* param;
 
     public:
@@ -339,7 +336,7 @@ public:
          * @param ent the reflection data.
          * @param param pointer to the parameter record.
          */
-        Parameter(u8* ent, const Ent::Param* param) :
+        Parameter(uint8_t* ent, const Ent::Param* param) :
             ent(ent),
             param(param)
         {
@@ -394,7 +391,7 @@ public:
      */
     class Method
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Method* method;
 
     public:
@@ -411,7 +408,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the function record.
          */
-        Method(u8* ent, u32 spec) :
+        Method(uint8_t* ent, uint32_t spec) :
             ent(ent),
             method(static_cast<Ent::Method*>(getPointer(ent, spec)))
         {
@@ -454,7 +451,7 @@ public:
          * Gets the specified parameter.
          * @param n the parameter number.
          */
-        Parameter getParameter(u32 n) const
+        Parameter getParameter(uint32_t n) const
         {
             return Parameter(ent, method->getParam(n));
         }
@@ -500,7 +497,7 @@ public:
      */
     class Member
     {
-        u8* ent;
+        uint8_t* ent;
         const Ent::Member* member;
 
     public:
@@ -517,7 +514,7 @@ public:
          * @param ent the reflection data.
          * @param member pointer to the parameter record.
          */
-        Member(u8* ent, const Ent::Member* member) :
+        Member(uint8_t* ent, const Ent::Member* member) :
             ent(ent),
             member(member)
         {
@@ -545,7 +542,7 @@ public:
      */
     class Structure
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Structure* record;
 
     public:
@@ -563,7 +560,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the structure record.
          */
-        Structure(u8* ent, u32 offset) :
+        Structure(uint8_t* ent, uint32_t offset) :
             ent(ent),
             record(static_cast<Ent::Structure*>(getPointer(ent, offset)))
         {
@@ -590,7 +587,7 @@ public:
          * Gets the specified member.
          * @param n the member number.
          */
-        Member getMember(u32 n) const
+        Member getMember(uint32_t n) const
         {
             return Member(ent, record->getMember(n));
         }
@@ -616,7 +613,7 @@ public:
      */
     class Constant
     {
-        u8* ent;
+        uint8_t* ent;
         const Ent::Constant* c;
 
     public:
@@ -633,7 +630,7 @@ public:
          * @param ent the reflection data.
          * @param c pointer to the parameter record.
          */
-        Constant(u8* ent, const Ent::Constant* c) :
+        Constant(uint8_t* ent, const Ent::Constant* c) :
             ent(ent),
             c(c)
         {
@@ -658,7 +655,7 @@ public:
         template <typename T>
         T getValue() const
         {
-            if (sizeof(T) <= sizeof(u32))
+            if (sizeof(T) <= sizeof(uint32_t))
             {
                 return *reinterpret_cast<const T*>(&c->value);
             }
@@ -679,7 +676,7 @@ public:
      */
     class Interface
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Interface* record;
 
     public:
@@ -697,7 +694,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the interface record.
          */
-        Interface(u8* ent, u32 offset) :
+        Interface(uint8_t* ent, uint32_t offset) :
             ent(ent),
             record(static_cast<Ent::Interface*>(getPointer(ent, offset)))
         {
@@ -811,7 +808,7 @@ public:
      */
     class Module
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Module* record;
 
     public:
@@ -829,7 +826,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the module record.
          */
-        Module(u8* ent, u32 offset) :
+        Module(uint8_t* ent, uint32_t offset) :
             ent(ent),
             record(static_cast<Ent::Module*>(getPointer(ent, offset)))
         {
@@ -915,7 +912,7 @@ public:
      */
     class Array
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Array* record;
 
     public:
@@ -933,7 +930,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the array record.
          */
-        Array(u8* ent, u32 offset) :
+        Array(uint8_t* ent, uint32_t offset) :
             ent(ent),
             record(static_cast<Ent::Array*>(getPointer(ent, offset)))
         {
@@ -950,7 +947,7 @@ public:
         /**
          * Gets the number of dimensions of this array type.
          */
-        u32 getDimension() const
+        uint32_t getDimension() const
         {
             return record->dim;
         }
@@ -959,7 +956,7 @@ public:
          * Gets the rank of the specified dimension.
          * @param n the dimension number.
          */
-        u32 getRank(u32 n) const
+        uint32_t getRank(uint32_t n) const
         {
             return record->getRank(n);
         }
@@ -971,7 +968,7 @@ public:
         {
             Type type = getType();
             int size = type.getSize();
-            for (u32 i = 0; i < getDimension(); ++i)
+            for (uint32_t i = 0; i < getDimension(); ++i)
             {
                 size *= getRank(i);
             }
@@ -984,7 +981,7 @@ public:
      */
     class Sequence
     {
-        u8* ent;
+        uint8_t* ent;
         Ent::Sequence* record;
 
     public:
@@ -1002,7 +999,7 @@ public:
          * @param ent the reflection data.
          * @param offset the offset to the sequence record.
          */
-        Sequence(u8* ent, u32 offset) :
+        Sequence(uint8_t* ent, uint32_t offset) :
             ent(ent),
             record(static_cast<Ent::Sequence*>(getPointer(ent, offset)))
         {
@@ -1019,7 +1016,7 @@ public:
         /**
          * Gets the maximum number of elements in this sequence type.
          */
-        u64 getMax() const
+        uint64_t getMax() const
         {
             return record->max;
         }
@@ -1041,7 +1038,7 @@ public:
      * @param ent the reflection data to be loaded.
      */
     Reflect(void* ent) :
-        ent(static_cast<u8*>(ent))
+        ent(static_cast<uint8_t*>(ent))
     {
     }
 

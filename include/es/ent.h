@@ -19,8 +19,8 @@
 #define NINTENDO_ES_ENT_H_INCLUDED
 
 #include <assert.h>
+#include <stdint.h>
 #include <new>
-#include <es/uuid.h>
 
 // Amend namespace pollution
 #ifdef minor
@@ -33,7 +33,7 @@
 namespace Ent
 {
     // Primitive types
-    typedef u32 Spec;
+    typedef uint32_t Spec;
     static const Spec SpecPrimitive = 0x80000000u;
     static const Spec SpecS8 = SpecPrimitive | 0u;
     static const Spec SpecS16 = SpecPrimitive | 1u;
@@ -61,7 +61,7 @@ namespace Ent
     static const int MaxSpec = 23;
 
     // Non-primitive types
-    typedef u32 Type;
+    typedef uint32_t Type;
     static const Type TypeModule = 0u;
     static const Type TypeInterface = 1u;
     static const Type TypeStructure = 2u;
@@ -72,54 +72,54 @@ namespace Ent
     static const int MaxType = 7;
 
     // Attribute bits
-    static const u32 AttrMask =                 0x00000003;
-    static const u32 AttrOperation =            0x00000000;
-    static const u32 AttrGetter =               0x00000001;
-    static const u32 AttrSetter =               0x00000002;
-    static const u32 AttrIn =                   0x00000000;
-    static const u32 AttrOut =                  0x00000001;
-    static const u32 AttrInOut =                0x00000002;
+    static const uint32_t AttrMask =                 0x00000003;
+    static const uint32_t AttrOperation =            0x00000000;
+    static const uint32_t AttrGetter =               0x00000001;
+    static const uint32_t AttrSetter =               0x00000002;
+    static const uint32_t AttrIn =                   0x00000000;
+    static const uint32_t AttrOut =                  0x00000001;
+    static const uint32_t AttrInOut =                0x00000002;
 
     // Extended attribute bits
     // [IndexCreator], [IndexDeleter], [IndexGetter] and [IndexSetter]
-    static const u32 IndexMask =                0x0000003c;
-    static const u32 IndexCreator =             0x00000004;
-    static const u32 IndexDeleter =             0x00000008;
-    static const u32 IndexGetter =              0x00000010;
-    static const u32 IndexSetter =              0x00000020;
+    static const uint32_t IndexMask =                0x0000003c;
+    static const uint32_t IndexCreator =             0x00000004;
+    static const uint32_t IndexDeleter =             0x00000008;
+    static const uint32_t IndexGetter =              0x00000010;
+    static const uint32_t IndexSetter =              0x00000020;
     // [NameCreator], [NameDeleter], [NameGetter] and [NameSetter]
-    static const u32 NameMask =                 0x000003c0;
-    static const u32 NameCreator =              0x00000040;
-    static const u32 NameDeleter =              0x00000080;
-    static const u32 NameGetter =               0x00000100;
-    static const u32 NameSetter =               0x00000200;
+    static const uint32_t NameMask =                 0x000003c0;
+    static const uint32_t NameCreator =              0x00000040;
+    static const uint32_t NameDeleter =              0x00000080;
+    static const uint32_t NameGetter =               0x00000100;
+    static const uint32_t NameSetter =               0x00000200;
     // [NoIndexingOperations]
-    static const u32 NoIndexingOperations =     0x00000400;
+    static const uint32_t NoIndexingOperations =     0x00000400;
     // [Callback]
-    static const u32 CallbackMask =             0x00000006;
-    static const u32 Callback =                 0x00001800;
-    static const u32 CallbackIsFunctionOnly =   0x00000800;
-    static const u32 CallbackIsPropertyOnly =   0x00001000;
+    static const uint32_t CallbackMask =             0x00000006;
+    static const uint32_t Callback =                 0x00001800;
+    static const uint32_t CallbackIsFunctionOnly =   0x00000800;
+    static const uint32_t CallbackIsPropertyOnly =   0x00001000;
     // [NoInterfaceObject]
-    static const u32 NoInterfaceObject =        0x00002000;
+    static const uint32_t NoInterfaceObject =        0x00002000;
     // [PrototypeRoot ]
-    static const u32 PrototypeRoot =            0x00004000;
+    static const uint32_t PrototypeRoot =            0x00004000;
     // [Null]
-    static const u32 NullIsEmpty =              0x00008000;
-    static const u32 NullIsNull =               0x00010000;
+    static const uint32_t NullIsEmpty =              0x00008000;
+    static const uint32_t NullIsNull =               0x00010000;
     // [Undefined]
-    static const u32 UndefinedIsEmpty =         0x00020000;
-    static const u32 UndefinedIsNull =          0x00040000;
+    static const uint32_t UndefinedIsEmpty =         0x00020000;
+    static const uint32_t UndefinedIsNull =          0x00040000;
     // [Stringifies]
-    static const u32 Stringifies =              0x00080000;
+    static const uint32_t Stringifies =              0x00080000;
     // [Replaceable]
-    static const u32 Replaceable =              0x00100000;
+    static const uint32_t Replaceable =              0x00100000;
     // [Callable]
-    static const u32 Callable =                 0x00200000;
+    static const uint32_t Callable =                 0x00200000;
     // [Optional]
-    static const u32 Optional =                 0x00400000;
+    static const uint32_t Optional =                 0x00400000;
     // [Variadic]
-    static const u32 Variadic =                 0x00800000;
+    static const uint32_t Variadic =                 0x00800000;
 
     static bool isPrimitive(Spec spec)
     {
@@ -130,16 +130,16 @@ namespace Ent
      */
     struct Header
     {
-        static const u8 Major = 0;
-        static const u8 Minor = 1;
-        static const u8 Patch = 0;
+        static const uint8_t Major = 0;
+        static const uint8_t Minor = 1;
+        static const uint8_t Patch = 0;
 
-        char magic[4];       // magic number (0x7f, 'E', 'N', 'T')
-        u8   major;
-        u8   minor;
-        u8   patch;
-        u8   reserved;
-        u32  fileSize;
+        char     magic[4];  // magic number (0x7f, 'E', 'N', 'T')
+        uint8_t  major;
+        uint8_t  minor;
+        uint8_t  patch;
+        uint8_t  reserved;
+        uint32_t fileSize;
         // Module global;
 
         Header(size_t fileSize) :
@@ -158,11 +158,11 @@ namespace Ent
 
     struct Constant
     {
-        Spec spec;
-        u32  name;
-        u32  value;
+        Spec     spec;
+        uint32_t name;
+        uint32_t value;
 
-        Constant(Spec spec, u32 name, u32 value) :
+        Constant(Spec spec, uint32_t name, uint32_t value) :
             spec(spec),
             name(name),
             value(value)
@@ -180,17 +180,18 @@ namespace Ent
      */
     struct Module
     {
-        Type type;          // TypeModule
-        u32  name;
-        Spec parent;
-        u32  moduleCount;
-        u32  interfaceCount;
-        u32  constCount;
+        Type     type;  // TypeModule
+        uint32_t name;
+        Spec     parent;
+        uint32_t moduleCount;
+        uint32_t interfaceCount;
+        uint32_t constCount;
         // Spec modules[moduleCount];
         // Spec interfaces[interfaceCount];
         // Constant consts[constCount];
 
-        Module(u32 name, Spec parent, u32 moduleCount, u32 interfaceCount, u32 constCount) :
+        Module(uint32_t name, Spec parent, uint32_t moduleCount, uint32_t interfaceCount,
+               uint32_t constCount) :
             type(TypeModule),
             name(name),
             parent(parent),
@@ -204,7 +205,7 @@ namespace Ent
         {
             assert(spec);
             Spec* p = reinterpret_cast<Spec*>(&this[1]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < moduleCount; ++i, ++p)
             {
                 if (*p == 0)
@@ -216,7 +217,7 @@ namespace Ent
             assert(i < moduleCount);
         }
 
-        Spec getModule(u32 index) const
+        Spec getModule(uint32_t index) const
         {
             assert(index < moduleCount);
             const Spec* p = reinterpret_cast<const Spec*>(&this[1]);
@@ -228,7 +229,7 @@ namespace Ent
             assert(spec);
             Spec* p = reinterpret_cast<Spec*>(&this[1]);
             p += moduleCount;
-            u32 i;
+            uint32_t i;
             for (i = 0; i < interfaceCount; ++i, ++p)
             {
                 if (*p == 0)
@@ -240,21 +241,21 @@ namespace Ent
             assert(i < interfaceCount);
         }
 
-        Spec getInterface(u32 index) const
+        Spec getInterface(uint32_t index) const
         {
             assert(index < interfaceCount);
             const Spec* p = reinterpret_cast<const Spec*>(&this[1]);
             return p[moduleCount + index];
         }
 
-        void addConstant(Spec spec, u32 name, u32 value)
+        void addConstant(Spec spec, uint32_t name, uint32_t value)
         {
             assert(spec);
             Spec* p = reinterpret_cast<Spec*>(&this[1]);
             p += moduleCount;
             p += interfaceCount;
             Constant* c = reinterpret_cast<Constant*>(p);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < constCount; ++i, ++p)
             {
                 if (c->spec == 0)
@@ -266,7 +267,7 @@ namespace Ent
             assert(i < constCount);
         }
 
-        const Constant* getConstant(u32 index) const
+        const Constant* getConstant(uint32_t index) const
         {
             assert(index < constCount);
             const Spec* p = reinterpret_cast<const Spec*>(&this[1]);
@@ -276,7 +277,7 @@ namespace Ent
             return c + index;
         }
 
-        static size_t getSize(u32 moduleCount, u32 interfaceCount, u32 constCount)
+        static size_t getSize(uint32_t moduleCount, uint32_t interfaceCount, uint32_t constCount)
         {
             return sizeof(Module) +
                    sizeof(Spec) * (moduleCount + interfaceCount) +
@@ -286,24 +287,24 @@ namespace Ent
 
     struct Interface
     {
-        Type type;          // TypeInterface
-        u32  name;
-        u32  attr;
-        u32  fullyQualifiedName;
-        u32  fullyQualifiedBaseName;
-        Spec module;
-        u32  methodCount;
-        u32  constCount;
-        u32  inheritedMethodCount;
-        Spec constructor;
+        Type     type;  // TypeInterface
+        uint32_t name;
+        uint32_t attr;
+        uint32_t fullyQualifiedName;
+        uint32_t fullyQualifiedBaseName;
+        Spec     module;
+        uint32_t methodCount;
+        uint32_t constCount;
+        uint32_t inheritedMethodCount;
+        Spec     constructor;
         // Spec methods[methodCount];
         // Constant consts[constCount];
 
-        Interface(u32 name,
-                  u32 fullyQualifiedName,
-                  u32 fullyQualifiedBaseName,
+        Interface(uint32_t name,
+                  uint32_t fullyQualifiedName,
+                  uint32_t fullyQualifiedBaseName,
                   Spec module,
-                  u32 methodCount, u32 constCount, u32 inheritedMethodCount,
+                  uint32_t methodCount, uint32_t constCount, uint32_t inheritedMethodCount,
                   Spec constructor) :
             type(TypeInterface),
             name(name),
@@ -322,7 +323,7 @@ namespace Ent
         {
             assert(spec);
             Spec* p = reinterpret_cast<Spec*>(&this[1]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < methodCount; ++i, ++p)
             {
                 if (*p == 0)
@@ -334,20 +335,20 @@ namespace Ent
             assert(i < methodCount);
         }
 
-        Spec getMethod(u32 index) const
+        Spec getMethod(uint32_t index) const
         {
             assert(index < methodCount);
             const Spec* p = reinterpret_cast<const Spec*>(&this[1]);
             return p[index];
         }
 
-        void addConstant(Spec spec, u32 name, u32 value)
+        void addConstant(Spec spec, uint32_t name, uint32_t value)
         {
             assert(spec);
             Spec* p = reinterpret_cast<Spec*>(&this[1]);
             p += methodCount;
             Constant* c = reinterpret_cast<Constant*>(p);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < constCount; ++i, ++p)
             {
                 if (c->spec == 0)
@@ -359,7 +360,7 @@ namespace Ent
             assert(i < constCount);
         }
 
-        const Constant* getConstant(u32 index) const
+        const Constant* getConstant(uint32_t index) const
         {
             assert(index < constCount);
             const Spec* p = reinterpret_cast<const Spec*>(&this[1]);
@@ -368,7 +369,7 @@ namespace Ent
             return c + index;
         }
 
-        static size_t getSize(u32 methodCount, u32 constCount)
+        static size_t getSize(uint32_t methodCount, uint32_t constCount)
         {
             return sizeof(Interface) +
                    sizeof(Spec) * methodCount +
@@ -378,9 +379,9 @@ namespace Ent
 
     struct Param
     {
-        Spec spec;
-        u32  name;
-        u32  attr;
+        Spec     spec;
+        uint32_t name;
+        uint32_t attr;
 
         bool isInput() const
         {
@@ -405,15 +406,15 @@ namespace Ent
 
     struct Method
     {
-        Spec spec;          // return type
-        u32  name;
-        u32  attr;
-        u32  paramCount;
-        u32  raiseCount;
+        Spec     spec;  // return type
+        uint32_t name;
+        uint32_t attr;
+        uint32_t paramCount;
+        uint32_t raiseCount;
         // Param params[paramCount];
         // Spec raises[raiseCount];
 
-        Method(Spec spec, u32 name, u32 attr, u32 paramCount, u32 raiseCount) :
+        Method(Spec spec, uint32_t name, uint32_t attr, uint32_t paramCount, uint32_t raiseCount) :
             spec(spec),
             name(name),
             attr(attr),
@@ -422,11 +423,11 @@ namespace Ent
         {
         }
 
-        void addParam(Spec spec, u32 name, u32 attr)
+        void addParam(Spec spec, uint32_t name, uint32_t attr)
         {
             assert(spec);
             Param* p = reinterpret_cast<Param*>(&this[1]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < paramCount; ++i, ++p)
             {
                 if (p->spec == 0)
@@ -440,7 +441,7 @@ namespace Ent
             assert(i < paramCount);
         }
 
-        const Param* getParam(u32 index) const
+        const Param* getParam(uint32_t index) const
         {
             assert(index < paramCount);
             const Param* p = reinterpret_cast<const Param*>(&this[1]);
@@ -451,7 +452,7 @@ namespace Ent
         {
             Param* params = reinterpret_cast<Param*>(&this[1]);
             Spec* raises = reinterpret_cast<Spec*>(&params[paramCount]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < raiseCount; ++i, ++raises)
             {
                 if (*raises == 0)
@@ -463,7 +464,7 @@ namespace Ent
             assert(i < raiseCount);
         }
 
-        Spec getRaise(u32 index) const
+        Spec getRaise(uint32_t index) const
         {
             assert(index < raiseCount);
             const Param* params = reinterpret_cast<const Param*>(&this[1]);
@@ -471,7 +472,7 @@ namespace Ent
             return raises[index];
         }
 
-        static size_t getSize(u32 paramCount, u32 raiseCount)
+        static size_t getSize(uint32_t paramCount, uint32_t raiseCount)
         {
             return sizeof(Method) +
                    sizeof(Param) * paramCount +
@@ -516,27 +517,27 @@ namespace Ent
 
     struct Member
     {
-        Spec spec;
-        u32  name;
+        Spec     spec;
+        uint32_t name;
     };
 
     struct Structure
     {
-        Type type;          // TypeStructure
-        u32  memberCount;
+        Type     type;  // TypeStructure
+        uint32_t memberCount;
         // Member members[memberCount];
 
-        Structure(u32 memberCount) :
+        Structure(uint32_t memberCount) :
             type(TypeStructure),
             memberCount(memberCount)
         {
         }
 
-        void addMember(Spec spec, u32 name)
+        void addMember(Spec spec, uint32_t name)
         {
             assert(spec);
             Member* p = reinterpret_cast<Member*>(&this[1]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < memberCount; ++i, ++p)
             {
                 if (p->spec == 0)
@@ -549,14 +550,14 @@ namespace Ent
             assert(i < memberCount);
         }
 
-        const Member* getMember(u32 index) const
+        const Member* getMember(uint32_t index) const
         {
             assert(index < memberCount);
             const Member* p = reinterpret_cast<const Member*>(&this[1]);
             return p + index;
         }
 
-        static size_t getSize(u32 memberCount)
+        static size_t getSize(uint32_t memberCount)
         {
             return sizeof(Structure) + sizeof(Member) * memberCount;
         }
@@ -564,21 +565,21 @@ namespace Ent
 
     struct Exception
     {
-        Type type;          // TypeException
-        u32  memberCount;
+        Type     type;  // TypeException
+        uint32_t memberCount;
         // Member members[memberCount];
 
-        Exception(u32 memberCount) :
+        Exception(uint32_t memberCount) :
             type(TypeException),
             memberCount(memberCount)
         {
         }
 
-        void addMember(Spec spec, u32 name)
+        void addMember(Spec spec, uint32_t name)
         {
             assert(spec);
             Member* p = reinterpret_cast<Member*>(&this[1]);
-            u32 i;
+            uint32_t i;
             for (i = 0; i < memberCount; ++i, ++p)
             {
                 if (p->spec == 0)
@@ -591,13 +592,13 @@ namespace Ent
             assert(i < memberCount);
         }
 
-        const Member* getMember(u32 index) const
+        const Member* getMember(uint32_t index) const
         {
             const Member* p = reinterpret_cast<const Member*>(&this[1]);
             return p + index;
         }
 
-        static size_t getSize(u32 memberCount)
+        static size_t getSize(uint32_t memberCount)
         {
             return sizeof(Exception) + sizeof(Member) * memberCount;
         }
@@ -605,20 +606,20 @@ namespace Ent
 
     struct Enum
     {
-        Type type;          // TypeEnum
-        u32  enumCount;
-        // u32 enums[enumCount];
+        Type     type;  // TypeEnum
+        uint32_t enumCount;
+        // uint32_t enums[enumCount];
 
-        Enum(u32 enumCount) :
+        Enum(uint32_t enumCount) :
             type(TypeEnum),
             enumCount(enumCount)
         {
         }
 
-        void add(u32 name)
+        void add(uint32_t name)
         {
-            u32* p = reinterpret_cast<u32*>(&this[1]);
-            u32 i;
+            uint32_t* p = reinterpret_cast<uint32_t*>(&this[1]);
+            uint32_t i;
             for (i = 0; i < enumCount; ++i, ++p)
             {
                 if (*p == 0)
@@ -630,27 +631,27 @@ namespace Ent
             assert(i < enumCount);
         }
 
-        u32 get(u32 index) const
+        uint32_t get(uint32_t index) const
         {
             assert(index < enumCount);
-            const u32* p = reinterpret_cast<const u32*>(&this[1]);
+            const uint32_t* p = reinterpret_cast<const uint32_t*>(&this[1]);
             return p[index];
         }
 
-        static size_t getSize(u32 enumCount)
+        static size_t getSize(uint32_t enumCount)
         {
-            return sizeof(Enum) + sizeof(u32) * enumCount;
+            return sizeof(Enum) + sizeof(uint32_t) * enumCount;
         }
     };
 
     struct Array
     {
-        Type type;          // TypeArray
-        Spec spec;
-        u32  dim;
-        // u32 rank[dim];
+        Type     type;  // TypeArray
+        Spec     spec;
+        uint32_t dim;
+        // uint32_t rank[dim];
 
-        Array(Spec spec, u32 dim) :
+        Array(Spec spec, uint32_t dim) :
             type(TypeArray),
             spec(spec),
             dim(dim)
@@ -658,10 +659,10 @@ namespace Ent
             assert(0 < dim);
         }
 
-        void setRank(u32 rank)
+        void setRank(uint32_t rank)
         {
-            u32* p = reinterpret_cast<u32*>(&this[1]);
-            u32 i;
+            uint32_t* p = reinterpret_cast<uint32_t*>(&this[1]);
+            uint32_t i;
             for (i = 0; i < dim; ++i, ++p)
             {
                 if (*p == 0)
@@ -673,26 +674,26 @@ namespace Ent
             assert(i < dim);
         }
 
-        u32 getRank(u32 index) const
+        uint32_t getRank(uint32_t index) const
         {
             assert(index < dim);
-            const u32* p = reinterpret_cast<const u32*>(&this[1]);
+            const uint32_t* p = reinterpret_cast<const uint32_t*>(&this[1]);
             return p[index];
         }
 
-        static size_t getSize(u32 dim)
+        static size_t getSize(uint32_t dim)
         {
-            return sizeof(Array) + sizeof(u32) * dim;
+            return sizeof(Array) + sizeof(uint32_t) * dim;
         }
     };
 
     struct Sequence
     {
-        Type type;          // TypeSequence
-        Spec spec;
-        u64  max;
+        Type     type;  // TypeSequence
+        Spec     spec;
+        uint64_t max;
 
-        Sequence(Spec spec, u64 max = 0) :
+        Sequence(Spec spec, uint64_t max = 0) :
             type(TypeSequence),
             spec(spec),
             max(max)

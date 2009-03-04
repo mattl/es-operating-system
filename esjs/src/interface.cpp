@@ -19,6 +19,7 @@
 #include <es/any.h>
 #include <es/endian.h>
 #include <es/formatter.h>
+#include <es/uuid.h>
 #include <es/base/IInterface.h>
 #include <es/base/IProcess.h>
 #include <es/hashtable.h>
