@@ -153,7 +153,7 @@ top_srcdir = @top_srcdir@
 SUFFIXES = .h .idl
 nobase_include_HEADERS = es.h es/any.h es/broker.h es/capability.h \
 	es/color.h es/collection.h es/context.h es/dateTime.h es/elf.h \
-	es/ent.h es/endian.h es/exception.h es/formatter.h es/handle.h \
+	es/endian.h es/ent.h es/exception.h es/formatter.h es/handle.h \
 	es/hashtable.h es/interlocked.h es/list.h es/md5.h \
 	es/objectTable.h es/ref.h es/reflect.h es/ring.h es/rpc.h \
 	es/synchronized.h es/timer.h es/timeSpan.h es/tree.h \
@@ -465,6 +465,10 @@ uninstall-am: uninstall-nobase_includeHEADERS \
 	uninstall-nobase_includeHEADERS \
 	uninstall-nobase_nodist_includeHEADERS
 
+
+es/ent.h : $(srcdir)/../esidl/es/ent.h
+	mkdir -p es
+	cp $? es
 
 @ES_TRUE@%.h %.ent : %.idl
 @ES_TRUE@	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface -ent $<

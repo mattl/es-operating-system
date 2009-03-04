@@ -1,5 +1,9 @@
 SUFFIXES = .h .idl
 
+es/ent.h : $(srcdir)/../esidl/es/ent.h
+	mkdir -p es
+	cp $? es
+
 if ES
 
 %.h %.ent : %.idl
@@ -28,8 +32,8 @@ nobase_include_HEADERS = \
 	es/context.h \
 	es/dateTime.h \
 	es/elf.h \
-	es/ent.h \
 	es/endian.h \
+	es/ent.h \
 	es/exception.h \
 	es/formatter.h \
 	es/handle.h \
