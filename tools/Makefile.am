@@ -30,3 +30,5 @@ AM_CPPFLAGS = -I- \
 	-I$(srcdir)/../os/fs/fat \
 	-I$(srcdir)/../os/fs/iso9660
 
+bin_SCRIPTS = idl_scraper.pl
+
