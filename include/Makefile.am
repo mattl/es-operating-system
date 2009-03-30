@@ -7,7 +7,7 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 if ES
 
 %.h %.ent : %.idl
-	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface -ent $<
+	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 	esidl -C -isystem $(srcdir) -ent $<
@@ -15,7 +15,7 @@ es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object Interface -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -ent $<
@@ -106,8 +106,20 @@ nobase_nodist_include_HEADERS = \
 	es/util/IIterator.h \
 	es/util/ISet.h \
 	es/util/ICanvasRenderingContext2D.h \
-	es/util/IOrderedMap.h
-
+	es/util/IOrderedMap.h \
+	w3c/css.h \
+	w3c/dom.h \
+	w3c/events.h \
+	w3c/html5.h \
+	w3c/ls.h \
+	w3c/ranges.h \
+	w3c/smil.h \
+	w3c/stylesheets.h \
+	w3c/svg.h \
+	w3c/traversal.h \
+	w3c/validation.h \
+	w3c/views.h
+	
 nobase_nodist_include_HEADERS += \
 	es/base/IAlarm.ent \
 	es/base/ICache.ent \
@@ -147,7 +159,19 @@ nobase_nodist_include_HEADERS += \
 	es/util/IIterator.ent \
 	es/util/ISet.ent \
 	es/util/ICanvasRenderingContext2D.ent \
-	es/util/IOrderedMap.ent
+	es/util/IOrderedMap.ent \
+	w3c/css.ent \
+	w3c/dom.ent \
+	w3c/events.ent \
+	w3c/html5.ent \
+	w3c/ls.ent \
+	w3c/ranges.ent \
+	w3c/smil.ent \
+	w3c/stylesheets.ent \
+	w3c/svg.ent \
+	w3c/traversal.ent \
+	w3c/validation.ent \
+	w3c/views.ent
 
 nobase_include_HEADERS += \
 	es/base/IAlarm.idl \
@@ -188,7 +212,20 @@ nobase_include_HEADERS += \
 	es/util/IIterator.idl \
 	es/util/ISet.idl \
 	es/util/ICanvasRenderingContext2D.idl \
-	es/util/IOrderedMap.idl
+	es/util/IOrderedMap.idl \
+	w3c/css.idl \
+	w3c/dom.idl \
+	w3c/events.idl \
+	w3c/html5.idl \
+	w3c/ls.idl \
+	w3c/ranges.idl \
+	w3c/smil.idl \
+	w3c/stylesheets.idl \
+	w3c/svg.idl \
+	w3c/traversal.idl \
+	w3c/validation.idl \
+	w3c/views.idl
 
 clean-local:
-	-rm -rf es
+	-rm -rf es -rf w3c
+
