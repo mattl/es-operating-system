@@ -17,13 +17,11 @@
 
 #include "dom.idl"
 
-#pragma prefix "dom.w3c.org"
 module ranges
 {
 
   typedef dom::Node Node;
   typedef dom::DocumentFragment DocumentFragment;
-  typedef dom::DOMString DOMString;
 
   // Introduced in DOM Level 2:
   exception RangeException {
@@ -54,33 +52,33 @@ module ranges
     readonly attribute Node             commonAncestorContainer;
                                         // raises(dom::DOMException) on retrieval
 
-    void               setStart(in Node refNode, 
+    void               setStart(in Node refNode,
                                 in long offset)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
-    void               setEnd(in Node refNode, 
+    void               setEnd(in Node refNode,
                               in long offset)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               setStartBefore(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               setStartAfter(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               setEndBefore(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               setEndAfter(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               collapse(in boolean toStart)
                                         raises(dom::DOMException);
     void               selectNode(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
     void               selectNodeContents(in Node refNode)
-                                        raises(RangeException, 
+                                        raises(RangeException,
                                                dom::DOMException);
 
     // CompareHow
@@ -89,7 +87,7 @@ module ranges
     const unsigned short      END_TO_END                     = 2;
     const unsigned short      END_TO_START                   = 3;
 
-    short              compareBoundaryPoints(in unsigned short how, 
+    short              compareBoundaryPoints(in unsigned short how,
                                              in Range sourceRange)
                                         raises(dom::DOMException);
     void               deleteContents()
@@ -99,10 +97,10 @@ module ranges
     DocumentFragment   cloneContents()
                                         raises(dom::DOMException);
     void               insertNode(in Node newNode)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                RangeException);
     void               surroundContents(in Node newParent)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                RangeException);
     Range              cloneRange()
                                         raises(dom::DOMException);

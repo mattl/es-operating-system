@@ -10,8 +10,31 @@
 #define _HTML5_IDL_
 
 #include "dom.idl"
+#include "events.idl"
+#include "css.idl"
+#include "ranges.idl"
 
 module html5 {
+
+  typedef dom::Node Node;
+  typedef dom::Document Document;
+  typedef dom::NodeList NodeList;
+  typedef dom::Element Element;
+  typedef dom::DOMStringList DOMStringList;
+  typedef views::AbstractView AbstractView;
+  typedef events::Event Event;
+  typedef events::EventTarget EventTarget;
+  typedef events::MouseEvent MouseEvent;
+  typedef css::CSSStyleDeclaration CSSStyleDeclaration;
+  typedef ranges::Range Range;
+
+  interface HTMLElement;
+  interface HTMLFormElement;
+  interface HTMLTableCaptionElement;
+  interface HTMLTableSectionElement;
+
+  // XXX
+  typedef any Date;
 
   [Callable=namedItem]
   interface HTMLCollection {
@@ -559,6 +582,10 @@ module html5 {
     void deleteRow(in long index);
   };
 
+  interface HTMLTableCaptionElement : HTMLElement {
+             attribute DOMString       align;
+  };
+
   interface HTMLTableColElement : HTMLElement {
              attribute unsigned long span;
   };
@@ -919,6 +946,10 @@ module html5 {
     readonly attribute HTMLFormElement form;
   };
 
+  // XXX
+  interface Window;
+  typedef Window WindowProxy;
+
   [IndexGetter, NameGetter=OverrideBuiltins]
   interface Window {
     // the current browsing context
@@ -950,9 +981,9 @@ module html5 {
 
     // the user agent
     readonly attribute Navigator navigator;
-    readonly attribute Storage localStorage;
-    readonly attribute Storage sessionStorage;
-    Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
+    // XXX readonly attribute Storage localStorage;
+    // XXX readonly attribute Storage sessionStorage;
+    // XXX Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
     readonly attribute ApplicationCache applicationCache;
 
     // user prompts
@@ -1190,12 +1221,12 @@ module html5 {
   [NoInterfaceObject, ImplementedOn=Window] interface WindowTimers {
     // timers
     long setTimeout(in TimeoutHandler handler, in long timeout);
-    long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);
+    long setTimeout(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
     long setTimeout(in DOMString code, in long timeout);
     long setTimeout(in DOMString code, in long timeout, in DOMString language);
     void clearTimeout(in long handle);
     long setInterval(in TimeoutHandler handler, in long timeout);
-    long setInterval(in TimeoutHandler handler, in long timeout, arguments...);
+    long setInterval(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
     long setInterval(in DOMString code, in long timeout);
     long setInterval(in DOMString code, in long timeout, in DOMString language);
     void clearInterval(in long handle);

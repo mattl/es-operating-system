@@ -15,11 +15,8 @@
 #ifndef _DOM_IDL_
 #define _DOM_IDL_
 
-#pragma prefix "w3c.org"
 module dom
 {
-
-  valuetype DOMString sequence<unsigned short>;
 
   typedef   unsigned long long DOMTimeStamp;
 
@@ -80,7 +77,7 @@ module dom
     DOMString          getNamespaceURI(in unsigned long index);
     readonly attribute unsigned long   length;
     boolean            contains(in DOMString str);
-    boolean            containsNS(in DOMString namespaceURI, 
+    boolean            containsNS(in DOMString namespaceURI,
                                   in DOMString name);
   };
 
@@ -97,20 +94,20 @@ module dom
   };
 
   interface DOMImplementation {
-    boolean            hasFeature(in DOMString feature, 
+    boolean            hasFeature(in DOMString feature,
                                   in DOMString version);
     // Introduced in DOM Level 2:
-    DocumentType       createDocumentType(in DOMString qualifiedName, 
-                                          in DOMString publicId, 
+    DocumentType       createDocumentType(in DOMString qualifiedName,
+                                          in DOMString publicId,
                                           in DOMString systemId)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    Document           createDocument(in DOMString namespaceURI, 
-                                      in DOMString qualifiedName, 
+    Document           createDocument(in DOMString namespaceURI,
+                                      in DOMString qualifiedName,
                                       in DocumentType doctype)
                                         raises(DOMException);
     // Introduced in DOM Level 3:
-    DOMObject          getFeature(in DOMString feature, 
+    DOMObject          getFeature(in DOMString feature,
                                   in DOMString version);
   };
 
@@ -146,11 +143,11 @@ module dom
     // Modified in DOM Level 2:
     readonly attribute Document        ownerDocument;
     // Modified in DOM Level 3:
-    Node               insertBefore(in Node newChild, 
+    Node               insertBefore(in Node newChild,
                                     in Node refChild)
                                         raises(DOMException);
     // Modified in DOM Level 3:
-    Node               replaceChild(in Node newChild, 
+    Node               replaceChild(in Node newChild,
                                     in Node oldChild)
                                         raises(DOMException);
     // Modified in DOM Level 3:
@@ -164,7 +161,7 @@ module dom
     // Modified in DOM Level 3:
     void               normalize();
     // Introduced in DOM Level 2:
-    boolean            isSupported(in DOMString feature, 
+    boolean            isSupported(in DOMString feature,
                                    in DOMString version);
     // Introduced in DOM Level 2:
     readonly attribute DOMString       namespaceURI;
@@ -206,11 +203,11 @@ module dom
     // Introduced in DOM Level 3:
     boolean            isEqualNode(in Node arg);
     // Introduced in DOM Level 3:
-    DOMObject          getFeature(in DOMString feature, 
+    DOMObject          getFeature(in DOMString feature,
                                   in DOMString version);
     // Introduced in DOM Level 3:
-    DOMUserData        setUserData(in DOMString key, 
-                                   in DOMUserData data, 
+    DOMUserData        setUserData(in DOMString key,
+                                   in DOMUserData data,
                                    in UserDataHandler handler);
     // Introduced in DOM Level 3:
     DOMUserData        getUserData(in DOMString key);
@@ -230,14 +227,14 @@ module dom
     Node               item(in unsigned long index);
     readonly attribute unsigned long   length;
     // Introduced in DOM Level 2:
-    Node               getNamedItemNS(in DOMString namespaceURI, 
+    Node               getNamedItemNS(in DOMString namespaceURI,
                                       in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
     Node               setNamedItemNS(in Node arg)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    Node               removeNamedItemNS(in DOMString namespaceURI, 
+    Node               removeNamedItemNS(in DOMString namespaceURI,
                                          in DOMString localName)
                                         raises(DOMException);
   };
@@ -248,19 +245,19 @@ module dom
                                         // raises(DOMException) on retrieval
 
     readonly attribute unsigned long   length;
-    DOMString          substringData(in unsigned long offset, 
+    DOMString          substringData(in unsigned long offset,
                                      in unsigned long count)
                                         raises(DOMException);
     void               appendData(in DOMString arg)
                                         raises(DOMException);
-    void               insertData(in unsigned long offset, 
+    void               insertData(in unsigned long offset,
                                   in DOMString arg)
                                         raises(DOMException);
-    void               deleteData(in unsigned long offset, 
+    void               deleteData(in unsigned long offset,
                                   in unsigned long count)
                                         raises(DOMException);
-    void               replaceData(in unsigned long offset, 
-                                   in unsigned long count, 
+    void               replaceData(in unsigned long offset,
+                                   in unsigned long count,
                                    in DOMString arg)
                                         raises(DOMException);
   };
@@ -282,7 +279,7 @@ module dom
   interface Element : Node {
     readonly attribute DOMString       tagName;
     DOMString          getAttribute(in DOMString name);
-    void               setAttribute(in DOMString name, 
+    void               setAttribute(in DOMString name,
                                     in DOMString value)
                                         raises(DOMException);
     void               removeAttribute(in DOMString name)
@@ -294,48 +291,48 @@ module dom
                                         raises(DOMException);
     NodeList           getElementsByTagName(in DOMString name);
     // Introduced in DOM Level 2:
-    DOMString          getAttributeNS(in DOMString namespaceURI, 
+    DOMString          getAttributeNS(in DOMString namespaceURI,
                                       in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    void               setAttributeNS(in DOMString namespaceURI, 
-                                      in DOMString qualifiedName, 
+    void               setAttributeNS(in DOMString namespaceURI,
+                                      in DOMString qualifiedName,
                                       in DOMString value)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    void               removeAttributeNS(in DOMString namespaceURI, 
+    void               removeAttributeNS(in DOMString namespaceURI,
                                          in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    Attr               getAttributeNodeNS(in DOMString namespaceURI, 
+    Attr               getAttributeNodeNS(in DOMString namespaceURI,
                                           in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
     Attr               setAttributeNodeNS(in Attr newAttr)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
+    NodeList           getElementsByTagNameNS(in DOMString namespaceURI,
                                               in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
     boolean            hasAttribute(in DOMString name);
     // Introduced in DOM Level 2:
-    boolean            hasAttributeNS(in DOMString namespaceURI, 
+    boolean            hasAttributeNS(in DOMString namespaceURI,
                                       in DOMString localName)
                                         raises(DOMException);
     // Introduced in DOM Level 3:
     readonly attribute TypeInfo        schemaTypeInfo;
     // Introduced in DOM Level 3:
-    void               setIdAttribute(in DOMString name, 
+    void               setIdAttribute(in DOMString name,
                                       in boolean isId)
                                         raises(DOMException);
     // Introduced in DOM Level 3:
-    void               setIdAttributeNS(in DOMString namespaceURI, 
-                                        in DOMString localName, 
+    void               setIdAttributeNS(in DOMString namespaceURI,
+                                        in DOMString localName,
                                         in boolean isId)
                                         raises(DOMException);
     // Introduced in DOM Level 3:
-    void               setIdAttributeNode(in Attr idAttr, 
+    void               setIdAttributeNode(in Attr idAttr,
                                           in boolean isId)
                                         raises(DOMException);
   };
@@ -366,8 +363,8 @@ module dom
     const unsigned long       DERIVATION_UNION               = 0x00000004;
     const unsigned long       DERIVATION_LIST                = 0x00000008;
 
-    boolean            isDerivedFrom(in DOMString typeNamespaceArg, 
-                                     in DOMString typeNameArg, 
+    boolean            isDerivedFrom(in DOMString typeNamespaceArg,
+                                     in DOMString typeNameArg,
                                      in unsigned long derivationMethod);
   };
 
@@ -381,10 +378,10 @@ module dom
     const unsigned short      NODE_RENAMED                   = 4;
     const unsigned short      NODE_ADOPTED                   = 5;
 
-    void               handle(in unsigned short operation, 
-                              in DOMString key, 
-                              in DOMUserData data, 
-                              in Node src, 
+    void               handle(in unsigned short operation,
+                              in DOMString key,
+                              in DOMUserData data,
+                              in Node src,
                               in Node dst);
   };
 
@@ -421,12 +418,12 @@ module dom
 
   // Introduced in DOM Level 3:
   interface DOMConfiguration {
-    void               setParameter(in DOMString name, 
+    void               setParameter(in DOMString name,
                                     in DOMUserData value)
                                         raises(DOMException);
     DOMUserData        getParameter(in DOMString name)
                                         raises(DOMException);
-    boolean            canSetParameter(in DOMString name, 
+    boolean            canSetParameter(in DOMString name,
                                        in DOMUserData value);
     readonly attribute DOMStringList   parameterNames;
   };
@@ -488,7 +485,7 @@ module dom
     Comment            createComment(in DOMString data);
     CDATASection       createCDATASection(in DOMString data)
                                         raises(DOMException);
-    ProcessingInstruction createProcessingInstruction(in DOMString target, 
+    ProcessingInstruction createProcessingInstruction(in DOMString target,
                                                       in DOMString data)
                                         raises(DOMException);
     Attr               createAttribute(in DOMString name)
@@ -497,19 +494,19 @@ module dom
                                         raises(DOMException);
     NodeList           getElementsByTagName(in DOMString tagname);
     // Introduced in DOM Level 2:
-    Node               importNode(in Node importedNode, 
+    Node               importNode(in Node importedNode,
                                   in boolean deep)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    Element            createElementNS(in DOMString namespaceURI, 
+    Element            createElementNS(in DOMString namespaceURI,
                                        in DOMString qualifiedName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    Attr               createAttributeNS(in DOMString namespaceURI, 
+    Attr               createAttributeNS(in DOMString namespaceURI,
                                          in DOMString qualifiedName)
                                         raises(DOMException);
     // Introduced in DOM Level 2:
-    NodeList           getElementsByTagNameNS(in DOMString namespaceURI, 
+    NodeList           getElementsByTagNameNS(in DOMString namespaceURI,
                                               in DOMString localName);
     // Introduced in DOM Level 2:
     Element            getElementById(in DOMString elementId);
@@ -537,12 +534,11 @@ module dom
     // Introduced in DOM Level 3:
     void               normalizeDocument();
     // Introduced in DOM Level 3:
-    Node               renameNode(in Node n, 
-                                  in DOMString namespaceURI, 
+    Node               renameNode(in Node n,
+                                  in DOMString namespaceURI,
                                   in DOMString qualifiedName)
                                         raises(DOMException);
   };
 };
 
 #endif // _DOM_IDL_
-

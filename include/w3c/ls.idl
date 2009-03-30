@@ -19,7 +19,6 @@
 #include "events.idl"
 #include "traversal.idl"
 
-#pragma prefix "dom.w3c.org"
 module ls
 {
 
@@ -31,7 +30,6 @@ module ls
 
   typedef   Object LSWriter;
 
-  typedef dom::DOMString DOMString;
   typedef dom::DOMConfiguration DOMConfiguration;
   typedef dom::Node Node;
   typedef dom::Document Document;
@@ -58,7 +56,7 @@ module ls
     const unsigned short      MODE_SYNCHRONOUS               = 1;
     const unsigned short      MODE_ASYNCHRONOUS              = 2;
 
-    LSParser           createLSParser(in unsigned short mode, 
+    LSParser           createLSParser(in unsigned short mode,
                                       in DOMString schemaType)
                                         raises(dom::DOMException);
     LSSerializer       createLSSerializer();
@@ -72,10 +70,10 @@ module ls
     readonly attribute boolean         async;
     readonly attribute boolean         busy;
     Document           parse(in LSInput input)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                LSException);
     Document           parseURI(in DOMString uri)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                LSException);
 
     // ACTION_TYPES
@@ -85,10 +83,10 @@ module ls
     const unsigned short      ACTION_INSERT_AFTER            = 4;
     const unsigned short      ACTION_REPLACE                 = 5;
 
-    Node               parseWithContext(in LSInput input, 
-                                        in Node contextArg, 
+    Node               parseWithContext(in LSInput input,
+                                        in Node contextArg,
                                         in unsigned short action)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                LSException);
     void               abort();
   };
@@ -107,10 +105,10 @@ module ls
   };
 
   interface LSResourceResolver {
-    LSInput            resolveResource(in DOMString type, 
-                                       in DOMString namespaceURI, 
-                                       in DOMString publicId, 
-                                       in DOMString systemId, 
+    LSInput            resolveResource(in DOMString type,
+                                       in DOMString namespaceURI,
+                                       in DOMString publicId,
+                                       in DOMString systemId,
                                        in DOMString baseURI);
   };
 
@@ -131,14 +129,14 @@ module ls
     readonly attribute DOMConfiguration domConfig;
              attribute DOMString       newLine;
              attribute LSSerializerFilter filter;
-    boolean            write(in Node nodeArg, 
+    boolean            write(in Node nodeArg,
                              in LSOutput destination)
                                         raises(LSException);
-    boolean            writeToURI(in Node nodeArg, 
+    boolean            writeToURI(in Node nodeArg,
                                   in DOMString uri)
                                         raises(LSException);
     DOMString          writeToString(in Node nodeArg)
-                                        raises(dom::DOMException, 
+                                        raises(dom::DOMException,
                                                LSException);
   };
 

@@ -17,7 +17,6 @@
 
 #include "dom.idl"
 
-#pragma prefix "dom.w3c.org"
 module traversal
 {
 
@@ -85,14 +84,14 @@ module traversal
 
   // Introduced in DOM Level 2:
   interface DocumentTraversal {
-    NodeIterator       createNodeIterator(in Node root, 
-                                          in unsigned long whatToShow, 
-                                          in NodeFilter filter, 
+    NodeIterator       createNodeIterator(in Node root,
+                                          in unsigned long whatToShow,
+                                          in NodeFilter filter,
                                           in boolean entityReferenceExpansion)
                                         raises(dom::DOMException);
-    TreeWalker         createTreeWalker(in Node root, 
-                                        in unsigned long whatToShow, 
-                                        in NodeFilter filter, 
+    TreeWalker         createTreeWalker(in Node root,
+                                        in unsigned long whatToShow,
+                                        in NodeFilter filter,
                                         in boolean entityReferenceExpansion)
                                         raises(dom::DOMException);
   };

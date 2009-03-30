@@ -3,11 +3,11 @@
 #define _SMIL_IDL_
 
 #include "dom.idl"
+#include "events.idl"
 
-#pragma prefix "dom.w3c.org"
 module smil
 {
-  typedef dom::DOMString DOMString;
+
 
   interface ElementTimeControl {
     void            beginElement();

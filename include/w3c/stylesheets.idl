@@ -17,11 +17,9 @@
 
 #include "dom.idl"
 
-#pragma prefix "dom.w3c.org"
 module stylesheets
 {
 
-  typedef dom::DOMString DOMString;
   typedef dom::Node Node;
 
   interface MediaList;

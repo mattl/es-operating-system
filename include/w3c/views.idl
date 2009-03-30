@@ -17,7 +17,6 @@
 
 #include "dom.idl"
 
-#pragma prefix "dom.w3c.org"
 module views
 {
 
@@ -35,4 +34,3 @@ module views
 };
 
 #endif // _VIEWS_IDL_
-

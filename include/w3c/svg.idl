@@ -18,11 +18,8 @@
 // For access to the SMIL OM used by SVG DOM.
 #include "smil.idl"
 
-#pragma prefix "dom.w3c.org"
-#pragma javaPackage "org.w3c.dom"
 module svg
 {
-  typedef dom::DOMString DOMString;
   typedef dom::DOMException DOMException;
   typedef dom::Element Element;
   typedef dom::Document Document;
@@ -63,7 +60,7 @@ module svg
   const unsigned short SVG_INVALID_VALUE_ERR        = 1;
   const unsigned short SVG_MATRIX_NOT_INVERTABLE    = 2;
 
-  interface SVGElement : Element { 
+  interface SVGElement : Element {
              attribute DOMString id;
                          // raises DOMException on setting
              attribute DOMString xmlbase;
@@ -72,21 +69,21 @@ module svg
     readonly attribute SVGElement viewportElement;
   };
 
-  interface SVGAnimatedBoolean { 
+  interface SVGAnimatedBoolean {
 
              attribute boolean baseVal;
                          // raises DOMException on setting
     readonly attribute boolean animVal;
   };
 
-  interface SVGAnimatedString { 
+  interface SVGAnimatedString {
 
              attribute DOMString baseVal;
                          // raises DOMException on setting
     readonly attribute DOMString animVal;
   };
 
-  interface SVGStringList { 
+  interface SVGStringList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -106,34 +103,34 @@ module svg
                     raises( DOMException, SVGException );
   };
 
-  interface SVGAnimatedEnumeration { 
+  interface SVGAnimatedEnumeration {
 
              attribute unsigned short baseVal;
                          // raises DOMException on setting
     readonly attribute unsigned short animVal;
   };
 
-  interface SVGAnimatedInteger { 
+  interface SVGAnimatedInteger {
 
              attribute long baseVal;
                          // raises DOMException on setting
     readonly attribute long animVal;
   };
 
-  interface SVGNumber { 
+  interface SVGNumber {
 
              attribute float value;
                          // raises DOMException on setting
   };
 
-  interface SVGAnimatedNumber { 
+  interface SVGAnimatedNumber {
 
              attribute float baseVal;
                          // raises DOMException on setting
     readonly attribute float animVal;
   };
 
-  interface SVGNumberList { 
+  interface SVGNumberList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -153,13 +150,13 @@ module svg
                     raises( DOMException, SVGException );
   };
 
-  interface SVGAnimatedNumberList { 
+  interface SVGAnimatedNumberList {
 
     readonly attribute SVGNumberList baseVal;
     readonly attribute SVGNumberList animVal;
   };
 
-  interface SVGLength { 
+  interface SVGLength {
 
     // Length Unit Types
     const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
@@ -186,13 +183,13 @@ module svg
     void convertToSpecifiedUnits ( in unsigned short unitType );
   };
 
-  interface SVGAnimatedLength { 
+  interface SVGAnimatedLength {
 
     readonly attribute SVGLength baseVal;
     readonly attribute SVGLength animVal;
   };
 
-  interface SVGLengthList { 
+  interface SVGLengthList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -212,13 +209,13 @@ module svg
                     raises( DOMException, SVGException );
   };
 
-  interface SVGAnimatedLengthList { 
+  interface SVGAnimatedLengthList {
 
     readonly attribute SVGLengthList baseVal;
     readonly attribute SVGLengthList animVal;
   };
 
-  interface SVGAngle { 
+  interface SVGAngle {
 
     // Angle Unit Types
     const unsigned short SVG_ANGLETYPE_UNKNOWN     = 0;
@@ -239,13 +236,13 @@ module svg
     void convertToSpecifiedUnits ( in unsigned short unitType );
   };
 
-  interface SVGAnimatedAngle { 
+  interface SVGAnimatedAngle {
 
     readonly attribute SVGAngle baseVal;
     readonly attribute SVGAngle animVal;
   };
 
-  interface SVGColor : css::CSSValue { 
+  interface SVGColor : css::CSSValue {
     // Color Types
     const unsigned short SVG_COLORTYPE_UNKNOWN           = 0;
     const unsigned short SVG_COLORTYPE_RGBCOLOR          = 1;
@@ -264,14 +261,14 @@ module svg
                     raises( SVGException );
   };
 
-  interface SVGICCColor { 
+  interface SVGICCColor {
 
              attribute DOMString      colorProfile;
                          // raises DOMException on setting
     readonly attribute SVGNumberList colors;
   };
 
-  interface SVGRect { 
+  interface SVGRect {
 
              attribute float x;
                          // raises DOMException on setting
@@ -283,13 +280,13 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGAnimatedRect { 
+  interface SVGAnimatedRect {
 
     readonly attribute SVGRect baseVal;
     readonly attribute SVGRect animVal;
   };
 
-  interface SVGUnitTypes { 
+  interface SVGUnitTypes {
 
     // Unit Types
     const unsigned short SVG_UNIT_TYPE_UNKNOWN           = 0;
@@ -297,7 +294,7 @@ module svg
     const unsigned short SVG_UNIT_TYPE_OBJECTBOUNDINGBOX = 2;
   };
 
-  interface SVGStylable { 
+  interface SVGStylable {
 
     readonly attribute SVGAnimatedString className;
     readonly attribute css::CSSStyleDeclaration style;
@@ -305,7 +302,7 @@ module svg
     css::CSSValue getPresentationAttribute ( in DOMString name );
   };
 
-  interface SVGLocatable { 
+  interface SVGLocatable {
 
     readonly attribute SVGElement              nearestViewportElement;
     readonly attribute SVGElement              farthestViewportElement;
@@ -317,11 +314,11 @@ module svg
                     raises( SVGException );
   };
 
-  interface SVGTransformable : SVGLocatable { 
+  interface SVGTransformable : SVGLocatable {
     readonly attribute SVGAnimatedTransformList transform;
   };
 
-  interface SVGTests { 
+  interface SVGTests {
 
     readonly attribute SVGStringList requiredFeatures;
     readonly attribute SVGStringList requiredExtensions;
@@ -330,7 +327,7 @@ module svg
     boolean hasExtension ( in DOMString extension );
   };
 
-  interface SVGLangSpace { 
+  interface SVGLangSpace {
 
              attribute DOMString xmllang;
                          // raises DOMException on setting
@@ -338,18 +335,18 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGExternalResourcesRequired { 
+  interface SVGExternalResourcesRequired {
 
     readonly attribute SVGAnimatedBoolean externalResourcesRequired;
   };
 
-  interface SVGFitToViewBox { 
+  interface SVGFitToViewBox {
 
     readonly attribute SVGAnimatedRect                viewBox;
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
   };
 
-  interface SVGZoomAndPan { 
+  interface SVGZoomAndPan {
 
     // Zoom and Pan Types
     const unsigned short SVG_ZOOMANDPAN_UNKNOWN   = 0;
@@ -360,9 +357,9 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGViewSpec : 
+  interface SVGViewSpec :
                 SVGZoomAndPan,
-                SVGFitToViewBox { 
+                SVGFitToViewBox {
 
     readonly attribute SVGTransformList transform;
     readonly attribute SVGElement       viewTarget;
@@ -372,17 +369,17 @@ module svg
     readonly attribute DOMString        viewTargetString;
   };
 
-  interface SVGURIReference { 
+  interface SVGURIReference {
 
     readonly attribute SVGAnimatedString href;
   };
 
-  interface SVGCSSRule : css::CSSRule { 
+  interface SVGCSSRule : css::CSSRule {
     // Additional CSS RuleType to support ICC color specifications
     const unsigned short COLOR_PROFILE_RULE = 7;
   };
 
-  interface SVGRenderingIntent { 
+  interface SVGRenderingIntent {
 
     // Rendering Intent Types
     const unsigned short RENDERING_INTENT_UNKNOWN               = 0;
@@ -393,9 +390,9 @@ module svg
     const unsigned short RENDERING_INTENT_ABSOLUTE_COLORIMETRIC = 5;
   };
 
-  interface SVGDocument : 
+  interface SVGDocument :
                 Document,
-                events::DocumentEvent { 
+                events::DocumentEvent {
 
     readonly attribute DOMString    title;
     readonly attribute DOMString     referrer;
@@ -404,7 +401,7 @@ module svg
     readonly attribute SVGSVGElement rootElement;
   };
 
-  interface SVGSVGElement : 
+  interface SVGSVGElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -416,7 +413,7 @@ module svg
                 events::EventTarget,
                 events::DocumentEvent,
                 css::ViewCSS,
-                css::DocumentCSS { 
+                css::DocumentCSS {
 
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
@@ -464,7 +461,7 @@ module svg
     Element         getElementById ( in DOMString elementId );
   };
 
-  interface SVGGElement : 
+  interface SVGGElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -473,7 +470,7 @@ module svg
                 SVGTransformable,
                 events::EventTarget {};
 
-  interface SVGDefsElement : 
+  interface SVGDefsElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -482,17 +479,17 @@ module svg
                 SVGTransformable,
                 events::EventTarget {};
 
-  interface SVGDescElement : 
+  interface SVGDescElement :
                 SVGElement,
                 SVGLangSpace,
                 SVGStylable {};
 
-  interface SVGTitleElement : 
+  interface SVGTitleElement :
                 SVGElement,
                 SVGLangSpace,
                 SVGStylable {};
 
-  interface SVGSymbolElement : 
+  interface SVGSymbolElement :
                 SVGElement,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
@@ -500,7 +497,7 @@ module svg
                 SVGFitToViewBox,
                 events::EventTarget {};
 
-  interface SVGUseElement : 
+  interface SVGUseElement :
                 SVGElement,
                 SVGURIReference,
                 SVGTests,
@@ -508,7 +505,7 @@ module svg
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength   x;
     readonly attribute SVGAnimatedLength   y;
@@ -518,7 +515,7 @@ module svg
     readonly attribute SVGElementInstance animatedInstanceRoot;
   };
 
-  interface SVGElementInstance : events::EventTarget { 
+  interface SVGElementInstance : events::EventTarget {
     readonly attribute SVGElement correspondingElement;
     readonly attribute SVGUseElement correspondingUseElement;
     readonly attribute SVGElementInstance parentNode;
@@ -529,14 +526,14 @@ module svg
     readonly attribute SVGElementInstance nextSibling;
   };
 
-  interface SVGElementInstanceList { 
+  interface SVGElementInstanceList {
 
     readonly attribute unsigned long length;
 
     SVGElementInstance item ( in unsigned long index );
   };
 
-  interface SVGImageElement : 
+  interface SVGImageElement :
                 SVGElement,
                 SVGURIReference,
                 SVGTests,
@@ -544,7 +541,7 @@ module svg
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
@@ -553,7 +550,7 @@ module svg
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
   };
 
-  interface SVGSwitchElement : 
+  interface SVGSwitchElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -562,13 +559,13 @@ module svg
                 SVGTransformable,
                 events::EventTarget {};
 
-  interface GetSVGDocument { 
+  interface GetSVGDocument {
 
     SVGDocument getSVGDocument (  )
                     raises( DOMException );
   };
 
-  interface SVGStyleElement : SVGElement { 
+  interface SVGStyleElement : SVGElement {
              attribute DOMString xmlspace;
                          // raises DOMException on setting
              attribute DOMString type;
@@ -579,7 +576,7 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPoint { 
+  interface SVGPoint {
 
              attribute float x;
                          // raises DOMException on setting
@@ -589,7 +586,7 @@ module svg
     SVGPoint matrixTransform ( in SVGMatrix matrix );
   };
 
-  interface SVGPointList { 
+  interface SVGPointList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -609,7 +606,7 @@ module svg
                     raises( DOMException, SVGException );
   };
 
-  interface SVGMatrix { 
+  interface SVGMatrix {
 
              attribute float a;
                          // raises DOMException on setting
@@ -639,7 +636,7 @@ module svg
     SVGMatrix skewY ( in float angle );
   };
 
-  interface SVGTransform { 
+  interface SVGTransform {
 
     // Transform Types
     const unsigned short SVG_TRANSFORM_UNKNOWN   = 0;
@@ -662,7 +659,7 @@ module svg
     void setSkewY ( in float angle );
   };
 
-  interface SVGTransformList { 
+  interface SVGTransformList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -684,13 +681,13 @@ module svg
     SVGTransform consolidate (  );
   };
 
-  interface SVGAnimatedTransformList { 
+  interface SVGAnimatedTransformList {
 
     readonly attribute SVGTransformList baseVal;
     readonly attribute SVGTransformList animVal;
   };
 
-  interface SVGPreserveAspectRatio { 
+  interface SVGPreserveAspectRatio {
 
     // Alignment Types
     const unsigned short SVG_PRESERVEASPECTRATIO_UNKNOWN   = 0;
@@ -715,13 +712,13 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGAnimatedPreserveAspectRatio { 
+  interface SVGAnimatedPreserveAspectRatio {
 
     readonly attribute SVGPreserveAspectRatio baseVal;
     readonly attribute SVGPreserveAspectRatio animVal;
   };
 
-  interface SVGPathSeg { 
+  interface SVGPathSeg {
 
     // Path Segment Types
     const unsigned short PATHSEG_UNKNOWN                      = 0;
@@ -751,50 +748,35 @@ module svg
 
   interface SVGPathSegClosePath : SVGPathSeg {};
 
-  interface SVGPathSegMovetoAbs : SVGPathSeg { 
+  interface SVGPathSegMovetoAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegMovetoRel : SVGPathSeg { 
+  interface SVGPathSegMovetoRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoAbs : SVGPathSeg { 
+  interface SVGPathSegLinetoAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoRel : SVGPathSeg { 
+  interface SVGPathSegLinetoRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoCubicAbs : SVGPathSeg { 
-             attribute float   x;
-                         // raises DOMException on setting
-             attribute float   y;
-                         // raises DOMException on setting
-             attribute float   x1;
-                         // raises DOMException on setting
-             attribute float   y1;
-                         // raises DOMException on setting
-             attribute float   x2;
-                         // raises DOMException on setting
-             attribute float   y2;
-                         // raises DOMException on setting
-  };
-
-  interface SVGPathSegCurvetoCubicRel : SVGPathSeg { 
+  interface SVGPathSegCurvetoCubicAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -809,7 +791,22 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoQuadraticAbs : SVGPathSeg { 
+  interface SVGPathSegCurvetoCubicRel : SVGPathSeg {
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   x1;
+                         // raises DOMException on setting
+             attribute float   y1;
+                         // raises DOMException on setting
+             attribute float   x2;
+                         // raises DOMException on setting
+             attribute float   y2;
+                         // raises DOMException on setting
+  };
+
+  interface SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -820,7 +817,7 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoQuadraticRel : SVGPathSeg { 
+  interface SVGPathSegCurvetoQuadraticRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -831,7 +828,7 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegArcAbs : SVGPathSeg { 
+  interface SVGPathSegArcAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -848,7 +845,7 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegArcRel : SVGPathSeg { 
+  interface SVGPathSegArcRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -865,38 +862,27 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoHorizontalAbs : SVGPathSeg { 
+  interface SVGPathSegLinetoHorizontalAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoHorizontalRel : SVGPathSeg { 
+  interface SVGPathSegLinetoHorizontalRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoVerticalAbs : SVGPathSeg { 
+  interface SVGPathSegLinetoVerticalAbs : SVGPathSeg {
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegLinetoVerticalRel : SVGPathSeg { 
+  interface SVGPathSegLinetoVerticalRel : SVGPathSeg {
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg { 
-             attribute float   x;
-                         // raises DOMException on setting
-             attribute float   y;
-                         // raises DOMException on setting
-             attribute float   x2;
-                         // raises DOMException on setting
-             attribute float   y2;
-                         // raises DOMException on setting
-  };
-
-  interface SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg { 
+  interface SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
@@ -907,21 +893,32 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg { 
+  interface SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg {
+             attribute float   x;
+                         // raises DOMException on setting
+             attribute float   y;
+                         // raises DOMException on setting
+             attribute float   x2;
+                         // raises DOMException on setting
+             attribute float   y2;
+                         // raises DOMException on setting
+  };
+
+  interface SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg { 
+  interface SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg {
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
 
-  interface SVGPathSegList { 
+  interface SVGPathSegList {
 
     readonly attribute unsigned long numberOfItems;
 
@@ -941,7 +938,7 @@ module svg
                     raises( DOMException, SVGException );
   };
 
-  interface SVGAnimatedPathData { 
+  interface SVGAnimatedPathData {
 
     readonly attribute SVGPathSegList   pathSegList;
     readonly attribute SVGPathSegList   normalizedPathSegList;
@@ -949,7 +946,7 @@ module svg
     readonly attribute SVGPathSegList   animatedNormalizedPathSegList;
   };
 
-  interface SVGPathElement : 
+  interface SVGPathElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -957,7 +954,7 @@ module svg
                 SVGStylable,
                 SVGTransformable,
                 events::EventTarget,
-                SVGAnimatedPathData { 
+                SVGAnimatedPathData {
 
     readonly attribute SVGAnimatedNumber pathLength;
 
@@ -985,14 +982,14 @@ module svg
     SVGPathSegCurvetoQuadraticSmoothRel    createSVGPathSegCurvetoQuadraticSmoothRel ( in float x, in float y );
   };
 
-  interface SVGRectElement : 
+  interface SVGRectElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
@@ -1002,28 +999,28 @@ module svg
     readonly attribute SVGAnimatedLength ry;
   };
 
-  interface SVGCircleElement : 
+  interface SVGCircleElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;
   };
 
-  interface SVGEllipseElement : 
+  interface SVGEllipseElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
@@ -1031,14 +1028,14 @@ module svg
     readonly attribute SVGAnimatedLength ry;
   };
 
-  interface SVGLineElement : 
+  interface SVGLineElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength x1;
     readonly attribute SVGAnimatedLength y1;
@@ -1046,13 +1043,13 @@ module svg
     readonly attribute SVGAnimatedLength y2;
   };
 
-  interface SVGAnimatedPoints { 
+  interface SVGAnimatedPoints {
 
     readonly attribute SVGPointList   points;
     readonly attribute SVGPointList   animatedPoints;
   };
 
-  interface SVGPolylineElement : 
+  interface SVGPolylineElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -1062,7 +1059,7 @@ module svg
                 events::EventTarget,
                 SVGAnimatedPoints {};
 
-  interface SVGPolygonElement : 
+  interface SVGPolygonElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
@@ -1072,13 +1069,13 @@ module svg
                 events::EventTarget,
                 SVGAnimatedPoints {};
 
-  interface SVGTextContentElement : 
+  interface SVGTextContentElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
-                events::EventTarget { 
+                events::EventTarget {
 
     // lengthAdjust Types
     const unsigned short LENGTHADJUST_UNKNOWN   = 0;
@@ -1105,7 +1102,7 @@ module svg
                     raises( DOMException );
   };
 
-  interface SVGTextPositioningElement : SVGTextContentElement { 
+  interface SVGTextPositioningElement : SVGTextContentElement {
     readonly attribute SVGAnimatedLengthList x;
     readonly attribute SVGAnimatedLengthList y;
     readonly attribute SVGAnimatedLengthList dx;
@@ -1113,19 +1110,19 @@ module svg
     readonly attribute SVGAnimatedNumberList rotate;
   };
 
-  interface SVGTextElement : 
+  interface SVGTextElement :
                 SVGTextPositioningElement,
                 SVGTransformable {};
 
   interface SVGTSpanElement : SVGTextPositioningElement {};
 
-  interface SVGTRefElement : 
+  interface SVGTRefElement :
                 SVGTextPositioningElement,
                 SVGURIReference {};
 
-  interface SVGTextPathElement : 
+  interface SVGTextPathElement :
                 SVGTextContentElement,
-                SVGURIReference { 
+                SVGURIReference {
 
     // textPath Method Types
     const unsigned short TEXTPATH_METHODTYPE_UNKNOWN   = 0;
@@ -1141,9 +1138,9 @@ module svg
     readonly attribute SVGAnimatedEnumeration spacing;
   };
 
-  interface SVGAltGlyphElement : 
+  interface SVGAltGlyphElement :
                 SVGTextPositioningElement,
-                SVGURIReference { 
+                SVGURIReference {
 
              attribute DOMString glyphRef;
                          // raises DOMException on setting
@@ -1155,10 +1152,10 @@ module svg
 
   interface SVGAltGlyphItemElement : SVGElement {};
 
-  interface SVGGlyphRefElement : 
+  interface SVGGlyphRefElement :
                 SVGElement,
                 SVGURIReference,
-                SVGStylable { 
+                SVGStylable {
 
              attribute DOMString glyphRef;
                          // raises DOMException on setting
@@ -1174,7 +1171,7 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGPaint : SVGColor { 
+  interface SVGPaint : SVGColor {
     // Paint Types
     const unsigned short SVG_PAINTTYPE_UNKNOWN               = 0;
     const unsigned short SVG_PAINTTYPE_RGBCOLOR              = 1;
@@ -1195,12 +1192,12 @@ module svg
                     raises( SVGException );
   };
 
-  interface SVGMarkerElement : 
+  interface SVGMarkerElement :
                 SVGElement,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
-                SVGFitToViewBox { 
+                SVGFitToViewBox {
 
     // Marker Unit Types
     const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;
@@ -1223,10 +1220,10 @@ module svg
     void setOrientToAngle ( in SVGAngle angle );
   };
 
-  interface SVGColorProfileElement : 
+  interface SVGColorProfileElement :
                 SVGElement,
                 SVGURIReference,
-                SVGRenderingIntent { 
+                SVGRenderingIntent {
 
              attribute DOMString      local;
                          // raises DOMException on setting
@@ -1236,9 +1233,9 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGColorProfileRule : 
+  interface SVGColorProfileRule :
                 SVGCSSRule,
-                SVGRenderingIntent { 
+                SVGRenderingIntent {
 
              attribute DOMString      src;
                          // raises DOMException on setting
@@ -1248,12 +1245,12 @@ module svg
                          // raises DOMException on setting
   };
 
-  interface SVGGradientElement : 
+  interface SVGGradientElement :
                 SVGElement,
                 SVGURIReference,
                 SVGExternalResourcesRequired,
                 SVGStylable,
-                SVGUnitTypes { 
+                SVGUnitTypes {
 
     // Spread Method Types
     const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
@@ -1266,14 +1263,14 @@ module svg
     readonly attribute SVGAnimatedEnumeration   spreadMethod;
   };
 
-  interface SVGLinearGradientElement : SVGGradientElement { 
+  interface SVGLinearGradientElement : SVGGradientElement {
     readonly attribute SVGAnimatedLength x1;
     readonly attribute SVGAnimatedLength y1;
     readonly attribute SVGAnimatedLength x2;
     readonly attribute SVGAnimatedLength y2;
   };
 
-  interface SVGRadialGradientElement : SVGGradientElement { 
+  interface SVGRadialGradientElement : SVGGradientElement {
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;
@@ -1281,14 +1278,14 @@ module svg
     readonly attribute SVGAnimatedLength fy;
   };
 
-  interface SVGStopElement : 
+  interface SVGStopElement :
                 SVGElement,
-                SVGStylable { 
+                SVGStylable {
 
     readonly attribute SVGAnimatedNumber offset;
   };
 
-  interface SVGPatternElement : 
+  interface SVGPatternElement :
                 SVGElement,
                 SVGURIReference,
                 SVGTests,
@@ -1296,7 +1293,7 @@ module svg
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGFitToViewBox,
-                SVGUnitTypes { 
+                SVGUnitTypes {
 
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
@@ -1307,25 +1304,25 @@ module svg
     readonly attribute SVGAnimatedLength        height;
   };
 
-  interface SVGClipPathElement : 
+  interface SVGClipPathElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                SVGUnitTypes { 
+                SVGUnitTypes {
 
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
   };
 
-  interface SVGMaskElement : 
+  interface SVGMaskElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
-                SVGUnitTypes { 
+                SVGUnitTypes {
 
     readonly attribute SVGAnimatedEnumeration maskUnits;
     readonly attribute SVGAnimatedEnumeration maskContentUnits;
@@ -1335,13 +1332,13 @@ module svg
     readonly attribute SVGAnimatedLength      height;
   };
 
-  interface SVGFilterElement : 
+  interface SVGFilterElement :
                 SVGElement,
                 SVGURIReference,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
-                SVGUnitTypes { 
+                SVGUnitTypes {
 
     readonly attribute SVGAnimatedEnumeration filterUnits;
     readonly attribute SVGAnimatedEnumeration primitiveUnits;
@@ -1355,7 +1352,7 @@ module svg
     void setFilterRes ( in unsigned long filterResX, in unsigned long filterResY );
   };
 
-  interface SVGFilterPrimitiveStandardAttributes : SVGStylable { 
+  interface SVGFilterPrimitiveStandardAttributes : SVGStylable {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
@@ -1363,9 +1360,9 @@ module svg
     readonly attribute SVGAnimatedString result;
   };
 
-  interface SVGFEBlendElement : 
+  interface SVGFEBlendElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Blend Mode Types
     const unsigned short SVG_FEBLEND_MODE_UNKNOWN  = 0;
@@ -1380,9 +1377,9 @@ module svg
     readonly attribute SVGAnimatedEnumeration mode;
   };
 
-  interface SVGFEColorMatrixElement : 
+  interface SVGFEColorMatrixElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Color Matrix Types
     const unsigned short SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0;
@@ -1396,14 +1393,14 @@ module svg
     readonly attribute SVGAnimatedNumberList  values;
   };
 
-  interface SVGFEComponentTransferElement : 
+  interface SVGFEComponentTransferElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
   };
 
-  interface SVGComponentTransferFunctionElement : SVGElement { 
+  interface SVGComponentTransferFunctionElement : SVGElement {
     // Component Transfer Types
     const unsigned short SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0;
     const unsigned short SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY = 1;
@@ -1429,9 +1426,9 @@ module svg
 
   interface SVGFEFuncAElement : SVGComponentTransferFunctionElement {};
 
-  interface SVGFECompositeElement : 
+  interface SVGFECompositeElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Composite Operators
     const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;
@@ -1451,9 +1448,9 @@ module svg
     readonly attribute SVGAnimatedNumber      k4;
   };
 
-  interface SVGFEConvolveMatrixElement : 
+  interface SVGFEConvolveMatrixElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Edge Mode Values
     const unsigned short SVG_EDGEMODE_UNKNOWN   = 0;
@@ -1474,27 +1471,27 @@ module svg
     readonly attribute SVGAnimatedBoolean     preserveAlpha;
   };
 
-  interface SVGFEDiffuseLightingElement : 
+  interface SVGFEDiffuseLightingElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;
     readonly attribute SVGAnimatedNumber diffuseConstant;
   };
 
-  interface SVGFEDistantLightElement : SVGElement { 
+  interface SVGFEDistantLightElement : SVGElement {
     readonly attribute SVGAnimatedNumber azimuth;
     readonly attribute SVGAnimatedNumber elevation;
   };
 
-  interface SVGFEPointLightElement : SVGElement { 
+  interface SVGFEPointLightElement : SVGElement {
     readonly attribute SVGAnimatedNumber x;
     readonly attribute SVGAnimatedNumber y;
     readonly attribute SVGAnimatedNumber z;
   };
 
-  interface SVGFESpotLightElement : SVGElement { 
+  interface SVGFESpotLightElement : SVGElement {
     readonly attribute SVGAnimatedNumber x;
     readonly attribute SVGAnimatedNumber y;
     readonly attribute SVGAnimatedNumber z;
@@ -1505,9 +1502,9 @@ module svg
     readonly attribute SVGAnimatedNumber limitingConeAngle;
   };
 
-  interface SVGFEDisplacementMapElement : 
+  interface SVGFEDisplacementMapElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Channel Selectors
     const unsigned short SVG_CHANNEL_UNKNOWN = 0;
@@ -1523,16 +1520,16 @@ module svg
     readonly attribute SVGAnimatedEnumeration yChannelSelector;
   };
 
-  interface SVGFEFloodElement : 
+  interface SVGFEFloodElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString      in1;
   };
 
-  interface SVGFEGaussianBlurElement : 
+  interface SVGFEGaussianBlurElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber stdDeviationX;
@@ -1541,24 +1538,24 @@ module svg
     void setStdDeviation ( in float stdDeviationX, in float stdDeviationY );
   };
 
-  interface SVGFEImageElement : 
+  interface SVGFEImageElement :
                 SVGElement,
                 SVGURIReference,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGFilterPrimitiveStandardAttributes {};
 
-  interface SVGFEMergeElement : 
+  interface SVGFEMergeElement :
                 SVGElement,
                 SVGFilterPrimitiveStandardAttributes {};
 
-  interface SVGFEMergeNodeElement : SVGElement { 
+  interface SVGFEMergeNodeElement : SVGElement {
     readonly attribute SVGAnimatedString in1;
   };
 
-  interface SVGFEMorphologyElement : 
+  interface SVGFEMorphologyElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Morphology Operators
     const unsigned short SVG_MORPHOLOGY_OPERATOR_UNKNOWN = 0;
@@ -1571,18 +1568,18 @@ module svg
     readonly attribute SVGAnimatedLength      radiusY;
   };
 
-  interface SVGFEOffsetElement : 
+  interface SVGFEOffsetElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber dx;
     readonly attribute SVGAnimatedNumber dy;
   };
 
-  interface SVGFESpecularLightingElement : 
+  interface SVGFESpecularLightingElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;
@@ -1590,16 +1587,16 @@ module svg
     readonly attribute SVGAnimatedNumber specularExponent;
   };
 
-  interface SVGFETileElement : 
+  interface SVGFETileElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     readonly attribute SVGAnimatedString in1;
   };
 
-  interface SVGFETurbulenceElement : 
+  interface SVGFETurbulenceElement :
                 SVGElement,
-                SVGFilterPrimitiveStandardAttributes { 
+                SVGFilterPrimitiveStandardAttributes {
 
     // Turbulence Types
     const unsigned short SVG_TURBULENCE_TYPE_UNKNOWN      = 0;
@@ -1618,17 +1615,17 @@ module svg
     readonly attribute SVGAnimatedEnumeration type;
   };
 
-  interface SVGCursorElement : 
+  interface SVGCursorElement :
                 SVGElement,
                 SVGURIReference,
                 SVGTests,
-                SVGExternalResourcesRequired { 
+                SVGExternalResourcesRequired {
 
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
   };
 
-  interface SVGAElement : 
+  interface SVGAElement :
                 SVGElement,
                 SVGURIReference,
                 SVGTests,
@@ -1636,24 +1633,24 @@ module svg
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedString target;
   };
 
-  interface SVGViewElement : 
+  interface SVGViewElement :
                 SVGElement,
                 SVGExternalResourcesRequired,
                 SVGFitToViewBox,
-                SVGZoomAndPan { 
+                SVGZoomAndPan {
 
     readonly attribute SVGStringList viewTarget;
   };
 
-  interface SVGScriptElement : 
+  interface SVGScriptElement :
                 SVGElement,
                 SVGURIReference,
-                SVGExternalResourcesRequired { 
+                SVGExternalResourcesRequired {
 
              attribute DOMString type;
                          // raises DOMException on setting
@@ -1661,7 +1658,7 @@ module svg
 
   interface SVGEvent : events::Event {};
 
-  interface SVGZoomEvent : events::UIEvent { 
+  interface SVGZoomEvent : events::UIEvent {
     readonly attribute SVGRect zoomRectScreen;
     readonly attribute float previousScale;
     readonly attribute SVGPoint previousTranslate;
@@ -1669,12 +1666,12 @@ module svg
     readonly attribute SVGPoint newTranslate;
   };
 
-  interface SVGAnimationElement : 
+  interface SVGAnimationElement :
                 SVGElement,
                 SVGTests,
                 SVGExternalResourcesRequired,
                 smil::ElementTimeControl,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGElement targetElement;
 
@@ -1690,7 +1687,7 @@ module svg
 
   interface SVGAnimateMotionElement : SVGAnimationElement {};
 
-  interface SVGMPathElement : 
+  interface SVGMPathElement :
                 SVGElement,
                 SVGURIReference,
                 SVGExternalResourcesRequired {};
@@ -1699,16 +1696,16 @@ module svg
 
   interface SVGAnimateTransformElement : SVGAnimationElement {};
 
-  interface SVGFontElement : 
+  interface SVGFontElement :
                 SVGElement,
                 SVGExternalResourcesRequired,
                 SVGStylable {};
 
-  interface SVGGlyphElement : 
+  interface SVGGlyphElement :
                 SVGElement,
                 SVGStylable {};
 
-  interface SVGMissingGlyphElement : 
+  interface SVGMissingGlyphElement :
                 SVGElement,
                 SVGStylable {};
 
@@ -1730,14 +1727,14 @@ module svg
 
   interface SVGMetadataElement : SVGElement {};
 
-  interface SVGForeignObjectElement : 
+  interface SVGForeignObjectElement :
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
                 SVGExternalResourcesRequired,
                 SVGStylable,
                 SVGTransformable,
-                events::EventTarget { 
+                events::EventTarget {
 
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

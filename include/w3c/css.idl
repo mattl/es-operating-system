@@ -19,11 +19,9 @@
 #include "stylesheets.idl"
 #include "views.idl"
 
-#pragma prefix "dom.w3c.org"
 module css
 {
 
-  typedef dom::DOMString DOMString;
   typedef dom::Element Element;
   typedef dom::DOMImplementation DOMImplementation;
 
@@ -73,7 +71,7 @@ module css
   interface CSSMediaRule : CSSRule {
     readonly attribute stylesheets::MediaList  media;
     readonly attribute CSSRuleList      cssRules;
-    unsigned long      insertRule(in DOMString rule, 
+    unsigned long      insertRule(in DOMString rule,
                                   in unsigned long index)
                                         raises(dom::DOMException);
     void               deleteRule(in unsigned long index)
@@ -121,8 +119,8 @@ module css
     DOMString          removeProperty(in DOMString propertyName)
                                         raises(dom::DOMException);
     DOMString          getPropertyPriority(in DOMString propertyName);
-    void               setProperty(in DOMString propertyName, 
-                                   in DOMString value, 
+    void               setProperty(in DOMString propertyName,
+                                   in DOMString value,
                                    in DOMString priority)
                                         raises(dom::DOMException);
     readonly attribute unsigned long    length;
@@ -177,12 +175,12 @@ module css
     const unsigned short      CSS_RGBCOLOR                   = 25;
 
     readonly attribute unsigned short   primitiveType;
-    void               setFloatValue(in unsigned short unitType, 
+    void               setFloatValue(in unsigned short unitType,
                                      in float floatValue)
                                         raises(dom::DOMException);
     float              getFloatValue(in unsigned short unitType)
                                         raises(dom::DOMException);
-    void               setStringValue(in unsigned short stringType, 
+    void               setStringValue(in unsigned short stringType,
                                       in DOMString stringValue)
                                         raises(dom::DOMException);
     DOMString          getStringValue()
@@ -602,7 +600,7 @@ module css
   interface CSSStyleSheet : stylesheets::StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
-    unsigned long      insertRule(in DOMString rule, 
+    unsigned long      insertRule(in DOMString rule,
                                   in unsigned long index)
                                         raises(dom::DOMException);
     void               deleteRule(in unsigned long index)
@@ -611,19 +609,19 @@ module css
 
   // Introduced in DOM Level 2:
   interface ViewCSS : views::AbstractView {
-    CSSStyleDeclaration getComputedStyle(in Element elt, 
+    CSSStyleDeclaration getComputedStyle(in Element elt,
                                          in DOMString pseudoElt);
   };
 
   // Introduced in DOM Level 2:
   interface DocumentCSS : stylesheets::DocumentStyle {
-    CSSStyleDeclaration getOverrideStyle(in Element elt, 
+    CSSStyleDeclaration getOverrideStyle(in Element elt,
                                          in DOMString pseudoElt);
   };
 
   // Introduced in DOM   Level 2:
   interface DOMImplementationCSS : DOMImplementation {
-    CSSStyleSheet      createCSSStyleSheet(in DOMString title, 
+    CSSStyleSheet      createCSSStyleSheet(in DOMString title,
                                            in DOMString media)
                                         raises(dom::DOMException);
   };
