@@ -28,13 +28,38 @@ module html5 {
   typedef css::CSSStyleDeclaration CSSStyleDeclaration;
   typedef ranges::Range Range;
 
+  interface ApplicationCache;
+  interface CanvasGradient;
+  interface CanvasPattern;
+  interface CanvasPixelArray;
+  interface DataGridDataProvider;
+  interface DataGridSelection;
+  interface DataTransfer;
+  interface History;
+  interface ImageData;
+  interface Function;
   interface HTMLElement;
   interface HTMLFormElement;
+  interface HTMLMediaElement;
+  interface HTMLMenuElement;
   interface HTMLTableCaptionElement;
   interface HTMLTableSectionElement;
+  interface HTMLOptionElement;
+  interface Location;
+  interface MediaError;
+  interface MessagePort;
+  interface Navigator;
+  interface RowSpecification;
+  interface Selection;
+  interface TextMetrics;
+  interface TimeRanges;
+  interface UndoManager;
+  interface ValidityState;
+  interface Window;
 
   // XXX
   typedef any Date;
+  typedef Window WindowProxy;
 
   [Callable=namedItem]
   interface HTMLCollection {
@@ -338,20 +363,6 @@ module html5 {
              attribute DOMString value;
   };
 
-  interface HTMLVideoElement : HTMLMediaElement {
-             attribute DOMString width;
-             attribute DOMString height;
-    readonly attribute unsigned long videoWidth;
-    readonly attribute unsigned long videoHeight;
-             attribute DOMString poster;
-  };
-
-  [NamedConstructor=Audio(),
-   NamedConstructor=Audio(in DOMString src)]
-  interface HTMLAudioElement : HTMLMediaElement {
-    // no members
-  };
-
   interface HTMLSourceElement : HTMLElement {
              attribute DOMString src;
              attribute DOMString type;
@@ -409,6 +420,20 @@ module html5 {
              attribute boolean controls;
              attribute float volume;
              attribute boolean muted;
+  };
+
+  interface HTMLVideoElement : HTMLMediaElement {
+             attribute DOMString width;
+             attribute DOMString height;
+    readonly attribute unsigned long videoWidth;
+    readonly attribute unsigned long videoHeight;
+             attribute DOMString poster;
+  };
+
+  [NamedConstructor=Audio(),
+   NamedConstructor=Audio(in DOMString src)]
+  interface HTMLAudioElement : HTMLMediaElement {
+    // no members
   };
 
   [Callback=FunctionOnly, NoInterfaceObject]
@@ -604,17 +629,17 @@ module html5 {
     void deleteCell(in long index);
   };
 
-  interface HTMLTableDataCellElement : HTMLTableCellElement {};
-
-  interface HTMLTableHeaderCellElement : HTMLTableCellElement {
-             attribute DOMString scope;
-  };
-
   interface HTMLTableCellElement : HTMLElement {
              attribute long colSpan;
              attribute long rowSpan;
              attribute DOMString headers;
     readonly attribute long cellIndex;
+  };
+
+  interface HTMLTableDataCellElement : HTMLTableCellElement {};
+
+  interface HTMLTableHeaderCellElement : HTMLTableCellElement {
+             attribute DOMString scope;
   };
 
   [Callable=namedItem]
@@ -946,10 +971,6 @@ module html5 {
     readonly attribute HTMLFormElement form;
   };
 
-  // XXX
-  interface Window;
-  typedef Window WindowProxy;
-
   [IndexGetter, NameGetter=OverrideBuiltins]
   interface Window {
     // the current browsing context
@@ -1220,12 +1241,10 @@ module html5 {
 
   [NoInterfaceObject, ImplementedOn=Window] interface WindowTimers {
     // timers
-    long setTimeout(in TimeoutHandler handler, in long timeout);
     long setTimeout(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
     long setTimeout(in DOMString code, in long timeout);
     long setTimeout(in DOMString code, in long timeout, in DOMString language);
     void clearTimeout(in long handle);
-    long setInterval(in TimeoutHandler handler, in long timeout);
     long setInterval(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
     long setInterval(in DOMString code, in long timeout);
     long setInterval(in DOMString code, in long timeout, in DOMString language);
