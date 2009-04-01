@@ -105,7 +105,6 @@ nobase_nodist_include_HEADERS = \
 	es/net/ISocket.h \
 	es/util/IIterator.h \
 	es/util/ISet.h \
-	es/util/ICanvasRenderingContext2D.h \
 	es/util/IOrderedMap.h \
 	w3c/css.h \
 	w3c/dom.h \
@@ -158,7 +157,6 @@ nobase_nodist_include_HEADERS += \
 	es/net/ISocket.ent \
 	es/util/IIterator.ent \
 	es/util/ISet.ent \
-	es/util/ICanvasRenderingContext2D.ent \
 	es/util/IOrderedMap.ent \
 	w3c/css.ent \
 	w3c/dom.ent \
@@ -211,7 +209,6 @@ nobase_include_HEADERS += \
 	es/net/ISocket.idl \
 	es/util/IIterator.idl \
 	es/util/ISet.idl \
-	es/util/ICanvasRenderingContext2D.idl \
 	es/util/IOrderedMap.idl \
 	w3c/css.idl \
 	w3c/dom.idl \

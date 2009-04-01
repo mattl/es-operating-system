@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
@@ -73,9 +74,20 @@ extern unsigned char ISocketInfo[];
 extern unsigned char IIteratorInfo[];
 extern unsigned char ISetInfo[];
 
-extern unsigned char ICanvasRenderingContext2DInfo[];
-
 extern unsigned char IOrderedMapInfo[];
+
+extern unsigned char cssInfo[];
+extern unsigned char domInfo[];
+extern unsigned char eventsInfo[];
+extern unsigned char html5Info[];
+extern unsigned char lsInfo[];
+extern unsigned char rangesInfo[];
+extern unsigned char smilInfo[];
+extern unsigned char stylesheetsInfo[];
+extern unsigned char svgInfo[];
+extern unsigned char traversalInfo[];
+extern unsigned char validationInfo[];
+extern unsigned char viewsInfo[];
 
 namespace es
 {
@@ -133,7 +145,7 @@ class InterfaceStore
     void registerInterface(Reflect::Module& module);
 
 public:
-    InterfaceStore(int capacity = 128);
+    InterfaceStore(int capacity = 1024);
 
     Reflect::Interface& getInterface(const char* iid)
     {
@@ -239,9 +251,20 @@ unsigned char* defaultInterfaceInfo[] =
     IIteratorInfo,
     ISetInfo,
 
-    ICanvasRenderingContext2DInfo,
-
     IOrderedMapInfo,
+
+    cssInfo,
+    domInfo,
+    eventsInfo,
+    html5Info,
+    lsInfo,
+    rangesInfo,
+    smilInfo,
+    stylesheetsInfo,
+    svgInfo,
+    traversalInfo,
+    validationInfo,
+    viewsInfo,
 };
 
 size_t defaultInterfaceCount = sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];

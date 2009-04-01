@@ -87,26 +87,21 @@ c.closePath();
 c.fill();
 
 c.fillStyle = "red";
-c.moveTo(512, 200);
-c.mozTextStyle = "36pt Italic Liberation Serif";
-c.mozDrawText("Hello, world.");
+c.font = "36pt Italic Liberation Serif";
+c.fillText("Hello, world.", 512, 200);
 
 c.fillStyle = "lime";
-c.moveTo(512, 250);
-c.mozTextStyle = "40pt Bold Liberation Sans";
-c.mozDrawText("Hello, world.");
+c.font = "40pt Bold Liberation Sans";
+c.fillText("Hello, world.", 512, 250);
 
 c.fillStyle = "blue";
-c.moveTo(512, 300);
-c.mozTextStyle = "48pt Liberation Mono";
-c.mozDrawText("Hello, world.");
+c.font = "48pt Liberation Mono";
+c.fillText("Hello, world.", 512, 300);
 
 c.fillStyle = "fuchsia";
-c.moveTo(512, 350);
-c.mozTextStyle = "48pt Sazanami Gothic";
-c.mozDrawText("こんにちは、世界。");
+c.font = "48pt Sazanami Gothic";
+c.fillText("こんにちは、世界。", 512, 350);
 
 c.fillStyle = "aqua";
-c.moveTo(512, 400);
-c.mozTextStyle = "48pt Sazanami Mincho";
-c.mozDrawText("こんにちは、世界。");
+c.font = "48pt Sazanami Mincho";
+c.fillText("こんにちは、世界。", 512, 400);

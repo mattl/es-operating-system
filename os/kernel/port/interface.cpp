@@ -74,7 +74,18 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IIteratorInfo,
     ISetInfo,
 
-    ICanvasRenderingContext2DInfo,
+    cssInfo,
+    domInfo,
+    eventsInfo,
+    html5Info,
+    lsInfo,
+    rangesInfo,
+    smilInfo,
+    stylesheetsInfo,
+    svgInfo,
+    traversalInfo,
+    validationInfo,
+    viewsInfo,
 };
 
 struct ConstructorAccessors

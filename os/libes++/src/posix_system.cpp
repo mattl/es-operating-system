@@ -49,7 +49,7 @@
 
 #include <es/base/IAlarm.h>
 #include <es/base/IProcess.h>
-#include <es/util/ICanvasRenderingContext2D.h>
+#include <w3c/html5.h>
 
 #include <sys/mman.h>
 
@@ -380,7 +380,7 @@ public:
         {
             try
             {
-                es::CanvasRenderingContext2D* canvas = static_cast<es::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, es::CanvasRenderingContext2D::iid(), false));
+                html5::CanvasRenderingContext2D* canvas = static_cast<html5::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, html5::CanvasRenderingContext2D::iid(), false));
                 Handle<es::Context> device = root->lookup("device");
                 device->bind("canvas", canvas);
             }

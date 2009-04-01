@@ -940,7 +940,7 @@ module html5 {
              attribute boolean disabled;
              attribute boolean checked;
              attribute DOMString radiogroup;
-             attribute boolean default;
+             attribute boolean defaultValue;  // XXX default
    void click(); // shadows HTMLElement.click()
   };
 
@@ -1010,7 +1010,7 @@ module html5 {
     // user prompts
     void alert(in DOMString message);
     boolean confirm(in DOMString message);
-    DOMString prompt(in DOMString message, [Optional] in DOMString default);
+    DOMString prompt(in DOMString message, [Optional] in DOMString defaultValue);
     void print();
     any showModalDialog(in DOMString url, [Optional] in any argument);
 

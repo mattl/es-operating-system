@@ -1236,7 +1236,7 @@ int main(int argc, char* argv[])
     surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
-    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
+    device->bind("canvas", static_cast<html5::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start console.\n");

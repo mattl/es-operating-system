@@ -2,7 +2,7 @@ SUBDIRS = . testsuite
 
 SUFFIXES = .ent
 
-vpath %.ent = ../../include/es
+vpath %.ent = ../../include
 
 %.c : %.ent
 	mkdir -p $(*D);
@@ -54,45 +54,56 @@ endif X86_64
 # default interface descriptions
 #
 nodist_libessup___a_SOURCES = \
-	base/IAlarm.c \
-	base/ICache.c \
-	base/ICallback.c \
-	base/IFile.c \
-	base/IInterface.c \
-	base/IInterfaceStore.c \
-	base/IMonitor.c \
-	base/IPageable.c \
-	base/IPageSet.c \
-	base/IProcess.c \
-	base/IRuntime.c \
-	base/ISelectable.c \
-	base/IService.c \
-	base/IStream.c \
-	base/IThread.c \
-	device/IAudioFormat.c \
-	device/IBeep.c \
-	device/ICursor.c \
-	device/IDevice.c \
-	device/IDiskManagement.c \
-	device/IDmac.c \
-	device/IFatFileSystem.c \
-	device/IFileSystem.c \
-	device/IIso9660FileSystem.c \
-	device/INetworkInterface.c \
-	device/IPic.c \
-	device/IRemovableMedia.c \
-	device/IRtc.c \
-	device/IPartition.c \
-	naming/IBinding.c \
-	naming/IContext.c \
-	net/IInternetAddress.c \
-	net/IInternetConfig.c \
-	net/IResolver.c \
-	net/ISocket.c \
-	util/IIterator.c \
-	util/ISet.c \
-	util/ICanvasRenderingContext2D.c \
-	util/IOrderedMap.c
+	es/base/IAlarm.c \
+	es/base/ICache.c \
+	es/base/ICallback.c \
+	es/base/IFile.c \
+	es/base/IInterface.c \
+	es/base/IInterfaceStore.c \
+	es/base/IMonitor.c \
+	es/base/IPageable.c \
+	es/base/IPageSet.c \
+	es/base/IProcess.c \
+	es/base/IRuntime.c \
+	es/base/ISelectable.c \
+	es/base/IService.c \
+	es/base/IStream.c \
+	es/base/IThread.c \
+	es/device/IAudioFormat.c \
+	es/device/IBeep.c \
+	es/device/ICursor.c \
+	es/device/IDevice.c \
+	es/device/IDiskManagement.c \
+	es/device/IDmac.c \
+	es/device/IFatFileSystem.c \
+	es/device/IFileSystem.c \
+	es/device/IIso9660FileSystem.c \
+	es/device/INetworkInterface.c \
+	es/device/IPic.c \
+	es/device/IRemovableMedia.c \
+	es/device/IRtc.c \
+	es/device/IPartition.c \
+	es/naming/IBinding.c \
+	es/naming/IContext.c \
+	es/net/IInternetAddress.c \
+	es/net/IInternetConfig.c \
+	es/net/IResolver.c \
+	es/net/ISocket.c \
+	es/util/IIterator.c \
+	es/util/ISet.c \
+	es/util/IOrderedMap.c \
+	w3c/css.c \
+	w3c/dom.c \
+	w3c/events.c \
+	w3c/html5.c \
+	w3c/ls.c \
+	w3c/ranges.c \
+	w3c/smil.c \
+	w3c/stylesheets.c \
+	w3c/svg.c \
+	w3c/traversal.c \
+	w3c/validation.c \
+	w3c/views.c
 
 libes___a_SOURCES = $(libessup___a_SOURCES) $(nodist_libessup___a_SOURCES) \
 	src/interfaceStore.cpp \

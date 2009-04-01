@@ -221,14 +221,14 @@ setFillStyle(const Any fillStyle)
     dirtyStyle[STYLE_FILL] = true;
 }
 
-es::CanvasGradient* Canvas::
+html5::CanvasGradient* Canvas::
 createLinearGradient(float x0, float y0, float x1, float y1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = NULL;
     pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
-    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -237,14 +237,14 @@ createLinearGradient(float x0, float y0, float x1, float y1)
     return gradient;
 }
 
-es::CanvasGradient* Canvas::
+html5::CanvasGradient* Canvas::
 createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = 0;
     pattern = cairo_pattern_create_radial(x0, y0, r0, x1, y1, r1);
-    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -691,23 +691,23 @@ translate(float tx, float ty)
 }
 
 const char* Canvas::
-getMozTextStyle(char* style, int len)
+getFont(char* font, int fontLength)
 {
-    if (textStyle.size() < len)
+    if (textStyle.size() < fontLength)
     {
-        len = textStyle.size() + 1;
+        fontLength = textStyle.size() + 1;
     }
-    strncpy(style, textStyle.c_str(), len);
-    style[len - 1] = '\0';
-    return style;
+    strncpy(font, textStyle.c_str(), fontLength);
+    font[fontLength - 1] = '\0';
+    return font;
 }
 
 void Canvas::
-setMozTextStyle(const char* style)
+setFont(const char* font)
 {
     Synchronized<es::Monitor*> method(monitor);
 
-    textStyle = style;
+    textStyle = font;
 
     const char* family;
     char word[256];
@@ -718,8 +718,8 @@ setMozTextStyle(const char* style)
 
     do
     {
-        family = style = skipSpace(style);
-        style = getWord(style, word);
+        family = font = skipSpace(font);
+        font = getWord(font, word);
         if (isdigit(*word))
         {
             char* unit;
@@ -747,25 +747,28 @@ setMozTextStyle(const char* style)
         {
             break;
         }
-    } while (*style);
+    } while (*font);
 
     cairo_select_font_face (cr, family, slant, weight);
     cairo_set_font_size (cr, size);
 }
 
 void Canvas::
-mozDrawText(const char* textToDraw)
+fillText(const char* text, float x, float y)
 {
     Synchronized<es::Monitor*> method(monitor);
 
+    cairo_move_to (cr, x, y);
+
     applyStyle(STYLE_FILL);
-    cairo_show_text(cr, textToDraw);
+    cairo_show_text(cr, text);
 
     updated = true;
 }
 
-float Canvas::
-mozMeasureText(const char* textToMeasure)
+#if 0
+html5::TextMetrics Canvas::
+measureText(const char* textToMeasure)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -773,20 +776,7 @@ mozMeasureText(const char* textToMeasure)
     cairo_text_extents(cr, textToMeasure, &te);
     return te.width;
 }
-
-void Canvas::
-mozPathText(const char* textToPath)
-{
-    Synchronized<es::Monitor*> method(monitor);
-
-    cairo_text_path(cr, textToPath);
-}
-
-void Canvas::
-mozTextAlongPath(const char* textToDraw, bool stroke)
-{
-}
-
+#endif
 
 //
 // CanvasGradient

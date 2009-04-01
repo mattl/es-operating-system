@@ -34,8 +34,6 @@
 #include <es/base/IService.h>
 #include "canvas2d.h"
 
-
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -57,7 +55,7 @@ namespace
 es::CurrentProcess* System();
 
 // C++ version of the figure script
-void figure(es::CanvasRenderingContext2D* canvas)
+void figure(html5::CanvasRenderingContext2D* canvas)
 {
     // Bar graph
     float top = 50.0f;
@@ -147,29 +145,24 @@ void figure(es::CanvasRenderingContext2D* canvas)
 
     // Text enhancement
     canvas->setFillStyle("red");
-    canvas->moveTo(512, 200);
-    canvas->setMozTextStyle("36pt Italic Liberation Serif");
-    canvas->mozDrawText("Hello, world.");
+    canvas->setFont("36pt Italic Liberation Serif");
+    canvas->fillText("Hello, world.", 512, 200);
 
     canvas->setFillStyle("lime");
-    canvas->moveTo(512, 250);
-    canvas->setMozTextStyle("40pt Bold Liberation Sans");
-    canvas->mozDrawText("Hello, world.");
+    canvas->setFont("40pt Bold Liberation Sans");
+    canvas->fillText("Hello, world.", 512, 250);
 
     canvas->setFillStyle("blue");
-    canvas->moveTo(512, 300);
-    canvas->setMozTextStyle("48pt Liberation Mono");
-    canvas->mozDrawText("Hello, world.");
+    canvas->setFont("48pt Liberation Mono");
+    canvas->fillText("Hello, world.", 512, 300);
 
     canvas->setFillStyle("fuchsia");
-    canvas->moveTo(512, 350);
-    canvas->setMozTextStyle("48pt Sazanami Gothic");
-    canvas->mozDrawText("こんにちは、世界。");
+    canvas->setFont("48pt Sazanami Gothic");
+    canvas->fillText("こんにちは、世界。", 512, 350);
 
     canvas->setFillStyle("aqua");
-    canvas->moveTo(512, 400);
-    canvas->setMozTextStyle("48pt Sazanami Mincho");
-    canvas->mozDrawText("こんにちは、世界。");
+    canvas->setFont("48pt Sazanami Mincho");
+    canvas->fillText("こんにちは、世界。", 512, 400);
 
 }
 
@@ -198,7 +191,7 @@ int main(int argc, char* argv[])
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
     Handle<es::Context> device = nameSpace->lookup("device");
-    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
+    device->bind("canvas", static_cast<html5::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start canvas.\n");
