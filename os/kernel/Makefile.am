@@ -67,6 +67,7 @@ nodist_libeskernel_a_SOURCES = \
 	es/util/ISet.c \
 	es/util/IOrderedMap.c \
 	w3c/css.c \
+	w3c/cssomview.c \
 	w3c/dom.c \
 	w3c/events.c \
 	w3c/html5.c \

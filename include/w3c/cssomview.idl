@@ -17,6 +17,12 @@ module views
   typedef dom::Element Element;
   typedef ranges::Range Range;
 
+  interface ClientRect;
+  interface ClientRectList;
+  interface DocumentView;
+  interface Media;
+  interface Screen;
+
   interface AbstractView {
     readonly attribute DocumentView document;
     readonly attribute Media media;

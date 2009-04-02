@@ -1,3 +1,7 @@
+// The CSSOM View Module also supercedes DOM Level 2 Views
+#include "cssomview.idl"
+
+#if 0
 /*
  * Copyright (c) 2000 World Wide Web Consortium,
  * (Massachusetts Institute of Technology, Institut National de
@@ -32,5 +36,6 @@ module views
     readonly attribute AbstractView     defaultView;
   };
 };
+#endif
 
 #endif // _VIEWS_IDL_

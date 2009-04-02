@@ -75,6 +75,7 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     ISetInfo,
 
     cssInfo,
+    cssomviewInfo,
     domInfo,
     eventsInfo,
     html5Info,

@@ -107,6 +107,7 @@ nobase_nodist_include_HEADERS = \
 	es/util/ISet.h \
 	es/util/IOrderedMap.h \
 	w3c/css.h \
+	w3c/cssomview.h \
 	w3c/dom.h \
 	w3c/events.h \
 	w3c/html5.h \
@@ -159,6 +160,7 @@ nobase_nodist_include_HEADERS += \
 	es/util/ISet.ent \
 	es/util/IOrderedMap.ent \
 	w3c/css.ent \
+	w3c/cssomview.ent \
 	w3c/dom.ent \
 	w3c/events.ent \
 	w3c/html5.ent \
@@ -211,6 +213,7 @@ nobase_include_HEADERS += \
 	es/util/ISet.idl \
 	es/util/IOrderedMap.idl \
 	w3c/css.idl \
+	w3c/cssomview.idl \
 	w3c/dom.idl \
 	w3c/events.idl \
 	w3c/html5.idl \

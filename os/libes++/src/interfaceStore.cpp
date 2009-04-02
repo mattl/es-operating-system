@@ -77,6 +77,7 @@ extern unsigned char ISetInfo[];
 extern unsigned char IOrderedMapInfo[];
 
 extern unsigned char cssInfo[];
+extern unsigned char cssomviewInfo[];
 extern unsigned char domInfo[];
 extern unsigned char eventsInfo[];
 extern unsigned char html5Info[];
@@ -254,6 +255,7 @@ unsigned char* defaultInterfaceInfo[] =
     IOrderedMapInfo,
 
     cssInfo,
+    cssomviewInfo,
     domInfo,
     eventsInfo,
     html5Info,

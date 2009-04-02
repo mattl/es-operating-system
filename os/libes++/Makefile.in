@@ -82,8 +82,8 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	es/naming/IContext.c es/net/IInternetAddress.c \
 	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
 	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c \
-	w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
+	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
+	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
 	w3c/traversal.c w3c/validation.c w3c/views.c \
 	src/interfaceStore.cpp src/report.cpp src/system.cpp \
 	src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
@@ -111,10 +111,10 @@ am__objects_7 = IAlarm.$(OBJEXT) ICache.$(OBJEXT) ICallback.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
-	dom.$(OBJEXT) events.$(OBJEXT) html5.$(OBJEXT) ls.$(OBJEXT) \
-	ranges.$(OBJEXT) smil.$(OBJEXT) stylesheets.$(OBJEXT) \
-	svg.$(OBJEXT) traversal.$(OBJEXT) validation.$(OBJEXT) \
-	views.$(OBJEXT)
+	cssomview.$(OBJEXT) dom.$(OBJEXT) events.$(OBJEXT) \
+	html5.$(OBJEXT) ls.$(OBJEXT) ranges.$(OBJEXT) smil.$(OBJEXT) \
+	stylesheets.$(OBJEXT) svg.$(OBJEXT) traversal.$(OBJEXT) \
+	validation.$(OBJEXT) views.$(OBJEXT)
 @ES_TRUE@am__objects_8 = system.$(OBJEXT)
 @POSIX_TRUE@am__objects_9 = posix_system.$(OBJEXT) \
 @POSIX_TRUE@	posix_video.$(OBJEXT) rpc.$(OBJEXT)
@@ -139,8 +139,8 @@ am__libesrpc_a_SOURCES_DIST = es/base/IAlarm.c es/base/ICache.c \
 	es/naming/IContext.c es/net/IInternetAddress.c \
 	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
 	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c \
-	w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
+	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
+	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
 	w3c/traversal.c w3c/validation.c w3c/views.c src/rpc.cpp
 am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-ICache.$(OBJEXT) libesrpc_a-ICallback.$(OBJEXT) \
@@ -166,12 +166,12 @@ am__objects_10 = libesrpc_a-IAlarm.$(OBJEXT) \
 	libesrpc_a-IResolver.$(OBJEXT) libesrpc_a-ISocket.$(OBJEXT) \
 	libesrpc_a-IIterator.$(OBJEXT) libesrpc_a-ISet.$(OBJEXT) \
 	libesrpc_a-IOrderedMap.$(OBJEXT) libesrpc_a-css.$(OBJEXT) \
-	libesrpc_a-dom.$(OBJEXT) libesrpc_a-events.$(OBJEXT) \
-	libesrpc_a-html5.$(OBJEXT) libesrpc_a-ls.$(OBJEXT) \
-	libesrpc_a-ranges.$(OBJEXT) libesrpc_a-smil.$(OBJEXT) \
-	libesrpc_a-stylesheets.$(OBJEXT) libesrpc_a-svg.$(OBJEXT) \
-	libesrpc_a-traversal.$(OBJEXT) libesrpc_a-validation.$(OBJEXT) \
-	libesrpc_a-views.$(OBJEXT)
+	libesrpc_a-cssomview.$(OBJEXT) libesrpc_a-dom.$(OBJEXT) \
+	libesrpc_a-events.$(OBJEXT) libesrpc_a-html5.$(OBJEXT) \
+	libesrpc_a-ls.$(OBJEXT) libesrpc_a-ranges.$(OBJEXT) \
+	libesrpc_a-smil.$(OBJEXT) libesrpc_a-stylesheets.$(OBJEXT) \
+	libesrpc_a-svg.$(OBJEXT) libesrpc_a-traversal.$(OBJEXT) \
+	libesrpc_a-validation.$(OBJEXT) libesrpc_a-views.$(OBJEXT)
 @POSIX_TRUE@am_libesrpc_a_OBJECTS = $(am__objects_10) \
 @POSIX_TRUE@	libesrpc_a-rpc.$(OBJEXT)
 libesrpc_a_OBJECTS = $(am_libesrpc_a_OBJECTS)
@@ -199,10 +199,10 @@ nodist_libessup___a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
-	dom.$(OBJEXT) events.$(OBJEXT) html5.$(OBJEXT) ls.$(OBJEXT) \
-	ranges.$(OBJEXT) smil.$(OBJEXT) stylesheets.$(OBJEXT) \
-	svg.$(OBJEXT) traversal.$(OBJEXT) validation.$(OBJEXT) \
-	views.$(OBJEXT)
+	cssomview.$(OBJEXT) dom.$(OBJEXT) events.$(OBJEXT) \
+	html5.$(OBJEXT) ls.$(OBJEXT) ranges.$(OBJEXT) smil.$(OBJEXT) \
+	stylesheets.$(OBJEXT) svg.$(OBJEXT) traversal.$(OBJEXT) \
+	validation.$(OBJEXT) views.$(OBJEXT)
 libessup___a_OBJECTS = $(am_libessup___a_OBJECTS) \
 	$(nodist_libessup___a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -411,6 +411,7 @@ nodist_libessup___a_SOURCES = \
 	es/util/ISet.c \
 	es/util/IOrderedMap.c \
 	w3c/css.c \
+	w3c/cssomview.c \
 	w3c/dom.c \
 	w3c/events.c \
 	w3c/html5.c \
@@ -557,6 +558,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/context.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/css.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cssomview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dateTime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dump.Po@am__quote@
@@ -604,6 +606,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-css.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-cssomview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-dom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-events.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-html5.Po@am__quote@
@@ -1295,6 +1298,20 @@ css.obj: w3c/css.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/css.c' object='css.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o css.obj `if test -f 'w3c/css.c'; then $(CYGPATH_W) 'w3c/css.c'; else $(CYGPATH_W) '$(srcdir)/w3c/css.c'; fi`
+
+cssomview.o: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cssomview.o -MD -MP -MF $(DEPDIR)/cssomview.Tpo -c -o cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/cssomview.Tpo $(DEPDIR)/cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='cssomview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+
+cssomview.obj: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cssomview.obj -MD -MP -MF $(DEPDIR)/cssomview.Tpo -c -o cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/cssomview.Tpo $(DEPDIR)/cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='cssomview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
 
 dom.o: w3c/dom.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dom.o -MD -MP -MF $(DEPDIR)/dom.Tpo -c -o dom.o `test -f 'w3c/dom.c' || echo '$(srcdir)/'`w3c/dom.c
@@ -1995,6 +2012,20 @@ libesrpc_a-css.obj: w3c/css.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/css.c' object='libesrpc_a-css.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-css.obj `if test -f 'w3c/css.c'; then $(CYGPATH_W) 'w3c/css.c'; else $(CYGPATH_W) '$(srcdir)/w3c/css.c'; fi`
+
+libesrpc_a-cssomview.o: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-cssomview.o -MD -MP -MF $(DEPDIR)/libesrpc_a-cssomview.Tpo -c -o libesrpc_a-cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-cssomview.Tpo $(DEPDIR)/libesrpc_a-cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='libesrpc_a-cssomview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+
+libesrpc_a-cssomview.obj: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-cssomview.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-cssomview.Tpo -c -o libesrpc_a-cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-cssomview.Tpo $(DEPDIR)/libesrpc_a-cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='libesrpc_a-cssomview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
 
 libesrpc_a-dom.o: w3c/dom.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-dom.o -MD -MP -MF $(DEPDIR)/libesrpc_a-dom.Tpo -c -o libesrpc_a-dom.o `test -f 'w3c/dom.c' || echo '$(srcdir)/'`w3c/dom.c

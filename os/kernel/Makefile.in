@@ -195,10 +195,10 @@ nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
-	dom.$(OBJEXT) events.$(OBJEXT) html5.$(OBJEXT) ls.$(OBJEXT) \
-	ranges.$(OBJEXT) smil.$(OBJEXT) stylesheets.$(OBJEXT) \
-	svg.$(OBJEXT) traversal.$(OBJEXT) validation.$(OBJEXT) \
-	views.$(OBJEXT) mbr.$(OBJEXT)
+	cssomview.$(OBJEXT) dom.$(OBJEXT) events.$(OBJEXT) \
+	html5.$(OBJEXT) ls.$(OBJEXT) ranges.$(OBJEXT) smil.$(OBJEXT) \
+	stylesheets.$(OBJEXT) svg.$(OBJEXT) traversal.$(OBJEXT) \
+	validation.$(OBJEXT) views.$(OBJEXT) mbr.$(OBJEXT)
 libeskernel_a_OBJECTS = $(am_libeskernel_a_OBJECTS) \
 	$(nodist_libeskernel_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -358,8 +358,8 @@ nodist_libeskernel_a_SOURCES = es/base/IAlarm.c es/base/ICache.c \
 	es/naming/IContext.c es/net/IInternetAddress.c \
 	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
 	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c \
-	w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
+	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
+	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
 	w3c/traversal.c w3c/validation.c w3c/views.c mbr.c
 
 #
@@ -524,6 +524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cacheFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cga.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/css.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cssomview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dp8390d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf.Po@am__quote@
@@ -1174,6 +1175,20 @@ css.obj: w3c/css.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/css.c' object='css.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o css.obj `if test -f 'w3c/css.c'; then $(CYGPATH_W) 'w3c/css.c'; else $(CYGPATH_W) '$(srcdir)/w3c/css.c'; fi`
+
+cssomview.o: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cssomview.o -MD -MP -MF $(DEPDIR)/cssomview.Tpo -c -o cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/cssomview.Tpo $(DEPDIR)/cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='cssomview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cssomview.o `test -f 'w3c/cssomview.c' || echo '$(srcdir)/'`w3c/cssomview.c
+
+cssomview.obj: w3c/cssomview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cssomview.obj -MD -MP -MF $(DEPDIR)/cssomview.Tpo -c -o cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/cssomview.Tpo $(DEPDIR)/cssomview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='w3c/cssomview.c' object='cssomview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cssomview.obj `if test -f 'w3c/cssomview.c'; then $(CYGPATH_W) 'w3c/cssomview.c'; else $(CYGPATH_W) '$(srcdir)/w3c/cssomview.c'; fi`
 
 dom.o: w3c/dom.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dom.o -MD -MP -MF $(DEPDIR)/dom.Tpo -c -o dom.o `test -f 'w3c/dom.c' || echo '$(srcdir)/'`w3c/dom.c
