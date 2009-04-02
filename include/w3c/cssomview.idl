@@ -10,9 +10,12 @@
 #define _CSSOM_IDL_
 
 #include "dom.idl"
+#include "ranges.idl"
 
 module views
 {
+  typedef dom::Element Element;
+  typedef ranges::Range Range;
 
   interface AbstractView {
     readonly attribute DocumentView document;
