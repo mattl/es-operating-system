@@ -12,10 +12,23 @@
 #include "dom.idl"
 #include "ranges.idl"
 
+module html5
+{
+  interface HTMLElement;
+};
+
+module events
+{
+  interface MouseEvent;
+};
+
 module views
 {
+  typedef dom::Document Document;
   typedef dom::Element Element;
   typedef ranges::Range Range;
+  typedef events::MouseEvent MouseEvent;
+  typedef html5::HTMLElement HTMLElement;
 
   interface ClientRect;
   interface ClientRectList;
@@ -62,12 +75,14 @@ module views
     readonly attribute unsigned long pixelDepth;
   };
 
+  [ImplementedOn=Document]
   interface DocumentView {
     readonly attribute AbstractView defaultView;
     Element elementFromPoint(in float x, in float y);
     Range caretRangeFromPoint(in float x, in float y);
   };
 
+  [ImplementedOn=Element]
   interface ElementView {
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
@@ -84,6 +99,7 @@ module views
 
   };
 
+  [ImplementedOn=HTMLElement]
   interface HTMLElementView {
     readonly attribute Element offsetParent;
     readonly attribute long offsetTop;
@@ -92,11 +108,13 @@ module views
     readonly attribute long offsetHeight;
   };
 
+  [ImplementedOn=Range]
   interface RangeView {
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
   };
 
+  [ImplementedOn=MouseEvent]
   interface MouseEventView {
     readonly attribute long screenX;
     readonly attribute long screenY;

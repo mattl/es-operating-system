@@ -74,6 +74,7 @@ module events
   };
 
   // Introduced in DOM Level 2:
+  [ImplementedOn=Node]
   interface EventTarget {
     void               addEventListener(in DOMString type,
                                         in EventListener listener,
@@ -104,6 +105,7 @@ module events
   };
 
   // Introduced in DOM Level 2:
+  [Callback]
   interface EventListener {
     void               handleEvent(in Event evt);
   };
