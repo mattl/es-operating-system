@@ -157,7 +157,7 @@ cd ../..
 cd src
 if [ ! -f freetype-2.3.5.tar.bz2 ]; 
 then
-	wget http://superb-east.dl.sourceforge.net/sourceforge/freetype/freetype-2.3.5.tar.bz2
+	wget http://ftp.twaren.net/Unix/NonGNU/freetype/freetype-2.3.5.tar.bz2
 fi
 rm -rf freetype-2.3.5
 tar -jxf freetype-2.3.5.tar.bz2
