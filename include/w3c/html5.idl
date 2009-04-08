@@ -29,9 +29,11 @@ module html5 {
   typedef ranges::Range Range;
 
   interface ApplicationCache;
+  interface BarProp;
   interface CanvasGradient;
   interface CanvasPattern;
   interface CanvasPixelArray;
+  interface CueRangeCallback;
   interface DataGridDataProvider;
   interface DataGridSelection;
   interface DataTransfer;
@@ -47,15 +49,17 @@ module html5 {
   interface HTMLOptionElement;
   interface Location;
   interface MediaError;
-  interface MessagePort;
   interface Navigator;
   interface RowSpecification;
   interface Selection;
   interface TextMetrics;
+  interface TimeoutHandler;
   interface TimeRanges;
   interface UndoManager;
   interface ValidityState;
   interface Window;
+
+  // typedef sequence<MessagePort> MessagePortArray;    // XXX sequence is not supported yet
 
   // XXX
   typedef any Date;
@@ -256,9 +260,9 @@ module html5 {
 
   interface HTMLBodyElement : HTMLElement {
              attribute Function onbeforeunload;
-             attribute Function onerror;
+             // attribute Function onerror;     // XXX defined in HTMLDocument
              attribute Function onhashchange;
-             attribute Function onload;
+             // attribute Function onload;      // XXX defined in HTMLDocument
              attribute Function onmessage;
              attribute Function onoffline;
              attribute Function ononline;
@@ -655,7 +659,7 @@ module html5 {
 
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute long length;
-    [IndexGetter] any item(in DOMString name);
+    [IndexGetter] any item(in unsigned long index);
     [NameGetter=OverrideBuiltins] any namedItem(in DOMString name);
 
     void submit();
@@ -777,7 +781,7 @@ module html5 {
 
     readonly attribute HTMLOptionsCollection options;
              attribute unsigned long length;
-    [IndexGetter] any item(in DOMString name);
+    [IndexGetter] any item(in unsigned long index);
     [NameGetter] any namedItem(in DOMString name);
     void add(in HTMLElement element, [Optional] in HTMLElement before);
     void add(in HTMLElement element, in long before);
@@ -941,12 +945,12 @@ module html5 {
              attribute boolean checked;
              attribute DOMString radiogroup;
              attribute boolean defaultValue;  // XXX default
-   void click(); // shadows HTMLElement.click()
+    // XXX void click(); // shadows HTMLElement.click()
   };
 
   interface HTMLBrowserButtonElement : HTMLElement {
              attribute DOMString type;
-    readonly attribute boolean supported;
+    // readonly attribute boolean supported;  // XXX esidl specific issue: hide dom::Node::isSupported
     readonly attribute boolean disabled;
   };
 
@@ -1016,7 +1020,7 @@ module html5 {
 
     // cross-document messaging
     void postMessage(in any message, in DOMString targetOrigin);
-    void postMessage(in any message, in MessagePortArray ports, in DOMString targetOrigin);
+    // XXX void postMessage(in any message, in MessagePortArray ports, in DOMString targetOrigin);
 
     // event handler DOM attributes
              attribute Function onabort;
@@ -1211,6 +1215,7 @@ module html5 {
     void initUndoManagerEventNS(in DOMString namespaceURIArg, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in any dataArg);
   };
 
+#if XXX
   interface MessageEvent : Event {
     readonly attribute any data;
     readonly attribute DOMString origin;
@@ -1227,8 +1232,6 @@ module html5 {
     readonly attribute MessagePort port2;
   };
 
-  typedef sequence<MessagePort> MessagePortArray;
-
   interface MessagePort {
     readonly attribute boolean active;
     void postMessage(in any message, [Optional] in MessagePortArray ports);
@@ -1238,6 +1241,7 @@ module html5 {
     // event handler attributes
              attribute Function onmessage;
   };
+#endif
 
   [NoInterfaceObject, ImplementedOn=Window] interface WindowTimers {
     // timers
