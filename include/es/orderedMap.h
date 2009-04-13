@@ -46,7 +46,7 @@ public:
         return size;
     }
 
-    const char* getByIndex(char* string, int stringLength, int index)
+    const char* getByIndex(char* string, int stringLength, unsigned int index)
     {
         int count = 0;
         MapTree::Iterator it = tree.begin();
@@ -64,7 +64,7 @@ public:
         return 0;
     }
 
-    void setByIndex(int index, const char* value)
+    void setByIndex(unsigned int index, const char* value)
     {
         if (index > size)
         {
