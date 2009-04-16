@@ -87,8 +87,8 @@ public:
     // IAlarm
     long long getInterval();
     long long getStartTime();
-    bool isEnabled();
-    bool isPeriodic();
+    bool getEnabled();
+    bool getPeriodic();
     void setCallback(es::Callback* callback);
     void setEnabled(bool enabled);
     void setPeriodic(bool periodic);

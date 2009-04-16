@@ -237,7 +237,7 @@ public:
     int getSendBufferSize();
     void setSendBufferSize(int size);
 
-    bool isReuseAddress();
+    bool getReuseAddress();
     void setReuseAddress(bool on);
 
     long long getTimeout();
@@ -257,7 +257,7 @@ public:
 
     void notify();
 
-    bool isBlocking()
+    bool getBlocking()
     {
         return blocking;
     }
@@ -276,7 +276,7 @@ public:
     int remove(es::Monitor* selector);
 
     // IMulticastSocket
-    bool isLoopbackMode();
+    bool getLoopbackMode();
     void setLoopbackMode(bool disable);
     void joinGroup(es::InternetAddress* addr);
     void leaveGroup(es::InternetAddress* addr);

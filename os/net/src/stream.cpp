@@ -176,7 +176,7 @@ read(SocketMessenger* m, Conduit* c)
 
     while (!isReadable())
     {
-        if (!socket->isBlocking())
+        if (!socket->getBlocking())
         {
             m->setErrorCode(EAGAIN);
             return false;
@@ -219,7 +219,7 @@ write(SocketMessenger* m, Conduit* c)
     Synchronized<es::Monitor*> method(monitor);
     while (!isWritable())
     {
-        if (!socket->isBlocking())
+        if (!socket->getBlocking())
         {
             m->setErrorCode(EAGAIN);
             return false;
@@ -284,7 +284,7 @@ close(SocketMessenger* m, Conduit* c)
 {
     Synchronized<es::Monitor*> method(monitor);
 
-    if (socket->getTimeout() == 0 && !socket->isBlocking())
+    if (socket->getTimeout() == 0 && !socket->getBlocking())
     {
         state->abort(this);
         return false;
@@ -308,7 +308,7 @@ close(SocketMessenger* m, Conduit* c)
     while (!isClosable())
     {
         ASSERT(socket);
-        if (!socket->isBlocking())
+        if (!socket->getBlocking())
         {
             m->setErrorCode(EAGAIN);
             return false;
@@ -389,7 +389,7 @@ StateClosed::connect(SocketMessenger* m, StreamReceiver* s)
 
     while (!s->isConnectable())
     {
-        if (!s->socket->isBlocking())
+        if (!s->socket->getBlocking())
         {
             m->setErrorCode(EINPROGRESS);
             return false;
@@ -405,7 +405,7 @@ StateListen::accept(SocketMessenger* m, StreamReceiver* s)
 {
     while (!s->isAcceptable())
     {
-        if (!s->socket->isBlocking())
+        if (!s->socket->getBlocking())
         {
             m->setErrorCode(EAGAIN);
             return false;

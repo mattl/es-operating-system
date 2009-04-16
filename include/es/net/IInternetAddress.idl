@@ -67,19 +67,19 @@ module es
         readonly attribute string hostName;
         /** Boolean whether this address is a link-local address.
          */
-        readonly attribute boolean linkLocal;
+        boolean isLinkLocal();
 
         /** Boolean whether this address is a loopback address.
          */
-        readonly attribute boolean loopback;
+        boolean isLoopback();
 
         /** Boolean whether this address is a multicast address.
          */
-        readonly attribute boolean multicast;
+        boolean isMulticast();
 
         /** Boolean whether this address is assigned to one of the interfaces of the host.
          */
-        readonly attribute boolean localAddress;
+        boolean isLocalAddress();
 
         /** The next internet address
          */
@@ -95,7 +95,7 @@ module es
 
         /** Boolean whether this address is the unspecified address.
          */
-        readonly attribute boolean unspecified;
+        boolean isUnspecified();
     };
 };
 

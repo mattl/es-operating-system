@@ -52,7 +52,7 @@ public:
     int start();
     int stop();
 
-    bool isPromiscuousMode();
+    bool getPromiscuousMode();
     void setPromiscuousMode(bool on);
 
     int addMulticastAddress(const unsigned char macaddr[6]);

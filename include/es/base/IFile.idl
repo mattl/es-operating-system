@@ -68,17 +68,17 @@ module es
         /** Tests whether this file is a directory.
          * @return          true if and only if this file is a directory; false otherwise.
          */
-        readonly attribute boolean directory;
+        boolean isDirectory();
 
         /** Tests whether this file is a normal file.
          * @return          true if and only if this file is a normal file; false otherwise.
          */
-        readonly attribute boolean file;
+        boolean isFile();
 
         /** Tests whether this file is a hidden file.
          * @return          true if and only if this file is a hidden file; false otherwise.
          */
-        readonly attribute boolean hidden;
+        boolean isHidden();
 
         /** The string representation of this file.
          */

@@ -450,7 +450,7 @@ stop()
 }
 
 bool Dp8390d::
-isPromiscuousMode()
+getPromiscuousMode()
 {
     Synchronized<es::Monitor*> method(monitor);
 

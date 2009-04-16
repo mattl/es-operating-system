@@ -251,7 +251,7 @@ setTimeout(long long timeSpan)
 }
 
 bool Socket::
-isReuseAddress()
+getReuseAddress()
 {
 }
 
@@ -611,7 +611,7 @@ isWritable()
 //
 
 bool Socket::
-isLoopbackMode()
+getLoopbackMode()
 {
 }
 

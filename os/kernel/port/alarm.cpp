@@ -55,13 +55,13 @@ Alarm::
 }
 
 bool Alarm::
-isPeriodic()
+getPeriodic()
 {
     return getFlag(Periodic);
 }
 
 bool Alarm::
-isEnabled()
+getEnabled()
 {
     return getFlag(Enabled);
 }
@@ -265,7 +265,7 @@ Queue::process(long long ticks)
                 {
                     alarm = queue.removeFirst();
                     alarm->current = 0;
-                    if (alarm->isPeriodic() && 0 < alarm->interval)
+                    if (alarm->getPeriodic() && 0 < alarm->interval)
                     {
                         add(alarm);
                     }
@@ -295,7 +295,7 @@ void Alarm::
 Queue::add(Alarm* alarm)
 {
     if (!alarm ||
-        !alarm->isEnabled() ||
+        !alarm->getEnabled() ||
         alarm->interval <= 0)
     {
         return;
@@ -320,7 +320,7 @@ Queue::add(Alarm* alarm)
         now = DateTime::getNow().getTicks();
         alarm->nextTick = alarm->start + alarm->interval;
     }
-    if (alarm->isPeriodic())
+    if (alarm->getPeriodic())
     {
         if (0 <= now - alarm->nextTick)
         {

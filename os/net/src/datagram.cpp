@@ -70,7 +70,7 @@ read(SocketMessenger* m, Conduit* c)
     // Copy-out data
     while (!isReadable())
     {
-        if (!socket->isBlocking())
+        if (!socket->getBlocking())
         {
             m->setErrorCode(errorCode ? errorCode : EAGAIN);
             return false;

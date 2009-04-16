@@ -116,7 +116,7 @@ module es
 
         /** Boolean whether this socket is ready to accept a new connection.
          */
-        readonly attribute boolean acceptable;
+        boolean isAcceptable();
 
         /** The address family of this socket.
          */
@@ -124,19 +124,19 @@ module es
 
         /** Boolean whether this socket bound to an internet address.
          */
-        readonly attribute boolean bound;
+        boolean isBound();
 
         /** Boolean whether this socket has been closed.
          */
-        readonly attribute boolean closed;
+        boolean isClosed();
 
         /** Boolean whether this socket has completed the connect operation, either finished or failed.
          */
-        readonly attribute boolean connectable;
+        boolean isConnectable();
 
         /** Boolean whether this socket has been connected.
          */
-        readonly attribute boolean connected;
+        boolean isConnected();
 
         /** The last error code of this socket.
          */
@@ -156,7 +156,7 @@ module es
 
         /** Boolean whether this socket is ready for reading
          */
-        readonly attribute boolean readable;
+        boolean isReadable();
 
         /** The remote internet address to which this socket is connected.
          */
@@ -172,7 +172,7 @@ module es
 
         /** Boolean whether this socket is ready for writing
          */
-        readonly attribute boolean writable;
+        boolean isWritable();
 
         /** The blocking option of this socket.
          * By default, this option is enabled.

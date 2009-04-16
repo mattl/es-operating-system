@@ -58,7 +58,7 @@ public:
     {
         return true;
     }
-    bool isPromiscuousMode()
+    bool getPromiscuousMode()
     {
         return true;
     }

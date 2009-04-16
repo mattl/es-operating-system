@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     }
 
     es::Alarm* alarm = es::Alarm::createInstance();
-    alarm->isPeriodic();
+    alarm->getPeriodic();
     alarm->release();
 
     printf("%p\n", es::getConstructor(es::Cache::iid()));

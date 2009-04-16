@@ -224,7 +224,7 @@ write(const void* src, int count)
 //
 
 bool Tap::
-isPromiscuousMode()
+getPromiscuousMode()
 {
     Synchronized<es::Monitor*> method(monitor);
 

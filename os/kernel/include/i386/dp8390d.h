@@ -249,7 +249,7 @@ public:
     int start();
     int stop();
 
-    bool isPromiscuousMode();
+    bool getPromiscuousMode();
     void setPromiscuousMode(bool on);
     int addMulticastAddress(const u8 mac[6]);
     int removeMulticastAddress(const u8 mac[6]);

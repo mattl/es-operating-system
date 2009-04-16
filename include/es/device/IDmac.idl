@@ -52,7 +52,7 @@ module es
         /**
          * Boolean whether the DMA transfer is complete.
          */
-        readonly attribute boolean done;
+        boolean isDone();
         /**
          * The current DMA transfer counter of this DMA controller.
          */
