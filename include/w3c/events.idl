@@ -295,4 +295,3 @@ module events
 };
 
 #endif // _EVENTS_IDL_
-
