@@ -7,18 +7,18 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 if ES
 
 %.h %.ent : %.idl
-	esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+	esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	esidl -C -isystem $(srcdir) -ent $<
+	esidl -isystem $(srcdir) -ent $<
 
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -C -isystem $(srcdir) -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
 
 endif !ES
 
