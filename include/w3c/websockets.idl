@@ -7,6 +7,13 @@
  * http://dev.w3.org/html5/websockets/
  */
 
+#ifndef _WEBSOCKETS_IDL_
+#define _WEBSOCKETS_IDL_
+
+#include "html5.idl"
+
+module html5 {
+
 [Constructor(in DOMString url)]
 interface WebSocket {
   readonly attribute DOMString URL;
@@ -24,3 +31,7 @@ interface WebSocket {
   void postMessage(in DOMString data);
   void disconnect();
 };
+
+};  // module html5
+
+#endif  // _WEBSOCKETS_IDL_

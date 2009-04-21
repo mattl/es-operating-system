@@ -7,6 +7,13 @@
  * http://dev.w3.org/html5/eventsource/
  */
 
+#ifndef _EVENTSOURCE_IDL_
+#define _EVENTSOURCE_IDL_
+
+#include "html5.idl"
+
+module html5 {
+
 [Constructor(in DOMString url)]
 interface EventSource {
   readonly attribute DOMString URL;
@@ -23,3 +30,7 @@ interface EventSource {
            attribute Function onerror;
   void disconnect();
 };
+
+};  // module html5
+
+#endif  // _EVENTSOURCE_IDL_

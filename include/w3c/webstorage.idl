@@ -7,6 +7,13 @@
  * http://dev.w3.org/html5/webstorage/
  */
 
+#ifndef _WEBSTORAGE_IDL_
+#define _WEBSTORAGE_IDL_
+
+#include "html5.idl"
+
+module html5 {
+
 interface Storage {
   readonly attribute unsigned long length;
   [IndexGetter] DOMString key(in unsigned long index);
@@ -98,6 +105,10 @@ interface SQLError {
 };
 
 exception SQLException {
-  readonly attribute unsigned long code;
-  readonly attribute DOMString message;
+  unsigned long code;
+  DOMString message;
 };
+
+};  // module html5
+
+#endif  // _WEBSTORAGE_IDL_

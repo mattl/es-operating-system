@@ -7,6 +7,19 @@
  * http://dev.w3.org/html5/workers/
  */
 
+#ifndef _WEBWORKERS_IDL_
+#define _WEBWORKERS_IDL_
+
+#include "html5.idl"
+
+module html5 {
+
+typedef dom::DOMObject DOMObject;
+typedef events::EventListener EventListener;
+
+interface Database;
+interface DatabaseSync;
+
 interface WorkerGlobalScope {
   readonly attribute WorkerGlobalScope self;
   readonly attribute WorkerLocation location;
@@ -75,3 +88,7 @@ interface WorkerLocation {
   readonly attribute DOMString search;
   readonly attribute DOMString hash;
 };
+
+};  // module html5
+
+#endif  // _WEBWORKERS_IDL_

@@ -49,6 +49,7 @@ module html5 {
   interface HTMLOptionElement;
   interface Location;
   interface MediaError;
+  interface MessagePort;
   interface Navigator;
   interface RowSpecification;
   interface Selection;
@@ -59,7 +60,7 @@ module html5 {
   interface ValidityState;
   interface Window;
 
-  // typedef sequence<MessagePort> MessagePortArray;    // XXX sequence is not supported yet
+  typedef sequence<MessagePort> MessagePortArray;
 
   // XXX
   typedef any Date;
@@ -1215,7 +1216,6 @@ module html5 {
     void initUndoManagerEventNS(in DOMString namespaceURIArg, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in any dataArg);
   };
 
-#if XXX
   interface MessageEvent : Event {
     readonly attribute any data;
     readonly attribute DOMString origin;
@@ -1241,7 +1241,6 @@ module html5 {
     // event handler attributes
              attribute Function onmessage;
   };
-#endif
 
   [NoInterfaceObject, ImplementedOn=Window] interface WindowTimers {
     // timers

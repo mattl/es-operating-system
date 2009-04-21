@@ -110,6 +110,7 @@ nobase_nodist_include_HEADERS = \
 	w3c/cssomview.h \
 	w3c/dom.h \
 	w3c/events.h \
+	w3c/eventsource.h \
 	w3c/html5.h \
 	w3c/ls.h \
 	w3c/ranges.h \
@@ -118,7 +119,11 @@ nobase_nodist_include_HEADERS = \
 	w3c/svg.h \
 	w3c/traversal.h \
 	w3c/validation.h \
-	w3c/views.h
+	w3c/webstorage.h \
+	w3c/websockets.h \
+	w3c/webworkers.h \
+	w3c/views.h \
+	w3c/xhr.h
 	
 nobase_nodist_include_HEADERS += \
 	es/base/IAlarm.ent \
@@ -163,6 +168,7 @@ nobase_nodist_include_HEADERS += \
 	w3c/cssomview.ent \
 	w3c/dom.ent \
 	w3c/events.ent \
+	w3c/eventsource.ent \
 	w3c/html5.ent \
 	w3c/ls.ent \
 	w3c/ranges.ent \
@@ -171,7 +177,11 @@ nobase_nodist_include_HEADERS += \
 	w3c/svg.ent \
 	w3c/traversal.ent \
 	w3c/validation.ent \
-	w3c/views.ent
+	w3c/websockets.ent \
+	w3c/webstorage.ent \
+	w3c/webworkers.ent \
+	w3c/views.ent \
+	w3c/xhr.ent
 
 nobase_include_HEADERS += \
 	es/base/IAlarm.idl \
@@ -216,6 +226,7 @@ nobase_include_HEADERS += \
 	w3c/cssomview.idl \
 	w3c/dom.idl \
 	w3c/events.idl \
+	w3c/eventsource.idl \
 	w3c/html5.idl \
 	w3c/ls.idl \
 	w3c/ranges.idl \
@@ -224,7 +235,11 @@ nobase_include_HEADERS += \
 	w3c/svg.idl \
 	w3c/traversal.idl \
 	w3c/validation.idl \
-	w3c/views.idl
+	w3c/websockets.idl \
+	w3c/webstorage.idl \
+	w3c/webworkers.idl \
+	w3c/views.idl \
+	w3c/xhr.idl
 
 clean-local:
 	-rm -rf es -rf w3c

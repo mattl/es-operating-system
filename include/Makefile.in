@@ -179,9 +179,11 @@ nobase_include_HEADERS = es.h es/any.h es/broker.h es/capability.h \
 	es/net/IInternetConfig.idl es/net/IResolver.idl \
 	es/net/ISocket.idl es/util/IIterator.idl es/util/ISet.idl \
 	es/util/IOrderedMap.idl w3c/css.idl w3c/cssomview.idl \
-	w3c/dom.idl w3c/events.idl w3c/html5.idl w3c/ls.idl \
-	w3c/ranges.idl w3c/smil.idl w3c/stylesheets.idl w3c/svg.idl \
-	w3c/traversal.idl w3c/validation.idl w3c/views.idl
+	w3c/dom.idl w3c/events.idl w3c/eventsource.idl w3c/html5.idl \
+	w3c/ls.idl w3c/ranges.idl w3c/smil.idl w3c/stylesheets.idl \
+	w3c/svg.idl w3c/traversal.idl w3c/validation.idl \
+	w3c/websockets.idl w3c/webstorage.idl w3c/webworkers.idl \
+	w3c/views.idl w3c/xhr.idl
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
@@ -199,11 +201,12 @@ nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
 	es/naming/IContext.h es/net/IInternetAddress.h \
 	es/net/IInternetConfig.h es/net/IResolver.h es/net/ISocket.h \
 	es/util/IIterator.h es/util/ISet.h es/util/IOrderedMap.h \
-	w3c/css.h w3c/cssomview.h w3c/dom.h w3c/events.h w3c/html5.h \
-	w3c/ls.h w3c/ranges.h w3c/smil.h w3c/stylesheets.h w3c/svg.h \
-	w3c/traversal.h w3c/validation.h w3c/views.h \
-	es/base/IAlarm.ent es/base/ICache.ent es/base/ICallback.ent \
-	es/base/IFile.ent es/base/IInterface.ent \
+	w3c/css.h w3c/cssomview.h w3c/dom.h w3c/events.h \
+	w3c/eventsource.h w3c/html5.h w3c/ls.h w3c/ranges.h w3c/smil.h \
+	w3c/stylesheets.h w3c/svg.h w3c/traversal.h w3c/validation.h \
+	w3c/webstorage.h w3c/websockets.h w3c/webworkers.h w3c/views.h \
+	w3c/xhr.h es/base/IAlarm.ent es/base/ICache.ent \
+	es/base/ICallback.ent es/base/IFile.ent es/base/IInterface.ent \
 	es/base/IInterfaceStore.ent es/base/IMonitor.ent \
 	es/base/IPageable.ent es/base/IPageSet.ent \
 	es/base/IProcess.ent es/base/IRuntime.ent \
@@ -221,9 +224,11 @@ nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
 	es/net/IInternetConfig.ent es/net/IResolver.ent \
 	es/net/ISocket.ent es/util/IIterator.ent es/util/ISet.ent \
 	es/util/IOrderedMap.ent w3c/css.ent w3c/cssomview.ent \
-	w3c/dom.ent w3c/events.ent w3c/html5.ent w3c/ls.ent \
-	w3c/ranges.ent w3c/smil.ent w3c/stylesheets.ent w3c/svg.ent \
-	w3c/traversal.ent w3c/validation.ent w3c/views.ent
+	w3c/dom.ent w3c/events.ent w3c/eventsource.ent w3c/html5.ent \
+	w3c/ls.ent w3c/ranges.ent w3c/smil.ent w3c/stylesheets.ent \
+	w3c/svg.ent w3c/traversal.ent w3c/validation.ent \
+	w3c/websockets.ent w3c/webstorage.ent w3c/webworkers.ent \
+	w3c/views.ent w3c/xhr.ent
 all: all-am
 
 .SUFFIXES:

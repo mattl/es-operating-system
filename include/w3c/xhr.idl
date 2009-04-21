@@ -7,6 +7,15 @@
  * http://www.w3.org/TR/XMLHttpRequest/
  */
 
+#ifndef _XHR_IDL_
+#define _XHR_IDL_
+
+#include "html5.idl"
+
+module html5 {
+
+ typedef events::EventListener EventListener;
+
  interface XMLHttpRequest {
   // event handler
            attribute EventListener onreadystatechange;
@@ -38,3 +47,7 @@
   readonly attribute unsigned short status;
   readonly attribute DOMString statusText;
 };
+
+};  // module html5
+
+#endif  // _XHR_IDL_
