@@ -14,6 +14,16 @@
 
 module html5 {
 
+interface SQLError;
+interface SQLVoidCallback;
+interface SQLResultSet;
+interface SQLResultSetRowList;
+interface SQLStatementCallback;
+interface SQLTransaction;
+interface SQLTransactionCallback;
+interface SQLTransactionErrorCallback;
+interface SQLTransactionSync;
+
 interface Storage {
   readonly attribute unsigned long length;
   [IndexGetter] DOMString key(in unsigned long index);
