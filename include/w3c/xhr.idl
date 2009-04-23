@@ -14,9 +14,9 @@
 
 module html5 {
 
- typedef events::EventListener EventListener;
-typedef html5::Function Function;
- interface XMLHttpRequest {
+typedef events::EventListener EventListener;
+
+interface XMLHttpRequest {
   // event handler
            attribute EventListener onreadystatechange;
 
