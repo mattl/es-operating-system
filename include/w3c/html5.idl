@@ -14,6 +14,11 @@
 #include "css.idl"
 #include "ranges.idl"
 
+module webstorage {
+  interface Database;
+  interface Storage;
+};
+
 module html5 {
 
   typedef dom::Node Node;
@@ -27,6 +32,8 @@ module html5 {
   typedef events::MouseEvent MouseEvent;
   typedef css::CSSStyleDeclaration CSSStyleDeclaration;
   typedef ranges::Range Range;
+  typedef webstorage::Database Database;
+  typedef webstorage::Storage Storage;
 
   interface ApplicationCache;
   interface BarProp;
@@ -1007,9 +1014,9 @@ module html5 {
 
     // the user agent
     readonly attribute Navigator navigator;
-    // XXX readonly attribute Storage localStorage;
-    // XXX readonly attribute Storage sessionStorage;
-    // XXX Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
+    readonly attribute Storage localStorage;
+    readonly attribute Storage sessionStorage;
+    Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
     readonly attribute ApplicationCache applicationCache;
 
     // user prompts
@@ -1021,7 +1028,7 @@ module html5 {
 
     // cross-document messaging
     void postMessage(in any message, in DOMString targetOrigin);
-    // XXX void postMessage(in any message, in MessagePortArray ports, in DOMString targetOrigin);
+    void postMessage(in any message, in MessagePortArray ports, in DOMString targetOrigin);
 
     // event handler DOM attributes
              attribute Function onabort;
