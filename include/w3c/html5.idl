@@ -951,7 +951,7 @@ module html5 {
 
   interface HTMLBrowserButtonElement : HTMLElement {
              attribute DOMString type;
-    // readonly attribute boolean supported;  // XXX esidl specific issue: hide dom::Node::isSupported
+    readonly attribute boolean supported;
     readonly attribute boolean disabled;
   };
 
