@@ -14,6 +14,9 @@
 
 module webstorage {
 
+typedef events::Event Event;
+typedef html5::WindowProxy WindowProxy;
+
 interface SQLError;
 interface SQLVoidCallback;
 interface SQLResultSet;
