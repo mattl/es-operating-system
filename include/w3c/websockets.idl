@@ -12,7 +12,9 @@
 
 #include "html5.idl"
 
-module html5 {
+module websockets {
+
+typedef html5::Function Function;
 
 [Constructor(in DOMString url)]
 interface WebSocket {
@@ -32,6 +34,6 @@ interface WebSocket {
   void disconnect();
 };
 
-};  // module html5
+};  // module websockets
 
 #endif  // _WEBSOCKETS_IDL_

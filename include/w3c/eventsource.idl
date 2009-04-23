@@ -12,7 +12,9 @@
 
 #include "html5.idl"
 
-module html5 {
+module eventsource {
+
+typedef html5::Function Function;
 
 [Constructor(in DOMString url)]
 interface EventSource {
@@ -31,6 +33,6 @@ interface EventSource {
   void disconnect();
 };
 
-};  // module html5
+};  // module eventsource
 
 #endif  // _EVENTSOURCE_IDL_

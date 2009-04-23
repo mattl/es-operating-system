@@ -12,13 +12,19 @@
 
 #include "html5.idl"
 
-module html5 {
+module webworkers {
 
 typedef dom::DOMObject DOMObject;
+typedef events::Event Event;
 typedef events::EventListener EventListener;
+typedef html5::ApplicationCache ApplicationCache;
+typedef html5::MessagePort MessagePort;
+typedef html5::MessagePortArray MessagePortArray;
 
 interface Database;
 interface DatabaseSync;
+interface Navigator;
+interface WorkerLocation;
 
 interface WorkerGlobalScope {
   readonly attribute WorkerGlobalScope self;
@@ -89,6 +95,6 @@ interface WorkerLocation {
   readonly attribute DOMString hash;
 };
 
-};  // module html5
+};  // module webworkers
 
 #endif  // _WEBWORKERS_IDL_

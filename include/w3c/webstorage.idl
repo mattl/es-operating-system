@@ -12,7 +12,7 @@
 
 #include "html5.idl"
 
-module html5 {
+module webstorage {
 
 interface SQLError;
 interface SQLVoidCallback;
@@ -120,6 +120,6 @@ exception SQLException {
   DOMString message;
 };
 
-};  // module html5
+};  // module webstorage
 
 #endif  // _WEBSTORAGE_IDL_

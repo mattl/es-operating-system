@@ -161,7 +161,7 @@ module html2
              attribute DOMString       name;
              attribute long            size;
              attribute long            tabIndex;
-    void               add(in HTMLElement element, 
+    void               add(in HTMLElement element,
                            in HTMLElement before)
                                         raises(dom::DOMException);
     void               remove(in long index);
