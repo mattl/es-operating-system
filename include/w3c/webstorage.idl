@@ -19,6 +19,7 @@ interface SQLVoidCallback;
 interface SQLResultSet;
 interface SQLResultSetRowList;
 interface SQLStatementCallback;
+interface SQLStatementErrorCallback;
 interface SQLTransaction;
 interface SQLTransactionCallback;
 interface SQLTransactionErrorCallback;
