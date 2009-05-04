@@ -1,0 +1,138 @@
+Only in es-0.1.4/cmd: squeak-3.7.1
+Only in es-0.1.4: .NEWS.swp
+Only in es-0.1.4/os/kernel/include/i386: cscope.out
+diff -ru es-0.1.4-org/os/kernel/include/line.h es-0.1.4/os/kernel/include/line.h
+--- es-0.1.4-org/os/kernel/include/line.h	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/kernel/include/line.h	2009-04-09 17:09:47.000000000 +0800
+@@ -44,6 +44,7 @@
+ 
+ public:
+     Line(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
++    //Line(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
+     virtual ~Line();
+ 
+     int invoke(int);
+@@ -73,7 +74,8 @@
+ class InputLine : public Line
+ {
+ public:
+-    InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
++     //InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
++     InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
+     virtual ~InputLine();
+     int read(void* dst, int count);
+     int write(const void* src, int count);
+@@ -82,7 +84,8 @@
+ class OutputLine : public Line
+ {
+ public:
+-    OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
++     //OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
++     OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
+     virtual ~OutputLine();
+     int read(void* dst, int count);
+     int write(const void* src, int count);
+diff -ru es-0.1.4-org/os/kernel/pc/es1370.cpp es-0.1.4/os/kernel/pc/es1370.cpp
+--- es-0.1.4-org/os/kernel/pc/es1370.cpp	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/kernel/pc/es1370.cpp	2009-04-09 17:14:45.000000000 +0800
+@@ -363,6 +363,7 @@
+     inputLine(this),
+     outputLine(this)
+ {
++
+     // DMA buffer for playback.
+     dac2Buffer = new u8[BufferSize];
+     ASSERT(dac2Buffer);
+diff -ru es-0.1.4-org/os/kernel/pc/gdbstub.cpp es-0.1.4/os/kernel/pc/gdbstub.cpp
+--- es-0.1.4-org/os/kernel/pc/gdbstub.cpp	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/kernel/pc/gdbstub.cpp	2009-04-09 16:34:52.000000000 +0800
+@@ -326,7 +326,8 @@
+     } while (getDebugChar() != '+');
+ }
+ 
+-void debug_error(char* format)
++void debug_error(const char* format)
++//void debug_error(char* format)
+ {
+     if (remote_debug)
+         esReport("%s", format);
+diff -ru es-0.1.4-org/os/kernel/port/line.cpp es-0.1.4/os/kernel/port/line.cpp
+--- es-0.1.4-org/os/kernel/port/line.cpp	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/kernel/port/line.cpp	2009-04-09 17:18:25.000000000 +0800
+@@ -23,7 +23,8 @@
+ #include "line.h"
+ 
+ Line::
+-Line(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++//Line(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++Line(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+     callback(callback),
+     bits(bits),
+     channels(channels),
+@@ -171,7 +172,8 @@
+ }
+ 
+ InputLine::
+-InputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++//InputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++InputLine(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+     Line(callback, bits, channels, rate)
+ {
+ }
+@@ -212,7 +214,8 @@
+ }
+ 
+ OutputLine::
+-OutputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++//OutputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
++OutputLine(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+     Line(callback, bits, channels, rate)
+ {
+ }
+diff -ru es-0.1.4-org/os/kernel/port/pageSet.cpp es-0.1.4/os/kernel/port/pageSet.cpp
+--- es-0.1.4-org/os/kernel/port/pageSet.cpp	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/kernel/port/pageSet.cpp	2009-04-09 12:23:08.000000000 +0800
+@@ -373,4 +373,4 @@
+     // cf. -fthreadsafe-statics for g++
+     static Constructor constructor;
+     es::PageSet::setConstructor(&constructor);
+-}
+\ No newline at end of file
++}
+diff -ru es-0.1.4-org/os/libes++/src/rpc.cpp es-0.1.4/os/libes++/src/rpc.cpp
+--- es-0.1.4-org/os/libes++/src/rpc.cpp	2009-02-06 18:17:50.000000000 +0800
++++ es-0.1.4/os/libes++/src/rpc.cpp	2009-04-09 19:46:05.000000000 +0800
+@@ -110,7 +110,7 @@
+         return -1;
+     }
+ 
+-    if (rc < sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, &sa))
++    if (rc < (ssize_t)sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, &sa))
+     {
+         errno = EBADMSG;
+         rc = -1;
+@@ -203,7 +203,7 @@
+ 
+         // TODO check message length msg.msg_iov[0].iov_len
+ 
+-        if (sizeof(RpcHdr) <= rc)
++        if ((ssize_t)sizeof(RpcHdr) <= rc)
+         {
+ #if 0
+             fprintf(stderr, "%s:\n", __func__);
+@@ -211,12 +211,12 @@
+ #endif
+             // TODO check trunk etc.
+             hdr = reinterpret_cast<RpcHdr*>(iov.iov_base);
+-            if (hdr->cmd == RPC_REQ && sizeof(RpcReq) <= rc)
++            if (hdr->cmd == RPC_REQ && (ssize_t)sizeof(RpcReq) <= rc)
+             {
+                 RpcStack::alloc(rc);
+                 break;
+             }
+-            else if (hdr->cmd == RPC_RES && sizeof(RpcRes) <= rc)
++            else if (hdr->cmd == RPC_RES && (ssize_t)sizeof(RpcRes) <= rc)
+             {
+                 RpcStack::alloc(rc);
+                 break;
+Only in es-0.1.4: .setup.swp
