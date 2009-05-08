@@ -303,7 +303,7 @@ isHidden()
 }
 
 const char* Stream::
-getName(char* name, int nameLength)
+getName(void* name, int nameLength)
 {
     ASSERT(cache->file);
     return cache->file->getName(name, nameLength);

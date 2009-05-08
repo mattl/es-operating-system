@@ -118,15 +118,15 @@ public:
         object = element;
     }
 
-    const char* getName(char* name, int len)
+    const char* getName(void* name, int len)
     {
         if (len < 0)
         {
             return 0;
         }
         unsigned count = (len < 7) ? len : 7;
-        strncpy(name, "Stream", count);
-        return name;
+        strncpy(static_cast<char*>(name), "Stream", count);
+        return static_cast<char*>(name);
     }
 
     void* queryInterface(const char* riid)

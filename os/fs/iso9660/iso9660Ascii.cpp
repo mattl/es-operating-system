@@ -119,7 +119,7 @@ lookupPathName(const char*& name)
 }
 
 const char* Iso9660Stream::
-getName(char* name, int len)
+getName(void* name, int len)
 {
     u8 record[255];
 
@@ -129,7 +129,7 @@ getName(char* name, int len)
     }
     if (isRoot())
     {
-        name[0] = 0;
+        static_cast<char*>(name)[0] = 0;
     }
     else
     {
@@ -142,12 +142,12 @@ getName(char* name, int len)
         if (record[DR_FileIdentifierLength] < len)
         {
             memmove(name, record + DR_FileIdentifier, record[DR_FileIdentifierLength]);
-            name[record[DR_FileIdentifierLength]] = 0;
+            static_cast<char*>(name)[record[DR_FileIdentifierLength]] = 0;
         }
         else
         {
             memmove(name, record + DR_FileIdentifier, len);
         }
     }
-    return name;
+    return static_cast<char*>(name);
 }

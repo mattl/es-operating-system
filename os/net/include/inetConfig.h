@@ -55,8 +55,8 @@ public:
     void removeNameServer(es::InternetAddress* address);
 
     void addSearchDomain(const char* address);
-    const char* getSearchDomain(char* address, int addressLength);
-    const char* getSearchDomain(char* address, int addressLength, int pos);
+    const char* getSearchDomain(void* address, int addressLength);
+    const char* getSearchDomain(void* address, int addressLength, int pos);
     void removeSearchDomain(const char* address);
 
     //

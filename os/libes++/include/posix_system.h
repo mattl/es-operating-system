@@ -306,24 +306,24 @@ public:
         esThrow(EACCES); // [check] appropriate?
     }
 
-    const char* getName(char* name, int len)
+    const char* getName(void* name, int len)
     {
         if (len < 1)
         {
             return 0;
         }
         const char* src = this->name;
-        char* dst = name;
+        char* dst = static_cast<char*>(name);
         for (int i = 0; i < len; ++i)
         {
             char c = *dst++ = *src++;
             if (c == '\0')
             {
-                return name;
+                return static_cast<char*>(name);
             }
         }
-        name[len - 1] = '\0';
-        return name;
+        static_cast<char*>(name)[len - 1] = '\0';
+        return static_cast<char*>(name);
     }
 
     //

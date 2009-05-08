@@ -85,7 +85,7 @@ void Binding::setObject(es::Interface* unknown)
     }
 }
 
-const char* Binding::getName(char* name, int len)
+const char* Binding::getName(void* name, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -93,8 +93,8 @@ const char* Binding::getName(char* name, int len)
     {
         return 0;
     }
-    strncpy(name, this->name, len);
-    return name;
+    strncpy(static_cast<char*>(name), this->name, len);
+    return static_cast<char*>(name);
 }
 
 // Makes this binding invisible from the context so that iterators can

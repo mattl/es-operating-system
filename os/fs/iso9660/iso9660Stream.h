@@ -99,7 +99,7 @@ public:
     // IBinding
     es::Interface* getObject();
     void setObject(es::Interface* object);
-    const char* getName(char* name, int len);
+    const char* getName(void* name, int len);
 
     // IContext
     es::Binding* bind(const char* name, es::Interface* object);

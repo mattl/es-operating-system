@@ -49,7 +49,7 @@ setObject(es::Interface* object)
 }
 
 const char* FatStream::
-getName(char* name, int len)
+getName(void* name, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -60,7 +60,7 @@ getName(char* name, int len)
 
     if (1 <= len)
     {
-        name[0] = 0;
+        static_cast<char*>(name)[0] = 0;
     }
 
     if (isRoot() || isRemoved())
@@ -129,8 +129,8 @@ getName(char* name, int len)
                             break;
                         }
                     }
-                    FatFileSystem::utf16toutf8(l, name);    // XXX error check
-                    return name;
+                    FatFileSystem::utf16toutf8(l, static_cast<char*>(name));    // XXX error check
+                    return static_cast<char*>(name);
                     break;
                 }
                 ord = -1;

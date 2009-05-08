@@ -122,19 +122,19 @@ getAddressFamily()
 }
 
 const char* Inet4Address::
-getCanonicalHostName(char* hostName, int len)
+getCanonicalHostName(void* hostName, int len)
 {
     return 0;
 }
 
 const char* Inet4Address::
-getHostAddress(char* hostAddress, int len)
+getHostAddress(void* hostAddress, int len)
 {
     return 0;
 }
 
 const char* Inet4Address::
-getHostName(char* hostName, int len)
+getHostName(void* hostName, int len)
 {
     return Socket::resolver->getHostName(hostName, len, this);
 }

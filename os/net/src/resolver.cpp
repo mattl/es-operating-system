@@ -450,16 +450,16 @@ getHostByName(const char* hostName, int addressFamily)
 }
 
 const char* Resolver::
-getHostName(char* hostName, int len, es::InternetAddress* address)
+getHostName(void* hostName, int len, es::InternetAddress* address)
 {
     Synchronized<es::Monitor*> method(monitor);
 
-    if (!setup() || !control->getHostName(address, hostName, len))
+    if (!setup() || !control->getHostName(address, static_cast<char*>(hostName), len))
     {
         return 0;
     }
 
-    return hostName;
+    return static_cast<char*>(hostName);
 }
 
 // Note DNS is not queried.

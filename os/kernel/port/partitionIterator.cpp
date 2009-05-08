@@ -143,7 +143,7 @@ setObject(es::Interface* object)
 }
 
 const char* PartitionIterator::
-getName(char* name, int len)
+getName(void* name, int len)
 {
     Monitor::Synchronized method(context->monitor);
 
@@ -177,23 +177,14 @@ getName(char* name, int len)
 
             if (stream->isExtendedPartition())
             {
-#ifdef WIN32
-                _snprintf(name, len, "%s", prefix);
-#else
-                snprintf(name, len, "%s", prefix);
-#endif
-                return name;
+                snprintf(static_cast<char*>(name), len, "%s", prefix);
+                return static_cast<char*>(name);
             }
-
-#ifdef WIN32
-            _snprintf(name, len, "%s%u", prefix, id);
-#else
-            snprintf(name, len, "%s%u", prefix, id);
-#endif
-            return name;
+            snprintf(static_cast<char*>(name), len, "%s%u", prefix, id);
+            return static_cast<char*>(name);
         }
     }
-    return NULL;
+    return 0;
 }
 
 //

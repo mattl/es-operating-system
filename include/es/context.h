@@ -57,7 +57,7 @@ public:
 
     es::Interface* getObject();
     void setObject(es::Interface* object);
-    const char* getName(char* name, int nameLength);
+    const char* getName(void* name, int nameLength);
 
     typedef ::List<Binding, &Binding::link> List;
 };

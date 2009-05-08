@@ -73,15 +73,15 @@ public:
         strncpy(this->name, name, 13);
     }
 
-    const char* getName(char* name, int len)
+    const char* getName(void* name, int len)
     {
         unsigned count(strlen(this->name) + 1);
         if (len < count)
         {
             count = len;
         }
-        strncpy(name, this->name, count);
-        return name;
+        strncpy(static_cast<char*>(name), this->name, count);
+        return static_cast<char*>(name);
     }
 
     void* queryInterface(const char* riid)

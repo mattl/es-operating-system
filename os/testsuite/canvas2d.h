@@ -415,7 +415,7 @@ public:
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy) {}
     float getGlobalAlpha();
     void setGlobalAlpha(float globalAlpha);
-    const char* getGlobalCompositeOperation(char* globalCompositeOperation, int globalCompositeOperationLength);
+    const char* getGlobalCompositeOperation(void* globalCompositeOperation, int globalCompositeOperationLength);
     void setGlobalCompositeOperation(const char* globalCompositeOperation);
     Any getStrokeStyle(void* strokeStyle, int strokeStyleLength);
     void setStrokeStyle(const Any strokeStyle);
@@ -428,9 +428,9 @@ public:
 
     float getLineWidth();
     void setLineWidth(float lineWidth);
-    const char* getLineCap(char* lineCap, int lineCapLength);
+    const char* getLineCap(void* lineCap, int lineCapLength);
     void setLineCap(const char* lineCap);
-    const char* getLineJoin(char* lineJoin, int lineJoinLength);
+    const char* getLineJoin(void* lineJoin, int lineJoinLength);
     void setLineJoin(const char* lineJoin);
     float getMiterLimit();
     void setMiterLimit(float miterLimit);
@@ -441,7 +441,7 @@ public:
     void setShadowOffsetY(float shadowOffsetY) {}
     float getShadowBlur() {}
     void setShadowBlur(float shadowBlur) {}
-    const char* getShadowColor(char* shadowColor, int shadowColorLength) {}
+    const char* getShadowColor(void* shadowColor, int shadowColorLength) {}
     void setShadowColor(const char* shadowColor) {}
 
     void clearRect(float x, float y, float width, float height);
@@ -462,11 +462,11 @@ public:
 
     bool isPointInPath(float x, float y) {}
 
-    const char* getFont(char* font, int fontLength);
+    const char* getFont(void* font, int fontLength);
     void setFont(const char* font);
-    const char* getTextAlign(char* textAlign, int textAlignLength) {}
+    const char* getTextAlign(void* textAlign, int textAlignLength) {}
     void setTextAlign(const char* textAlign) {}
-    const char* getTextBaseline(char* textBaseline, int textBaselineLength) {}
+    const char* getTextBaseline(void* textBaseline, int textBaselineLength) {}
     void setTextBaseline(const char* textBaseline) {}
     void fillText(const char* text, float x, float y);
     void fillText(const char* text, float x, float y, float maxWidth) {}
