@@ -78,7 +78,7 @@ module es
          * @param scope the scope ID of the network interface.
          * @return the network interface.
          */
-        Interface getInterface(in long scopeID);
+        Object getInterface(in long scopeID);
 
         /** Gets the scope identifier of the specified network interface.
          * @return this scope identifier, or zero if the specified network
