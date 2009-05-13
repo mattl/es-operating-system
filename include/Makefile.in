@@ -487,13 +487,13 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 @ES_TRUE@	esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 @ES_TRUE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-@ES_TRUE@	esidl -isystem $(srcdir) -ent $<
+@ES_TRUE@	esidl -isystem $(srcdir) -object ::es::Interface -ent $<
 
 @ES_FALSE@%.h %.ent : %.idl
 @ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 @ES_FALSE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -object ::es::Interface -ent $<
 
 clean-local:
 	-rm -rf es -rf w3c

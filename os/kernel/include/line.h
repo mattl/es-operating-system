@@ -65,7 +65,7 @@ public:
     virtual int write(const void* src, int count) = 0;
     int write(const void* src, int count, long long offset);
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

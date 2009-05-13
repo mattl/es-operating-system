@@ -24,8 +24,6 @@
 
 // #define VERBOSE
 
-
-
 u32 Vesa::data[32] =
 {
     0xc0000000, // 1100000000000000
@@ -471,10 +469,10 @@ put(long long offset, unsigned long long pte)
 {
 }
 
-void* Vesa::
+es::Interface* Vesa::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Cursor::iid()) == 0)
     {
         objectPtr = static_cast<es::Cursor*>(this);
@@ -495,7 +493,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

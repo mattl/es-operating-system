@@ -111,7 +111,7 @@ public:
     es::Iterator* list(const char* name);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -180,7 +180,7 @@ public:
     int defrag();
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -189,7 +189,7 @@ public:
     {
     public:
         es::Iso9660FileSystem* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -212,7 +212,7 @@ public:
     es::Interface* next();
     int remove();
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

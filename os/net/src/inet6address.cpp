@@ -126,7 +126,7 @@ socket(int type, int protocol)
 }
 
 // IInterface
-void* Inet6Address::
+es::Interface* Inet6Address::
 queryInterface(const char* riid)
 {
 }

@@ -232,7 +232,7 @@ public:
         void spinUnlock();
 
         // IInterface
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
 
@@ -268,7 +268,7 @@ public:
         {
         public:
             es::Monitor* createInstance();
-            void* queryInterface(const char* riid);
+            es::Interface* queryInterface(const char* riid);
             unsigned int addRef();
             unsigned int release();
         };
@@ -377,7 +377,7 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -454,7 +454,7 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

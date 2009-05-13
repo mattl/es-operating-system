@@ -964,10 +964,10 @@ list(const char* name)
 // PartitionContext : es::Interface
 //
 
-void* PartitionContext::
+es::Interface* PartitionContext::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
@@ -984,7 +984,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -1013,10 +1013,10 @@ Constructor::createInstance()
     return new PartitionContext;
 }
 
-void* PartitionContext::
+es::Interface* PartitionContext::
 Constructor::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Partition::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Partition::Constructor*>(this);
@@ -1029,7 +1029,7 @@ Constructor::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

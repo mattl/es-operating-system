@@ -91,7 +91,7 @@ public:
     int issue(AtaDevice* device, u8* packet, int packetSize,
               void* buffer = 0, int count = 0, u8 features = 0);
     int invoke(int);
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -153,7 +153,7 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -182,7 +182,7 @@ public:
 
     int read(void* dst, int count, long long offset);
     int write(const void* src, int count, long long offset);
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

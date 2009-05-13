@@ -30,7 +30,7 @@ Handle<es::Context> classStore;
 class Impl : public es::Interface
 {
 public:
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
         return NULL;
     }

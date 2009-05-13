@@ -327,7 +327,7 @@ public:
     void reserve(unsigned long long reserveCount);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -342,7 +342,7 @@ public:
     {
     public:
         es::PageSet* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -387,7 +387,7 @@ public:
         es::Cache* createInstance(es::Stream* backingStore, es::PageSet* pageSet);
 
         // IInterface
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
 
@@ -505,7 +505,7 @@ public:
     unsigned long long getPageCount();
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -560,7 +560,7 @@ public:
     es::Pageable* getPageable();
     es::Stream* getStream();
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

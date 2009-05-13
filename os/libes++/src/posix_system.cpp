@@ -563,9 +563,9 @@ public:
     {
     }
 
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        es::Interface* objectPtr;
         if (strcmp(riid, es::CurrentProcess::iid()) == 0)
         {
             objectPtr = static_cast<es::CurrentProcess*>(this);
@@ -578,7 +578,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -1053,7 +1053,10 @@ public:
             resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));  // TODO: maybe set just the # of elements
             break;
         case Ent::TypeInterface:
-            iid = returnType.getInterface().getFullyQualifiedName();
+            if (!stringIsInterfaceName)
+            {
+                iid = returnType.getInterface().getFullyQualifiedName();
+            }
             // FALL THROUGH
         case Ent::SpecObject:
             res.result = apply(argc, argv, (es::Interface* (*)()) ((*object)[methodNumber]));
@@ -1603,9 +1606,9 @@ public:
     }
 
     // es::Interface
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        es::Interface* objectPtr;
         if (strcmp(riid, es::Process::iid()) == 0)
         {
             objectPtr = static_cast<es::Process*>(this);
@@ -1618,7 +1621,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -1650,7 +1653,7 @@ public:
     {
     public:
         es::Process* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -1663,9 +1666,9 @@ es::Process* Process::Constructor::createInstance()
     return new Process;
 }
 
-void* Process::Constructor::queryInterface(const char* riid)
+es::Interface* Process::Constructor::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Process::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Process::Constructor*>(this);
@@ -1678,7 +1681,7 @@ void* Process::Constructor::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -2158,7 +2161,10 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 break;
             case Ent::TypeInterface:
-                iid = returnType.getInterface().getFullyQualifiedName();
+                if (!stringIsInterfaceName)
+                {
+                    iid = returnType.getInterface().getFullyQualifiedName();
+                }
                 // FALL THROUGH
             case Ent::SpecObject:
                 if (static_cast<es::Interface*>(res->result))
@@ -2171,7 +2177,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                         // TODO Set exec on close to cap->object
                     }
 #ifdef VERBOSE
-                    printf(">>(%s) ", iid);
+                    printf(">>(%s:%d) ", iid, stringIsInterfaceName);
                     cap->report();
 #endif
                     res->result = current.importObject(*cap, iid, false);

@@ -191,10 +191,10 @@ getName(void* name, int len)
 // PartitionIterator : es::Interface
 //
 
-void* PartitionIterator::
+es::Interface* PartitionIterator::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
@@ -211,7 +211,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

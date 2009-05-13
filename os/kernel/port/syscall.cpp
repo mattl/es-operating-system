@@ -570,7 +570,10 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::TypeInterface:
-        iid = returnType.getInterface().getFullyQualifiedName();
+        if (!stringIsInterfaceName)
+        {
+            iid = returnType.getInterface().getFullyQualifiedName();
+        }
         // FALL THROUGH
     case Ent::SpecObject:
         result = apply(argc, argv, (es::Interface* (*)()) ((*object)[methodNumber]));

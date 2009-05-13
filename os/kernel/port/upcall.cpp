@@ -287,7 +287,10 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                     result = reinterpret_cast<intptr_t>(record->variant);
                     break;
                 case Ent::TypeInterface:
-                    iid = returnType.getInterface().getFullyQualifiedName();
+                    if (!stringIsInterfaceName)
+                    {
+                        iid = returnType.getInterface().getFullyQualifiedName();
+                    }
                     // FALL THROUGH
                 case Ent::SpecObject:
                     // Convert the received interface pointer to kernel's interface pointer

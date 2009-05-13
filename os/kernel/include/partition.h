@@ -87,7 +87,7 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -154,7 +154,7 @@ public:
     int mount(es::Stream* disk);
     int unmount();
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -210,7 +210,7 @@ public:
     {
     public:
         es::Partition* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -240,7 +240,7 @@ public:
     void setObject(es::Interface* object);
     const char* getName(void* name, int len);
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

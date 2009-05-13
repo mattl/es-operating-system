@@ -518,10 +518,10 @@ getHostByAddress(const void* address, int len, unsigned int scopeID)
     return 0;
 }
 
-void* Resolver::
+es::Interface* Resolver::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Resolver::iid()) == 0)
     {
         objectPtr = static_cast<es::Resolver*>(this);
@@ -534,7 +534,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

@@ -102,7 +102,7 @@ class System : public es::CurrentProcess
             currentThread->testCancel();
         }
 
-        void* queryInterface(const char* riid)
+        es::Interface* queryInterface(const char* riid)
         {
             return currentThread->queryInterface(riid);
         }
@@ -243,7 +243,7 @@ public:
         return currentProcess->getCurrent();
     }
 
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
         return currentProcess->queryInterface(riid);
     }

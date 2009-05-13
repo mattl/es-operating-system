@@ -429,10 +429,10 @@ stop(Line* line)
     }
 }
 
-void* SoundBlaster16::
+es::Interface* SoundBlaster16::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Callback::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
@@ -445,7 +445,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

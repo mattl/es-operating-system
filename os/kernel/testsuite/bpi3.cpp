@@ -37,7 +37,7 @@ public:
     int invoke(int result);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -165,10 +165,10 @@ invoke(int result)
 // IInterface
 //
 
-void* AlarmCallback::
+es::Interface* AlarmCallback::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Callback::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
@@ -181,7 +181,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

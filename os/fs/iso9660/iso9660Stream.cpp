@@ -178,10 +178,10 @@ findNext(es::Stream* dir, u8* record)
     return false;
 }
 
-void* Iso9660Stream::
+es::Interface* Iso9660Stream::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (isDirectory() && strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
@@ -202,7 +202,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

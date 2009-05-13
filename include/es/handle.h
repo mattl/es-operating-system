@@ -185,7 +185,7 @@ class Handle
         // a virtual function.
         unsigned int addRef();
         unsigned int release();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
 
         void operator delete(void*, size_t);
         Protected& operator=(const I&);

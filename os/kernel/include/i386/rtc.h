@@ -62,7 +62,7 @@ public:
     void setTime(long long time);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

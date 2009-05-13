@@ -811,10 +811,10 @@ invoke(int irq)
 // IInterface
 //
 
-void* Dp8390d::
+es::Interface* Dp8390d::
 queryInterface(const char* riid)
 {
-    void* object;
+    es::Interface* object;
 
     if (strcmp(riid, es::Stream::iid()) == 0)
     {
@@ -832,7 +832,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(object)->addRef();
+    object->addRef();
     return object;
 }
 

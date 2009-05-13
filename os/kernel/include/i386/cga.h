@@ -51,7 +51,7 @@ public:
     int write(const void* src, int count, long long offset);
     void flush();
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

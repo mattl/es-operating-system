@@ -124,9 +124,9 @@ public:
         cairo_set_source(cr, pattern);
     }
 
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        es::Interface* objectPtr;
         if (strcmp(riid, html5::CanvasPattern::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasPattern*>(this);
@@ -139,7 +139,7 @@ public:
         {
             return 0;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -197,9 +197,9 @@ public:
 
     void addColorStop(float offset, const char* color);
 
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        es::Interface* objectPtr;
         if (strcmp(riid, html5::CanvasGradient::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasGradient*>(this);
@@ -212,7 +212,7 @@ public:
         {
             return 0;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -488,9 +488,9 @@ public:
     void putImageData(html5::ImageData* imagedata, float dx, float dy) {}
     void putImageData(html5::ImageData* imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight) {}
 
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        es::Interface* objectPtr;
         if (strcmp(riid, html5::CanvasRenderingContext2D::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasRenderingContext2D*>(this);
@@ -503,7 +503,7 @@ public:
         {
             return 0;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 

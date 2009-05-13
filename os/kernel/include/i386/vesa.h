@@ -139,7 +139,7 @@ public:
     void put(long long offset, unsigned long long pte);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

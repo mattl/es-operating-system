@@ -59,7 +59,7 @@ public:
     void testCancel();
 
     // es::Interface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -84,7 +84,7 @@ public:
     void notifyAll();
 
     // es::Interface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -111,7 +111,7 @@ public:
     {
     public:
         es::Monitor* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -155,7 +155,7 @@ public:
     void cancel();
 
     // es::Interface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

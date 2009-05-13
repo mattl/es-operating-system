@@ -111,10 +111,10 @@ remove(void)
     return 0;
 }
 
-void* FatIterator::
+es::Interface* FatIterator::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
@@ -127,7 +127,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

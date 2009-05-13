@@ -212,10 +212,10 @@ removeSearchDomain(const char* address)
     }
 }
 
-void* InternetConfig::
+es::Interface* InternetConfig::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::InternetConfig::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetConfig*>(this);
@@ -228,7 +228,7 @@ queryInterface(const char* riid)
     {
         return 0;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

@@ -71,7 +71,7 @@ public:
     long releaseUser();
 
     // IInterface
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -104,7 +104,7 @@ public:
     bool isUsed();
 
     // IInterface
-    void* queryInterface(const char* riid)
+    es::Interface* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -333,7 +333,7 @@ public:
     void setError(es::Stream* error);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -375,7 +375,7 @@ public:
     {
     public:
         es::Process* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };

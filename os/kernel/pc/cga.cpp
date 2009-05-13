@@ -153,10 +153,10 @@ flush()
 {
 }
 
-void* Cga::
+es::Interface* Cga::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Stream::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
@@ -169,7 +169,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 
 }

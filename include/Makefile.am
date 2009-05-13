@@ -10,7 +10,7 @@ if ES
 	esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	esidl -isystem $(srcdir) -ent $<
+	esidl -isystem $(srcdir) -object ::es::Interface -ent $<
 
 else !ES
 
@@ -18,7 +18,7 @@ else !ES
 	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
 
 es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -object ::es::Interface -ent $<
 
 endif !ES
 

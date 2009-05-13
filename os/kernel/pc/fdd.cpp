@@ -397,10 +397,10 @@ setLayout(const Partition* partition)
 {
 }
 
-void* FloppyDrive::
+es::Interface* FloppyDrive::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::DiskManagement::iid()) == 0)
     {
         objectPtr = static_cast<es::DiskManagement*>(this);
@@ -417,7 +417,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

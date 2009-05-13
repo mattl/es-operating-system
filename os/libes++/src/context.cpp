@@ -132,9 +132,9 @@ void Binding::detach()
     }
 }
 
-void* Binding::queryInterface(const char* riid)
+es::Interface* Binding::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Binding::iid()) == 0)
     {
         objectPtr = static_cast<es::Binding*>(this);
@@ -147,7 +147,7 @@ void* Binding::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -569,9 +569,9 @@ int Context::destroySubcontext(const char* name)
     return hcontext->destroySubcontext(name);
 }
 
-void* Context::queryInterface(const char* riid)
+es::Interface* Context::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
@@ -588,7 +588,7 @@ void* Context::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -698,9 +698,9 @@ int Iterator::remove()
     return 0;
 }
 
-void* Iterator::queryInterface(const char* riid)
+es::Interface* Iterator::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
@@ -713,7 +713,7 @@ void* Iterator::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

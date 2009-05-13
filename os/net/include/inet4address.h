@@ -364,7 +364,7 @@ public:
     es::Interface* socket(int type, int protocol, int port);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

@@ -51,7 +51,7 @@ public:
     Binding(const char* name, Interface* object);
     ~Binding();
 
-    void* queryInterface(const char* iid);
+    es::Interface* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
@@ -85,7 +85,7 @@ public:
     Context();
     ~Context();
 
-    void* queryInterface(const char* iid);
+    es::Interface* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
@@ -114,7 +114,7 @@ public:
     Iterator(Binding* binding);
     ~Iterator();
 
-    void* queryInterface(const char* iid);
+    es::Interface* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 

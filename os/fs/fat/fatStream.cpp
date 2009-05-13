@@ -389,10 +389,10 @@ FatStream::
     monitor->release();
 }
 
-void* FatStream::
+es::Interface* FatStream::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    es::Interface* objectPtr;
     if (isDirectory() && strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
@@ -413,7 +413,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

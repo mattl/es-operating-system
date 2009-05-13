@@ -28,7 +28,7 @@ module es
          * @param iid           the interface ID to be queried.
          * @return              a pointer to the object.
          */
-        Object queryInterface(in string iid);
+        Interface queryInterface(in string iid);
 
         /** Increments the reference count of this object.
          */

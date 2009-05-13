@@ -141,7 +141,7 @@ public:
     es::Iterator* list(const char* name);
 
     // es::Interface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -290,7 +290,7 @@ public:
     int defrag();
 
     // es::Interface
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -299,7 +299,7 @@ public:
     {
     public:
         es::FatFileSystem* createInstance();
-        void* queryInterface(const char* riid);
+        es::Interface* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -322,7 +322,7 @@ public:
     es::Interface* next();
     int remove(void);
 
-    void* queryInterface(const char* riid);
+    es::Interface* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
