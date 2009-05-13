@@ -84,10 +84,10 @@ public:
         return static_cast<char*>(name);
     }
 
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Location*>(this);
         }
@@ -124,7 +124,7 @@ public:
     {
     public:
         es::Location* createInstance();
-        es::Interface* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -137,14 +137,14 @@ es::Location* Location::Constructor::createInstance()
     return new Location;
 }
 
-es::Interface* Location::Constructor::queryInterface(const char* riid)
+Object* Location::Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Location::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Location::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Location::Constructor*>(this);
     }

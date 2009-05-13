@@ -635,7 +635,7 @@ void sqSocketCreateNetTypeSocketTypeRecvBytesSendBytesSemaIDReadSemaIDWriteSemaI
   else if (UDPSocketType == socketType)
     {
       /* --- UDP --- */
-      es::Interface* p = any->socket(AF_INET, es::Socket::Datagram, 0);
+      Object* p = any->socket(AF_INET, es::Socket::Datagram, 0);
       newSocket = p;
     }
   if (!newSocket)

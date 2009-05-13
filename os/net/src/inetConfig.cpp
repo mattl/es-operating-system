@@ -120,7 +120,7 @@ addInterface(es::NetworkInterface* networkInterface)
     return scopeID;
 }
 
-es::Interface* InternetConfig::
+Object* InternetConfig::
 getInterface(int scopeID)
 {
     NetworkInterface* interface = Socket::getInterface(scopeID);
@@ -212,15 +212,15 @@ removeSearchDomain(const char* address)
     }
 }
 
-es::Interface* InternetConfig::
+Object* InternetConfig::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::InternetConfig::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetConfig*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetConfig*>(this);
     }

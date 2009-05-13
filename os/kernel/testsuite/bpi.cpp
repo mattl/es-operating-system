@@ -84,7 +84,7 @@ int main()
     MonitorA = new Monitor();
     TEST(MonitorA);
 
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     ThreadHi = new Thread(Hi,                 // thread function

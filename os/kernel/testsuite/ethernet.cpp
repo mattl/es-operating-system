@@ -40,7 +40,7 @@ static u8 buf[1514];
 
 int main()
 {
-    es::Interface* root = 0;
+    Object* root = 0;
     esInit(&root);
 
     Handle<es::Context> context = root;

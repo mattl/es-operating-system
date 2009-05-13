@@ -26,7 +26,7 @@
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     __asm__ __volatile__ ("cli\n");

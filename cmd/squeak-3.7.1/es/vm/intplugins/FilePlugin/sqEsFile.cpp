@@ -235,7 +235,7 @@ int sqFileOpen(SQFile* f, int sqFileNameIndex, int sqFileNameSize, int writeFlag
     }
     sqFilenameFromString(cFileName, sqFileNameIndex, sqFileNameSize);
 
-    es::Interface* node = gRoot->lookup(cFileName);
+    Object* node = gRoot->lookup(cFileName);
 
     if (!node && writeFlag)
     {

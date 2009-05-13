@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     esReport("main(): %x %x %x\n", testA, testB, &testA);
 
 #if 1
-    current = reinterpret_cast<es::CurrentThread*>(current->queryInterface(es::Interface::iid()));
+    current = reinterpret_cast<es::CurrentThread*>(current->queryInterface(Object::iid()));
     try
     {
         current->sleep(30000000);   // Should raise an exception.

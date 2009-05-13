@@ -380,7 +380,7 @@ void CheckMbr(es::Stream* disk)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
 
     Handle<es::Stream> disk = new VDisk(static_cast<char*>("over8GB.img"));

@@ -65,7 +65,7 @@ hasNext()
     return false;
 }
 
-es::Interface* PartitionIterator::
+Object* PartitionIterator::
 next()
 {
     Monitor::Synchronized method(context->monitor);
@@ -117,7 +117,7 @@ remove()
 // PartitionIterator : es::Binding
 //
 
-es::Interface* PartitionIterator::
+Object* PartitionIterator::
 getObject()
 {
     Monitor::Synchronized method(context->monitor);
@@ -137,7 +137,7 @@ getObject()
 }
 
 void PartitionIterator::
-setObject(es::Interface* object)
+setObject(Object* object)
 {
     esThrow(EACCES); // [check] appropriate?
 }
@@ -188,13 +188,13 @@ getName(void* name, int len)
 }
 
 //
-// PartitionIterator : es::Interface
+// PartitionIterator : Object
 //
 
-es::Interface* PartitionIterator::
+Object* PartitionIterator::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
@@ -203,7 +203,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }

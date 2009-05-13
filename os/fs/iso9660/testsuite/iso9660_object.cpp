@@ -65,7 +65,7 @@ void test(Handle<es::Context> root)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
     Handle<es::Context> nameSpace(ns);
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
         Handle<es::Binding> binding = root;
         TEST(binding);
 
-        Handle<es::Interface> interface = binding->getObject();
+        Handle<Object> interface = binding->getObject();
         TEST(interface);
 
         Handle<es::Context> object = interface;

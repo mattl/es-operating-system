@@ -119,14 +119,14 @@ getNext()
     return 0;
 }
 
-es::Interface* Inet6Address::
+Object* Inet6Address::
 socket(int type, int protocol)
 {
     return 0;
 }
 
 // IInterface
-es::Interface* Inet6Address::
+Object* Inet6Address::
 queryInterface(const char* riid)
 {
 }

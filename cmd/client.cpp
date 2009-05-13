@@ -23,17 +23,17 @@
 
 es::CurrentProcess* System();
 
-class Test : public es::Interface
+class Test : public Object
 {
     Ref ref;
 
 public:
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
-            objectPtr = static_cast<es::Interface*>(this);
+            objectPtr = static_cast<Object*>(this);
         }
         else
         {

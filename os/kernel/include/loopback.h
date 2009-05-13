@@ -96,7 +96,7 @@ public:
     void flush();
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

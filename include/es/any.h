@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <es/exception.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 
 struct AnyBase
 {
@@ -41,7 +41,7 @@ struct AnyBase
         float           floatValue;
         double          doubleValue;  // ES extension
         const char*     stringValue;  // DOMString in UTF-8
-        es::Interface*  objectValue;
+        Object*  objectValue;
     };
     int type;
 };
@@ -174,7 +174,7 @@ public:
         type = TypeString;
     }
 
-    Any(es::Interface* value)
+    Any(Object* value)
     {
         objectValue = value;
         type = TypeObject;
@@ -279,7 +279,7 @@ public:
         return stringValue;
     }
 
-    operator es::Interface*() const
+    operator Object*() const
     {
         if (getType() != TypeObject)
         {
@@ -316,7 +316,7 @@ Any apply(int argc, Any* argv, uint64_t (*function)());
 Any apply(int argc, Any* argv, float (*function)());
 Any apply(int argc, Any* argv, double (*function)());
 Any apply(int argc, Any* argv, const char* (*function)());
-Any apply(int argc, Any* argv, es::Interface* (*function)());
+Any apply(int argc, Any* argv, Object* (*function)());
 
 long long evaluate(const Any& variant);
 

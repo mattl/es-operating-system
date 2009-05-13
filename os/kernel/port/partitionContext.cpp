@@ -812,7 +812,7 @@ unmount()
 //
 
 es::Binding* PartitionContext::
-bind(const char* name, es::Interface* object)
+bind(const char* name, Object* object)
 {
     Monitor::Synchronized method(monitor);
 
@@ -907,7 +907,7 @@ getId(const char* name, const char* prefix)
     return n;
 }
 
-es::Interface* PartitionContext::
+Object* PartitionContext::
 lookup(const char* name)
 {
     PartitionStream* stream = lookupPartitionStream(name);
@@ -961,13 +961,13 @@ list(const char* name)
 }
 
 //
-// PartitionContext : es::Interface
+// PartitionContext : Object
 //
 
-es::Interface* PartitionContext::
+Object* PartitionContext::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
@@ -976,7 +976,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Partition*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
     }
@@ -1013,15 +1013,15 @@ Constructor::createInstance()
     return new PartitionContext;
 }
 
-es::Interface* PartitionContext::
+Object* PartitionContext::
 Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Partition::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Partition::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Partition::Constructor*>(this);
     }

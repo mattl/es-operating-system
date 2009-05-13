@@ -213,10 +213,10 @@ testCancel()
     pthread_testcancel();
 }
 
-es::Interface* Core::
+Object* Core::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::CurrentThread::iid()) == 0)
     {
         objectPtr = static_cast<es::CurrentThread*>(this);
@@ -225,7 +225,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::CurrentProcess*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::CurrentThread*>(this);
     }

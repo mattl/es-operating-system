@@ -77,7 +77,7 @@ void esInitThread()
     PartitionContext::initializeConstructor();
 }
 
-int esInit(es::Interface** nameSpace)
+int esInit(Object** nameSpace)
 {
     if (root)
     {

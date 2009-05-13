@@ -18,7 +18,7 @@
 #include <es.h>
 #include <es/handle.h>
 #include <es/dateTime.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 #include "ataController.h"
 #include "core.h"
 
@@ -79,7 +79,7 @@ void PrintPartitions(es::Context* context)
 
 int main()
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     Handle<es::Context> root(nameSpace);

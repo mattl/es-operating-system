@@ -438,7 +438,7 @@ int sqImageFileClose(sqImageFile f)
 sqImageFile sqImageFileOpen(char *fileName, char *mode)
 {
     FPRINTF("%s(\"%s\", \"%s\");\n", __func__, fileName, mode);
-    es::Interface* interface = gRoot->lookup(fileName);
+    Object* interface = gRoot->lookup(fileName);
     imageFile = reinterpret_cast<es::File*>(interface->queryInterface(es::File::iid()));
     interface->release();
     es::Stream* stream = imageFile->getStream();

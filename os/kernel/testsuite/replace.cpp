@@ -44,7 +44,7 @@ static void setData(u8* buf, long size, u8 shift)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
 
     esInit(&root);
 

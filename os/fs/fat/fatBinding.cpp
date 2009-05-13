@@ -35,7 +35,7 @@
 #include <es/handle.h>
 #include "fatStream.h"
 
-es::Interface* FatStream::
+Object* FatStream::
 getObject()
 {
     addRef();
@@ -43,7 +43,7 @@ getObject()
 }
 
 void FatStream::
-setObject(es::Interface* object)
+setObject(Object* object)
 {
     esThrow(EACCES); // [check]
 }

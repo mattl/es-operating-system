@@ -106,15 +106,15 @@ Chan::getCount()
     return (count << dmac->shift) + 1;
 }
 
-es::Interface* Dmac::
+Object* Dmac::
 Chan::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Dmac::iid()) == 0)
     {
         objectPtr = static_cast<es::Dmac*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Dmac*>(this);
     }

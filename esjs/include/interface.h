@@ -21,14 +21,14 @@
 #include <es.h>
 #include <es/any.h>
 #include <es/reflect.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 
 #include "esjs.h"
 
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    es::Interface* getConstructor(const char* iid);
+    Object* getConstructor(const char* iid);
 }
 
 ObjectValue* constructInterfaceObject();
@@ -40,10 +40,10 @@ ObjectValue* constructSystemObject(void* system);
 
 class InterfacePointerValue : public ObjectValue
 {
-    es::Interface* object;
+    Object* object;
 
 public:
-    InterfacePointerValue(es::Interface* object) :
+    InterfacePointerValue(Object* object) :
         object(object)
     {
     }
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    es::Interface*& getObject()
+    Object*& getObject()
     {
         return object;
     }

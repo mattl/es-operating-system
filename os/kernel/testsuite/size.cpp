@@ -33,7 +33,7 @@ int main()
     long long pageTableSize = 32 * 1024LL;       // 32KB
     long long hugeSize = 9223372036854775807LL;  // LLONG_MAX
 
-    es::Interface* root = NULL;
+    Object* root = NULL;
 
     esInit(&root);
 

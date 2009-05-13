@@ -67,7 +67,7 @@ hasNext(void)
 }
 
 // Dot and dotdot entries are not reported.
-es::Interface* FatIterator::
+Object* FatIterator::
 next()
 {
     Synchronized<es::Monitor*> method(stream->monitor);
@@ -98,7 +98,7 @@ remove(void)
 {
     Synchronized<es::Monitor*> method(stream->monitor);
 
-    es::Interface* found = next();
+    Object* found = next();
     if (found)
     {
         FatStream* s = dynamic_cast<FatStream*>(found);
@@ -111,15 +111,15 @@ remove(void)
     return 0;
 }
 
-es::Interface* FatIterator::
+Object* FatIterator::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }

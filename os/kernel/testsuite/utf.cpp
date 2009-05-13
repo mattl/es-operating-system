@@ -46,7 +46,7 @@ void utf8toutf16(const char* utf8, u16* utf16)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     wchar_t kanji[] = L"漢字";

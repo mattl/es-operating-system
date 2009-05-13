@@ -150,7 +150,7 @@ extern int main(int, char* []);
 extern void set_debug_traps(void);
 extern void breakpoint(void);
 
-int esInit(es::Interface** nameSpace)
+int esInit(Object** nameSpace)
 {
     set_debug_traps();
 
@@ -495,7 +495,7 @@ Reflect::Interface& getInterface(const char* iid)
     return interfaceStore->getInterface(iid);
 }
 
-es::Interface* getConstructor(const char* iid)
+Object* getConstructor(const char* iid)
 {
     return interfaceStore->getConstructor(iid);
 }

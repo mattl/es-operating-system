@@ -34,7 +34,7 @@
 
 
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 
 char data[8000];
@@ -42,7 +42,7 @@ int len[4];
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
 

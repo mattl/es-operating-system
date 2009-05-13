@@ -194,15 +194,15 @@ notifyAll()
     }
 }
 
-es::Interface* Monitor::
+Object* Monitor::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Monitor::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor*>(this);
     }
@@ -238,15 +238,15 @@ Constructor::createInstance()
     return new Monitor;
 }
 
-es::Interface* Monitor::
+Object* Monitor::
 Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Monitor::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }

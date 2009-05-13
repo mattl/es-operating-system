@@ -165,10 +165,10 @@ cancel()
     nextTick = 0;
 }
 
-es::Interface* Alarm::
+Object* Alarm::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Alarm::iid()) == 0)
     {
         objectPtr = static_cast<es::Alarm*>(this);
@@ -384,15 +384,15 @@ Constructor::createInstance()
     return new Alarm;
 }
 
-es::Interface* Alarm::
+Object* Alarm::
 Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Alarm::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Alarm::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Alarm::Constructor*>(this);
     }

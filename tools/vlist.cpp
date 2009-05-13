@@ -60,7 +60,7 @@ void list(Handle<es::Context> root, const char* filename)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
     Handle<es::Context> nameSpace(ns);

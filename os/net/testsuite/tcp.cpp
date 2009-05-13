@@ -35,7 +35,7 @@
 #include "udp.h"
 #include "visualizer.h"
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 
 Conduit* inProtocol;
@@ -81,7 +81,7 @@ static void* serve(void* param)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
 

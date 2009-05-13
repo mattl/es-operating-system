@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #include <es/reflect.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 #include <es/util/ICanvasRenderingContext2D.h>
 
 #include "exportedObject.h"

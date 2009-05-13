@@ -180,8 +180,8 @@ am__objects_5 = elf.$(OBJEXT) init.$(OBJEXT) interface.$(OBJEXT) \
 am__objects_6 = $(am__objects_2) $(am__objects_2)
 am_libeskernel_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_5) $(am__objects_6)
-nodist_libeskernel_a_OBJECTS = IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
-	ICallback.$(OBJEXT) IFile.$(OBJEXT) IInterface.$(OBJEXT) \
+nodist_libeskernel_a_OBJECTS = object.$(OBJEXT) IAlarm.$(OBJEXT) \
+	ICache.$(OBJEXT) ICallback.$(OBJEXT) IFile.$(OBJEXT) \
 	IInterfaceStore.$(OBJEXT) IMonitor.$(OBJEXT) \
 	IPageable.$(OBJEXT) IPageSet.$(OBJEXT) IProcess.$(OBJEXT) \
 	IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) IService.$(OBJEXT) \
@@ -343,8 +343,8 @@ AM_CPPFLAGS = -I../../include -I$(srcdir)/../../include -iquote \
 #
 
 # 	include/space.h
-nodist_libeskernel_a_SOURCES = es/base/IAlarm.c es/base/ICache.c \
-	es/base/ICallback.c es/base/IFile.c es/base/IInterface.c \
+nodist_libeskernel_a_SOURCES = es/object.c es/base/IAlarm.c \
+	es/base/ICache.c es/base/ICallback.c es/base/IFile.c \
 	es/base/IInterfaceStore.c es/base/IMonitor.c \
 	es/base/IPageable.c es/base/IPageSet.c es/base/IProcess.c \
 	es/base/IRuntime.c es/base/ISelectable.c es/base/IService.c \
@@ -490,7 +490,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFileSystem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInterfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInternetAddress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IInternetConfig.Po@am__quote@
@@ -548,6 +547,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mmu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/monitor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/object.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageTable.Po@am__quote@
@@ -630,6 +630,20 @@ label.obj: pc/label.S
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
+object.o: es/object.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT object.o -MD -MP -MF $(DEPDIR)/object.Tpo -c -o object.o `test -f 'es/object.c' || echo '$(srcdir)/'`es/object.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/object.Tpo $(DEPDIR)/object.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/object.c' object='object.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o object.o `test -f 'es/object.c' || echo '$(srcdir)/'`es/object.c
+
+object.obj: es/object.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT object.obj -MD -MP -MF $(DEPDIR)/object.Tpo -c -o object.obj `if test -f 'es/object.c'; then $(CYGPATH_W) 'es/object.c'; else $(CYGPATH_W) '$(srcdir)/es/object.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/object.Tpo $(DEPDIR)/object.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/object.c' object='object.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o object.obj `if test -f 'es/object.c'; then $(CYGPATH_W) 'es/object.c'; else $(CYGPATH_W) '$(srcdir)/es/object.c'; fi`
+
 IAlarm.o: es/base/IAlarm.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IAlarm.o -MD -MP -MF $(DEPDIR)/IAlarm.Tpo -c -o IAlarm.o `test -f 'es/base/IAlarm.c' || echo '$(srcdir)/'`es/base/IAlarm.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IAlarm.Tpo $(DEPDIR)/IAlarm.Po
@@ -685,20 +699,6 @@ IFile.obj: es/base/IFile.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/base/IFile.c' object='IFile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IFile.obj `if test -f 'es/base/IFile.c'; then $(CYGPATH_W) 'es/base/IFile.c'; else $(CYGPATH_W) '$(srcdir)/es/base/IFile.c'; fi`
-
-IInterface.o: es/base/IInterface.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IInterface.o -MD -MP -MF $(DEPDIR)/IInterface.Tpo -c -o IInterface.o `test -f 'es/base/IInterface.c' || echo '$(srcdir)/'`es/base/IInterface.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IInterface.Tpo $(DEPDIR)/IInterface.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/base/IInterface.c' object='IInterface.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IInterface.o `test -f 'es/base/IInterface.c' || echo '$(srcdir)/'`es/base/IInterface.c
-
-IInterface.obj: es/base/IInterface.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IInterface.obj -MD -MP -MF $(DEPDIR)/IInterface.Tpo -c -o IInterface.obj `if test -f 'es/base/IInterface.c'; then $(CYGPATH_W) 'es/base/IInterface.c'; else $(CYGPATH_W) '$(srcdir)/es/base/IInterface.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IInterface.Tpo $(DEPDIR)/IInterface.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/base/IInterface.c' object='IInterface.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IInterface.obj `if test -f 'es/base/IInterface.c'; then $(CYGPATH_W) 'es/base/IInterface.c'; else $(CYGPATH_W) '$(srcdir)/es/base/IInterface.c'; fi`
 
 IInterfaceStore.o: es/base/IInterfaceStore.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IInterfaceStore.o -MD -MP -MF $(DEPDIR)/IInterfaceStore.Tpo -c -o IInterfaceStore.o `test -f 'es/base/IInterfaceStore.c' || echo '$(srcdir)/'`es/base/IInterfaceStore.c

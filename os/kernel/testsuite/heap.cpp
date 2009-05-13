@@ -28,7 +28,7 @@ Arena arena;
 
 int main()
 {
-    es::Interface* root = 0;
+    Object* root = 0;
     esInit(&root);
 
     void*  a;

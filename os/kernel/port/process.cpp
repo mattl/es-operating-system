@@ -1098,11 +1098,11 @@ setError(es::Stream* error)
     }
 }
 
-es::Interface* Process::
+Object* Process::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
-    if (strcmp(riid, es::Interface::iid()) == 0)
+    Object* objectPtr;
+    if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Process*>(this);
     }
@@ -1227,14 +1227,14 @@ es::Process* Process::Constructor::createInstance()
     return new Process;
 }
 
-es::Interface* Process::Constructor::queryInterface(const char* riid)
+Object* Process::Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Process::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Process::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Process::Constructor*>(this);
     }

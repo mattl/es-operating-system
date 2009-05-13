@@ -150,9 +150,9 @@ _Z5applyiP3AnyPFPKcvE:
         movl    VSTRING, VTYPE(%eax)
         jmp     apply
 
-// Any apply(int argc, Any* argv, es::Interface* (*function)());
-        .globl _Z5applyiP3AnyPFPN2es9InterfaceEvE
-_Z5applyiP3AnyPFPN2es9InterfaceEvE:
+// Any apply(int argc, Any* argv, Object* (*function)());
+        .globl _Z5applyiP3AnyPFP6ObjectvE
+_Z5applyiP3AnyPFP6ObjectvE:
         pushl   %ebp
         movl    %esp, %ebp
         movl    8(%ebp), %eax   // pointer to the return value

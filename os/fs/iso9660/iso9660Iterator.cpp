@@ -49,7 +49,7 @@ hasNext()
 }
 
 // Dot and dotdot entries are not reported.
-es::Interface* Iso9660Iterator::
+Object* Iso9660Iterator::
 next()
 {
     ASSERT(stream->isDirectory());
@@ -77,15 +77,15 @@ remove()
     return -1;
 }
 
-es::Interface* Iso9660Iterator::
+Object* Iso9660Iterator::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }

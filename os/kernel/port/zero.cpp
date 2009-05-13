@@ -69,14 +69,14 @@ void Zero::flush()
 {
 }
 
-es::Interface* Zero::queryInterface(const char* riid)
+Object* Zero::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Stream::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }

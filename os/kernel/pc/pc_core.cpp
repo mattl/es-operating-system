@@ -70,14 +70,14 @@ namespace
         unsigned int splLo() { return 0; }
         unsigned int splHi() { return 0; }
         void splX(unsigned int x) {}
-        es::Interface* queryInterface(const char* riid)
+        Object* queryInterface(const char* riid)
         {
-            es::Interface* objectPtr;
+            Object* objectPtr;
             if (strcmp(riid, es::Pic::iid()) == 0)
             {
                 objectPtr = static_cast<es::Pic*>(this);
             }
-            else if (strcmp(riid, es::Interface::iid()) == 0)
+            else if (strcmp(riid, Object::iid()) == 0)
             {
                 objectPtr = static_cast<es::Pic*>(this);
             }

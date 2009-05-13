@@ -32,7 +32,7 @@
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context = root;
 

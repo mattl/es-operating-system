@@ -200,15 +200,15 @@ splX(unsigned x)
 // IInterface
 //
 
-es::Interface* Pic::
+Object* Pic::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Pic::iid()) == 0)
     {
         objectPtr = static_cast<es::Pic*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Pic*>(this);
     }

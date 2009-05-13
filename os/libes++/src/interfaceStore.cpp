@@ -19,7 +19,7 @@
 #include <string.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 #include <es/base/IAlarm.h>
 #include <es/base/ICache.h>
 #include <es/base/IMonitor.h>
@@ -33,11 +33,12 @@
 // Reflection data of the default interface set
 //
 
+extern unsigned char objectInfo[];
+
 extern unsigned char IAlarmInfo[];
 extern unsigned char ICacheInfo[];
 extern unsigned char ICallbackInfo[];
 extern unsigned char IFileInfo[];
-extern unsigned char IInterfaceInfo[];
 extern unsigned char IInterfaceStoreInfo[];
 extern unsigned char IMonitorInfo[];
 extern unsigned char IPageableInfo[];
@@ -98,9 +99,9 @@ class InterfaceStore
     struct InterfaceData
     {
         Reflect::Interface meta;
-        Interface* (*constructorGetter)();                 // for statically created data
-        void (*constructorSetter)(Interface* constructor); // for statically created data
-        Interface* constructor;                            // for dynamically created data
+        Object* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(Object* constructor); // for statically created data
+        Object* constructor;                            // for dynamically created data
 
         InterfaceData() :
             constructorGetter(0),
@@ -117,7 +118,7 @@ class InterfaceStore
         {
         }
 
-        Interface* getConstructor() const
+        Object* getConstructor() const
         {
             if (constructor)
             {
@@ -130,7 +131,7 @@ class InterfaceStore
             return 0;
         }
 
-        void setConstructor(Interface* constructor)
+        void setConstructor(Object* constructor)
         {
             if (constructorSetter)
             {
@@ -153,7 +154,7 @@ public:
         return hashtable.get(iid).meta;
     }
 
-    Interface* getConstructor(const char* iid)
+    Object* getConstructor(const char* iid)
     {
         try
         {
@@ -170,7 +171,7 @@ public:
         return hashtable.contains(iid);
     }
 
-    void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*))
+    void registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*))
     {
         try
         {
@@ -183,7 +184,7 @@ public:
         }
     }
 
-    void registerConstructor(const char* iid, Interface* constructor)
+    void registerConstructor(const char* iid, Object* constructor)
     {
         try
         {
@@ -210,7 +211,7 @@ public:
 unsigned char* defaultInterfaceInfo[] =
 {
     // Base classes first
-    IInterfaceInfo,
+    objectInfo,
 
     IAlarmInfo,
     ICacheInfo,
@@ -299,21 +300,21 @@ InterfaceStore(int capacity) :
     }
 
     registerConstructor(Alarm::iid(),
-                        reinterpret_cast<Interface* (*)()>(Alarm::getConstructor), reinterpret_cast<void (*)(Interface*)>(Alarm::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Alarm::getConstructor), reinterpret_cast<void (*)(Object*)>(Alarm::setConstructor));
     registerConstructor(Cache::iid(),
-                        reinterpret_cast<Interface* (*)()>(Cache::getConstructor), reinterpret_cast<void (*)(Interface*)>(Cache::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Cache::getConstructor), reinterpret_cast<void (*)(Object*)>(Cache::setConstructor));
     registerConstructor(Monitor::iid(),
-                        reinterpret_cast<Interface* (*)()>(Monitor::getConstructor), reinterpret_cast<void (*)(Interface*)>(Monitor::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Monitor::getConstructor), reinterpret_cast<void (*)(Object*)>(Monitor::setConstructor));
     registerConstructor(PageSet::iid(),
-                        reinterpret_cast<Interface* (*)()>(PageSet::getConstructor), reinterpret_cast<void (*)(Interface*)>(PageSet::setConstructor));
+                        reinterpret_cast<Object* (*)()>(PageSet::getConstructor), reinterpret_cast<void (*)(Object*)>(PageSet::setConstructor));
     registerConstructor(Process::iid(),
-                        reinterpret_cast<Interface* (*)()>(Process::getConstructor), reinterpret_cast<void (*)(Interface*)>(Process::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Process::getConstructor), reinterpret_cast<void (*)(Object*)>(Process::setConstructor));
     registerConstructor(FatFileSystem::iid(),
-                        reinterpret_cast<Interface* (*)()>(FatFileSystem::getConstructor), reinterpret_cast<void (*)(Interface*)>(FatFileSystem::setConstructor));
+                        reinterpret_cast<Object* (*)()>(FatFileSystem::getConstructor), reinterpret_cast<void (*)(Object*)>(FatFileSystem::setConstructor));
     registerConstructor(Iso9660FileSystem::iid(),
-                        reinterpret_cast<Interface* (*)()>(Iso9660FileSystem::getConstructor), reinterpret_cast<void (*)(Interface*)>(Iso9660FileSystem::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Iso9660FileSystem::getConstructor), reinterpret_cast<void (*)(Object*)>(Iso9660FileSystem::setConstructor));
     registerConstructor(Partition::iid(),
-                        reinterpret_cast<Interface* (*)()>(Partition::getConstructor), reinterpret_cast<void (*)(Interface*)>(Partition::setConstructor));
+                        reinterpret_cast<Object* (*)()>(Partition::getConstructor), reinterpret_cast<void (*)(Object*)>(Partition::setConstructor));
 }
 
 namespace
@@ -326,17 +327,17 @@ Reflect::Interface& getInterface(const char* iid)
     return interfaceStore.getInterface(iid);
 }
 
-Interface* getConstructor(const char* iid)
+Object* getConstructor(const char* iid)
 {
     return interfaceStore.getConstructor(iid);
 }
 
-void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*))
+void registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*))
 {
     return interfaceStore.registerConstructor(iid, getter, setter);
 }
 
-void registerConstructor(const char* iid, Interface* constructor)
+void registerConstructor(const char* iid, Object* constructor)
 {
     return interfaceStore.registerConstructor(iid, constructor);
 }

@@ -111,15 +111,15 @@ getTime()
     return ticks;
 }
 
-es::Interface* Rtc::
+Object* Rtc::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Rtc::iid()) == 0)
     {
         objectPtr = static_cast<es::Rtc*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Rtc*>(this);
     }

@@ -19,8 +19,6 @@
 #include <es/any.h>
 #include <es/broker.h>
 
-using namespace es;
-
 class ITestInterface
 {
 public:

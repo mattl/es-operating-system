@@ -55,7 +55,7 @@ void* incrementValue(void* param)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     // create, start and join.

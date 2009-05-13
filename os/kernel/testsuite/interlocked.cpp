@@ -26,7 +26,7 @@
 
 int main()
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     esReport("sizeof(char) = %u\n", sizeof(char));

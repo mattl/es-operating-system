@@ -96,7 +96,7 @@ public:
     void setStartTime(long long time);
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -105,7 +105,7 @@ public:
     {
     public:
         es::Alarm* createInstance();
-        es::Interface* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };

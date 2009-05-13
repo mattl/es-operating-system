@@ -36,7 +36,7 @@
 #include "udp.h"
 #include "visualizer.h"
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 
 Conduit* inProtocol;
 
@@ -52,7 +52,7 @@ char input[Size];
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
 

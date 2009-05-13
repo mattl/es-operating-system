@@ -33,7 +33,7 @@ es::CurrentProcess* System();
 class Stream : public es::Stream, public es::Binding
 {
     Ref         ref;
-    es::Interface* object;
+    Object* object;
 
 public:
     Stream() :
@@ -99,12 +99,12 @@ public:
     {
     }
 
-    es::Interface* getObject()
+    Object* getObject()
     {
         return object;
     }
 
-    void setObject(es::Interface* element)
+    void setObject(Object* element)
     {
         esReport("Stream::setObject(%p)\n", element);
         if (element)
@@ -129,10 +129,10 @@ public:
         return static_cast<char*>(name);
     }
 
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
         }

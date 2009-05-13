@@ -124,14 +124,14 @@ public:
         cairo_set_source(cr, pattern);
     }
 
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, html5::CanvasPattern::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasPattern*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasPattern*>(this);
         }
@@ -197,14 +197,14 @@ public:
 
     void addColorStop(float offset, const char* color);
 
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, html5::CanvasGradient::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasGradient*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasGradient*>(this);
         }
@@ -488,14 +488,14 @@ public:
     void putImageData(html5::ImageData* imagedata, float dx, float dy) {}
     void putImageData(html5::ImageData* imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight) {}
 
-    es::Interface* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        es::Interface* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, html5::CanvasRenderingContext2D::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasRenderingContext2D*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<html5::CanvasRenderingContext2D*>(this);
         }
@@ -503,7 +503,7 @@ public:
         {
             return 0;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        static_cast<Object*>(objectPtr)->addRef();
         return objectPtr;
     }
 

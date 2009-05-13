@@ -37,7 +37,7 @@ public:
     int invoke(int result);
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -96,7 +96,7 @@ static void* Lo(void* param)
 
 int main()
 {
-    es::Interface* ns = NULL;
+    Object* ns = NULL;
     esInit(&ns);
 
     Handle<es::Alarm> alarm = es::Alarm::createInstance();
@@ -153,15 +153,15 @@ invoke(int result)
 // IInterface
 //
 
-es::Interface* AlarmCallback::
+Object* AlarmCallback::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Callback::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }

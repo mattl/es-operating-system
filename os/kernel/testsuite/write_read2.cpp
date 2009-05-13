@@ -108,7 +108,7 @@ int main()
 {
     int result = 1;
 
-    es::Interface* root = NULL;
+    Object* root = NULL;
 
     esInit(&root);
     esReport("Check read() and write().\n");

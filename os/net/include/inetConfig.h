@@ -46,7 +46,7 @@ public:
     void removeRouter(es::InternetAddress* router);
 
     int addInterface(es::NetworkInterface* networkInterface);
-    es::Interface* getInterface(int scopeID);
+    Object* getInterface(int scopeID);
     int getScopeID(es::NetworkInterface* networkInterface);
     void removeInterface(es::NetworkInterface* networkInterface);
 
@@ -62,7 +62,7 @@ public:
     //
     // IInterface
     //
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

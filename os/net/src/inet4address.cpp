@@ -179,7 +179,7 @@ getNext()
     return 0;
 }
 
-es::Interface* Inet4Address::
+Object* Inet4Address::
 socket(int type, int protocol, int port)
 {
     Socket* socket = new Socket(type, protocol);
@@ -205,15 +205,15 @@ socket(int type, int protocol, int port)
 }
 
 // IInterface
-es::Interface* Inet4Address::
+Object* Inet4Address::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::InternetAddress::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetAddress*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetAddress*>(this);
     }

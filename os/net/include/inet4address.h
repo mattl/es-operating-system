@@ -361,10 +361,10 @@ public:
 
     es::InternetAddress* getNext();
 
-    es::Interface* socket(int type, int protocol, int port);
+    Object* socket(int type, int protocol, int port);
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

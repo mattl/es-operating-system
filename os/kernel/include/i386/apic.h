@@ -178,7 +178,7 @@ public:
     static void broadcastIPI(u8 vec);
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

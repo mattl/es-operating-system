@@ -197,10 +197,10 @@ public:
     bool isMulticast();
     bool isReachable(long long timeout);
     es::InternetAddress* getNext();
-    es::Interface* socket(int type, int protocol);
+    Object* socket(int type, int protocol);
 
     // IInterface
-    es::Interface* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

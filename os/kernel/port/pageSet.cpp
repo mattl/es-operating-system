@@ -257,15 +257,15 @@ fork()
    return instance;
 }
 
-es::Interface* PageSet::
+Object* PageSet::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::PageSet::iid()) == 0)
     {
         objectPtr = static_cast<es::PageSet*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::PageSet*>(this);
     }
@@ -335,15 +335,15 @@ Constructor::createInstance()
     return PageTable::pageSet->fork();
 }
 
-es::Interface* PageSet::
+Object* PageSet::
 Constructor::queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::PageSet::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::PageSet::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::PageSet::Constructor*>(this);
     }

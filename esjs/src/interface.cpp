@@ -20,7 +20,7 @@
 #include <es/endian.h>
 #include <es/formatter.h>
 #include <es/uuid.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 #include <es/base/IProcess.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
@@ -29,7 +29,7 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    es::Interface* getConstructor(const char* iid);
+    Object* getConstructor(const char* iid);
     extern unsigned char* defaultInterfaceInfo[];
     extern size_t defaultInterfaceCount;
 }  // namespace es
@@ -141,7 +141,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     Guid iidv[9];
     Guid* iidp = iidv;
     int ext = 0;    // extra parameter count
-    const char* riid = es::Interface::iid();
+    const char* riid = Object::iid();
 
     // Set this
     *argp++ = Any(reinterpret_cast<intptr_t>(self));
@@ -207,7 +207,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 else
                 {
                     // XXX expose ECMAScript object
-                    *argp = Any(static_cast<es::Interface*>(0));
+                    *argp = Any(static_cast<Object*>(0));
                 }
                 break;
             default:
@@ -251,7 +251,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             }
             else
             {
-                *argp = Any(static_cast<es::Interface*>(0));
+                *argp = Any(static_cast<Object*>(0));
             }
             break;
         case Ent::SpecBool:
@@ -348,7 +348,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 }
                 break;
             case Any::TypeObject:
-                if (es::Interface* unknown = static_cast<es::Interface*>(result))
+                if (Object* unknown = static_cast<Object*>(result))
                 {
                     ObjectValue* instance = new InterfacePointerValue(unknown);
                     instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
@@ -431,7 +431,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
         riid = returnType.getInterface().getFullyQualifiedName();
         // FALL THROUGH
     case Ent::SpecObject:
-        if (es::Interface* unknown = apply(argc, argv, (es::Interface* (*)()) ((*self)[methodNumber])))
+        if (Object* unknown = apply(argc, argv, (Object* (*)()) ((*self)[methodNumber])))
         {
             ObjectValue* instance = new InterfacePointerValue(unknown);
             instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
@@ -458,7 +458,7 @@ static Value* invoke(const char* iid, int number, InterfacePointerValue* object,
         throw getErrorInstance("TypeError");
     }
     Value* value = invoke(iid, number, self, list);
-    if (strcmp(iid, es::Interface::iid()) == 0 && number == 2)   // es::Interface::release()
+    if (strcmp(iid, Object::iid()) == 0 && number == 2)   // Object::release()
     {
         object->clearObject();
     }
@@ -814,7 +814,7 @@ public:
         if (constructor->hasInstance(getThis()))
         {
             // Constructor
-            es::Interface* constructor = es::getConstructor(iid);
+            Object* constructor = es::getConstructor(iid);
             if (!constructor)
             {
                 throw getErrorInstance("TypeError");
@@ -834,9 +834,9 @@ public:
                 throw getErrorInstance("TypeError");
             }
 
-            es::Interface* object;
+            Object* object;
             object = self->getObject();
-            if (!object || !(object = reinterpret_cast<es::Interface*>(object->queryInterface(iid))))
+            if (!object || !(object = reinterpret_cast<Object*>(object->queryInterface(iid))))
             {
                 // We should throw an error in case called by a new expression.
                 throw getErrorInstance("TypeError");

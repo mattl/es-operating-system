@@ -504,10 +504,10 @@ checkStack()
     return *(int*) stack == 0xa5a5a5a5;
 }
 
-es::Interface* Thread::
+Object* Thread::
 queryInterface(const char* riid)
 {
-    es::Interface* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Thread::iid()) == 0)
     {
         objectPtr = static_cast<es::Thread*>(this);
@@ -516,7 +516,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Thread*>(this);
     }

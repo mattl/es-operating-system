@@ -28,7 +28,7 @@
 
 int main(void)
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     DateTime max = DateTime::getMaxValue().getTicks();
