@@ -7,7 +7,7 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 if ES
 
 %.h %.ent : %.idl
-	esidl -isystem $(srcdir) -include es/object.idl -ent $<
+	esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
 es/object.h es/object.ent : es/object.idl
 	esidl -isystem $(srcdir) -ent $<
@@ -15,7 +15,7 @@ es/object.h es/object.ent : es/object.idl
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
 es/object.h es/object.ent : es/object.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<

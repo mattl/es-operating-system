@@ -221,14 +221,14 @@ setFillStyle(const Any fillStyle)
     dirtyStyle[STYLE_FILL] = true;
 }
 
-html5::CanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createLinearGradient(float x0, float y0, float x1, float y1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = NULL;
     pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
-    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -237,14 +237,14 @@ createLinearGradient(float x0, float y0, float x1, float y1)
     return gradient;
 }
 
-html5::CanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = 0;
     pattern = cairo_pattern_create_radial(x0, y0, r0, x1, y1, r1);
-    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -767,7 +767,7 @@ fillText(const char* text, float x, float y)
 }
 
 #if 0
-html5::TextMetrics Canvas::
+es::TextMetrics Canvas::
 measureText(const char* textToMeasure)
 {
     Synchronized<es::Monitor*> method(monitor);

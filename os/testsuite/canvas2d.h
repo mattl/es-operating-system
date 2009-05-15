@@ -85,7 +85,7 @@ extern "C" {
 
 es::CurrentProcess* System();
 
-class CanvasPattern : public html5::CanvasPattern
+class CanvasPattern : public es::CanvasPattern
 {
     Ref ref;
     es::Monitor* monitor;
@@ -127,13 +127,13 @@ public:
     Object* queryInterface(const char* riid)
     {
         Object* objectPtr;
-        if (strcmp(riid, html5::CanvasPattern::iid()) == 0)
+        if (strcmp(riid, es::CanvasPattern::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasPattern*>(this);
+            objectPtr = static_cast<es::CanvasPattern*>(this);
         }
         else if (strcmp(riid, Object::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasPattern*>(this);
+            objectPtr = static_cast<es::CanvasPattern*>(this);
         }
         else
         {
@@ -161,7 +161,7 @@ public:
     }
 };
 
-class CanvasGradient : public html5::CanvasGradient
+class CanvasGradient : public es::CanvasGradient
 {
     Ref ref;
     es::Monitor* monitor;
@@ -200,13 +200,13 @@ public:
     Object* queryInterface(const char* riid)
     {
         Object* objectPtr;
-        if (strcmp(riid, html5::CanvasGradient::iid()) == 0)
+        if (strcmp(riid, es::CanvasGradient::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasGradient*>(this);
+            objectPtr = static_cast<es::CanvasGradient*>(this);
         }
         else if (strcmp(riid, Object::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasGradient*>(this);
+            objectPtr = static_cast<es::CanvasGradient*>(this);
         }
         else
         {
@@ -234,7 +234,7 @@ public:
     }
 };
 
-class Canvas : public html5::CanvasRenderingContext2D
+class Canvas : public es::CanvasRenderingContext2D
 {
     Ref ref;
     es::Monitor* monitor;
@@ -337,13 +337,13 @@ class Canvas : public html5::CanvasRenderingContext2D
 
         Any getStyle(int whichStyle, void* style, int styleLength)
         {
-            if (html5::CanvasGradient* gradient = gradientStyles[whichStyle])
+            if (es::CanvasGradient* gradient = gradientStyles[whichStyle])
             {
                 gradient->addRef();
                 return Any(gradient);
             }
 
-            if (html5::CanvasPattern* pattern = patternStyles[whichStyle])
+            if (es::CanvasPattern* pattern = patternStyles[whichStyle])
             {
                 pattern->addRef();
                 return Any(pattern);
@@ -405,7 +405,7 @@ public:
     //
     // ICanvasRenderingContext2D
     //
-    html5::HTMLCanvasElement* getCanvas() {}
+    es::HTMLCanvasElement* getCanvas() {}
     void save();
     void restore();
     void scale(float x, float y);
@@ -421,10 +421,10 @@ public:
     void setStrokeStyle(const Any strokeStyle);
     Any getFillStyle(void* fillStyle, int fillStyleLength);
     void setFillStyle(const Any fillStyle);
-    html5::CanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
-    html5::CanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    html5::CanvasPattern* createPattern(html5::HTMLImageElement* image, const char* repetition) {}
-    html5::CanvasPattern* createPattern(html5::HTMLCanvasElement* image, const char* repetition) {}
+    es::CanvasGradient* createLinearGradient(float x0, float y0, float x1, float y1);
+    es::CanvasGradient* createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    es::CanvasPattern* createPattern(es::HTMLImageElement* image, const char* repetition) {}
+    es::CanvasPattern* createPattern(es::HTMLCanvasElement* image, const char* repetition) {}
 
     float getLineWidth();
     void setLineWidth(float lineWidth);
@@ -472,32 +472,32 @@ public:
     void fillText(const char* text, float x, float y, float maxWidth) {}
     void strokeText(const char* text, float x, float y) {}
     void strokeText(const char* text, float x, float y, float maxWidth) {}
-    html5::TextMetrics* measureText(const char* text) {}
+    es::TextMetrics* measureText(const char* text) {}
 
-    void drawImage(html5::HTMLImageElement* image, float dx, float dy) {}
-    void drawImage(html5::HTMLImageElement* image, float dx, float dy, float dw, float dh) {}
-    void drawImage(html5::HTMLImageElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
-    void drawImage(html5::HTMLCanvasElement* image, float dx, float dy) {}
-    void drawImage(html5::HTMLCanvasElement* image, float dx, float dy, float dw, float dh) {}
-    void drawImage(html5::HTMLCanvasElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
-    void drawImage(html5::HTMLVideoElement* image, float dx, float dy) {}
-    void drawImage(html5::HTMLVideoElement* image, float dx, float dy, float dw, float dh) {}
-    void drawImage(html5::HTMLVideoElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
-    html5::ImageData* createImageData(float sw, float sh) {}
-    html5::ImageData* getImageData(float sx, float sy, float sw, float sh) {}
-    void putImageData(html5::ImageData* imagedata, float dx, float dy) {}
-    void putImageData(html5::ImageData* imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight) {}
+    void drawImage(es::HTMLImageElement* image, float dx, float dy) {}
+    void drawImage(es::HTMLImageElement* image, float dx, float dy, float dw, float dh) {}
+    void drawImage(es::HTMLImageElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
+    void drawImage(es::HTMLCanvasElement* image, float dx, float dy) {}
+    void drawImage(es::HTMLCanvasElement* image, float dx, float dy, float dw, float dh) {}
+    void drawImage(es::HTMLCanvasElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
+    void drawImage(es::HTMLVideoElement* image, float dx, float dy) {}
+    void drawImage(es::HTMLVideoElement* image, float dx, float dy, float dw, float dh) {}
+    void drawImage(es::HTMLVideoElement* image, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh) {}
+    es::ImageData* createImageData(float sw, float sh) {}
+    es::ImageData* getImageData(float sx, float sy, float sw, float sh) {}
+    void putImageData(es::ImageData* imagedata, float dx, float dy) {}
+    void putImageData(es::ImageData* imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight) {}
 
     Object* queryInterface(const char* riid)
     {
         Object* objectPtr;
-        if (strcmp(riid, html5::CanvasRenderingContext2D::iid()) == 0)
+        if (strcmp(riid, es::CanvasRenderingContext2D::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasRenderingContext2D*>(this);
+            objectPtr = static_cast<es::CanvasRenderingContext2D*>(this);
         }
         else if (strcmp(riid, Object::iid()) == 0)
         {
-            objectPtr = static_cast<html5::CanvasRenderingContext2D*>(this);
+            objectPtr = static_cast<es::CanvasRenderingContext2D*>(this);
         }
         else
         {

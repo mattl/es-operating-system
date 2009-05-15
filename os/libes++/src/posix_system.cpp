@@ -380,7 +380,7 @@ public:
         {
             try
             {
-                html5::CanvasRenderingContext2D* canvas = static_cast<html5::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, html5::CanvasRenderingContext2D::iid(), false));
+                es::CanvasRenderingContext2D* canvas = static_cast<es::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, es::CanvasRenderingContext2D::iid(), false));
                 Handle<es::Context> device = root->lookup("device");
                 device->bind("canvas", canvas);
             }
