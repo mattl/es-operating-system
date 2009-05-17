@@ -326,7 +326,8 @@ void putpacket(char *buffer)
     } while (getDebugChar() != '+');
 }
 
-void debug_error(char* format)
+//void debug_error(char* format)
+void debug_error(const char* format)
 {
     if (remote_debug)
         esReport("%s", format);
