@@ -1,0 +1,20 @@
+diff -bcrN freetype-2.3.5.org/builds/unix/config.sub freetype-2.3.5/builds/unix/config.sub
+*** freetype-2.3.5.org/builds/unix/config.sub	2007-07-03 06:41:45.000000000 +0900
+--- freetype-2.3.5/builds/unix/config.sub	2007-07-31 13:33:11.000000000 +0900
+***************
+*** 1217,1223 ****
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+--- 1217,1223 ----
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* | -es* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
