@@ -1,0 +1,18 @@
+#!/bin/sh
+DIR=$1
+SCRIPT=$DIR/$2
+\rm $SCRIPT 2> /dev/null
+
+echo '#!/bin/sh' > $SCRIPT
+echo 'LOG='$2'.log' >> $SCRIPT
+echo 'cp -pf '$DIR/$2'.img '$DIR'/es.img' >> $SCRIPT
+echo 'vformat '$DIR'/2hd.img > /dev/null 2>&1' >> $SCRIPT
+echo 'vcopy '$DIR'/2hd.img '$DIR'/../../bootsect/es.ldr > /dev/null 2>&1' >> $SCRIPT
+echo 'vcopy '$DIR'/2hd.img '$DIR'/es.img > /dev/null 2>&1' >> $SCRIPT
+echo '' >> $SCRIPT
+echo '# run QEMU on the background.' >> $SCRIPT
+echo '(qemu -fda '$DIR'/2hd.img -hda '$DIR'/fat16.img -serial stdio -boot a -soundhw sb16 -cdrom '$DIR'/isotest.iso $QFLAGS | tee '$DIR'/$LOG 2>&1)' >> $SCRIPT
+echo '' >> $SCRIPT
+
+chmod u+x $SCRIPT
+
