@@ -35,7 +35,6 @@ module es
         void set(in Point point);
         void get(out Point point);
         void move(in Point direction);
-
         attribute string name;
     };
 };
