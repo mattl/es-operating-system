@@ -69,7 +69,7 @@ static long        lexptr = -1;
 
 int strLex(char* buffer, int max_size)
 {
-    int len;
+    unsigned len;
     for (len = 0; lexptr < source.length() && len < max_size; ++len)
     {
         *buffer++ = source[lexptr++];
@@ -197,7 +197,7 @@ char* skipSpace(const char* str)
         }
         else
         {
-            int i;
+            unsigned i;
             for (i = 0; i < sizeof(rgsp)/sizeof(rgsp[0]); ++i)
             {
                 const char* sp = rgsp[i];

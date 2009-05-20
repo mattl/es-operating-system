@@ -147,7 +147,7 @@ public:
             array->put("index", start);
             Register<StringValue> input = new StringValue(s);
             array->put("input", input);
-            for (int i = 0; i <= regex.re_nsub; ++i)
+            for (unsigned i = 0; i <= regex.re_nsub; ++i)
             {
                 char name[12];
                 sprintf(name, "%d", i);
@@ -523,7 +523,7 @@ Value* stringReplace()
         }
         else
         {
-            int pos = s.find(searchValue->toString());
+            unsigned pos = s.find(searchValue->toString());
             if (pos == std::string::npos)
             {
                 break;
@@ -641,7 +641,7 @@ static int splitMatch(Value* reg, std::string& s, int q, int nmatch, regmatch_t*
     if (!regexp)
     {
         std::string r = reg->toString();
-        int pos = s.substr(q).find(r);
+        unsigned pos = s.substr(q).find(r);
         if (pos == std::string::npos)
         {
             return REG_NOMATCH;
@@ -666,7 +666,7 @@ Value* stringSplit()
     Value* limit = getScopeChain()->get("limit");
     u32 lim = limit->isUndefined() ? 4294967295u : limit->toUint32();
 
-    int p = 0;
+    unsigned p = 0;
 
     Value* separator = getScopeChain()->get("separator");
     Register<Value> r;
@@ -695,11 +695,11 @@ Value* stringSplit()
         if (0 < s.length())
         {
             char name[12];
-            int  q = p;
+            unsigned  q = p;
 
             while (q < s.length() && splitMatch(r, s, q, nmatch, pmatch) == 0)
             {
-                int e = pmatch[0].rm_eo;                    // endIndex
+                unsigned e = pmatch[0].rm_eo;                    // endIndex
                 if (e == p)                                 // 15
                 {
                     ASSERT(pmatch[0].rm_so == q);

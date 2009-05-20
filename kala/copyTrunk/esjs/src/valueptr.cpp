@@ -41,6 +41,7 @@ public:
         {
             delete this;
         }
+	return 0;
     }
 };
 
@@ -74,4 +75,6 @@ int main()
     test2();
 
     printf("done.\n");
+
+    return 0; // successful.
 }

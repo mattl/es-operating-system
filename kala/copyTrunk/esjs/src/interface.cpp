@@ -133,7 +133,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
 
     Reflect::Interface interface = es::getInterface(iid);
     Reflect::Method method(interface.getMethod(number));
-    PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
+    printf("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
 
     // Set up parameters
     Any argv[9];
@@ -1004,7 +1004,7 @@ static void constructSystemObject(Reflect::Module& module)
         Reflect::Interface interface = module.getInterface(i);
 
         // Construct Default Interface Object
-        PRINTF("%s\n", interface.getName());
+        printf("%s\n", interface.getName());
         ObjectValue* object = new ObjectValue;
         object->setCode(new InterfaceConstructor(object, interface.getFullyQualifiedName()));
         object->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype());
@@ -1020,7 +1020,7 @@ static void constructSystemObject(Reflect::Module& module)
 
 ObjectValue* constructSystemObject(void* system)
 {
-    for (int i = 0; i < es::defaultInterfaceCount; ++i)
+    for (unsigned i = 0; i < es::defaultInterfaceCount; ++i)
     {
         Reflect r(es::defaultInterfaceInfo[i]);
         Reflect::Module global(r.getGlobalModule());

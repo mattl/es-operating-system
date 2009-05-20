@@ -265,9 +265,9 @@ class GlobalMethod : public Code
 
     bool isUnescaped(char c, const std::string& unescapedSet)
     {
-        if ('0' <= c && c <= '9' ||
-            'a' <= c && c <= 'z' ||
-            'A' <= c && c <= 'Z' ||
+        if (('0' <= c && c <= '9' )||
+            ('a' <= c && c <= 'z' )||
+            ('A' <= c && c <= 'Z' )||
             unescapedSet.find(c) != std::string::npos)
         {
             return true;
@@ -277,7 +277,7 @@ class GlobalMethod : public Code
 
     std::string encode(std::string& uri, const std::string& unescapedSet)
     {
-        int k;
+        unsigned k;
         std::string result = "";
         for (k = 0; k < uri.length(); ++k)
         {
@@ -357,7 +357,7 @@ class GlobalMethod : public Code
     {
         std::string result = "";
         int seq = 0;
-        int k;
+        unsigned k;
         for (k = 0; k < uri.length(); ++k)
         {
             char c = uri[k];
