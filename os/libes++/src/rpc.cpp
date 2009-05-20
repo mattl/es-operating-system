@@ -110,8 +110,7 @@ ssize_t receiveCommand(int s, CmdUnion* cmd, int flags)
         return -1;
     }
 
-    //if (rc < sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, &sa))
-    if (rc < (ssize_t)sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, &sa))
+    if (rc < sizeof(CmdHdr) || !isMatch(cmd->hdr.pid, &sa))
     {
         errno = EBADMSG;
         rc = -1;
@@ -204,7 +203,7 @@ RpcHdr* receiveMessage(int epfd, int* fdv, int*& fdmax, int* s)
 
         // TODO check message length msg.msg_iov[0].iov_len
 
-        if ((ssize_t)sizeof(RpcHdr) <= rc)
+        if (sizeof(RpcHdr) <= rc)
         {
 #if 0
             fprintf(stderr, "%s:\n", __func__);
@@ -212,14 +211,12 @@ RpcHdr* receiveMessage(int epfd, int* fdv, int*& fdmax, int* s)
 #endif
             // TODO check trunk etc.
             hdr = reinterpret_cast<RpcHdr*>(iov.iov_base);
-            //if (hdr->cmd == RPC_REQ && sizeof(RpcReq) <= rc)
-            if (hdr->cmd == RPC_REQ && (ssize_t)sizeof(RpcReq) <= rc)
+            if (hdr->cmd == RPC_REQ && sizeof(RpcReq) <= rc)
             {
                 RpcStack::alloc(rc);
                 break;
             }
-            //else if (hdr->cmd == RPC_RES && sizeof(RpcRes) <= rc)
-            else if (hdr->cmd == RPC_RES && (ssize_t)sizeof(RpcRes) <= rc)
+            else if (hdr->cmd == RPC_RES && sizeof(RpcRes) <= rc)
             {
                 RpcStack::alloc(rc);
                 break;

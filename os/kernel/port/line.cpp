@@ -23,8 +23,7 @@
 #include "line.h"
 
 Line::
-//Line(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
-Line(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+Line(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     callback(callback),
     bits(bits),
     channels(channels),
@@ -172,8 +171,7 @@ release()
 }
 
 InputLine::
-//InputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
-InputLine(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+InputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     Line(callback, bits, channels, rate)
 {
 }
@@ -214,8 +212,7 @@ write(const void* src, int count)
 }
 
 OutputLine::
-//OutputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
-OutputLine(es::Callback* callback, u8 bits, u8 channels, u16 rate) :
+OutputLine(es::Callback* callback, u8 bits, u8 channels, u8 rate) :
     Line(callback, bits, channels, rate)
 {
 }
