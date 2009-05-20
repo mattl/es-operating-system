@@ -265,9 +265,9 @@ class GlobalMethod : public Code
 
     bool isUnescaped(char c, const std::string& unescapedSet)
     {
-        if (('0' <= c && c <= '9' )||
-            ('a' <= c && c <= 'z' )||
-            ('A' <= c && c <= 'Z' )||
+        if (('0' <= c && c <= '9' ) ||
+            ('a' <= c && c <= 'z' ) ||
+            ('A' <= c && c <= 'Z' ) ||
             unescapedSet.find(c) != std::string::npos)
         {
             return true;
