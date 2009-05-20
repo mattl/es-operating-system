@@ -690,6 +690,24 @@ translate(float tx, float ty)
     cairo_translate(cr, tx, ty);
 }
 
+void Canvas::
+transform(float m11, float m12, float m21, float m22, float dx, float dy)
+{
+    Synchronized<es::Monitor*> method(monitor);
+    cairo_matrix_t mat;
+    cairo_matrix_init (&mat, m11, m12, m21, m22, dx, dy);
+    cairo_transform (cr, &mat);
+}
+
+void Canvas::
+setTransform(float m11, float m12, float m21, float m22, float dx, float dy)
+{
+    Synchronized<es::Monitor*> method(monitor);
+    cairo_matrix_t mat;
+    cairo_matrix_init (&mat, m11, m12, m21, m22, dx, dy);
+    cairo_set_matrix (cr, &mat);
+}
+
 const char* Canvas::
 getFont(void* font, int fontLength)
 {
