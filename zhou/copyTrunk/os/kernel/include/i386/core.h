@@ -30,7 +30,7 @@ class Core
     friend class Process;
     friend class Thread;
     friend struct Xreg;
-    friend int esInit(es::Interface** nameSpace);
+    friend int esInit(Object** nameSpace);
 
     // Thread control block (a read-only region from the user level threads)
     struct Tcb
@@ -157,7 +157,7 @@ public:
 
 } __attribute__ ((aligned (16)));
 
-int esInit(es::Interface** nameSpace);
+int esInit(Object** nameSpace);
 es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 
 #endif  // NINTENDO_ES_KERNEL_I386_CORE_H_INCLUDED

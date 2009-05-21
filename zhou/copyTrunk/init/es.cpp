@@ -47,7 +47,7 @@
 
 
 
-int esInit(es::Interface** nameSpace);
+int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 extern void esRegisterDHCPClient(es::Context* context);
 
@@ -162,7 +162,7 @@ int initNetwork(Handle<es::Context> context)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     Handle<es::Context> nameSpace(ns);
 

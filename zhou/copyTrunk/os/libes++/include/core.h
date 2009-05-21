@@ -26,7 +26,7 @@
 #include <es/base/IThread.h>
 
 void esInitThread();
-int esInit(es::Interface** nameSpace);
+int esInit(Object** nameSpace);
 es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 es::Monitor* esCreateMonitor();
 

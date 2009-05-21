@@ -26,7 +26,7 @@
 // Binding Implementation
 //
 
-Binding::Binding(const char* name, es::Interface* object) :
+Binding::Binding(const char* name, Object* object) :
     monitor(0),
     object(object),
     context(0)
@@ -59,7 +59,7 @@ Binding::~Binding()
     }
 }
 
-es::Interface* Binding::getObject()
+Object* Binding::getObject()
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -70,7 +70,7 @@ es::Interface* Binding::getObject()
     return object;
 }
 
-void Binding::setObject(es::Interface* unknown)
+void Binding::setObject(Object* unknown)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -85,7 +85,7 @@ void Binding::setObject(es::Interface* unknown)
     }
 }
 
-const char* Binding::getName(char* name, int len)
+const char* Binding::getName(void* name, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -93,8 +93,8 @@ const char* Binding::getName(char* name, int len)
     {
         return 0;
     }
-    strncpy(name, this->name, len);
-    return name;
+    strncpy(static_cast<char*>(name), this->name, len);
+    return static_cast<char*>(name);
 }
 
 // Makes this binding invisible from the context so that iterators can
@@ -132,14 +132,14 @@ void Binding::detach()
     }
 }
 
-void* Binding::queryInterface(const char* riid)
+Object* Binding::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Binding::iid()) == 0)
     {
         objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Binding*>(this);
     }
@@ -147,7 +147,7 @@ void* Binding::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -313,7 +313,7 @@ Binding* Context::walk(Context* context, const char*& name)
         binding = next;
         name += len;
 
-        es::Interface* object = binding->getObject();
+        Object* object = binding->getObject();
         if (!object)
         {
             break;
@@ -330,7 +330,7 @@ Binding* Context::walk(Context* context, const char*& name)
     return binding;
 }
 
-es::Binding* Context::bind(const char* name, es::Interface* unknown)
+es::Binding* Context::bind(const char* name, Object* unknown)
 {
     if (*name == 0)
     {
@@ -363,7 +363,7 @@ es::Binding* Context::bind(const char* name, es::Interface* unknown)
         return binding;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     binding->release();
     Handle<es::Context> hcontext(object);
     if (!hcontext)
@@ -373,7 +373,7 @@ es::Binding* Context::bind(const char* name, es::Interface* unknown)
     return hcontext->bind(name, unknown);
 }
 
-es::Interface* Context::lookup(const char* name)
+Object* Context::lookup(const char* name)
 {
     Binding* binding(walk(this, name));
     if (!binding)
@@ -381,7 +381,7 @@ es::Interface* Context::lookup(const char* name)
         return 0;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     binding->release();
     if (*name == 0)
     {
@@ -406,7 +406,7 @@ int Context::rename(const char* oldName, const char* newName)
     // XXX
 
     // lookup oldName
-    es::Interface* object = lookup(oldName);
+    Object* object = lookup(oldName);
     if (!object)
     {
         return -1;
@@ -446,7 +446,7 @@ int Context::unbind(const char* name)
         return 0;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     binding->release();
     Handle<es::Context> hcontext(object);
     if (!hcontext)
@@ -464,7 +464,7 @@ es::Iterator* Context::list(const char* name)
         return 0;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     binding->release();
     if (!object)
     {
@@ -529,7 +529,7 @@ es::Context* Context::createSubcontext(const char* name)
         return context;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     binding->release();
     Handle<es::Context> hcontext(object);
     if (!hcontext)
@@ -552,7 +552,7 @@ int Context::destroySubcontext(const char* name)
         return -1;
     }
 
-    es::Interface* object = binding->getObject();
+    Object* object = binding->getObject();
     Handle<es::Context> hcontext(object);
     if (!hcontext)
     {
@@ -569,14 +569,14 @@ int Context::destroySubcontext(const char* name)
     return hcontext->destroySubcontext(name);
 }
 
-void* Context::queryInterface(const char* riid)
+Object* Context::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Context::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Context*>(this);
     }
@@ -588,7 +588,7 @@ void* Context::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -649,7 +649,7 @@ bool Iterator::hasNext()
     return false;
 }
 
-es::Interface* Iterator::next()
+Object* Iterator::next()
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -698,14 +698,14 @@ int Iterator::remove()
     return 0;
 }
 
-void* Iterator::queryInterface(const char* riid)
+Object* Iterator::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }
@@ -713,7 +713,7 @@ void* Iterator::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

@@ -48,7 +48,7 @@ class Keyboard : public es::Callback
         int write(const void* src, int count, long long offset);
         void flush();
 
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -145,7 +145,7 @@ public:
     int invoke(int param);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

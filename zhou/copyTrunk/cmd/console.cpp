@@ -500,9 +500,9 @@ public:
         return true;
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Stream::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
@@ -511,7 +511,7 @@ public:
         {
             objectPtr = static_cast<es::Service*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
@@ -519,7 +519,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -1236,7 +1236,7 @@ int main(int argc, char* argv[])
     surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
-    device->bind("canvas", static_cast<html5::CanvasRenderingContext2D*>(canvas));
+    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start console.\n");

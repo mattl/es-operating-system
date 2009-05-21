@@ -41,7 +41,7 @@ void* test3(void*)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     // check synchronized block.

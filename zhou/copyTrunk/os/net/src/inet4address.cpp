@@ -122,19 +122,19 @@ getAddressFamily()
 }
 
 const char* Inet4Address::
-getCanonicalHostName(char* hostName, int len)
+getCanonicalHostName(void* hostName, int len)
 {
     return 0;
 }
 
 const char* Inet4Address::
-getHostAddress(char* hostAddress, int len)
+getHostAddress(void* hostAddress, int len)
 {
     return 0;
 }
 
 const char* Inet4Address::
-getHostName(char* hostName, int len)
+getHostName(void* hostName, int len)
 {
     return Socket::resolver->getHostName(hostName, len, this);
 }
@@ -179,7 +179,7 @@ getNext()
     return 0;
 }
 
-es::Interface* Inet4Address::
+Object* Inet4Address::
 socket(int type, int protocol, int port)
 {
     Socket* socket = new Socket(type, protocol);
@@ -205,15 +205,15 @@ socket(int type, int protocol, int port)
 }
 
 // IInterface
-void* Inet4Address::
+Object* Inet4Address::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::InternetAddress::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetAddress*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetAddress*>(this);
     }
@@ -221,7 +221,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

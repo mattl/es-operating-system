@@ -61,7 +61,7 @@ unsigned int SyscallProxy::release()
     unsigned int count = ref.release();
     if (count == 0)
     {
-        es::Interface* object(static_cast<es::Interface*>(getObject()));
+        Object* object(static_cast<Object*>(getObject()));
         if (object)
         {
 #ifdef VERBOSE
@@ -235,7 +235,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     Handle<SyscallProxy> inputProxies[8];
     Handle<UpcallProxy>  upcallProxies[8];
 
-    const char* iid = es::Interface::iid();
+    const char* iid = Object::iid();
 
     // Set this
     Method** object = reinterpret_cast<Method**>(proxy->getObject());
@@ -354,7 +354,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                 count = sizeof(char);       // XXX check string length?
                 break;
             case Any::TypeObject:
-                if (void** ip = *reinterpret_cast<void***>(static_cast<es::Interface*>(*argp)))
+                if (void** ip = *reinterpret_cast<void***>(static_cast<Object*>(*argp)))
                 {
                     if (base <= ip && ip < base + INTERFACE_POINTER_MAX)
                     {
@@ -365,13 +365,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                             throw SystemException<EINVAL>();
                         }
                         inputProxies[i] = proxy;
-                        *argp = Any(static_cast<es::Interface*>(inputProxies[i]->getObject()));
+                        *argp = Any(static_cast<Object*>(inputProxies[i]->getObject()));
                     }
                     else    // XXX Check range
                     {
                         // Allocate an entry in the upcall table and set the
                         // interface pointer to the broker for the upcall table.
-                        int n = set(this, (es::Interface*) ip, iid, false);
+                        int n = set(this, (Object*) ip, iid, false);
                         if (n < 0)
                         {
                             throw SystemException<ENFILE>();
@@ -379,12 +379,12 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         // Note the reference count of the created upcall proxy must
                         // be decremented by one at the end of this system call.
                         upcallProxies[i] = &upcallTable[n];
-                        *argp = Any(reinterpret_cast<es::Interface*>(&(broker.getInterfaceTable())[n]));
+                        *argp = Any(reinterpret_cast<Object*>(&(broker.getInterfaceTable())[n]));
                     }
                 }
                 else
                 {
-                    *argp = Any(static_cast<es::Interface*>(0));
+                    *argp = Any(static_cast<Object*>(0));
                 }
                 argp->makeVariant();
                 break;
@@ -468,13 +468,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                         throw SystemException<EINVAL>();
                     }
                     inputProxies[i] = proxy;
-                    *argp = Any(static_cast<es::Interface*>(inputProxies[i]->getObject()));
+                    *argp = Any(static_cast<Object*>(inputProxies[i]->getObject()));
                 }
                 else    // XXX Check range
                 {
                     // Allocate an entry in the upcall table and set the
                     // interface pointer to the broker for the upcall table.
-                    int n = set(this, (es::Interface*) ip, iid, false);
+                    int n = set(this, (Object*) ip, iid, false);
                     if (n < 0)
                     {
                         throw SystemException<ENFILE>();
@@ -482,12 +482,12 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                     // Note the reference count of the created upcall proxy must
                     // be decremented by one at the end of this system call.
                     upcallProxies[i] = &upcallTable[n];
-                    *argp = Any(reinterpret_cast<es::Interface*>(&(broker.getInterfaceTable())[n]));
+                    *argp = Any(reinterpret_cast<Object*>(&(broker.getInterfaceTable())[n]));
                 }
             }
             else
             {
-                *argp = Any(static_cast<es::Interface*>(0));
+                *argp = Any(static_cast<Object*>(0));
             }
             break;
         default:
@@ -521,7 +521,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         *variant = apply(argc, argv, (Any (*)()) ((*object)[methodNumber]));
         result = Any(reinterpret_cast<intptr_t>(variant));
         if (variant->getType() == Any::TypeObject) {
-            ip = static_cast<es::Interface*>(*variant);
+            ip = static_cast<Object*>(*variant);
         }
         break;
     case Ent::SpecBool:
@@ -570,11 +570,14 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
     case Ent::TypeInterface:
-        iid = returnType.getInterface().getFullyQualifiedName();
+        if (!stringIsInterfaceName)
+        {
+            iid = returnType.getInterface().getFullyQualifiedName();
+        }
         // FALL THROUGH
     case Ent::SpecObject:
-        result = apply(argc, argv, (es::Interface* (*)()) ((*object)[methodNumber]));
-        ip = static_cast<es::Interface*>(result);
+        result = apply(argc, argv, (Object* (*)()) ((*object)[methodNumber]));
+        ip = static_cast<Object*>(result);
         break;
     }
 
@@ -584,13 +587,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         int n = set(syscallTable, ip, iid, true);
         if (0 <= n)
         {
-            result = Any(reinterpret_cast<es::Interface*>(&base[n]));
+            result = Any(reinterpret_cast<Object*>(&base[n]));
         }
         else
         {
-            es::Interface* object(static_cast<es::Interface*>(ip));
+            Object* object(static_cast<Object*>(ip));
             object->release();
-            result = Any(static_cast<es::Interface*>(0));
+            result = Any(static_cast<Object*>(0));
             throw SystemException<EMFILE>();
         }
     }

@@ -27,7 +27,7 @@
 
 int main()
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     try

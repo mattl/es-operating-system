@@ -28,7 +28,7 @@
 // object - In general, object is possibly null. For Iso9660Stream, however,
 // object must be NULL.
 es::Binding* Iso9660Stream::
-bind(const char* name, es::Interface* object)
+bind(const char* name, Object* object)
 {
     return 0;
 }
@@ -45,7 +45,7 @@ destroySubcontext(const char* name)
     return -1;
 }
 
-es::Interface* Iso9660Stream::
+Object* Iso9660Stream::
 lookup(const char* name)
 {
     Iso9660Stream* stream(lookupPathName(name));

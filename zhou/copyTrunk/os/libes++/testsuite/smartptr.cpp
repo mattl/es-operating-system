@@ -33,10 +33,10 @@ public:
         printf("done.\n");
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
-        if (strcmp(riid, Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<Callback*>(this);
         }
@@ -48,7 +48,7 @@ public:
         {
             return NULL;
         }
-        static_cast<Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -111,10 +111,10 @@ int main()
     A a;
     C c;
 
-    printf("sizeof(Interface) :%d\n", sizeof(Interface));
+    printf("sizeof(Object) :%d\n", sizeof(Object));
     printf("sizeof(A) :%d\n", sizeof(A));
 
-    printf("isInterface(Interface) :%d\n", IsInterface<Interface>::Value);
+    printf("isInterface(Object) :%d\n", IsInterface<Object>::Value);
     printf("isInterface(A) :%d\n", IsInterface<A>::Value);
 
     Handle<Callback> hcb(&a, true);

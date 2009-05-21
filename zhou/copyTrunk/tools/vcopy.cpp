@@ -60,7 +60,7 @@ static es::Context* checkDestinationPath(char* dst, Handle<es::Context> root)
             break;
         }
 
-        Handle<es::Interface> interface = currentDir->lookup(path);
+        Handle<Object> interface = currentDir->lookup(path);
         if (interface)
         {
             Handle<es::File> file = interface;
@@ -151,7 +151,7 @@ void copy(Handle<es::Context> root, char* filename, char* dst)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
     Handle<es::Context> nameSpace(ns);

@@ -32,7 +32,7 @@
 
 namespace es
 {
-    void registerConstructor(const char* iid, es::Interface* constructor);
+    void registerConstructor(const char* iid, Object* constructor);
 }  // namespace es
 
 static __thread void* stopCfa;
@@ -102,7 +102,7 @@ class System : public es::CurrentProcess
             currentThread->testCancel();
         }
 
-        void* queryInterface(const char* riid)
+        Object* queryInterface(const char* riid)
         {
             return currentThread->queryInterface(riid);
         }
@@ -149,10 +149,10 @@ public:
                         binding->getName(iid, sizeof iid);
                         strcpy(ciid, iid);
                         strcat(ciid, "::Constructor");
-                        if (es::Interface* unknown = binding->getObject())
+                        if (Object* unknown = binding->getObject())
                         {
                             void* constructor = unknown->queryInterface(ciid);
-                            registerConstructor(iid, reinterpret_cast<es::Interface*>(constructor));
+                            es::registerConstructor(iid, reinterpret_cast<Object*>(constructor));
                             unknown->release();
                         }
                     }
@@ -243,7 +243,7 @@ public:
         return currentProcess->getCurrent();
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
         return currentProcess->queryInterface(riid);
     }

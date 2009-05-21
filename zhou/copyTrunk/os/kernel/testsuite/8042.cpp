@@ -22,7 +22,7 @@
 
 int main()
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     Handle<es::Context> root(nameSpace);

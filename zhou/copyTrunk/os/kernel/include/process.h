@@ -35,7 +35,7 @@ class InterfaceDescriptor;
 class Map;
 class Process;
 
-class SyscallProxy : public es::Interface
+class SyscallProxy : public Object
 {
     Ref         ref;
     Interlocked use;
@@ -71,7 +71,7 @@ public:
     long releaseUser();
 
     // IInterface
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -82,7 +82,7 @@ public:
     friend class Process;
 };
 
-class UpcallProxy : public es::Interface
+class UpcallProxy : public Object
 {
     Ref         ref;
     Interlocked use;
@@ -104,7 +104,7 @@ public:
     bool isUsed();
 
     // IInterface
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
         ASSERT(false);
         return NULL;
@@ -333,7 +333,7 @@ public:
     void setError(es::Stream* error);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -363,7 +363,7 @@ public:
      */
     int copyIn(UpcallRecord* record);
     u8* copyInString(const char* string, u8* esp);
-    es::Interface* copyInObject(es::Interface* object, const char* iid);
+    Object* copyInObject(Object* object, const char* iid);
 
     /** Copies back the input parameters from the server user stack.
      * @return  error number
@@ -375,7 +375,7 @@ public:
     {
     public:
         es::Process* createInstance();
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };

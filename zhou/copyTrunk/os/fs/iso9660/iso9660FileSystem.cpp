@@ -319,10 +319,10 @@ defrag()
     return 0;
 }
 
-void* Iso9660FileSystem::
+Object* Iso9660FileSystem::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iso9660FileSystem::iid()) == 0)
     {
         objectPtr = static_cast<es::Iso9660FileSystem*>(this);
@@ -331,7 +331,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Iso9660FileSystem*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iso9660FileSystem*>(this);
     }
@@ -339,7 +339,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;;
 }
 
@@ -368,15 +368,15 @@ createInstance()
     return new Iso9660FileSystem;
 }
 
-void* Iso9660FileSystem::Constructor::
+Object* Iso9660FileSystem::Constructor::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iso9660FileSystem::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Iso9660FileSystem::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iso9660FileSystem::Constructor*>(this);
     }
@@ -384,7 +384,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

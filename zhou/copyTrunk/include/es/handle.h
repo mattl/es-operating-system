@@ -19,7 +19,7 @@
 #define NINTENDO_ES_HANDLE_H_INCLUDED
 
 #include <stddef.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 
 /** Common base class for boolean type traits.
  */
@@ -57,11 +57,11 @@ class IsInterfaceImp
 
     static const bool IsAbstract = sizeof(isAbstract<T>(0)) == sizeof(YesType);
 
-    // IsObject has to deal with ambiguous 'es::Interface' base classes.
+    // IsObject has to deal with ambiguous 'Object' base classes.
     // See http://groups.google.com/group/comp.lang.c++.moderated/msg/dd6c4e4d5160bd83
     struct C
     {
-        operator es::Interface const volatile *() const;
+        operator Object const volatile *() const;
         operator T const volatile *();
     };
 
@@ -69,7 +69,7 @@ class IsInterfaceImp
 
     template <typename U>
     static YesType isObject(T const volatile *, U);
-    static NoType isObject(es::Interface const volatile *, int);
+    static NoType isObject(Object const volatile *, int);
 
     static const bool IsObject = sizeof(isObject(getObject(), 0)) == sizeof(YesType);
 
@@ -78,21 +78,21 @@ public:
 };
 
 template<>
-class IsInterfaceImp<es::Interface>
+class IsInterfaceImp<Object>
 {
 public:
     static const bool Value = true;
 };
 
 /** If <code>T</code> is an abstruct interface that inherits
- * <code>es::Interface</code> then <code>IsInterface</code> inherits from
+ * <code>Object</code> then <code>IsInterface</code> inherits from
  * <code>TrueType</code>, otherwise inherits from <code>FalseType</code>.
  */
 template <typename T>
 struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
 {
     /** <code>true</code> if <code>T</code> is an abstruct interface
-     * that inherits from <code>es::Interface</code>, otherwise
+     * that inherits from <code>Object</code>, otherwise
      * <code>false</code>.
      */
     static const bool Value = IsInterfaceImp<T>::Value;
@@ -102,8 +102,8 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  * interface pointers.
  * <code>Handle</code> has a template parameter, <code>I</code>,
  * which specifies the type of interface to be used.
- * <code>I</code> must be derived from <code>es::Interface</code> or
- * <code>es::Interface</code>.
+ * <code>I</code> must be derived from <code>Object</code> or
+ * <code>Object</code>.
  * <p>
  * <code>Handle</code> is smart in that it manages
  * <code>addRef</code>, <code>release</code> and <code>queryInterface</code>
@@ -119,7 +119,7 @@ struct IsInterface : BooleanType<IsInterfaceImp<T>::Value>
  *     IIterator* iterator = context->list("");
  *     while (iterator->hasNext())
  *     {
- *         es::Interface* unknown = iterator->next();
+ *         Object* unknown = iterator->next();
  *         es::Binding* binding;
  *         unknown->queryInterface(es::Binding::iid(),
  *                                 reinterpret_cast&lt;void**&gt;(&binding));
@@ -185,7 +185,7 @@ class Handle
         // a virtual function.
         unsigned int addRef();
         unsigned int release();
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
 
         void operator delete(void*, size_t);
         Protected& operator=(const I&);
@@ -267,7 +267,7 @@ public:
     template<class J>
     Handle(const Handle<J>& comptr)
     {
-        es::Interface* unknown = comptr.get();
+        Object* unknown = comptr.get();
         object = cast(unknown, IsInterface<J>());
     }
 

@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
 
     Handle<es::Stream> disk = new VDisk(static_cast<char*>(argv[1]));

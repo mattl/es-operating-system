@@ -38,7 +38,7 @@ class Binding : public es::Binding
     es::Monitor*   monitor;
     Ref            ref;
     char*          name;
-    es::Interface* object;
+    Object* object;
     Context*       context;
 
     void hide();
@@ -48,16 +48,16 @@ public:
     Link<Binding>   link;
 
 public:
-    Binding(const char* name, Interface* object);
+    Binding(const char* name, Object* object);
     ~Binding();
 
-    void* queryInterface(const char* iid);
+    Object* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
-    es::Interface* getObject();
-    void setObject(es::Interface* object);
-    const char* getName(char* name, int nameLength);
+    Object* getObject();
+    void setObject(Object* object);
+    const char* getName(void* name, int nameLength);
 
     typedef ::List<Binding, &Binding::link> List;
 };
@@ -85,14 +85,14 @@ public:
     Context();
     ~Context();
 
-    void* queryInterface(const char* iid);
+    Object* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
-    es::Binding* bind(const char* name, es::Interface* object);
+    es::Binding* bind(const char* name, Object* object);
     es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::Interface* lookup(const char* name);
+    Object* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
     es::Iterator* list(const char* name);
@@ -114,12 +114,12 @@ public:
     Iterator(Binding* binding);
     ~Iterator();
 
-    void* queryInterface(const char* iid);
+    Object* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 
     bool hasNext();
-    es::Interface* next();
+    Object* next();
     int remove();
 };
 

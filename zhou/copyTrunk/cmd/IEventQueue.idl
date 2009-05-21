@@ -24,7 +24,6 @@ module es
      */
     interface EventQueue
     {
-        #pragma ID EventQueue = "DCE:c466c947-602b-49c1-8d67-05d292fa65c4";
         typedef sequence<octet> Buf;
 
         /* User input recording II:

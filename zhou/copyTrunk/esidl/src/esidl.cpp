@@ -48,7 +48,8 @@ namespace
 }
 
 int Node::level = 1;
-const char* Node::baseObjectName = 0;
+const char* Node::baseObjectName = "::Object";
+const char* Node::namespaceName;
 
 Node* getSpecification()
 {
@@ -271,6 +272,7 @@ void OpDcl::adjustMethodCount()
     do
     {
         optionalCount = 0;
+#ifdef USE_FUNCTION_CALLBACK
         int callbackStage = 0;
         int callbackCount;
         do
@@ -294,7 +296,7 @@ void OpDcl::adjustMethodCount()
                 ++paramCount;
 
                 Node* spec = param->getSpec();
-                if (spec->isInterface(this))
+                if (spec->isInterface(this) && dynamic_cast<ScopedName*>(spec))  // spec can be 'Object'
                 {
                     Interface* callback = dynamic_cast<Interface*>(dynamic_cast<ScopedName*>(spec)->search(getParent()));
                     if (callback && callback->isCallback() == Interface::Callback)
@@ -306,6 +308,26 @@ void OpDcl::adjustMethodCount()
             paramCounts.push_back(paramCount);
             ++callbackStage;
         } while (callbackStage < (1u << callbackCount));
+#else  // USE_FUNCTION_CALLBACK
+        ++methodCount;
+        int paramCount = 0;
+        for (NodeList::iterator i = begin(); i != end(); ++i)
+        {
+            ParamDcl* param = dynamic_cast<ParamDcl*>(*i);
+            assert(param);
+            if (param->isOptional())
+            {
+                ++optionalCount;
+                if (optionalStage < optionalCount)
+                {
+                    break;
+                }
+            }
+            ++paramCount;
+
+        }
+        paramCounts.push_back(paramCount);
+#endif  // USE_FUNCTION_CALLBACK
         ++optionalStage;
     } while (optionalStage <= optionalCount);
     Interface* interface = dynamic_cast<Interface*>(getParent());
@@ -790,6 +812,8 @@ int main(int argc, char* argv[])
     bool ent = false;
     bool npapi = false;
     bool isystem = false;
+    bool useExceptions = true;
+    const char* stringTypeName = "char*";   // C++ string type name to be used
 
     for (int i = 1; i < argc; ++i)
     {
@@ -830,10 +854,28 @@ int main(int argc, char* argv[])
             {
                 npapi = true;
             }
+            else if (strcmp(argv[i], "-fexceptions") == 0)
+            {
+                useExceptions = true;
+            }
+            else if (strcmp(argv[i], "-fno-exceptions") == 0)
+            {
+                useExceptions = false;
+            }
+            else if (strcmp(argv[i], "-namespace") == 0)
+            {
+                ++i;
+                Node::setFlatNamespace(argv[i]);
+            }
             else if (strcmp(argv[i], "-object") == 0)
             {
                 ++i;
                 Node::setBaseObjectName(argv[i]);
+            }
+            else if (strcmp(argv[i], "-string") == 0)
+            {
+                ++i;
+                stringTypeName = argv[i];
             }
         }
     }
@@ -841,6 +883,21 @@ int main(int argc, char* argv[])
     Module* node = new Module("");
     setSpecification(node);
     setCurrent(node);
+
+    if (strcmp(Node::getBaseObjectName(), "::Object") == 0)
+    {
+        // Manually install 'Object' interface forward declaration.
+        Interface* object = new Interface("Object", 0, true);
+        object->setRank(2);
+        getCurrent()->add(object);
+    }
+
+    if (Node::getFlatNamespace())
+    {
+        Module* module = new Module(Node::getFlatNamespace());
+        getCurrent()->add(module);
+        setCurrent(module);
+    }
 
     yylloc.first_line = yylloc.last_line = 1;
     yylloc.first_column = yylloc.last_column = 0;
@@ -858,19 +915,24 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    if (Node::getFlatNamespace())
+    {
+        setCurrent(getCurrent()->getParent());
+    }
+
     ProcessExtendedAttributes processExtendedAttributes;
     getSpecification()->accept(&processExtendedAttributes);
 
     AdjustMethodCount adjustMethodCount;
     getSpecification()->accept(&adjustMethodCount);
 
-    printf("-I %s\n", includePath);
 #ifdef VERBOSE
+    printf("-I %s\n", includePath);
     printf("-----------------------------------\n");
     print();
 #endif
     printf("-----------------------------------\n");
-    printCxx(getOutputFilename(getFilename(), "h"));
+    printCxx(getOutputFilename(getFilename(), "h"), stringTypeName, useExceptions);
     printf("-----------------------------------\n");
     if (ent)
     {

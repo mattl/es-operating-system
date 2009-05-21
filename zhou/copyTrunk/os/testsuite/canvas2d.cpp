@@ -221,14 +221,14 @@ setFillStyle(const Any fillStyle)
     dirtyStyle[STYLE_FILL] = true;
 }
 
-html5::CanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createLinearGradient(float x0, float y0, float x1, float y1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = NULL;
     pattern = cairo_pattern_create_linear(x0, y0, x1, y1);
-    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -237,14 +237,14 @@ createLinearGradient(float x0, float y0, float x1, float y1)
     return gradient;
 }
 
-html5::CanvasGradient* Canvas::
+es::CanvasGradient* Canvas::
 createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     cairo_pattern_t* pattern = 0;
     pattern = cairo_pattern_create_radial(x0, y0, r0, x1, y1, r1);
-    html5::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
+    es::CanvasGradient* gradient = new(std::nothrow) CanvasGradient(pattern);
     if (!gradient)
     {
         cairo_pattern_destroy(pattern);
@@ -417,7 +417,7 @@ getGlobalAlpha()
 }
 
 const char* Canvas::
-getGlobalCompositeOperation(char* operation, int len)
+getGlobalCompositeOperation(void* operation, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -425,7 +425,7 @@ getGlobalCompositeOperation(char* operation, int len)
 
 #define CANVAS_OP_TO_CAIRO_OP(cvsop,cairoop) \
     if (cairo_op == CAIRO_OPERATOR_##cairoop) \
-        strcpy(operation, cvsop);
+        strcpy(static_cast<char*>(operation), cvsop);
 
     // XXX "darker" isn't really correct
     CANVAS_OP_TO_CAIRO_OP("clear", CLEAR)
@@ -445,7 +445,7 @@ getGlobalCompositeOperation(char* operation, int len)
 
 #undef CANVAS_OP_TO_CAIRO_OP
 
-    return operation;
+    return static_cast<char*>(operation);
 }
 
 float Canvas::
@@ -456,39 +456,39 @@ getMiterLimit()
 }
 
 const char* Canvas::
-getLineCap(char* capStyle, int len)
+getLineCap(void* capStyle, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
     cairo_line_cap_t cap = cairo_get_line_cap(cr);
 
     if (cap == CAIRO_LINE_CAP_BUTT && strlen("butt") + 1 < len)
-        sprintf(capStyle, "butt");
+        sprintf(static_cast<char*>(capStyle), "butt");
     else if (cap == CAIRO_LINE_CAP_ROUND && strlen("round") + 1 < len)
-        sprintf(capStyle, "round");
+        sprintf(static_cast<char*>(capStyle), "round");
     else if (cap == CAIRO_LINE_CAP_SQUARE && strlen("square") + 1 < len)
-        sprintf(capStyle, "square");
+        sprintf(static_cast<char*>(capStyle), "square");
     else
         return 0;
 
-    return capStyle;
+    return static_cast<char*>(capStyle);
 }
 
 const char* Canvas::
-getLineJoin(char* joinStyle, int len)
+getLineJoin(void* joinStyle, int len)
 {
     Synchronized<es::Monitor*> method(monitor);
     cairo_line_join_t j = cairo_get_line_join(cr);
 
     if (j == CAIRO_LINE_JOIN_ROUND && strlen("round") + 1 < len)
-        sprintf(joinStyle, "round");
+        sprintf(static_cast<char*>(joinStyle), "round");
     else if (j == CAIRO_LINE_JOIN_BEVEL && strlen("bevel") + 1 < len)
-        sprintf(joinStyle, "bevel");
+        sprintf(static_cast<char*>(joinStyle), "bevel");
     else if (j == CAIRO_LINE_JOIN_MITER && strlen("miter") + 1 < len)
-        sprintf(joinStyle, "miter");
+        sprintf(static_cast<char*>(joinStyle), "miter");
     else
         return 0;
 
-    return joinStyle;
+    return static_cast<char*>(joinStyle);
 }
 
 float Canvas::
@@ -691,15 +691,15 @@ translate(float tx, float ty)
 }
 
 const char* Canvas::
-getFont(char* font, int fontLength)
+getFont(void* font, int fontLength)
 {
     if (textStyle.size() < fontLength)
     {
         fontLength = textStyle.size() + 1;
     }
-    strncpy(font, textStyle.c_str(), fontLength);
-    font[fontLength - 1] = '\0';
-    return font;
+    strncpy(static_cast<char*>(font), textStyle.c_str(), fontLength);
+    static_cast<char*>(font)[fontLength - 1] = '\0';
+    return static_cast<char*>(font);
 }
 
 void Canvas::
@@ -767,7 +767,7 @@ fillText(const char* text, float x, float y)
 }
 
 #if 0
-html5::TextMetrics Canvas::
+es::TextMetrics Canvas::
 measureText(const char* textToMeasure)
 {
     Synchronized<es::Monitor*> method(monitor);

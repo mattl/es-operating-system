@@ -39,7 +39,7 @@ int main()
 {
     long long size;
 
-    es::Interface* root = 0;
+    Object* root = 0;
     esInit(&root);
 
     MemoryStream* backingStore = new MemoryStream(0);

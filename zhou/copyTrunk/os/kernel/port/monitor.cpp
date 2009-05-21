@@ -340,10 +340,10 @@ notifyAll()
     notify();
 }
 
-void* Thread::Monitor::
+Object* Thread::Monitor::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Monitor::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor*>(this);
@@ -352,7 +352,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor*>(this);
     }
@@ -360,7 +360,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -388,15 +388,15 @@ Constructor::createInstance()
     return new Monitor;
 }
 
-void* Thread::Monitor::
+Object* Thread::Monitor::
 Constructor::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Monitor::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Monitor::Constructor*>(this);
     }
@@ -404,7 +404,7 @@ Constructor::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

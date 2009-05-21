@@ -28,11 +28,11 @@ AM_CPPFLAGS = \
 # default interface information
 #
 nodist_libeskernel_a_SOURCES = \
+	es/object.c \
 	es/base/IAlarm.c \
 	es/base/ICache.c \
 	es/base/ICallback.c \
 	es/base/IFile.c \
-	es/base/IInterface.c \
 	es/base/IInterfaceStore.c \
 	es/base/IMonitor.c \
 	es/base/IPageable.c \

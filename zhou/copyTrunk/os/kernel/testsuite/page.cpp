@@ -24,7 +24,7 @@
 
 int main()
 {
-    es::Interface* root;
+    Object* root;
     esInit(&root);
 
     unsigned addr;

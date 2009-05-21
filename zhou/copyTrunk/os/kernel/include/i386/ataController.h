@@ -91,7 +91,7 @@ public:
     int issue(AtaDevice* device, u8* packet, int packetSize,
               void* buffer = 0, int count = 0, u8 features = 0);
     int invoke(int);
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -139,10 +139,10 @@ public:
     void flush();
 
     // IContext
-    es::Binding* bind(const char* name, es::Interface* object);
+    es::Binding* bind(const char* name, Object* object);
     es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::Interface* lookup(const char* name);
+    Object* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
     es::Iterator* list(const char* name);
@@ -153,7 +153,7 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -182,7 +182,7 @@ public:
 
     int read(void* dst, int count, long long offset);
     int write(const void* src, int count, long long offset);
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

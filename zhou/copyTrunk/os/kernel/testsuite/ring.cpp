@@ -33,7 +33,7 @@ int main(void)
     u8 data[5];
     u8 pat[5];
 
-    es::Interface* nameSpace = 0;
+    Object* nameSpace = 0;
     esInit(&nameSpace);
 
     for (i = 0; i < 5; ++i)

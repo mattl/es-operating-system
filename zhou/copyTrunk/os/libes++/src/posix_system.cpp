@@ -60,7 +60,7 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    void registerConstructor(const char* iid, Interface* (*getter)(), void (*setter)(Interface*));
+    void registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*));
     const char* getUniqueIdentifier(const char* iid);
 }
 
@@ -116,10 +116,10 @@ class System : public es::CurrentProcess
 
     struct ExportKey
     {
-        es::Interface* object;
+        Object* object;
         const char* iid;
     public:
-        ExportKey(es::Interface* object, const char* iid) :
+        ExportKey(Object* object, const char* iid) :
             object(object),
             iid(getUniqueIdentifier(iid))
         {
@@ -130,7 +130,7 @@ class System : public es::CurrentProcess
             return hash(object, iid);
         }
 
-        static size_t hash(es::Interface* object, const char* iid)
+        static size_t hash(Object* object, const char* iid)
         {
             return reinterpret_cast<size_t>(iid) ^ reinterpret_cast<size_t>(object);
         }
@@ -139,7 +139,7 @@ class System : public es::CurrentProcess
     struct Exported
     {
         Ref         ref;
-        es::Interface* object;
+        Object* object;
         const char* iid;
         u64         check;
         bool        doRelease;
@@ -313,7 +313,7 @@ public:
         else
         {
             // Root
-            es::Interface* unknown = 0;
+            Object* unknown = 0;
             esInit(&unknown);
             root = reinterpret_cast<es::Context*>(unknown->queryInterface(es::Context::iid()));
 
@@ -380,7 +380,7 @@ public:
         {
             try
             {
-                html5::CanvasRenderingContext2D* canvas = static_cast<html5::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, html5::CanvasRenderingContext2D::iid(), false));
+                es::CanvasRenderingContext2D* canvas = static_cast<es::CanvasRenderingContext2D*>(importObject(cmd.forkRes.document, es::CanvasRenderingContext2D::iid(), false));
                 Handle<es::Context> device = root->lookup("device");
                 device->bind("canvas", canvas);
             }
@@ -563,14 +563,14 @@ public:
     {
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::CurrentProcess::iid()) == 0)
         {
             objectPtr = static_cast<es::CurrentProcess*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::CurrentProcess*>(this);
         }
@@ -578,7 +578,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -617,7 +617,7 @@ public:
         return v;
     }
 
-    int exportObject(es::Interface* object, const char* iid, Capability* cap, bool param)
+    int exportObject(Object* object, const char* iid, Capability* cap, bool param)
     {
         if (!object)
         {
@@ -690,7 +690,7 @@ public:
         return i;
     }
 
-    es::Interface* importObject(const Capability& cap, const char* iid, bool param)
+    Object* importObject(const Capability& cap, const char* iid, bool param)
     {
 #ifdef VERBOSE
         printf("importObject: %s : %d\n", iid, param);
@@ -733,7 +733,7 @@ public:
                 imported->addRef();
                 importedTable.put(i);
             }
-            es::Interface* object = reinterpret_cast<es::Interface*>(&(importer.getInterfaceTable())[i]);
+            Object* object = reinterpret_cast<Object*>(&(importer.getInterfaceTable())[i]);
             return object;
         }
         else
@@ -842,7 +842,7 @@ public:
             }
         }
 
-        const char* iid = es::Interface::iid();
+        const char* iid = Object::iid();
         Method** object = reinterpret_cast<Method**>(exported->object);
         int argc = hdr->paramCount;
         Any* argv = hdr->getArgv();
@@ -916,7 +916,7 @@ public:
                     }
                     break;
                 case Any::TypeObject:
-                    if (static_cast<es::Interface*>(*argp))
+                    if (static_cast<Object*>(*argp))
                     {
                         // Import object
                         Capability* cap = reinterpret_cast<Capability*>(data);
@@ -924,7 +924,7 @@ public:
                         {
                             cap->object = *fdv++;   // TODO check range
                         }
-                        es::Interface* object = importObject(*cap, iid, true); // TODO false?
+                        Object* object = importObject(*cap, iid, true); // TODO false?
                         *argp = Any(object);
                         data += sizeof(Capability);
                     }
@@ -960,7 +960,7 @@ public:
                 iid = type.getInterface().getFullyQualifiedName();
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (static_cast<es::Interface*>(*argp))
+                if (static_cast<Object*>(*argp))
                 {
                     // Import object
                     Capability* cap = reinterpret_cast<Capability*>(data);
@@ -968,7 +968,7 @@ public:
                     {
                         cap->object = *fdv++;   // TODO check range
                     }
-                    es::Interface* object = importObject(*cap, iid, true); // TODO false?
+                    Object* object = importObject(*cap, iid, true); // TODO false?
                     *argp = Any(object);
                     data += sizeof(Capability);
                 }
@@ -1053,10 +1053,13 @@ public:
             resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));  // TODO: maybe set just the # of elements
             break;
         case Ent::TypeInterface:
-            iid = returnType.getInterface().getFullyQualifiedName();
+            if (!stringIsInterfaceName)
+            {
+                iid = returnType.getInterface().getFullyQualifiedName();
+            }
             // FALL THROUGH
         case Ent::SpecObject:
-            res.result = apply(argc, argv, (es::Interface* (*)()) ((*object)[methodNumber]));
+            res.result = apply(argc, argv, (Object* (*)()) ((*object)[methodNumber]));
             break;
         case Ent::TypeArray:
         case Ent::SpecVoid:
@@ -1065,7 +1068,7 @@ public:
         }
 
         // Export object
-        if (res.result.getType() == Any::TypeObject && static_cast<es::Interface*>(res.result))
+        if (res.result.getType() == Any::TypeObject && static_cast<Object*>(res.result))
         {
             Capability* cap = static_cast<Capability*>(resultPtr);
             exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
@@ -1366,7 +1369,7 @@ public:
         ::current.exportObject(error, es::Stream::iid(), &cmd.error, false);
         ::current.exportObject(current, es::Context::iid(), &cmd.current, false);
         ::current.exportObject(root, es::Context::iid(), &cmd.root, false);
-        ::current.exportObject(0, es::Interface::iid(), &cmd.document, false);
+        ::current.exportObject(0, Object::iid(), &cmd.document, false);
 #ifdef VERBOSE
         cmd.report();
 #endif
@@ -1602,15 +1605,15 @@ public:
         return current;
     }
 
-    // es::Interface
-    void* queryInterface(const char* riid)
+    // Object
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Process::iid()) == 0)
         {
             objectPtr = static_cast<es::Process*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Process*>(this);
         }
@@ -1618,7 +1621,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -1650,7 +1653,7 @@ public:
     {
     public:
         es::Process* createInstance();
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -1663,14 +1666,14 @@ es::Process* Process::Constructor::createInstance()
     return new Process;
 }
 
-void* Process::Constructor::queryInterface(const char* riid)
+Object* Process::Constructor::queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Process::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::Process::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Process::Constructor*>(this);
     }
@@ -1678,7 +1681,7 @@ void* Process::Constructor::queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -1852,7 +1855,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     // In the following implementation, we assume no out or inout attribute is
     // used for parameters.
     // Set up parameters
-    const char* iid = es::Interface::iid();
+    const char* iid = Object::iid();
 
     // Set this
     *argp++ = Any(static_cast<intptr_t>(0));  // to be filled by the server
@@ -1902,9 +1905,9 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 break;
             case Any::TypeObject:
-                if (static_cast<es::Interface*>(*argp))
+                if (static_cast<Object*>(*argp))
                 {
-                    es::Interface* object = static_cast<es::Interface*>(*argp);
+                    Object* object = static_cast<Object*>(*argp);
                     current.exportObject(object, iid, capp, true);  // TODO check error
                     iop->iov_base = capp;
                     iop->iov_len = sizeof(Capability);
@@ -1955,7 +1958,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject: {
-            es::Interface* object = va_arg(ap, es::Interface*);
+            Object* object = va_arg(ap, Object*);
             *argp = Any(object);
             if (object)
             {
@@ -2117,7 +2120,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     }
                     break;
                 case Any::TypeObject:
-                    if (static_cast<es::Interface*>(res->result))
+                    if (static_cast<Object*>(res->result))
                     {
                         Capability* cap = static_cast<Capability*>(res->getData());
                         if (cap->check == 0 && (fdmax - fdp) == 1)
@@ -2134,7 +2137,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                     }
                     else
                     {
-                        res->result = Any(static_cast<es::Interface*>(0));
+                        res->result = Any(static_cast<Object*>(0));
                     }
                     break;
                 }
@@ -2158,10 +2161,13 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 }
                 break;
             case Ent::TypeInterface:
-                iid = returnType.getInterface().getFullyQualifiedName();
+                if (!stringIsInterfaceName)
+                {
+                    iid = returnType.getInterface().getFullyQualifiedName();
+                }
                 // FALL THROUGH
             case Ent::SpecObject:
-                if (static_cast<es::Interface*>(res->result))
+                if (static_cast<Object*>(res->result))
                 {
                     Capability* cap = static_cast<Capability*>(res->getData());
                     if (cap->check == 0 && (fdmax - fdp) == 1)
@@ -2171,14 +2177,14 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                         // TODO Set exec on close to cap->object
                     }
 #ifdef VERBOSE
-                    printf(">>(%s) ", iid);
+                    printf(">>(%s:%d) ", iid, stringIsInterfaceName);
                     cap->report();
 #endif
                     res->result = current.importObject(*cap, iid, false);
                 }
                 else
                 {
-                    res->result = Any(static_cast<es::Interface*>(0));
+                    res->result = Any(static_cast<Object*>(0));
                 }
                 break;
             case Ent::TypeArray:

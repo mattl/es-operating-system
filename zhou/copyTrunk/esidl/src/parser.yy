@@ -98,23 +98,18 @@ int yylex();
 %token UNSIGNED
 %token VALUETYPE
 %token VOID
-%token WCHAR
-%token WSTRING
 
 %token OP_SCOPE
 %token OP_SHL
 %token OP_SHR
 
 %token POUND_SIGN
-%token PRAGMA_ID
 
 %token <name>       IDENTIFIER
 %token <name>       INTEGER_LITERAL
 %token <name>       CHARACTER_LITERAL
-%token <name>       WIDE_CHARACTER_LITERAL
 %token <name>       FLOATING_PT_LITERAL
 %token <name>       STRING_LITERAL
-%token <name>       WIDE_STRING_LITERAL
 %token <name>       FIXED_PT_LITERAL
 
 %type <node>        interface_inheritance_spec
@@ -140,13 +135,11 @@ int yylex();
 %type <node>        unsigned_long_int
 %type <node>        unsigned_longlong_int
 %type <node>        char_type
-%type <node>        wide_char_type
 %type <node>        boolean_type
 %type <node>        octet_type
 %type <node>        any_type
 %type <node>        sequence_type
 %type <node>        string_type
-%type <node>        wide_string_type
 %type <node>        array_declarator
 %type <node>        fixed_array_size_list
 %type <node>        fixed_array_size
@@ -164,11 +157,14 @@ int yylex();
 %type <node>        boolean_literal
 %type <node>        positive_int_const
 
-%type <node>        object_type
 %type <node>        op_type_spec
 %type <node>        raises_expr_opt
 %type <node>        raises_expr
 %type <node>        param_type_spec
+
+%type <node>        get_excep_expr
+%type <node>        set_excep_expr
+%type <node>        exception_list
 
 %type <nodeList>    extended_attribute_opt
 %type <nodeList>    extended_attribute_list
@@ -228,31 +224,39 @@ definition :
 module :
     extended_attribute_opt MODULE IDENTIFIER
         {
-            Node* node = getCurrent()->search($3);
-            if (node)
+            if (!Node::getFlatNamespace())
             {
-                if (Module* module = dynamic_cast<Module*>(node))
+                Node* node = getCurrent()->search($3);
+                if (node)
                 {
-                    setCurrent(module);
+                    if (Module* module = dynamic_cast<Module*>(node))
+                    {
+                        setCurrent(module);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "%d.%d-%d.%d: '%s' is not a valid module name.\n",
+                                @2.first_line, @2.first_column, @2.last_line, @2.last_column,
+                                $3);
+                        exit(EXIT_FAILURE);
+                    }
                 }
                 else
                 {
-                    fprintf(stderr, "Inv. module name '%s'\n", $3);
-                    exit(EXIT_FAILURE);
+                    Module* module = new Module($3);
+                    module->setExtendedAttributes($1);
+                    getCurrent()->add(module);
+                    setCurrent(module);
                 }
-            }
-            else
-            {
-                Module* module = new Module($3);
-                module->setExtendedAttributes($1);
-                getCurrent()->add(module);
-                setCurrent(module);
             }
             free($3);
         }
     '{' definition_list '}'
         {
-            setCurrent(getCurrent()->getParent());
+            if (!Node::getFlatNamespace())
+            {
+                setCurrent(getCurrent()->getParent());
+            }
         }
     ;
 
@@ -265,6 +269,10 @@ interface_dcl :
     interface_header '{' interface_body '}'
         {
             setCurrent(getCurrent()->getParent());
+            if (Node::getFlatNamespace() && getCurrent() == getSpecification())
+            {
+                setCurrent(dynamic_cast<Module*>(getSpecification()->search(Node::getFlatNamespace())));
+            }
         }
     ;
 
@@ -288,23 +296,28 @@ interface_header :
     | INTERFACE IDENTIFIER
         {
             Node* extends = 0;
-            if (const char* base = Node::getBaseObjectName())
+            if (strcmp($2, Node::getBaseObjectName()) == 0)
+            {
+                assert($2[0] == ':' && $2[1] == ':');
+                strcpy($2, strrchr($2, ':') + 1);
+            }
+            else
             {
                 std::string qualifiedName = getCurrent()->getQualifiedName();
                 qualifiedName += "::";
                 qualifiedName += $2;
-                if (qualifiedName != base) {
-                    ScopedName* name = new ScopedName(base);
-                    if (!name->search(getCurrent()))
-                    {
-                        fprintf(stderr, "'%s' is not declared.\n", name->getName().c_str());
-                        exit(EXIT_FAILURE);
-                    }
+                if (qualifiedName != Node::getBaseObjectName())
+                {
+                    ScopedName* name = new ScopedName(Node::getBaseObjectName());
                     extends = new Node();
                     extends->add(name);
                 }
             }
             Interface* node = new Interface($2, extends);
+            if (Node::getFlatNamespace() && !extends)
+            {
+                setCurrent(getSpecification());
+            }
             getCurrent()->add(node);
             setCurrent(node);
             free($2);
@@ -320,16 +333,28 @@ interface_header :
     | extended_attribute_list INTERFACE IDENTIFIER
         {
             Node* extends = 0;
-            if (const char* base = Node::getBaseObjectName())
+            if (strcmp($3, Node::getBaseObjectName()) == 0)
             {
-                if (strcmp(base, $3) != 0) {
-                    ScopedName* name = new ScopedName(base);
-                    assert(name->search(getCurrent()));
+                assert($3[0] == ':' && $3[1] == ':');
+                strcpy($3, strrchr($3, ':') + 1);
+            }
+            else
+            {
+                std::string qualifiedName = getCurrent()->getQualifiedName();
+                qualifiedName += "::";
+                qualifiedName += $3;
+                if (qualifiedName != Node::getBaseObjectName())
+                {
+                    ScopedName* name = new ScopedName(Node::getBaseObjectName());
                     extends = new Node();
                     extends->add(name);
                 }
             }
             Interface* node = new Interface($3, extends);
+            if (Node::getFlatNamespace() && !extends)
+            {
+                setCurrent(getSpecification());
+            }
             getCurrent()->add(node);
             setCurrent(node);
             node->setExtendedAttributes($1);
@@ -414,28 +439,47 @@ scoped_name :
         }
     | OP_SCOPE IDENTIFIER
         {
-            ScopedName* name = new ScopedName("::");
-            name->getName() += $2;
-            free($2);
+            ScopedName* name;
+            if (Node::getFlatNamespace())
+            {
+                name = new ScopedName($2);
+            }
+            else
+            {
+                name = new ScopedName("::");
+                name->getName() += $2;
+            }
             if (!name->search(getCurrent()))
             {
-                fprintf(stderr, "'%s' is not declared.\n", name->getName().c_str());
+                fprintf(stderr, "%d.%d-%d.%d: '%s' is not declared.\n",
+                        @1.first_line, @1.first_column, @2.last_line, @2.last_column,
+                        name->getName().c_str());
                 exit(EXIT_FAILURE);
             }
             $$ = name;
+            free($2);
         }
     | scoped_name OP_SCOPE IDENTIFIER
         {
             ScopedName* name = static_cast<ScopedName*>($1);
-            name->getName() += "::";
-            name->getName() += $3;
-            free($3);
+            if (Node::getFlatNamespace())
+            {
+                name->getName() = $3;
+            }
+            else
+            {
+                name->getName() += "::";
+                name->getName() += $3;
+            }
             if (!name->search(getCurrent()))
             {
-                fprintf(stderr, "'%s' is not declared.\n", name->getName().c_str());
+                fprintf(stderr, "%d.%d-%d.%d: '%s' is not declared.\n",
+                        @1.first_line, @1.first_column, @3.last_line, @3.last_column,
+                        name->getName().c_str());
                 exit(EXIT_FAILURE);
             }
             $$ = name;
+            free($3);
         }
     ;
 
@@ -462,11 +506,9 @@ const_dcl :
 const_type :
     integer_type
     | char_type
-    | wide_char_type
     | boolean_type
     | floating_pt_type
     | string_type
-    | wide_string_type
     | fixed_pt_const_type
     | scoped_name
     | octet_type
@@ -583,17 +625,7 @@ literal :
             $$ = new Literal($1);
             free($1);
         }
-    | WIDE_STRING_LITERAL
-        {
-            $$ = new Literal($1);
-            free($1);
-        }
     | CHARACTER_LITERAL
-        {
-            $$ = new Literal($1);
-            free($1);
-        }
-    | WIDE_CHARACTER_LITERAL
         {
             $$ = new Literal($1);
             free($1);
@@ -646,9 +678,15 @@ type_declarator :
             {
                 assert(dynamic_cast<Member*>(*i));
                 Member* m = static_cast<Member*>(*i);
-                m->setSpec($1);
-                m->setTypedef(true);
-                getCurrent()->add(m);
+                // In flat namespace mode, even a valid typedef can define a new type for the spec using the exactly same name.
+                if (dynamic_cast<ArrayDcl*>(m) ||
+                    !dynamic_cast<ScopedName*>($1) ||
+                    m->getQualifiedName() != $1->getQualifiedName())
+                {
+                    m->setSpec($1);
+                    m->setTypedef(true);
+                    getCurrent()->add(m);
+                }
             }
             delete $2;
         }
@@ -669,17 +707,14 @@ base_type_spec :
     floating_pt_type
     | integer_type
     | char_type
-    | wide_char_type
     | boolean_type
     | octet_type
     | any_type
-    | object_type
     ;
 
 template_type_spec :
     sequence_type
     | string_type
-    | wide_string_type
     | fixed_pt_type
     ;
 
@@ -809,13 +844,6 @@ char_type :
         }
     ;
 
-wide_char_type :
-    WCHAR
-        {
-            $$ = new Type("wchar");
-        }
-    ;
-
 boolean_type :
     BOOLEAN
         {
@@ -834,13 +862,6 @@ any_type :
     ANY
         {
             $$ = new Type("any");
-        }
-    ;
-
-object_type :
-    OBJECT
-        {
-            $$ = new Type("Object");
         }
     ;
 
@@ -904,17 +925,6 @@ string_type :
     | STRING
         {
             $$ = new Type("string");
-        }
-    ;
-
-wide_string_type :
-    WSTRING '<' positive_int_const '>'
-        {
-            $$ = new Type("wstring");   // XXX
-        }
-    | WSTRING
-        {
-            $$ = new Type("wstring");
         }
     ;
 
@@ -1063,7 +1073,6 @@ raises_expr :
 param_type_spec :
     base_type_spec
     | string_type
-    | wide_string_type
     | scoped_name
     ;
 
@@ -1087,63 +1096,54 @@ constr_forward_decl :
     ;
 
 readonly_attr_spec :
-    extended_attribute_opt READONLY ATTRIBUTE param_type_spec simple_declarator raises_expr
+    extended_attribute_opt READONLY ATTRIBUTE param_type_spec simple_declarator get_excep_expr set_excep_expr
         {
             Attribute* attr = new Attribute($5, $4, true);
             attr->setExtendedAttributes($1);
+            attr->setGetRaises($6);
+            attr->setSetRaises($7);
             getCurrent()->add(attr);
-        }
-    | extended_attribute_opt READONLY ATTRIBUTE param_type_spec simple_declarator_list
-        {
-            for (std::list<std::string>::iterator i = $5->begin();
-                 i != $5->end();
-                 ++i)
-            {
-                Attribute* attr = new Attribute(*i, $4, true);
-                attr->setExtendedAttributes($1);
-                getCurrent()->add(attr);
-            }
-            delete $5;
         }
     ;
 
 attr_spec :
-    extended_attribute_opt ATTRIBUTE param_type_spec simple_declarator attr_raises_expr
+    extended_attribute_opt ATTRIBUTE param_type_spec simple_declarator get_excep_expr set_excep_expr
         {
             Attribute* attr = new Attribute($4, $3);
             attr->setExtendedAttributes($1);
+            attr->setGetRaises($5);
+            attr->setSetRaises($6);
             getCurrent()->add(attr);
         }
-    | extended_attribute_opt ATTRIBUTE param_type_spec simple_declarator_list
-        {
-            for (std::list<std::string>::iterator i = $4->begin();
-                 i != $4->end();
-                 ++i)
-            {
-                Attribute* attr = new Attribute(*i, $3);
-                attr->setExtendedAttributes($1);
-                getCurrent()->add(attr);
-            }
-            delete $4;
-        }
-    ;
-
-attr_raises_expr :
-    get_excep_expr
-    | get_excep_expr set_excep_expr
-    | set_excep_expr
     ;
 
 get_excep_expr :
-    GETRAISES exception_list
+    /* empty */
+        {
+            $$ = 0;
+        }
+    | GETRAISES exception_list
+        {
+            $$ = $2;
+        }
     ;
 
 set_excep_expr :
-    SETRAISES exception_list
+    /* empty */
+        {
+            $$ = 0;
+        }
+    | SETRAISES exception_list
+        {
+            $$ = $2;
+        }
     ;
 
 exception_list :
     '(' scoped_name_list ')'
+        {
+            $$ = $2;
+        }
     ;
 
 preprocessor :
@@ -1195,16 +1195,6 @@ preprocessor :
             yylloc.last_line = atol($2);
             free($2);
             free($3);
-        }
-    | PRAGMA_ID scoped_name STRING_LITERAL EOL
-        {
-            getCurrent()->add(new PragmaID($2, $3));
-            free($3);
-        }
-    | PRAGMA_ID scoped_name '=' STRING_LITERAL ';' EOL
-        {
-            getCurrent()->add(new PragmaID($2, $4));
-            free($4);
         }
     ;
 

@@ -149,14 +149,14 @@ public:
     {
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Stream::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
@@ -164,7 +164,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 

@@ -192,7 +192,8 @@ native              {
                     }
 Object              {
                         stepLocation();
-                        return OBJECT;
+                        yylval.name = strdup(Node::getBaseObjectName());
+                        return IDENTIFIER;
                     }
 octet               {
                         stepLocation();
@@ -254,14 +255,6 @@ void                {
                         stepLocation();
                         return VOID;
                     }
-wchar               {
-                        stepLocation();
-                        return WCHAR;
-                    }
-wstring             {
-                        stepLocation();
-                        return WSTRING;
-                    }
 
 "::"                {
                         stepLocation();
@@ -306,12 +299,6 @@ wstring             {
                         return CHARACTER_LITERAL;
                     }
 
-L'{SingleStringCharacter}*' {
-                        stepLocation();
-                        yylval.name = strdup(yytext);
-                        return WIDE_CHARACTER_LITERAL;
-                    }
-
 {DecimalLiteral}    {
                         stepLocation();
                         yylval.name = strdup(yytext);
@@ -322,12 +309,6 @@ L'{SingleStringCharacter}*' {
                         stepLocation();
                         yylval.name = strdup(yytext);
                         return STRING_LITERAL;
-                    }
-
-L\"{DoubleStringCharacter}*\"   {
-                        stepLocation();
-                        yylval.name = strdup(yytext);
-                        return WIDE_STRING_LITERAL;
                     }
 
 {FixedPointLiteral} {
@@ -374,12 +355,6 @@ L\"{DoubleStringCharacter}*\"   {
                         stepLocation();
                         poundMode = true;
                         return POUND_SIGN;
-                    }
-
-{PoundSign}pragma({WhiteSpace})+ID  {
-                        stepLocation();
-                        poundMode = true;
-                        return PRAGMA_ID;
                     }
 
 .                   {

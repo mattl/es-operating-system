@@ -65,19 +65,19 @@ getAddressFamily()
 }
 
 const char* Inet6Address::
-getCanonicalHostName(char* hostName, int len)
+getCanonicalHostName(void* hostName, int len)
 {
     return 0;
 }
 
 const char* Inet6Address::
-getHostAddress(char* hostAddress, int len)
+getHostAddress(void* hostAddress, int len)
 {
     return 0;
 }
 
 const char* Inet6Address::
-getHostName(char* hostName, int len)
+getHostName(void* hostName, int len)
 {
     return 0;
 }
@@ -119,14 +119,14 @@ getNext()
     return 0;
 }
 
-es::Interface* Inet6Address::
+Object* Inet6Address::
 socket(int type, int protocol)
 {
     return 0;
 }
 
 // IInterface
-void* Inet6Address::
+Object* Inet6Address::
 queryInterface(const char* riid)
 {
 }

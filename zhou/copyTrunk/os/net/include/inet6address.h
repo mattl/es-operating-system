@@ -187,9 +187,9 @@ public:
     // IInternetAddress
     int getAddress(void* address, int len);
     int getAddressFamily();
-    const char* getCanonicalHostName(char* hostName, int len);
-    const char* getHostAddress(char* hostAddress, int len);
-    const char* getHostName(char* hostName, int len);
+    const char* getCanonicalHostName(void* hostName, int len);
+    const char* getHostAddress(void* hostAddress, int len);
+    const char* getHostName(void* hostName, int len);
     int getScopeID();
     bool isUnspecified();
     bool isLinkLocal();
@@ -197,10 +197,10 @@ public:
     bool isMulticast();
     bool isReachable(long long timeout);
     es::InternetAddress* getNext();
-    es::Interface* socket(int type, int protocol);
+    Object* socket(int type, int protocol);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

@@ -55,7 +55,7 @@ namespace
 es::CurrentProcess* System();
 
 // C++ version of the figure script
-void figure(html5::CanvasRenderingContext2D* canvas)
+void figure(es::CanvasRenderingContext2D* canvas)
 {
     // Bar graph
     float top = 50.0f;
@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
     Canvas* canvas = new Canvas(surface, canvasInfo.width, canvasInfo.height);
     ASSERT(canvas);
     Handle<es::Context> device = nameSpace->lookup("device");
-    device->bind("canvas", static_cast<html5::CanvasRenderingContext2D*>(canvas));
+    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
     ASSERT(nameSpace->lookup("device/canvas"));
 
     esReport("start canvas.\n");

@@ -305,7 +305,7 @@ getPartition()
 }
 
 es::Binding* AtaDevice::
-bind(const char* name, es::Interface* object)
+bind(const char* name, Object* object)
 {
     if (!getPartition())
     {
@@ -334,7 +334,7 @@ destroySubcontext(const char* name)
     return partition->destroySubcontext(name);
 }
 
-es::Interface* AtaDevice::
+Object* AtaDevice::
 lookup(const char* name)
 {
     if (!getPartition())
@@ -374,10 +374,10 @@ list(const char* name)
     return partition->list(name);
 }
 
-void* AtaDevice::
+Object* AtaDevice::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Stream::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
@@ -390,7 +390,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Context*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
@@ -398,7 +398,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

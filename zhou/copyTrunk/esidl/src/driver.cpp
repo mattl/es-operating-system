@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    char** argCpp = static_cast<char**>(malloc(sizeof(char*) * (argc + 2)));
-    char** argIdl = static_cast<char**>(malloc(sizeof(char*) * (argc + 1)));
+    const char** argCpp = static_cast<const char**>(malloc(sizeof(char*) * (argc + 2)));
+    const char** argIdl = static_cast<const char**>(malloc(sizeof(char*) * (argc + 1)));
 
     argCpp[0] = "cpp";
     argIdl[0] = "esidl2";
@@ -64,12 +64,11 @@ int main(int argc, char* argv[])
                 argCpp[optCpp++] = argv[i];
                 argIdl[optIdl++] = argv[i];
             }
-            else if (strcmp(argv[i], "-npapi") == 0 ||
-                     strcmp(argv[i], "-ent") == 0)
-            {
-                argIdl[optIdl++] = argv[i];
-            }
-            else if (strcmp(argv[i], "-debug") == 0)
+            else if (strcmp(argv[i], "-debug") == 0 ||
+                     strcmp(argv[i], "-ent") == 0 ||
+                     strcmp(argv[i], "-fexceptions") == 0 ||
+                     strcmp(argv[i], "-fno-exceptions") == 0 ||
+                     strcmp(argv[i], "-npapi") == 0)
             {
                 argIdl[optIdl++] = argv[i];
             }
@@ -79,7 +78,9 @@ int main(int argc, char* argv[])
                 ++i;
                 argCpp[optCpp++] = argv[i];
             }
-            else if (strcmp(argv[i], "-object") == 0)
+            else if (strcmp(argv[i], "-namespace") == 0 ||
+                     strcmp(argv[i], "-object") == 0 ||
+                     strcmp(argv[i], "-string") == 0)
             {
                 argIdl[optIdl++] = argv[i];
                 ++i;
@@ -104,7 +105,9 @@ int main(int argc, char* argv[])
             if (strcmp(argv[i], "-I") == 0 ||
                 strcmp(argv[i], "-include") == 0 ||
                 strcmp(argv[i], "-isystem") == 0 ||
-                strcmp(argv[i], "-object") == 0)
+                strcmp(argv[i], "-namespace") == 0 ||
+                strcmp(argv[i], "-object") == 0 ||
+                strcmp(argv[i], "-string") == 0)
             {
                 ++i;
             }
@@ -125,7 +128,7 @@ int main(int argc, char* argv[])
                 dup(stream[1]);
                 close(stream[0]);
                 close(stream[1]);
-                execvp(argCpp[0], argCpp);
+                execvp(argCpp[0], const_cast<char**>(argCpp));
                 break;
             }
             else
@@ -135,7 +138,7 @@ int main(int argc, char* argv[])
                 dup(stream[0]);
                 close(stream[0]);
                 close(stream[1]);
-                execvp(argIdl[0], argIdl);
+                execvp(argIdl[0], const_cast<char**>(argIdl));
                 break;
             }
         }

@@ -25,7 +25,7 @@
 
 
 
-int esInit(es::Interface** nameSpace);
+int esInit(Object** nameSpace);
 es::Stream* esReportStream();
 
 #define TEST(exp)                           \
@@ -52,7 +52,7 @@ void startProcess(Handle<es::Context> root, Handle<es::Process> process, Handle<
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
 
     Handle<es::Context> nameSpace(ns);

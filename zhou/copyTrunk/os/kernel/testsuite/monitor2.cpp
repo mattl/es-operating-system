@@ -123,7 +123,7 @@ char* id = "hello.";
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     // check wait(s64 timeout).

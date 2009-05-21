@@ -258,7 +258,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         }
         else
         {
-            const char* iid = es::Interface::iid();
+            const char* iid = Object::iid();
 
             // Return to the client process.
             Process* client = current->returnToClient();
@@ -282,12 +282,15 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                 case Ent::SpecVariant:
                     if (record->variant->getType() == Any::TypeObject)
                     {
-                        ip = reinterpret_cast<void**>(static_cast<es::Interface*>(*(record->variant)));
+                        ip = reinterpret_cast<void**>(static_cast<Object*>(*(record->variant)));
                     }
                     result = reinterpret_cast<intptr_t>(record->variant);
                     break;
                 case Ent::TypeInterface:
-                    iid = returnType.getInterface().getFullyQualifiedName();
+                    if (!stringIsInterfaceName)
+                    {
+                        iid = returnType.getInterface().getFullyQualifiedName();
+                    }
                     // FALL THROUGH
                 case Ent::SpecObject:
                     // Convert the received interface pointer to kernel's interface pointer
@@ -319,7 +322,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                     {
                         // Allocate an entry in the upcall table and set the
                         // interface pointer to the broker for the upcall table.
-                        int n = set(server, reinterpret_cast<es::Interface*>(ip), iid, true);
+                        int n = set(server, reinterpret_cast<Object*>(ip), iid, true);
                         if (0 <= n)
                         {
                             result = reinterpret_cast<long>(&(broker.getInterfaceTable())[n]);
@@ -481,8 +484,8 @@ copyInString(const char* string, u8* esp)
     return esp;
 }
 
-es::Interface* Process::
-copyInObject(es::Interface* object, const char* iid)
+Object* Process::
+copyInObject(Object* object, const char* iid)
 {
     if (!object)
     {
@@ -496,7 +499,7 @@ copyInObject(es::Interface* object, const char* iid)
         UpcallProxy* proxy = &upcallTable[n];
         if (proxy->process == this)
         {
-            return static_cast<es::Interface*>(proxy->object);
+            return static_cast<Object*>(proxy->object);
         }
     }
 
@@ -514,7 +517,7 @@ copyInObject(es::Interface* object, const char* iid)
     }
     // Note the reference count to the created syscall proxy must
     // be decremented by one at the end of this upcall.
-    return reinterpret_cast<es::Interface*>(ip); // XXX
+    return reinterpret_cast<Object*>(ip); // XXX
 }
 
 // Note copyIn() is called against the server process, so that
@@ -535,7 +538,7 @@ copyIn(UpcallRecord* record)
 
     int count = 0;
 
-    const char* iid = es::Interface::iid();
+    const char* iid = Object::iid();
 
     Reflect::Type returnType = record->method.getReturnType();
     if (returnType.getType() == Ent::SpecVariant)
@@ -615,7 +618,7 @@ copyIn(UpcallRecord* record)
                     *var = Any(reinterpret_cast<const char*>(esp));
                     break;
                 case Any::TypeObject:
-                    *var = Any(reinterpret_cast<es::Interface*>(copyInObject(static_cast<es::Interface*>(*var), iid)));
+                    *var = Any(reinterpret_cast<Object*>(copyInObject(static_cast<Object*>(*var), iid)));
                     break;
                 }
                 memcpy(argp, paramp, sizeof(AnyBase));
@@ -673,7 +676,7 @@ copyIn(UpcallRecord* record)
             iid = type.getInterface().getFullyQualifiedName();
             // FALL THROUGH
         case Ent::SpecObject:
-            *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<es::Interface**>(paramp), iid);
+            *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<Object**>(paramp), iid);
             // Note the reference count to the created syscall proxy must
             // be decremented by one at the end of this upcall.
             ++paramp;
@@ -809,7 +812,7 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
                 Any* var = reinterpret_cast<Any*>(paramp);
                 if (var->getType() == Any::TypeObject)
                 {
-                    ip = reinterpret_cast<void**>(static_cast<es::Interface*>(*var));
+                    ip = reinterpret_cast<void**>(static_cast<Object*>(*var));
                 }
                 paramp += sizeof(AnyBase) / sizeof(int);
             }

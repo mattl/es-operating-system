@@ -1,11 +1,24 @@
-interface I
+module X
 {
-    long op();
-    #pragma ID I = "DCE:B196B286-BAB4-101A-B69C-00AA00241D07";
-};
+    exception E
+    {
+        unsigned short code;
+    };
 
-interface J : I
-{
-    long op();
-    #pragma ID J = "DCE:8e76c0d0-5f02-4566-9bb5-bb11e677a889";
+    exception F
+    {
+        unsigned short code;
+    };
+
+    interface Y
+    {
+        readonly attribute double a;
+        readonly attribute double b setraises (F);
+        readonly attribute double c getraises (E);
+        readonly attribute double d getraises (E) setraises (F);
+        attribute double s;
+        attribute double t setraises (F);
+        attribute double u getraises (E);
+        attribute double v getraises (E) setraises (F);
+    };
 };

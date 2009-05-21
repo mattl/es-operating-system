@@ -120,7 +120,7 @@ addInterface(es::NetworkInterface* networkInterface)
     return scopeID;
 }
 
-es::Interface* InternetConfig::
+Object* InternetConfig::
 getInterface(int scopeID)
 {
     NetworkInterface* interface = Socket::getInterface(scopeID);
@@ -168,13 +168,13 @@ addSearchDomain(const char* address)
 }
 
 const char* InternetConfig::
-getSearchDomain(char* address, int addressLength)
+getSearchDomain(void* address, int addressLength)
 {
     return getSearchDomain(address, addressLength, 0);
 }
 
 const char* InternetConfig::
-getSearchDomain(char* address, int addressLength, int pos)
+getSearchDomain(void* address, int addressLength, int pos)
 {
     Collection<char*>::Iterator domainIter = domains.begin();
     char* ptr;
@@ -192,8 +192,8 @@ getSearchDomain(char* address, int addressLength, int pos)
         return 0;
     }
 
-    strncpy(address, ptr, addressLength);
-    return address;
+    strncpy(static_cast<char*>(address), ptr, addressLength);
+    return static_cast<char*>(address);
 }
 
 void InternetConfig::
@@ -212,15 +212,15 @@ removeSearchDomain(const char* address)
     }
 }
 
-void* InternetConfig::
+Object* InternetConfig::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::InternetConfig::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetConfig*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::InternetConfig*>(this);
     }
@@ -228,7 +228,7 @@ queryInterface(const char* riid)
     {
         return 0;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

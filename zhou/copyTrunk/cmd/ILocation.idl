@@ -32,12 +32,9 @@ module es
     [ Constructor ]
     interface Location
     {
-        #pragma ID Location = "DCE:113772a7-bf4a-4c91-b4cc-50514cf3b4f0";
-
         void set(in Point point);
         void get(out Point point);
         void move(in Point direction);
-
         attribute string name;
     };
 };

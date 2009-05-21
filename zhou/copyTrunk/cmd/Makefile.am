@@ -3,7 +3,7 @@ SUBDIRS = . testsuite
 SUFFIXES = .h .idl .ent
 
 %.h %.ent: %.idl
-	esidl -I$(srcdir)/../include -include es/base/IInterface.idl -object ::es::Interface -ent $<
+	esidl -I$(srcdir)/../include -include es/object.idl -ent $<
 
 %.c : %.ent
 	mkdir -p $(*D);

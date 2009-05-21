@@ -20,8 +20,8 @@
 class Cxx : public CPlusPlus
 {
 public:
-    Cxx(FILE* file) :
-        CPlusPlus(file)
+    Cxx(FILE* file, const char* stringTypeName = "char*", bool useExceptions = true) :
+        CPlusPlus(file, stringTypeName, useExceptions)
     {
     }
 
@@ -82,7 +82,7 @@ public:
             int count = 0;
             for (NodeList::iterator i = node->begin(); i != node->end(); ++i)
             {
-                if (dynamic_cast<PragmaID*>(*i) || (*i)->isSequence(node) || (*i)->isNative(node))
+                if ((*i)->isSequence(node) || (*i)->isNative(node))
                 {
                     continue;
                 }
@@ -90,6 +90,7 @@ public:
                 optionalStage = 0;
                 do
                 {
+#ifdef USE_FUNCTION_CALLBACK
                     callbackStage = 0;
                     do
                     {
@@ -105,6 +106,16 @@ public:
                         (*i)->accept(this);
                         ++callbackStage;
                     } while (callbackStage < (1u << callbackCount));
+#else  // USE_FUNCTION_CALLBACK
+                    if (0 < count)
+                    {
+                        write(";\n");
+                    }
+                    optionalCount = 0;
+                    ++count;
+                    writetab();
+                    (*i)->accept(this);
+#endif  // USE_FUNCTION_CALLBACK
                     ++optionalStage;
                 } while (optionalStage <= optionalCount);
             }
@@ -116,7 +127,8 @@ public:
             writeln("static const char* iid()");
             writeln("{");
             indent();
-                writeln("static const char* name = \"%s\";", node->getQualifiedName().c_str());
+                writeln("static const char* const name = \"%s\";",
+                        node->getQualifiedName().c_str());
                 writeln("return name;");
             unindent();
             writeln("}");
@@ -213,10 +225,6 @@ public:
         {
             write("%s", node->getName().c_str());
         }
-    }
-
-    virtual void at(const PragmaID* node)
-    {
     }
 
     virtual void at(const Member* node)
@@ -417,7 +425,7 @@ public:
     }
 };
 
-void printCxx(const std::string& filename)
+void printCxx(const std::string& filename, const char* stringTypeName, bool useExceptions)
 {
     printf("# %s\n", filename.c_str());
 
@@ -439,10 +447,13 @@ void printCxx(const std::string& filename)
         fprintf(file, "\n");
     }
 
-    Predeclaration predeclaration(file);
-    getSpecification()->accept(&predeclaration);
+    if (!Node::getFlatNamespace())
+    {
+        Predeclaration predeclaration(file);
+        getSpecification()->accept(&predeclaration);
+    }
 
-    Cxx cxx(file);
+    Cxx cxx(file, stringTypeName, useExceptions);
     getSpecification()->accept(&cxx);
 
     fprintf(file, "#endif  // %s\n", included.c_str());

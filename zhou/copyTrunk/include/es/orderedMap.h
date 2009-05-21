@@ -46,7 +46,7 @@ public:
         return size;
     }
 
-    const char* getByIndex(char* string, int stringLength, unsigned int index)
+    const char* getByIndex(void* string, int stringLength, unsigned int index)
     {
         int count = 0;
         MapTree::Iterator it = tree.begin();
@@ -57,7 +57,7 @@ public:
                 std::string& str = node->getValue();
                 int len = std::min((int)str.length(), stringLength);
                 std::memmove(string, str.c_str(), len);
-                return string;
+                return static_cast<char*>(string);
             }
             count++;
         }
@@ -86,7 +86,7 @@ public:
         }
     }
 
-    const char* get(char* string, int stringLength, const char* name)
+    const char* get(void* string, int stringLength, const char* name)
     {
         std::string key(name);
         try
@@ -94,7 +94,7 @@ public:
             std::string str = tree.get(key);
             int len = std::min((int)str.length(), stringLength);
             std::memmove(string, str.c_str(), len);
-            return string;
+            return static_cast<char*>(string);
         }
         catch (...)
         {
@@ -115,14 +115,14 @@ public:
         size++;
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::OrderedMap::iid()) == 0)
         {
             objectPtr = static_cast<es::OrderedMap*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::OrderedMap*>(this);
         }
@@ -130,7 +130,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 

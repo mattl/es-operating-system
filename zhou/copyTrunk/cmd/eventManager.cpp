@@ -34,8 +34,6 @@
 
 #include "eventManager.h"
 
-
-
 #define TEST(exp)                           \
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
@@ -731,10 +729,10 @@ public:
         }
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::EventQueue*>(this);
         }
@@ -746,7 +744,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 

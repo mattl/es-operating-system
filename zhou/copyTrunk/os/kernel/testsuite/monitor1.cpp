@@ -79,7 +79,7 @@ void* test1(void*)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     // check tryLock()

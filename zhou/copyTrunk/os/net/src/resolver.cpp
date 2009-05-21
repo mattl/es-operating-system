@@ -450,16 +450,16 @@ getHostByName(const char* hostName, int addressFamily)
 }
 
 const char* Resolver::
-getHostName(char* hostName, int len, es::InternetAddress* address)
+getHostName(void* hostName, int len, es::InternetAddress* address)
 {
     Synchronized<es::Monitor*> method(monitor);
 
-    if (!setup() || !control->getHostName(address, hostName, len))
+    if (!setup() || !control->getHostName(address, static_cast<char*>(hostName), len))
     {
         return 0;
     }
 
-    return hostName;
+    return static_cast<char*>(hostName);
 }
 
 // Note DNS is not queried.
@@ -518,15 +518,15 @@ getHostByAddress(const void* address, int len, unsigned int scopeID)
     return 0;
 }
 
-void* Resolver::
+Object* Resolver::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Resolver::iid()) == 0)
     {
         objectPtr = static_cast<es::Resolver*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Resolver*>(this);
     }
@@ -534,7 +534,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

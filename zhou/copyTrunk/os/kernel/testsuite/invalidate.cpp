@@ -86,7 +86,7 @@ int main()
     es::Cache* cache;
     es::Stream* stream;
     int result = -1;
-    es::Interface* root = NULL;
+    Object* root = NULL;
 
     esInit(&root);
 

@@ -38,7 +38,7 @@
 
 const InAddr DHCPHdr::magicCookie = { htonl(99 << 24 | 130 << 16 | 83 << 8 | 99) };
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 extern void esRegisterInternetProtocol(es::Context* context);
 
@@ -803,14 +803,14 @@ public:
         return enabled;
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Service::iid()) == 0)
         {
             objectPtr = static_cast<es::Service*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Service*>(this);
         }
@@ -818,7 +818,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 

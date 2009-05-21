@@ -143,7 +143,7 @@ class Thread : public es::Thread, public es::Callback, public Lock
 {
     friend class Sched;
     friend class Process;
-    friend int esInit(es::Interface** nameSpace);
+    friend int esInit(Object** nameSpace);
 
 public:
     static Sched*       sched;      // XXX
@@ -232,7 +232,7 @@ public:
         void spinUnlock();
 
         // IInterface
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
 
@@ -268,7 +268,7 @@ public:
         {
         public:
             es::Monitor* createInstance();
-            void* queryInterface(const char* riid);
+            Object* queryInterface(const char* riid);
             unsigned int addRef();
             unsigned int release();
         };
@@ -377,7 +377,7 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -454,7 +454,7 @@ public:
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

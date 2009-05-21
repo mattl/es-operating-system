@@ -107,15 +107,15 @@ flush()
     cache->flush();
 }
 
-void* Stream::
+Object* Stream::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Stream::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
@@ -127,7 +127,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -303,7 +303,7 @@ isHidden()
 }
 
 const char* Stream::
-getName(char* name, int nameLength)
+getName(void* name, int nameLength)
 {
     ASSERT(cache->file);
     return cache->file->getName(name, nameLength);

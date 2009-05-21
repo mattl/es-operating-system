@@ -25,10 +25,6 @@
 #include <string>
 #include "esidl.h"
 
-// Turn this on to use a function pointer rather than an interface pointer for
-// attributes of [Callback=FunctionOnly] interface.
-// #define USE_FUNCTION_ATTRIBUTE
-
 class CPlusPlus : public Visitor
 {
 protected:
@@ -36,11 +32,17 @@ protected:
 
     std::string indentString;
     std::string prefix;
+
     FILE* file;
+    std::string stringTypeName;
+    bool useExceptions;
+
     bool constructorMode;
     std::string asParam;
+#ifdef USE_FUNCTION_CALLBACK
     int callbackStage;
     int callbackCount;
+#endif
     int optionalStage;
     int optionalCount;
 
@@ -49,8 +51,9 @@ protected:
 
     int paramCount;  // The number of parameters of the previously evaluated operation
     const ParamDcl* variadicParam;  // Non-NULL if the last parameter of the previously evaluated operation is variadic
-    std::map<const ParamDcl*, const OpDcl*> callbacks;
 
+#ifdef USE_FUNCTION_CALLBACK
+    std::map<const ParamDcl*, const OpDcl*> callbacks;
     // param mode saved context.
     // XXX doesn't work if callback takes callbacks as arguments...
     struct
@@ -63,6 +66,7 @@ protected:
         const ParamDcl* variadicParam;
         std::map<const ParamDcl*, const OpDcl*> callbacks;
     } savedContext;
+#endif  // USE_FUNCTION_CALLBACK
 
     int getParamCount() const
     {
@@ -157,12 +161,16 @@ protected:
     }
 
 public:
-    CPlusPlus(FILE* file) :
+    CPlusPlus(FILE* file, const char* stringTypeName = "char*", bool useExceptions = true) :
         file(file),
+        stringTypeName(stringTypeName),
+        useExceptions(useExceptions),
         constructorMode(false),
         currentNode(getSpecification()),
+#ifdef USE_FUNCTION_CALLBACK
         callbackStage(0),
         callbackCount(0),
+#endif  // USE_FUNCTION_CALLBACK
         paramCount(0),
         variadicParam(0)
     {
@@ -177,9 +185,9 @@ public:
             if (resolved)
             {
                 name = resolved->getQualifiedName();
+                name = getInterfaceName(name);
                 name = getScopedName(moduleName, name);
             }
-            name = getInterfaceName(name);
             write("%s", name.c_str());
         }
         else
@@ -236,32 +244,9 @@ public:
         {
             write("Any");
         }
-        else if (node->getName() == "wchar")
-        {
-            write("wchar_t");
-        }
         else if (node->getName() == "string")
         {
-            write("char*");
-        }
-        else if (node->getName() == "wstring")
-        {
-            write("wchar_t*");
-        }
-        else if (node->getName() == "Object")
-        {
-            if (const char* base = Node::getBaseObjectName())
-            {
-                write("%s", getScopedName(moduleName, base).c_str());
-            }
-            else
-            {
-                write("void");
-            }
-        }
-        else if (node->getName() == "uuid")
-        {
-            write("Guid&");
+            write(stringTypeName.c_str());
         }
         else
         {
@@ -316,13 +301,11 @@ public:
             seq->accept(this);
             write(" %s, int %sLength)", name.c_str(), name.c_str());
         }
-        else if (spec->isString(node->getParent()) || spec->isWString(node->getParent()))
+        else if (spec->isString(node->getParent()))
         {
             write("const ", cap.c_str());
             spec->accept(this);
-            write(" get%s(", cap.c_str());
-            spec->accept(this);
-            write(" %s, int %sLength)", name.c_str(), name.c_str());
+            write(" get%s(void* %s, int %sLength)", cap.c_str(), name.c_str(), name.c_str());
         }
         else if (spec->isStruct(node->getParent()))
         {
@@ -384,6 +367,12 @@ public:
             }
             write(" get%s()", cap.c_str());
         }
+        if (useExceptions && node->getGetRaises())
+        {
+            write(" throw(");
+            node->getGetRaises()->accept(this);
+            write(")");
+        }
     }
 
     bool setter(const Attribute* node)
@@ -426,7 +415,7 @@ public:
             seq->accept(this);
             write(" %s, int %sLength)", name.c_str(), name.c_str());
         }
-        else if (spec->isString(node->getParent()) || spec->isWString(node->getParent()))
+        else if (spec->isString(node->getParent()))
         {
             write("void set%s(const ", cap.c_str());
             spec->accept(this);
@@ -485,13 +474,20 @@ public:
             }
             write(" %s)", name.c_str());
         }
+        if (useExceptions && node->getSetRaises())
+        {
+            write(" throw(");
+            node->getSetRaises()->accept(this);
+            write(")");
+        }
         return true;
     }
 
     virtual void at(const OpDcl* node)
     {
+#ifdef USE_FUNCTION_CALLBACK
         callbacks.clear();
-
+#endif  // USE_FUNCTION_CALLBACK
         if (asParam == "")
         {
             if (!constructorMode)
@@ -529,7 +525,7 @@ public:
             seq->accept(this);
             write(" %s, int %sLength", name.c_str(), name.c_str());
         }
-        else if (spec->isString(node->getParent()) || spec->isWString(node->getParent()))
+        else if (spec->isString(node->getParent()))
         {
             std::string name = spec->getName();
             size_t pos = name.rfind("::");
@@ -549,8 +545,7 @@ public:
             {
                 write(" (*%s)(", node->getName().c_str());
             }
-            spec->accept(this);
-            write(" %s, int %sLength", name.c_str(), name.c_str());
+            write("void* %s, int %sLength", name.c_str(), name.c_str());
         }
         else if (spec->isStruct(node->getParent()))
         {
@@ -666,7 +661,7 @@ public:
         }
 
         write(")");
-        if (node->getRaises())
+        if (useExceptions && node->getRaises())
         {
             write(" throw(");
             node->getRaises()->accept(this);
@@ -690,9 +685,7 @@ public:
         if (node->isInput())
         {
             if (seq && !seq->getSpec()->isInterface(currentNode) ||
-                spec->isGuid(node->getParent()) ||
                 spec->isString(node->getParent()) ||
-                spec->isWString(node->getParent()) ||
                 spec->isStruct(node->getParent()) ||
                 spec->isArray(node->getParent()))
             {
@@ -724,6 +717,7 @@ public:
         {
             if (spec->isInterface(node->getParent()))
             {
+#ifdef USE_FUNCTION_CALLBACK
                 Interface* callback = dynamic_cast<Interface*>(dynamic_cast<ScopedName*>(spec)->search(node->getParent()));
                 uint32_t attr;
                 if (callback && (attr = callback->isCallback()) != 0)
@@ -756,6 +750,7 @@ public:
                         return;
                     }
                 }
+#endif  // USE_FUNCTION_CALLBACK
                 spec->accept(this);
                 write("*");
             }
@@ -767,8 +762,7 @@ public:
             {
                 spec->accept(this);
             }
-            if (!spec->isString(node->getParent()) &&
-                !spec->isWString(node->getParent()))
+            if (!spec->isString(node->getParent()))
             {
                 if (!node->isInput())
                 {
@@ -793,7 +787,7 @@ public:
 
     static std::string getInterfaceName(std::string qualifiedName)
     {
-        if (qualifiedName == "Object")
+        if (qualifiedName == "::Object")
         {
             if (const char* base = Node::getBaseObjectName())
             {
@@ -807,6 +801,7 @@ public:
         return qualifiedName;
     }
 
+#ifdef USE_FUNCTION_CALLBACK
     const OpDcl* isCallback(const ParamDcl* param) const
     {
         std::map<const ParamDcl*, const OpDcl*>::const_iterator i = callbacks.find(param);
@@ -840,6 +835,7 @@ public:
         variadicParam = savedContext.variadicParam;
         callbacks = savedContext.callbacks;
     }
+#endif
 };
 
 #endif  // NINTENDO_ESIDL_CPLUSPLUS_H_INCLUDED

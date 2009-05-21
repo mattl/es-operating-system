@@ -80,7 +80,7 @@ public:
     int invoke(int);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

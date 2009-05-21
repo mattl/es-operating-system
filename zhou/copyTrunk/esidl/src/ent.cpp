@@ -129,6 +129,20 @@ public:
         }
 
         process(node->getSpec(), node->getParent());
+        if (Node* raises = node->getGetRaises())
+        {
+            for (NodeList::iterator i = raises->begin(); i != raises->end(); ++i)
+            {
+                process(*i, node->getParent());
+            }
+        }
+        if (Node* raises = node->getSetRaises())
+        {
+            for (NodeList::iterator i = raises->begin(); i != raises->end(); ++i)
+            {
+                process(*i, node->getParent());
+            }
+        }
     }
 
     virtual void at(const OpDcl* node)
@@ -204,10 +218,10 @@ public:
         }
 
         node->setOffset(offset);
-        offset += Ent::Method::getSize(0, 0);
+        offset += Ent::Method::getSize(0, node->getGetRaisesCount());
         if (!node->isReadonly() || node->isPutForwards() || node->isReplaceable())
         {
-            offset += Ent::Method::getSize(1, 0);
+            offset += Ent::Method::getSize(1, node->getSetRaisesCount());
         }
     }
 
@@ -221,7 +235,7 @@ public:
         node->setOffset(offset);
         for (int i = 0; i < node->getMethodCount(); ++i)
         {
-            offset += Ent::Method::getSize(node->getParamCount(i), node->getRaiseCount());
+            offset += Ent::Method::getSize(node->getParamCount(i), node->getRaisesCount());
         }
     }
 };
@@ -540,7 +554,17 @@ public:
         }
 
         printf("%04zx: Getter %s : %x\n", node->getOffset(), node->getName().c_str(), spec);
-        new(image + node->getOffset()) Ent::Method(spec, dict[node->getName()], Ent::AttrGetter, 0, 0);
+        Ent::Method* getter = new(image + node->getOffset())
+                Ent::Method(spec, dict[node->getName()], Ent::AttrGetter, 0, node->getGetRaisesCount());
+        if (Node* raises = node->getGetRaises())
+        {
+            for (NodeList::iterator i = raises->begin(); i != raises->end(); ++i)
+            {
+                getter->addRaise(getSpec(*i, node));
+                printf("  Raise %x\n", getSpec(*i, node));
+            }
+        }
+
         if (!node->isReadonly() || node->isPutForwards() || node->isReplaceable())
         {
             if (node->isPutForwards())
@@ -551,11 +575,19 @@ public:
                 assert(forwards);
                 spec = getSpec(forwards->getSpec(), target);
             }
-            interface->addMethod(node->getOffset() + Ent::Method::getSize(0, 0));
-            printf("%04zx: Setter %s : %x\n", node->getOffset() + Ent::Method::getSize(0, 0), node->getName().c_str(), spec);
-            Ent::Method* setter = new(image + node->getOffset() + Ent::Method::getSize(0, 0))
-                                    Ent::Method(Ent::SpecVoid, dict[node->getName()], Ent::AttrSetter, 1, 0);
+            interface->addMethod(node->getOffset() + Ent::Method::getSize(0, node->getGetRaisesCount()));
+            printf("%04zx: Setter %s : %x\n", node->getOffset() + Ent::Method::getSize(0, node->getGetRaisesCount()), node->getName().c_str(), spec);
+            Ent::Method* setter = new(image + node->getOffset() + Ent::Method::getSize(0, node->getGetRaisesCount()))
+                                    Ent::Method(Ent::SpecVoid, dict[node->getName()], Ent::AttrSetter, 1, node->getSetRaisesCount());
             setter->addParam(spec, dict[node->getName()], Ent::AttrIn);
+            if (Node* raises = node->getSetRaises())
+            {
+                for (NodeList::iterator i = raises->begin(); i != raises->end(); ++i)
+                {
+                    setter->addRaise(getSpec(*i, node));
+                    printf("  Raise %x\n", getSpec(*i, node));
+                }
+            }
         }
 
         node->getSpec()->accept(this);
@@ -667,22 +699,7 @@ public:
                 new(image + node->getOffset()) Ent::Constant(spec, dict[node->getName()], static_cast<uint32_t>(eval.getValue()));
             }
             break;
-        case Ent::SpecWChar:
-            {
-                EvalString<wchar_t> eval(node->getParent());
-                node->getExp()->accept(&eval);
-                new(image + node->getOffset()) Ent::Constant(spec, dict[node->getName()], static_cast<uint32_t>(eval.getValue()));
-            }
-            break;
         case Ent::SpecString:
-            {
-                EvalString<std::string> eval(node->getParent());
-                node->getExp()->accept(&eval);
-                new(image + node->getOffset()) Ent::Constant(spec, dict[node->getName()], node->getValue());
-                strcpy(reinterpret_cast<char*>(image + node->getValue()), eval.getValue().c_str());
-            }
-            break;
-        case Ent::SpecWString:
             {
                 EvalString<std::string> eval(node->getParent());
                 node->getExp()->accept(&eval);
@@ -706,26 +723,26 @@ public:
         assert(interface->type == Ent::TypeInterface);
 
         int methodNumber = 0;
-        callbackStage = 0;
         optionalStage = 0;
         do
         {
-            optionalCount = 0;
+            callbackStage = 0;
             do
             {
+                optionalCount = 0;
                 callbackCount = 0;
 
                 size_t offset = node->getOffset();
                 for (int i = 0; i < methodNumber; ++i)
                 {
-                    offset += Ent::Method::getSize(node->getParamCount(i), node->getRaiseCount());
+                    offset += Ent::Method::getSize(node->getParamCount(i), node->getRaisesCount());
                 }
 
                 interface->addMethod(offset);
                 Ent::Spec spec = getSpec(node->getSpec(), getCurrent());
                 Ent::Method* method = new(image + offset)
                     Ent::Method(spec, dict[node->getName()], node->getAttr(),
-                                node->getParamCount(methodNumber), node->getRaiseCount());
+                                node->getParamCount(methodNumber), node->getRaisesCount());
 
                 printf("%04zx: Method %s : %x\n", offset, node->getName().c_str(), spec);
                 int paramCount = 0;
@@ -745,8 +762,9 @@ public:
                     }
 
                     Ent::Spec spec = getSpec(param->getSpec(), node);
-
-                    if (param->getSpec()->isInterface(node->getParent()))
+#ifdef USE_FUNCTION_CALLBACK
+                    if (param->getSpec()->isInterface(node->getParent()) &&
+                        dynamic_cast<ScopedName*>(param->getSpec()))  // param->getSpec() can be 'Object'
                     {
                         Interface* callback = dynamic_cast<Interface*>(dynamic_cast<ScopedName*>(param->getSpec())->search(node->getParent()));
                         uint32_t attr;
@@ -770,6 +788,7 @@ public:
                             }
                         }
                     }
+#endif  // USE_FUNCTION_CALLBACK
                     method->addParam(spec, dict[param->getName()], param->getAttr());
                     printf("  Param %s : %x\n", param->getName().c_str(), spec);
                 }

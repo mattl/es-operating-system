@@ -31,7 +31,7 @@
 
 
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 
 void printAddress(es::InternetAddress* address)
@@ -57,7 +57,7 @@ void printAddress(es::InternetAddress* address)
 
 int main()
 {
-    es::Interface* root = 0;
+    Object* root = 0;
     esInit(&root);
     Handle<es::Context> context(root);
 

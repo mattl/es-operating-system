@@ -25,7 +25,7 @@
 #include <es/handle.h>
 #include "iso9660Stream.h"
 
-es::Interface* Iso9660Stream::
+Object* Iso9660Stream::
 getObject()
 {
     addRef();
@@ -33,7 +33,7 @@ getObject()
 }
 
 void Iso9660Stream::
-setObject(es::Interface* object)
+setObject(Object* object)
 {
     esThrow(EACCES); // [check] appropriate?
 }

@@ -76,7 +76,7 @@ void CheckAssociatedPage(es::Cache* cache, unsigned long numPage)
 
 int main()
 {
-    es::Interface* root = 0;
+    Object* root = 0;
     esInit(&root);
 
     unsigned long initialMaxFreeCount = PageTable::getFreeCount();

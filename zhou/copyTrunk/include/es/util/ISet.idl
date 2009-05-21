@@ -26,12 +26,12 @@ module es
      */
     interface Set
     {
-        boolean add(in Interface element);
+        boolean add(in Object element);
         boolean clear();
-        boolean contains(in Interface element);
+        boolean contains(in Object element);
         readonly attribute boolean empty;
         Iterator iterator();
-        boolean remove(in Interface element);
+        boolean remove(in Object element);
         long size();
     };
 };

@@ -87,7 +87,7 @@ public:
     void getLayout(Partition* partition);
     void setLayout(const Partition* partition);
 
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -141,10 +141,10 @@ public:
         PartitionStream::Partition* partition);
 
     // IContext
-    es::Binding* bind(const char* name, es::Interface* object);
+    es::Binding* bind(const char* name, Object* object);
     es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    es::Interface* lookup(const char* name);
+    Object* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
     es::Iterator* list(const char* name);
@@ -154,7 +154,7 @@ public:
     int mount(es::Stream* disk);
     int unmount();
 
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -210,7 +210,7 @@ public:
     {
     public:
         es::Partition* createInstance();
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -232,15 +232,15 @@ public:
 
     // IIterator
     bool hasNext();
-    es::Interface* next();
+    Object* next();
     int remove();
 
     // IBinding
-    es::Interface* getObject();
-    void setObject(es::Interface* object);
-    const char* getName(char* name, int len);
+    Object* getObject();
+    void setObject(Object* object);
+    const char* getName(void* name, int len);
 
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

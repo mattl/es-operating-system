@@ -118,7 +118,7 @@ void test(Handle<es::Context> root)
 
 int main(void)
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     FatFileSystem::initializeConstructor();
     Handle<es::Context> nameSpace(ns);

@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <es/reflect.h>
-#include <es/base/IInterface.h>
+#include <es/object.h>
 #include <es/base/IAlarm.h>
 #include <es/base/ICache.h>
 #include <es/base/IPageSet.h>
@@ -29,7 +29,7 @@
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    Interface* getConstructor(const char* iid);
+    Object* getConstructor(const char* iid);
     extern unsigned char* defaultInterfaceInfo[];
     extern size_t defaultInterfaceCount;
 }  // namespace es
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 {
     printf("%p\n", es::getConstructor(es::Alarm::iid()));
     printf("%p\n", es::Alarm::getConstructor());
-    if (es::getConstructor(es::Alarm::iid()) != reinterpret_cast<es::Interface*>(es::Alarm::getConstructor()))
+    if (es::getConstructor(es::Alarm::iid()) != reinterpret_cast<Object*>(es::Alarm::getConstructor()))
     {
         return EXIT_FAILURE;
     }

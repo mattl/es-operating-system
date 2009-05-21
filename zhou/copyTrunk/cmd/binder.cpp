@@ -38,7 +38,7 @@ class Binder : public es::Binding
     static int  id;
 
     Ref         ref;
-    es::Interface* object;
+    Object* object;
     char        name[14];
 
 public:
@@ -56,12 +56,12 @@ public:
         }
     }
 
-    es::Interface* getObject()
+    Object* getObject()
     {
         return object;
     }
 
-    void setObject(es::Interface* element)
+    void setObject(Object* element)
     {
         if (element)
         {
@@ -88,7 +88,7 @@ public:
     void* queryInterface(const char* riid)
     {
         void* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Binding*>(this);
         }
@@ -100,7 +100,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        static_cast<Object*>(objectPtr)->addRef();
         return objectPtr;
     }
 

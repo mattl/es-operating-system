@@ -25,7 +25,7 @@
     (void) ((exp) ||                        \
             (esPanic(__FILE__, __LINE__, "\nFailed test " #exp), 0))
 
-class Foo : public es::Interface
+class Foo : public Object
 {
     int ref;
 
@@ -38,18 +38,18 @@ public:
     {
     }
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
-        if (strcmp(riid, es::Interface::iid()) == 0)
+        Object* objectPtr;
+        if (strcmp(riid, Object::iid()) == 0)
         {
-            objectPtr = static_cast<es::Interface*>(this);
+            objectPtr = static_cast<Object*>(this);
         }
         else
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -86,7 +86,7 @@ static int test_without_smart_pointer(es::Context* context)
     es::Iterator* iterator;
     char name[64];
     es::Binding* binding;
-    es::Interface* unknown;
+    Object* unknown;
     Foo foo;
 
     binding = context->bind("a", &foo);
@@ -100,7 +100,7 @@ static int test_without_smart_pointer(es::Context* context)
     binding->release();
 
     unknown = context->lookup("sub/d");
-    TEST(unknown == static_cast<es::Interface*>(&foo));
+    TEST(unknown == static_cast<Object*>(&foo));
     unknown->release();
 
     const char* namelist[] =
@@ -237,7 +237,7 @@ static int test_with_smart_pointer(es::Context* _context)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     es::Context* context;
 

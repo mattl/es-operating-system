@@ -654,10 +654,10 @@ defrag()
     return 0;
 }
 
-void* FatFileSystem::
+Object* FatFileSystem::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::FatFileSystem::iid()) == 0)
     {
         objectPtr = static_cast<es::FatFileSystem*>(this);
@@ -666,7 +666,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::FatFileSystem*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::FatFileSystem*>(this);
     }
@@ -674,7 +674,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 
@@ -702,15 +702,15 @@ createInstance()
     return new FatFileSystem;
 }
 
-void* FatFileSystem::Constructor::
+Object* FatFileSystem::Constructor::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::FatFileSystem::Constructor::iid()) == 0)
     {
         objectPtr = static_cast<es::FatFileSystem::Constructor*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::FatFileSystem::Constructor*>(this);
     }
@@ -718,7 +718,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

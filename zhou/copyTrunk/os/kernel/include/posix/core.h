@@ -58,8 +58,8 @@ public:
     int setCancelType(int type);
     void testCancel();
 
-    // es::Interface
-    void* queryInterface(const char* riid);
+    // Object
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -83,8 +83,8 @@ public:
     void notify();
     void notifyAll();
 
-    // es::Interface
-    void* queryInterface(const char* riid);
+    // Object
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -111,7 +111,7 @@ public:
     {
     public:
         es::Monitor* createInstance();
-        void* queryInterface(const char* riid);
+        Object* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -154,8 +154,8 @@ public:
     void* join();
     void cancel();
 
-    // es::Interface
-    void* queryInterface(const char* riid);
+    // Object
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -194,7 +194,7 @@ class SpinLock : public Monitor
 
 #include "cache.h"
 
-int esInit(es::Interface** nameSpace);
+int esInit(Object** nameSpace);
 es::Thread* esCreateThread(void* (*start)(void* param), void* param);
 es::Monitor* esCreateMonitor();
 

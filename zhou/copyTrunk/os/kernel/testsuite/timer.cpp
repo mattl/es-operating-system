@@ -41,7 +41,7 @@ public:
 
 int main()
 {
-    es::Interface* nameSpace = 0;
+    Object* nameSpace = 0;
     esInit(&nameSpace);
 
     Tick task;

@@ -687,10 +687,10 @@ remove(es::Monitor* selector)
 // IInterface
 //
 
-void* Socket::
+Object* Socket::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Socket::iid()) == 0)
     {
         objectPtr = static_cast<es::Socket*>(this);
@@ -699,19 +699,19 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Selectable*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Socket*>(this);
     }
     else if (strcmp(riid, es::MulticastSocket::iid()) == 0 && type == es::Socket::Datagram)
     {
-        objectPtr = static_cast<Socket*>(this);
+        objectPtr = static_cast<es::Socket*>(this);
     }
     else
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

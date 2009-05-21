@@ -307,9 +307,9 @@ public:
     // IInternetAddress
     int getAddress(void* address, int len);
     int getAddressFamily();
-    const char* getCanonicalHostName(char* hostName, int len);
-    const char* getHostAddress(char* hostAddress, int len);
-    const char* getHostName(char* hostName, int len);
+    const char* getCanonicalHostName(void* hostName, int len);
+    const char* getHostAddress(void* hostAddress, int len);
+    const char* getHostName(void* hostName, int len);
 
     int getScopeID()
     {
@@ -361,10 +361,10 @@ public:
 
     es::InternetAddress* getNext();
 
-    es::Interface* socket(int type, int protocol, int port);
+    Object* socket(int type, int protocol, int port);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 

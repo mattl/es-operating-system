@@ -54,11 +54,11 @@ endif X86_64
 # default interface descriptions
 #
 nodist_libessup___a_SOURCES = \
+	es/object.c \
 	es/base/IAlarm.c \
 	es/base/ICache.c \
 	es/base/ICallback.c \
 	es/base/IFile.c \
-	es/base/IInterface.c \
 	es/base/IInterfaceStore.c \
 	es/base/IMonitor.c \
 	es/base/IPageable.c \

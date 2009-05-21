@@ -55,7 +55,7 @@ static void* writeData(void* param)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     Context = root;

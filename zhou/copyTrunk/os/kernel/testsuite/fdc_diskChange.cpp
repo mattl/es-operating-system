@@ -29,7 +29,7 @@ int main()
 {
     long ret;
 
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
     Handle<es::Context> root(nameSpace);

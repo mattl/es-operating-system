@@ -82,7 +82,7 @@ void* test0(void*)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
 
     es::Thread* thread0 = new Thread(test0,            // thread function

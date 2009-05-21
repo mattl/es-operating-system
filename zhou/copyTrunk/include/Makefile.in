@@ -160,11 +160,11 @@ nobase_include_HEADERS = es.h es/any.h es/broker.h es/capability.h \
 	es/types.h es/usage.h es/utf.h es/uuid.h es/net/arp.h \
 	es/net/dhcp.h es/net/dns.h es/net/dix.h es/net/icmp.h \
 	es/net/igmp.h es/net/inet4.h es/net/inet6.h es/net/tcp.h \
-	es/net/udp.h es/orderedMap.h es/base/IAlarm.idl \
+	es/net/udp.h es/orderedMap.h es/object.idl es/base/IAlarm.idl \
 	es/base/ICache.idl es/base/ICallback.idl es/base/IFile.idl \
-	es/base/IInterface.idl es/base/IInterfaceStore.idl \
-	es/base/IMonitor.idl es/base/IPageable.idl \
-	es/base/IPageSet.idl es/base/IProcess.idl es/base/IRuntime.idl \
+	es/base/IInterfaceStore.idl es/base/IMonitor.idl \
+	es/base/IPageable.idl es/base/IPageSet.idl \
+	es/base/IProcess.idl es/base/IRuntime.idl \
 	es/base/ISelectable.idl es/base/IService.idl \
 	es/base/IStream.idl es/base/IThread.idl \
 	es/device/IAudioFormat.idl es/device/IBeep.idl \
@@ -186,8 +186,8 @@ nobase_include_HEADERS = es.h es/any.h es/broker.h es/capability.h \
 	w3c/views.idl w3c/xhr.idl
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
-nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
-	es/base/ICallback.h es/base/IFile.h es/base/IInterface.h \
+nobase_nodist_include_HEADERS = es/object.h es/base/IAlarm.h \
+	es/base/ICache.h es/base/ICallback.h es/base/IFile.h \
 	es/base/IInterfaceStore.h es/base/IMonitor.h \
 	es/base/IPageable.h es/base/IPageSet.h es/base/IProcess.h \
 	es/base/IRuntime.h es/base/ISelectable.h es/base/IService.h \
@@ -205,8 +205,8 @@ nobase_nodist_include_HEADERS = es/base/IAlarm.h es/base/ICache.h \
 	w3c/eventsource.h w3c/html5.h w3c/ls.h w3c/ranges.h w3c/smil.h \
 	w3c/stylesheets.h w3c/svg.h w3c/traversal.h w3c/validation.h \
 	w3c/webstorage.h w3c/websockets.h w3c/webworkers.h w3c/views.h \
-	w3c/xhr.h es/base/IAlarm.ent es/base/ICache.ent \
-	es/base/ICallback.ent es/base/IFile.ent es/base/IInterface.ent \
+	w3c/xhr.h es/object.ent es/base/IAlarm.ent es/base/ICache.ent \
+	es/base/ICallback.ent es/base/IFile.ent \
 	es/base/IInterfaceStore.ent es/base/IMonitor.ent \
 	es/base/IPageable.ent es/base/IPageSet.ent \
 	es/base/IProcess.ent es/base/IRuntime.ent \
@@ -484,15 +484,15 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 	cp $? es
 
 @ES_TRUE@%.h %.ent : %.idl
-@ES_TRUE@	esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+@ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
-@ES_TRUE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
+@ES_TRUE@es/object.h es/object.ent : es/object.idl
 @ES_TRUE@	esidl -isystem $(srcdir) -ent $<
 
 @ES_FALSE@%.h %.ent : %.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
-@ES_FALSE@es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
+@ES_FALSE@es/object.h es/object.ent : es/object.idl
 @ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
 
 clean-local:

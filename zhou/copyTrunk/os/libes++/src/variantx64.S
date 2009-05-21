@@ -392,9 +392,9 @@ _Z5applyiP3AnyPFPKcvE:
         leave
         ret
 
-// Any apply(int argc, Any* argv, es::Interface* (*function)());
-        .globl _Z5applyiP3AnyPFPN2es9InterfaceEvE
-_Z5applyiP3AnyPFPN2es9InterfaceEvE:
+// Any apply(int argc, Any* argv, Object* (*function)());
+        .globl _Z5applyiP3AnyPFP6ObjectvE
+_Z5applyiP3AnyPFP6ObjectvE:
         pushq   %rbp
         movq    %rsp, %rbp
         call    apply

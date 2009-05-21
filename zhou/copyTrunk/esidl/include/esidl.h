@@ -27,6 +27,14 @@
 #include <string>
 #include <vector>
 
+// Turn this on to use a function pointer rather than an interface pointer for
+// attributes of [Callback=FunctionOnly] interface types.
+// #define USE_FUNCTION_ATTRIBUTE
+
+// Turn this on to use a function pointer as well as an interface pointer for
+// parameters of [Callback] interface types.
+// #define USE_FUNCTION_CALLBACK
+
 class Node;
     class Include;
     class ScopedName;
@@ -41,7 +49,6 @@ class Node;
     class UnaryExpr;
     class GroupingExpression;
     class Literal;
-    class PragmaID;
     class Member;
         class ArrayDcl;
         class Attribute;
@@ -85,6 +92,7 @@ protected:
 
     static int          level;          // current include level
     static const char*  baseObjectName; // default base object name
+    static const char*  namespaceName;  // flat namespace name if non zero
 
 public:
     // Attribute bits
@@ -415,19 +423,9 @@ public:
         return compare("string", scope) == 0;
     }
 
-    virtual bool isWString(const Node* scope) const
-    {
-        return compare("wstring", scope) == 0;
-    }
-
-    virtual bool isGuid(const Node* scope) const
-    {
-        return compare("uuid", scope) == 0;
-    }
-
     virtual bool isInterface(const Node* scope) const
     {
-        return compare("Object", scope) == 0;
+        return false;
     }
 
     virtual bool isFloat(const Node* scope) const
@@ -551,15 +549,25 @@ public:
 
     bool isBaseObject() const
     {
-        if (name == "Object")
+        if (getQualifiedName() == "::Object")
         {
             return true;
         }
-        if (baseObjectName && getQualifiedName() == baseObjectName)
+        if (getQualifiedName() == baseObjectName)
         {
             return true;
         }
         return false;
+    }
+
+    static void setFlatNamespace(const char* name)
+    {
+        namespaceName = name;
+    }
+
+    static const char* getFlatNamespace()
+    {
+        return namespaceName ;
     }
 };
 
@@ -1045,7 +1053,6 @@ public:
 
     operator bool() const;
     operator char() const;
-    operator wchar_t() const;
     operator short() const;
     operator int() const;
     operator long long() const;
@@ -1057,41 +1064,6 @@ public:
     operator double() const;
     operator long double() const;
     operator std::string() const;
-
-    virtual void accept(Visitor* visitor);
-};
-
-class PragmaID : public Node
-{
-    Node*       scopedName;
-    std::string id;
-
-public:
-    PragmaID(Node* scopedName, std::string id) :
-        scopedName(scopedName),
-        id(id)
-    {
-        separator = "\n";
-
-        Node* node = static_cast<ScopedName*>(scopedName)->search(getCurrent());
-        assert(node);
-        node->getID() = id;
-    }
-
-    ~PragmaID()
-    {
-        delete scopedName;
-    }
-
-    Node* getScopedName() const
-    {
-        return scopedName;
-    }
-
-    const std::string& getID() const
-    {
-        return id;
-    }
 
     virtual void accept(Visitor* visitor);
 };
@@ -1219,13 +1191,17 @@ class Attribute : public Member
 {
     bool readonly;
     uint32_t attr;
+    Node* getraises;
+    Node* setraises;
     std::string putForwards;
 
 public:
     Attribute(std::string identifier, Node* spec, bool readonly = false) :
         Member(identifier, spec),
         readonly(readonly),
-        attr(0)
+        attr(0),
+        getraises(0),
+        setraises(0)
     {
         separator = ";\n";
     }
@@ -1233,6 +1209,44 @@ public:
     bool isReadonly() const
     {
         return readonly;
+    }
+
+    Node* getGetRaises() const
+    {
+        return getraises;
+    }
+
+    void setGetRaises(Node* raises)
+    {
+        getraises = raises;
+    }
+
+    int getGetRaisesCount() const
+    {
+        if (getraises == 0)
+        {
+            return 0;
+        }
+        return getraises->getSize();
+    }
+
+    Node* getSetRaises() const
+    {
+        return setraises;
+    }
+
+    void setSetRaises(Node* raises)
+    {
+        setraises = raises;
+    }
+
+    int getSetRaisesCount() const
+    {
+        if (setraises == 0)
+        {
+            return 0;
+        }
+        return setraises->getSize();
     }
 
     void setStringifies()
@@ -1350,6 +1364,15 @@ public:
         this->raises = raises;
     }
 
+    int getRaisesCount() const
+    {
+        if (raises == 0)
+        {
+            return 0;
+        }
+        return raises->getSize();
+    }
+
     // Adjust methodCount for [Callback] and [Optional].
     // Need to be called after the source file is completely read.
     void adjustMethodCount();
@@ -1357,16 +1380,6 @@ public:
     int getParamCount() const
     {
         return paramCount;
-    }
-
-    int getRaiseCount() const
-    {
-        if (raises == 0)
-        {
-            return 0;
-        }
-
-        return raises->getSize();
     }
 
     uint32_t getAttr() const
@@ -1547,11 +1560,6 @@ public:
         at(static_cast<const Node*>(node));
     }
 
-    virtual void at(const PragmaID* node)
-    {
-        at(static_cast<const Node*>(node));
-    }
-
     virtual void at(const Member* node)
     {
         at(static_cast<const Node*>(node));
@@ -1666,11 +1674,6 @@ inline void Literal::accept(Visitor* visitor)
     visitor->at(this);
 }
 
-inline void PragmaID::accept(Visitor* visitor)
-{
-    visitor->at(this);
-}
-
 inline void Member::accept(Visitor* visitor)
 {
     visitor->at(this);
@@ -1707,7 +1710,7 @@ inline void ExtendedAttribute::accept(Visitor* visitor)
 }
 
 extern void print();
-extern void printCxx(const std::string& filename);
+extern void printCxx(const std::string& filename, const char* stringTypeName, bool useExceptions);
 extern void printEnt(const std::string& filename);
 extern void printNpapi(const char* idlFilename, bool isystem);
 

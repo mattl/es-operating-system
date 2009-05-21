@@ -43,7 +43,7 @@ static void SetData(u8* buf, long size)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
 
     esInit(&root);
 

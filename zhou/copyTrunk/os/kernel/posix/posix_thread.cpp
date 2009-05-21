@@ -206,15 +206,15 @@ cancel()
     }
 }
 
-void* Thread::
+Object* Thread::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Thread::iid()) == 0)
     {
         objectPtr = static_cast<es::Thread*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Thread*>(this);
     }
@@ -222,7 +222,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

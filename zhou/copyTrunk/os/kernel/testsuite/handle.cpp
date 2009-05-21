@@ -27,10 +27,10 @@
 
 Handle<es::Context> classStore;
 
-class Impl : public es::Interface
+class Impl : public Object
 {
 public:
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
         return NULL;
     }
@@ -46,11 +46,11 @@ public:
 
 int main()
 {
-    es::Interface* nameSpace;
+    Object* nameSpace;
     esInit(&nameSpace);
 
-    esReport("%d\n", IsInterface<es::Interface>::Value);
-    TEST(IsInterface<es::Interface>::Value);
+    esReport("%d\n", IsInterface<Object>::Value);
+    TEST(IsInterface<Object>::Value);
 
     esReport("%d\n", IsInterface<es::Alarm>::Value);
     TEST(IsInterface<es::Alarm>::Value);
@@ -60,7 +60,7 @@ int main()
 
     Handle<es::Context> root(nameSpace);
 
-    es::Interface* obj = root->lookup("class");
+    Object* obj = root->lookup("class");
     classStore = obj;
     ASSERT(classStore);
 

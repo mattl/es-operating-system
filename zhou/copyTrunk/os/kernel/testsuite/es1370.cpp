@@ -36,7 +36,7 @@ extern unsigned char sample8[33210];
 
 int main()
 {
-    es::Interface* nameSpace = 0;
+    Object* nameSpace = 0;
     esInit(&nameSpace);
 
     Handle<es::Context> root(nameSpace);

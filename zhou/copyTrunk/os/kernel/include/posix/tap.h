@@ -104,8 +104,8 @@ public:
     {
     }
 
-    // es::Interface
-    void* queryInterface(const char* riid);
+    // Object
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

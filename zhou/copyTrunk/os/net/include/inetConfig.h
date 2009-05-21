@@ -46,7 +46,7 @@ public:
     void removeRouter(es::InternetAddress* router);
 
     int addInterface(es::NetworkInterface* networkInterface);
-    es::Interface* getInterface(int scopeID);
+    Object* getInterface(int scopeID);
     int getScopeID(es::NetworkInterface* networkInterface);
     void removeInterface(es::NetworkInterface* networkInterface);
 
@@ -55,14 +55,14 @@ public:
     void removeNameServer(es::InternetAddress* address);
 
     void addSearchDomain(const char* address);
-    const char* getSearchDomain(char* address, int addressLength);
-    const char* getSearchDomain(char* address, int addressLength, int pos);
+    const char* getSearchDomain(void* address, int addressLength);
+    const char* getSearchDomain(void* address, int addressLength, int pos);
     void removeSearchDomain(const char* address);
 
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

@@ -32,9 +32,9 @@ class InterfaceStore : public es::InterfaceStore
     struct InterfaceData
     {
         Reflect::Interface meta;
-        es::Interface* (*constructorGetter)();                 // for statically created data
-        void (*constructorSetter)(es::Interface* constructor); // for statically created data
-        es::Interface* constructor;                            // for dynamically created data
+        Object* (*constructorGetter)();                 // for statically created data
+        void (*constructorSetter)(Object* constructor); // for statically created data
+        Object* constructor;                            // for dynamically created data
 
         InterfaceData() :
             constructorGetter(0),
@@ -51,7 +51,7 @@ class InterfaceStore : public es::InterfaceStore
         {
         }
 
-        es::Interface* getConstructor() const
+        Object* getConstructor() const
         {
             if (constructor) {
                 return constructor;
@@ -68,7 +68,7 @@ class InterfaceStore : public es::InterfaceStore
     Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
 
     void registerInterface(Reflect::Module& module);
-    void registerConstructor(const char* iid, es::Interface* (*getter)(), void (*setter)(es::Interface*));
+    void registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*));
 
 public:
     InterfaceStore(int capacity = 1024);
@@ -81,7 +81,7 @@ public:
         return hashtable.get(iid).meta;
     }
 
-    es::Interface* getConstructor(const char* iid)
+    Object* getConstructor(const char* iid)
     {
         SpinLock::Synchronized method(spinLock);
 
@@ -114,7 +114,7 @@ public:
     void remove(const char* riid);
 
     // IInterface
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
@@ -123,11 +123,12 @@ public:
 // Reflection data of the default interface set
 //
 
+extern unsigned char objectInfo[];
+
 extern unsigned char IAlarmInfo[];
 extern unsigned char ICacheInfo[];
 extern unsigned char ICallbackInfo[];
 extern unsigned char IFileInfo[];
-extern unsigned char IInterfaceInfo[];
 extern unsigned char IInterfaceStoreInfo[];
 extern unsigned char IMonitorInfo[];
 extern unsigned char IPageableInfo[];
@@ -181,7 +182,7 @@ extern unsigned char viewsInfo[];
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
-    es::Interface* getConstructor(const char* iid);
+    Object* getConstructor(const char* iid);
     const char* getUniqueIdentifier(const char* iid);
 }  // namespace es
 

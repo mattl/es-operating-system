@@ -30,7 +30,7 @@
 
 
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 
 Handle<es::Resolver> resolver;
@@ -62,7 +62,7 @@ void echo(int dixID)
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
 

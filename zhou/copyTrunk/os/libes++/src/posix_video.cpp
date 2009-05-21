@@ -455,10 +455,10 @@ put(long long offset, unsigned long long pte)
 {
 }
 
-void* VideoBuffer::
+Object* VideoBuffer::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Cursor::iid()) == 0)
     {
         objectPtr = static_cast<es::Cursor*>(this);
@@ -467,7 +467,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Cursor*>(this);
     }
@@ -479,7 +479,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
 
     if (getfd() == -1)
     {

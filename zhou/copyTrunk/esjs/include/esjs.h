@@ -465,14 +465,14 @@ public:
             return areStrictEqual(x, y);
         }
 
-        if (x->isNull() && y->isUndefined() ||
-            x->isUndefined() && y->isNull())
+        if ((x->isNull() && y->isUndefined()) ||
+            (x->isUndefined() && y->isNull()))
         {
             return true;
         }
 
-        if (x->isNumber() && y->isString() ||
-            x->isString() && y->isNumber())
+        if ((x->isNumber() && y->isString()) ||
+            (x->isString() && y->isNumber()))
         {
             return (x->toNumber() == y->toNumber()) ? true : false;
         }

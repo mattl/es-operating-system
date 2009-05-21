@@ -49,7 +49,7 @@ namespace
 // object - In general, object is possibly null. For FatStream, however,
 // object must be NULL.
 es::Binding* FatStream::
-bind(const char* name, es::Interface* object)
+bind(const char* name, Object* object)
 {
     if (!canWrite())
     {
@@ -100,7 +100,7 @@ destroySubcontext(const char* name)
     return stream->remove();    // XXX remove all entries under stream.
 }
 
-es::Interface* FatStream::
+Object* FatStream::
 lookup(const char* name)
 {
     FatStream* stream(lookup(this, name));

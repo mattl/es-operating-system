@@ -7,17 +7,17 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 if ES
 
 %.h %.ent : %.idl
-	esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+	esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
-es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
+es/object.h es/object.ent : es/object.idl
 	esidl -isystem $(srcdir) -ent $<
 
 else !ES
 
 %.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/base/IInterface.idl -object ::es::Interface -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
 
-es/base/IInterface.h es/base/IInterface.ent : es/base/IInterface.idl
+es/object.h es/object.ent : es/object.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
 
 endif !ES
@@ -68,11 +68,11 @@ nobase_include_HEADERS = \
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = \
+	es/object.h \
 	es/base/IAlarm.h \
 	es/base/ICache.h \
 	es/base/ICallback.h \
 	es/base/IFile.h \
-	es/base/IInterface.h \
 	es/base/IInterfaceStore.h \
 	es/base/IMonitor.h \
 	es/base/IPageable.h \
@@ -126,11 +126,11 @@ nobase_nodist_include_HEADERS = \
 	w3c/xhr.h
 	
 nobase_nodist_include_HEADERS += \
+	es/object.ent \
 	es/base/IAlarm.ent \
 	es/base/ICache.ent \
 	es/base/ICallback.ent \
 	es/base/IFile.ent \
-	es/base/IInterface.ent \
 	es/base/IInterfaceStore.ent \
 	es/base/IMonitor.ent \
 	es/base/IPageable.ent \
@@ -184,11 +184,11 @@ nobase_nodist_include_HEADERS += \
 	w3c/xhr.ent
 
 nobase_include_HEADERS += \
+	es/object.idl \
 	es/base/IAlarm.idl \
 	es/base/ICache.idl \
 	es/base/ICallback.idl \
 	es/base/IFile.idl \
-	es/base/IInterface.idl \
 	es/base/IInterfaceStore.idl \
 	es/base/IMonitor.idl \
 	es/base/IPageable.idl \

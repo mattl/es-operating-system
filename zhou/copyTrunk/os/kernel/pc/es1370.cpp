@@ -459,15 +459,15 @@ invoke(int irq)
     return 0;
 }
 
-void* Es1370::
+Object* Es1370::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Callback::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Callback*>(this);
     }
@@ -475,7 +475,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

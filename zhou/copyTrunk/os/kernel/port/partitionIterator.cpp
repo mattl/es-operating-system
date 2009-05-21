@@ -65,7 +65,7 @@ hasNext()
     return false;
 }
 
-es::Interface* PartitionIterator::
+Object* PartitionIterator::
 next()
 {
     Monitor::Synchronized method(context->monitor);
@@ -117,7 +117,7 @@ remove()
 // PartitionIterator : es::Binding
 //
 
-es::Interface* PartitionIterator::
+Object* PartitionIterator::
 getObject()
 {
     Monitor::Synchronized method(context->monitor);
@@ -137,13 +137,13 @@ getObject()
 }
 
 void PartitionIterator::
-setObject(es::Interface* object)
+setObject(Object* object)
 {
     esThrow(EACCES); // [check] appropriate?
 }
 
 const char* PartitionIterator::
-getName(char* name, int len)
+getName(void* name, int len)
 {
     Monitor::Synchronized method(context->monitor);
 
@@ -177,33 +177,24 @@ getName(char* name, int len)
 
             if (stream->isExtendedPartition())
             {
-#ifdef WIN32
-                _snprintf(name, len, "%s", prefix);
-#else
-                snprintf(name, len, "%s", prefix);
-#endif
-                return name;
+                snprintf(static_cast<char*>(name), len, "%s", prefix);
+                return static_cast<char*>(name);
             }
-
-#ifdef WIN32
-            _snprintf(name, len, "%s%u", prefix, id);
-#else
-            snprintf(name, len, "%s%u", prefix, id);
-#endif
-            return name;
+            snprintf(static_cast<char*>(name), len, "%s%u", prefix, id);
+            return static_cast<char*>(name);
         }
     }
-    return NULL;
+    return 0;
 }
 
 //
-// PartitionIterator : es::Interface
+// PartitionIterator : Object
 //
 
-void* PartitionIterator::
+Object* PartitionIterator::
 queryInterface(const char* riid)
 {
-    void* objectPtr;
+    Object* objectPtr;
     if (strcmp(riid, es::Iterator::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
@@ -212,7 +203,7 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Binding*>(this);
     }
-    else if (strcmp(riid, es::Interface::iid()) == 0)
+    else if (strcmp(riid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::Iterator*>(this);
     }
@@ -220,7 +211,7 @@ queryInterface(const char* riid)
     {
         return NULL;
     }
-    static_cast<es::Interface*>(objectPtr)->addRef();
+    objectPtr->addRef();
     return objectPtr;
 }
 

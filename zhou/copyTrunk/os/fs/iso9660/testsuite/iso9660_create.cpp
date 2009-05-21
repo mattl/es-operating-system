@@ -40,7 +40,7 @@ void test(Handle<es::Context> root)
 
 int main(int argc, char* argv[])
 {
-    es::Interface* ns = 0;
+    Object* ns = 0;
     esInit(&ns);
     Iso9660FileSystem::initializeConstructor();
     Handle<es::Context> nameSpace(ns);

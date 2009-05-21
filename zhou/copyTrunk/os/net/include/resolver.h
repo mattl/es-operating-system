@@ -77,12 +77,12 @@ public:
     //
     es::InternetAddress* getHostByName(const char* hostName, int addressFamily);
     es::InternetAddress* getHostByAddress(const void* address, int len, unsigned int scopeID);
-    const char* getHostName(char* hostName, int len, es::InternetAddress* address);
+    const char* getHostName(void* hostName, int len, es::InternetAddress* address);
 
     //
     // IInterface
     //
-    void* queryInterface(const char* riid);
+    Object* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };

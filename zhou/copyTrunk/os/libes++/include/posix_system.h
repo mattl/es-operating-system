@@ -158,9 +158,9 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Stream::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
@@ -169,7 +169,7 @@ public:
         {
             objectPtr = static_cast<es::Pageable*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
@@ -177,7 +177,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -295,44 +295,44 @@ public:
     //
     // IBinding
     //
-    es::Interface* getObject()
+    Object* getObject()
     {
         addRef();
         return static_cast<es::File*>(this);
     }
 
-    void setObject(es::Interface* object)
+    void setObject(Object* object)
     {
         esThrow(EACCES); // [check] appropriate?
     }
 
-    const char* getName(char* name, int len)
+    const char* getName(void* name, int len)
     {
         if (len < 1)
         {
             return 0;
         }
         const char* src = this->name;
-        char* dst = name;
+        char* dst = static_cast<char*>(name);
         for (int i = 0; i < len; ++i)
         {
             char c = *dst++ = *src++;
             if (c == '\0')
             {
-                return name;
+                return static_cast<char*>(name);
             }
         }
-        name[len - 1] = '\0';
-        return name;
+        static_cast<char*>(name)[len - 1] = '\0';
+        return static_cast<char*>(name);
     }
 
     //
     // IInterface
     //
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::File::iid()) == 0)
         {
             objectPtr = static_cast<es::File*>(this);
@@ -341,7 +341,7 @@ public:
         {
             objectPtr = static_cast<es::Binding*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::File*>(this);
         }
@@ -349,7 +349,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -416,7 +416,7 @@ public:
         return result;
     }
 
-    es::Interface* next();
+    Object* next();
 
     int remove()
     {
@@ -438,14 +438,14 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::Iterator::iid()) == 0)
         {
             objectPtr = static_cast<es::Iterator*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Iterator*>(this);
         }
@@ -453,7 +453,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -499,7 +499,7 @@ public:
     // IContext
     //
 
-    es::Binding* bind(const char* name, es::Interface* element)
+    es::Binding* bind(const char* name, Object* element)
     {
         if (fchdir(fd) == -1)
         {
@@ -536,7 +536,7 @@ public:
         return rmdir(name);
     }
 
-    es::Interface* lookup(const char* name)
+    Object* lookup(const char* name)
     {
         if (fchdir(fd) == -1)
         {
@@ -634,9 +634,9 @@ public:
     // IInterface
     //
 
-    void* queryInterface(const char* riid)
+    Object* queryInterface(const char* riid)
     {
-        void* objectPtr;
+        Object* objectPtr;
         if (strcmp(riid, es::File::iid()) == 0)
         {
             objectPtr = static_cast<es::File*>(this);
@@ -649,7 +649,7 @@ public:
         {
             objectPtr = static_cast<es::Context*>(this);
         }
-        else if (strcmp(riid, es::Interface::iid()) == 0)
+        else if (strcmp(riid, Object::iid()) == 0)
         {
             objectPtr = static_cast<es::Context*>(this);
         }
@@ -657,7 +657,7 @@ public:
         {
             return NULL;
         }
-        static_cast<es::Interface*>(objectPtr)->addRef();
+        objectPtr->addRef();
         return objectPtr;
     }
 
@@ -678,7 +678,7 @@ public:
     }
 };
 
-inline es::Interface* Iterator::next()
+inline Object* Iterator::next()
 {
     if (fchdir(dirfd(dir)) == -1)
     {
