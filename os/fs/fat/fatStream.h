@@ -62,11 +62,11 @@ class FatStream : public es::File, public es::Stream, public es::Context, public
         Updated = 0x02
     };
 
+	Ref         ref;
     FatFileSystem*  fileSystem;
     Link<FatStream> linkChain;
     Link<FatStream> linkHash;
 
-    Ref         ref;
     es::Monitor*   monitor;
     es::Cache*     cache;
     FatStream*  parent;
