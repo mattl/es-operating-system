@@ -62,11 +62,12 @@ class FatStream : public es::File, public es::Stream, public es::Context, public
         Updated = 0x02
     };
 
+    Ref         ref;
     FatFileSystem*  fileSystem;
     Link<FatStream> linkChain;
     Link<FatStream> linkHash;
 
-    Ref         ref;
+    
     es::Monitor*   monitor;
     es::Cache*     cache;
     FatStream*  parent;
@@ -127,21 +128,21 @@ public:
     void flush();
 
     // es::Binding
-    Object* getObject();
-    void setObject(Object* object);
-    const char* getName(void* name, int len);
+    es::Interface* getObject();
+    void setObject(es::Interface* object);
+    const char* getName(char* name, int len);
 
     // es::Context
-    es::Binding* bind(const char* name, Object* object);
+    es::Binding* bind(const char* name, es::Interface* object);
     es::Context* createSubcontext(const char* name);
     int destroySubcontext(const char* name);
-    Object* lookup(const char* name);
+    es::Interface* lookup(const char* name);
     int rename(const char* oldName, const char* newName);
     int unbind(const char* name);
     es::Iterator* list(const char* name);
 
-    // Object
-    Object* queryInterface(const char* riid);
+    // es::Interface
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -289,8 +290,8 @@ public:
     void format();
     int defrag();
 
-    // Object
-    Object* queryInterface(const char* riid);
+    // es::Interface
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 
@@ -299,7 +300,7 @@ public:
     {
     public:
         es::FatFileSystem* createInstance();
-        Object* queryInterface(const char* riid);
+        void* queryInterface(const char* riid);
         unsigned int addRef();
         unsigned int release();
     };
@@ -319,10 +320,10 @@ public:
     ~FatIterator();
 
     bool hasNext(void);
-    Object* next();
+    es::Interface* next();
     int remove(void);
 
-    Object* queryInterface(const char* riid);
+    void* queryInterface(const char* riid);
     unsigned int addRef();
     unsigned int release();
 };
