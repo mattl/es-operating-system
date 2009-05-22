@@ -1,0 +1,21 @@
+<HTML>
+<HEAD>
+<TITLE>ES Operating System</TITLE>
+<script type="text/javascript">
+function init()
+{
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+}
+</script>
+</HEAD>
+<BODY onload="init()">
+<EMBED src="hello" type="application/es-npapi-plugin" hidden=1>
+<CANVAS id="canvas" width="1024" height="768"></CANVAS>
+</BODY>
+</HTML>
+

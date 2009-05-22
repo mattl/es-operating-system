@@ -1,0 +1,20 @@
+diff -bcrN automake-1.10.org/lib/config.sub automake-1.10/lib/config.sub
+*** automake-1.10.org/lib/config.sub	2006-10-15 10:02:52.000000000 -0700
+--- automake-1.10/lib/config.sub	2008-04-03 18:39:07.000000000 -0700
+***************
+*** 1219,1225 ****
+  	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
+  	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+  	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+! 	      | -skyos* | -haiku* | -rdos* | -toppers*)
+  	# Remember, each alternative MUST END IN *, to match a version number.
+  		;;
+  	-qnx*)
+--- 1219,1225 ----
+  	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
+  	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+  	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+! 	      | -skyos* | -haiku* | -rdos* | -toppers* | -es*)
+  	# Remember, each alternative MUST END IN *, to match a version number.
+  		;;
+  	-qnx*)
