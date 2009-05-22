@@ -119,7 +119,7 @@ void* test2(void* id)
     return 0;
 }
 
-char* id = "hello.";
+const char* id = "hello.";
 
 int main()
 {
