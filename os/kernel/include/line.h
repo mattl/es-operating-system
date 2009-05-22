@@ -43,7 +43,7 @@ protected:
     Ring        ring;
 
 public:
-    Line(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    Line(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
     virtual ~Line();
 
     int invoke(int);
@@ -73,7 +73,7 @@ public:
 class InputLine : public Line
 {
 public:
-    InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    InputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
     virtual ~InputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);
@@ -82,7 +82,7 @@ public:
 class OutputLine : public Line
 {
 public:
-    OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u8 rate = 44100);
+    OutputLine(es::Callback* callback, u8 bits = 16, u8 channels = 2, u16 rate = 44100);
     virtual ~OutputLine();
     int read(void* dst, int count);
     int write(const void* src, int count);
