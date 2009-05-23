@@ -62,14 +62,14 @@ class FatStream : public es::File, public es::Stream, public es::Context, public
         Updated = 0x02
     };
 
-	Ref         ref;
+    Ref             ref;
     FatFileSystem*  fileSystem;
     Link<FatStream> linkChain;
     Link<FatStream> linkHash;
 
-    es::Monitor*   monitor;
-    es::Cache*     cache;
-    FatStream*  parent;
+    es::Monitor*    monitor;
+    es::Cache*      cache;
+    FatStream*      parent;
 
     u32         dirClus;    // the first cluster of the parent directory. Zero if this node is the root.
     u32         offset;     // offset to the directory entry of this node.
