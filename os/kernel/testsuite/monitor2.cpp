@@ -127,9 +127,9 @@ int main()
     esInit(&root);
 
     // check wait(s64 timeout).
-    es::Thread* thread2 = new Thread(test2,            // thread function
-                                  id,               // argument to thread function
-                                  es::Thread::Normal); // priority
+    es::Thread* thread2 = new Thread(test2,                  // thread function
+                                     const_cast<char*>(id),  // argument to thread function
+                                     es::Thread::Normal);    // priority
     thread2->start();
     void* val = thread2->join();
     TEST(val == 0);
