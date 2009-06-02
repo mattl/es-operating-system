@@ -1,0 +1,48 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
+#define NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
+
+module es
+{
+    /**
+     * This interface provides methods for managing pageable objects.
+     */
+    interface Pageable
+    {
+        /** Gets the physical page address at the specified offset of this pageable object.
+         * @param offset the offset of this pageable object.
+         * @return      Physical page address.
+         */
+        unsigned long long get(in long long offset);
+
+        /** Releases the page at the specified offset of this pageable object.
+         * @param offset the offset of this pageable object.
+         * @param pte the page table entry.
+         */
+        void put(in long long offset, in unsigned long long pte);
+
+        /** The size of this pageable object.
+         * @return the size of this pageable object.
+         */
+        attribute long long size;
+    };
+};
+
+#endif // NINTENDO_ES_BASE_IPAGEABLE_IDL_INCLUDED
+
