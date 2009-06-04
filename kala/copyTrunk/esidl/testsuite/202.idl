@@ -1,6 +1,0 @@
-module X
-{
-  interface Y {
-    [IndexGetter] long item(in DOMString name);
-  };
-};
