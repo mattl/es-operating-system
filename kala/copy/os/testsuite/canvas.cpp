@@ -54,6 +54,33 @@ namespace
 
 es::CurrentProcess* System();
 
+void transform(es::CanvasRenderingContext2D* canvas)
+{
+    int i = 0;
+    char buf[40];
+    float PI = 3.14159;
+    float sinT = sin(PI/6);
+    float cosT = cos(PI/6);
+    canvas->translate(200, 200);
+
+    //float c = 0;
+    int c = 0;
+    for (i; i <= 12; i++) {
+        c = floor(255 / 12 * i);
+        //sprintf(buf,"\"rgb(%f,%f,%f)\"",c,c,c);
+        //sprintf(buf,"rgb(%f,%f,%f)",c,c,c);
+        sprintf(buf,"rgb(%d,%d,%d)",c,c,c);
+        esReport("%s \n",buf);
+        canvas->setFillStyle(buf);
+        canvas->fillRect(0, 0, 100, 10);
+        canvas->transform(cosT,sinT, -sinT, cosT, 0, 0);
+    }
+										                                   
+    canvas->setTransform(-1, 0, 0, 1, 200, 200);
+    canvas->setFillStyle("rgba(255, 128, 255, 0.5)");
+    canvas->fillRect(0, 50, 100, 100);
+}
+
 // C++ version of the figure script
 void figure(es::CanvasRenderingContext2D* canvas)
 {
@@ -198,9 +225,10 @@ int main(int argc, char* argv[])
 
     if (argc < 2)
     {
-        figure(canvas);
+        //figure(canvas);
+	transform(canvas);
 #ifndef __es__
-        esSleep(20000000);
+        esSleep(40000000);
 #endif
     }
     else
