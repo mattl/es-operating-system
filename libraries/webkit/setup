@@ -1,0 +1,8 @@
+#!/bin/bash -v
+
+REV=44489
+
+# svn co http://svn.webkit.org/repository/webkit/trunk@$REV
+cd trunk
+patch -p0 < ../webkit.$REV.patch
+
