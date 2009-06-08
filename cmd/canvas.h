@@ -411,8 +411,8 @@ public:
     void scale(float x, float y);
     void rotate(float angle);
     void translate(float x, float y);
-    void transform(float m11, float m12, float m21, float m22, float dx, float dy) {}
-    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy) {}
+    void transform(float m11, float m12, float m21, float m22, float dx, float dy); 
+    void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
     float getGlobalAlpha();
     void setGlobalAlpha(float globalAlpha);
     const char* getGlobalCompositeOperation(void* globalCompositeOperation, int globalCompositeOperationLength);
