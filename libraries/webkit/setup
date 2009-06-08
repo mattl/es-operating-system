@@ -2,7 +2,11 @@
 
 REV=44489
 
-# svn co http://svn.webkit.org/repository/webkit/trunk@$REV
+svn checkout http://svn.webkit.org/repository/webkit/trunk@$REV
 cd trunk
 patch -p0 < ../webkit.$REV.patch
+aclocal
+autoconf
+autoheader
+automake -a --foreign
 
