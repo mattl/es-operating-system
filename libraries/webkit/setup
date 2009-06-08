@@ -5,6 +5,7 @@ REV=44489
 svn checkout http://svn.webkit.org/repository/webkit/trunk@$REV
 cd trunk
 patch -p0 < ../webkit.$REV.patch
+cd ..
 aclocal
 autoconf
 autoheader
