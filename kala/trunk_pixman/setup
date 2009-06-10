@@ -233,6 +233,27 @@ then
 fi
 cd ../..
 
+# ICU
+cd src
+if [ ! -f icu4c-4_2_0_1-src.tgz ]; 
+then
+	wget http://download.icu-project.org/files/icu4c/4.2.0.1/icu4c-4_2_0_1-src.tgz
+fi
+rm -rf icu
+tar -zxf icu4c-4_2_0_1-src.tgz
+#patch -p0 -d . < ../trunk/patches/expat-2.0.1.patch
+#cd ../opt
+#mkdir -p expat
+#cd expat
+#if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/expat-2.0.1.patch -newer Makefile -print`" ];
+#then
+#	../../src/expat-2.0.1/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+#	make
+#	make installlib
+#fi
+#cd ../..
+cd ..
+
 # ES operating system for PC
 if [ ! -d pc ]; 
 then

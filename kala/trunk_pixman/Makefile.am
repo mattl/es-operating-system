@@ -25,5 +25,6 @@ EXTRA_DIST = \
 	patches/freetype-2.3.5.patch \
 	patches/expat-2.0.1.patch \
 	patches/fontconfig-2.4.2.patch \
-	patches/cairo-1.4.10.patch
+	patches/cairo-1.8.6.patch \
+	patches/pixman-0.15.10.patch
 
