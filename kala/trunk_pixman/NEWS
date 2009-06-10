@@ -1,0 +1,131 @@
+News about ES releases
+----------------------
+
+Release 0.1.4  February 8, 2009
+-------------------------------
+
+NOTE: This release is tested with Fedora 9, Fedora 10, and Ubuntu 8.10.
+
+This release improves the Web IDL support, containing updates for esidl,
+esjs, the es kernel, and the 'setup' script.
+
+  esidl
+    * The type of a C++ function return value mapped from 'string' is 
+      changed from 'int' to 'const char*'.
+    * The 'I' prefix added to each C++ interface name has been removed.
+    * The default base object interface name can be specified with the
+      '-object' esidl command line option.
+    * The interface ID is given by the fully qualified name of the interface
+      rather than a DEC GUID. The use of DCE UUID based interface ID through
+      '#pragma ID' has been deprecated.
+    * The 'Constructor' extended attribute is now supported; esidl generates
+      the following definitions inside the specified interface class
+      definition in C++:
+        * 'Constructor' interface class
+        * createInstance() static class methods
+        * getConstructor() and setConstructor() static class methods
+  
+  esjs
+    * Update the 'new' operator to construct a new object instance whose 
+      interface has constructor(s). The 'ClassFactory' interface has been 
+      deprecated.
+  
+  es kernel
+    * Support the Web IDL constructors and the qualified name based 
+      interface IDs.
+  
+  binutils
+    * Update to binutils 2.19.
+  
+  newlib
+    * The "C" POSIX runtime implementation has been updated to use the
+      qualified name based interface IDs.
+      
+  setup
+    * Support Ubuntu (Tested with 8.10).
+    * Install ES SDK under `pwd`/sdk, rather than under /opt/es, by default.
+      
+Examples
+
+  Old esidl style:
+    interface Process : Interface
+    {
+        #pragma ID Process = "DCE:3b6bc7bd-44c2-11dc-9c02-0009bf000001";
+        // snip
+    };
+
+  New esidl style:
+    [Constructor]
+    interface Process
+    {
+        // snip
+    };
+
+  Old esjs style:
+    classStore = ClassStore(root.lookup("class"));
+    process = classStore.createInstance(CLSID_Process, IID_IProcess);
+
+  New esjs style:
+    process = new Process();
+
+  Old C++ style:
+    IMonitor* monitor = 
+      reinterpret_cast<IMonitor*>(esCreateInstance(CLSID_Monitor, 
+                                                   IMonitor::iid()));
+
+  New C++ style:
+    es::Monitor* monitor = es::Monitor::createInstance();
+
+
+Release 0.1.3  October 25, 2008
+-------------------------------
+
+This release contains a number of contributions made by the students
+participated in Google Summer of Code™ 2008. We've made the first step to
+switch over to the new Web IDL standard for the system interface definitions.
+The implementation of the TCP/IP stack has made some progress as well. This
+release also contains the Web IDL based preliminary RPC runtime for x86 Linux
+so that we can test and combine multiple ES software components running in
+separate processes on Linux as a substitute for the ES kernel naively running
+on PC.
+
+CAUTION: We recommend to use Fedora 9 to build and test this release. Other
+distributions and OS X will be tested and supported in the future releases.
+
+
+Release 0.1.2  April 5, 2008
+----------------------------
+
+This is the first ES operating system release from Google Code. ES operating
+system is now under the copyright of both Nintendo Co., Ltd. and Google Inc.
+In this release, the license has been changed from "Historical Permission
+Notice and Disclaimer" to "Apache License 2.0". Our appreciation goes to
+people at Nintendo and Google who helped make this happen, and especially to
+Genyo Takeda at Nintendo. We are also grateful to people at SourceForge.jp
+for their support to our former project site in SourceForge.jp. Even though
+ES is no longer a research project at Nintendo, the ongoing development of
+ES will continue to make it useful for everyone in the future.
+
+Technically, there are several bug fixes in this release so you can build ES
+on x86 Linux operating system including Fedora and Ubuntu and on Mac OS X
+Leopard with XCode, in addition to x64 Fedora on which ES has been developed
+mainly so far. Another noticeable change is now esidl IDL compiler
+automatically adds the "I" prefix to each interface class name in the
+generated C++ header files; so you don't have to add the "I" prefixes to the
+interface names in the IDL files and in ECMAScript source files. For a
+complete list of changes, please see the ChangeLog file.
+
+
+Release 0.1.1  December 10, 2007
+--------------------------------
+
+In this release, a text enhancement for the CanvasRenderingContext2D
+interface has been added to the console service. Plus, by refining the
+user-level mutex implementation, the performance of the ECMAScript
+interpreter esjs and others has been improved.
+
+Note: The patch files for newlib and fontconfig have been updated with
+this release. Due to the change made to the definition of pthread_mutex_t,
+please rebuild gcc and othere additional libraries before building the es
+operating system.
+
