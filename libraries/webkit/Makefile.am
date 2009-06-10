@@ -102,8 +102,7 @@ global_cflags += \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter -Wno-parentheses \
-	-fno-exceptions
+	-Wno-unused-parameter -Wno-parentheses
 
 global_cxxflags += \
 	$(global_cflags) \
@@ -1927,7 +1926,9 @@ TEST_PROGS += \
 testcanvas2d_SOURCES = testcanvas2d.cpp main.cpp
 testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
 testcanvas2d_CFLAGS = $(webkit_tests_cflags)
-testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags)
+testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
+	-I../../include \
+	-I$(srcdir)/../../include 
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 

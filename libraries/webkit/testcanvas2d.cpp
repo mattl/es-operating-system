@@ -51,10 +51,10 @@
 #include "WebFrameES.h"
 #include "WebViewES.h"
 
-void figure(WebCore::CanvasRenderingContext2D* canvas)
-{
-    WebCore::ExceptionCode ec = 0;
+#include "html5_canvasrenderingcontext2d.h"
 
+void figure(es::CanvasRenderingContext2D* canvas)
+{
     // Bar graph
     float top = 50.0f;
     float bottom = 250.0f;
@@ -64,32 +64,32 @@ void figure(WebCore::CanvasRenderingContext2D* canvas)
     float x;
     float y;
 
-    canvas->setStrokeColor("rgb(0, 0, 0)");
+    canvas->setStrokeStyle("rgb(0, 0, 0)");
     canvas->setLineWidth(3);
 
     height = 100.0f;
     x = 100.0f;
-    canvas->setFillColor("rgb(255, 0, 0)");
+    canvas->setFillStyle("rgb(255, 0, 0)");
     canvas->fillRect(x, bottom - height, width, height);
 
     x += 50.0f;
     height = 200.0f;
-    canvas->setFillColor("rgb(0, 255, 0)");
+    canvas->setFillStyle("rgb(0, 255, 0)");
     canvas->fillRect(x, bottom - height, width, height);
 
     x += 50.0f;
     height = 80.0f;
-    canvas->setFillColor("rgb(0, 0, 255)");
+    canvas->setFillStyle("rgb(0, 0, 255)");
     canvas->fillRect(x, bottom - height, width, height);
 
     x += 50.0f;
     height = 50.0f;
-    canvas->setFillColor("rgb(255, 255, 0)");
+    canvas->setFillStyle("rgb(255, 255, 0)");
     canvas->fillRect(x, bottom - height, width, height);
 
     x += 50.0f;
     height = 30.0f;
-    canvas->setFillColor("rgb(0, 255, 255)");
+    canvas->setFillStyle("rgb(0, 255, 255)");
     canvas->fillRect(x, bottom - height, width, height);
 
     canvas->moveTo(80.0f, top);
@@ -106,54 +106,50 @@ void figure(WebCore::CanvasRenderingContext2D* canvas)
     float s = 270.0f/180.0f;
     float e = 120.0f/180.0f;
 
-    canvas->setFillColor("rgb(255, 0, 0)");
+    canvas->setFillStyle("rgb(255, 0, 0)");
     canvas->beginPath();
-    ec = 0;
-    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0, ec);
+    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0);
     canvas->lineTo(cx, cy);
     canvas->closePath();
     canvas->fill();
 
     s = e;
     e = 240.0f/180.0f;
-    canvas->setFillColor("rgb(0, 255, 0)");
+    canvas->setFillStyle("rgb(0, 255, 0)");
     canvas->beginPath();
-    ec = 0;
-    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0, ec);
+    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0);
     canvas->lineTo(cx, cy);
     canvas->closePath();
     canvas->fill();
 
     s = e;
     e = 260.0f/180.0f;
-    canvas->setFillColor("rgb(0, 0, 255)");
+    canvas->setFillStyle("rgb(0, 0, 255)");
     canvas->beginPath();
-    ec = 0;
-    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0, ec);
+    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0);
     canvas->lineTo(cx, cy);
     canvas->closePath();
     canvas->fill();
 
     s = e;
     e = 270.0f/180.0f;
-    canvas->setFillColor("rgb(255, 255, 0)");
+    canvas->setFillStyle("rgb(255, 255, 0)");
     canvas->beginPath();
-    ec = 0;
-    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0, ec);
+    canvas->arc(cx, cy, r, M_PI * s, M_PI * e, 0);
     canvas->lineTo(cx, cy);
     canvas->closePath();
     canvas->fill();
 
     // Text enhancement
-    canvas->setFillColor("red");
+    canvas->setFillStyle("red");
     canvas->setFont("36pt Italic Liberation Serif");
     canvas->fillText("Hello, world.", 512, 200);
 
-    canvas->setFillColor("lime");
+    canvas->setFillStyle("lime");
     canvas->setFont("40pt Bold Liberation Sans");
     canvas->fillText("Hello, world.", 512, 250);
 
-    canvas->setFillColor("blue");
+    canvas->setFillStyle("blue");
     canvas->setFont("48pt Liberation Mono");
     canvas->fillText("Hello, world.", 512, 300);
 }
@@ -188,7 +184,8 @@ void testCanvas2d(cairo_t* cr)
 
     WebCore::CanvasRenderingContext2D* canvasRenderingContext = canvasElement->getContext(WebCore::String::fromUTF8("2d"));
 
-    figure(canvasRenderingContext);
+    CanvasRenderingContext2D_Impl canvasImpl(canvasRenderingContext);
+    figure(&canvasImpl);
 
     if (frame->contentRenderer() && frame->view())
     {

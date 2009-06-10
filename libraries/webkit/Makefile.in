@@ -2513,8 +2513,7 @@ global_cppflags := -DBUILDING_CAIRO__=1 -DWTF_CHANGES \
 global_cflags := -Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter -Wno-parentheses -fno-exceptions \
-	$(am__append_3)
+	-Wno-unused-parameter -Wno-parentheses $(am__append_3)
 global_cxxflags := $(global_cflags) $(SYMBOL_VISIBILITY_INLINES)
 
 # CFLAGS/CXXFLAGS used by WebCore and WebKit
@@ -2601,7 +2600,10 @@ webkit_tests_ldflags =
 testcanvas2d_SOURCES = testcanvas2d.cpp main.cpp
 testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
 testcanvas2d_CFLAGS = $(webkit_tests_cflags)
-testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags)
+testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
+	-I../../include \
+	-I$(srcdir)/../../include 
+
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 
