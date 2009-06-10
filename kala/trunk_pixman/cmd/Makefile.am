@@ -31,9 +31,10 @@ AM_CPPFLAGS = -I- \
 	-I$(srcdir)/../include \
 	-I$(prefix)/include \
 	-I$(prefix)/include/freetype2 \
-	-I$(prefix)/include/cairo
+	-I$(prefix)/include/cairo \
+	-I$(prefix)/include/pixman-1
 
-LDADD = ../os/libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm
+LDADD = ../os/libes++/libes++.a -lcairo -lpixman-1 -lfontconfig -lexpat -lfreetype -lm
 
 hello_SOURCES = hello.cpp
 
