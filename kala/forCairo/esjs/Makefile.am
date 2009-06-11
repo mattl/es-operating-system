@@ -24,9 +24,9 @@ bin_PROGRAMS = esjs
 if POSIX
 
 if APPLE
-LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
+LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
 else
-LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
+LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
 endif
 
 esjs_CXXFLAGS = -D YYERROR_VERBOSE

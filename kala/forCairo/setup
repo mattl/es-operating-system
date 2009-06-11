@@ -213,21 +213,42 @@ then
 fi
 cd ../..
 
+# Pixman
+cd src
+if [ ! -f pixman-0.15.10.tar.gz ]; 
+then
+	wget http://cairographics.org/releases/pixman-0.15.10.tar.gz
+fi
+rm -rf pixman-0.15.10
+tar -zxf pixman-0.15.10.tar.gz
+patch -p0 -d . < ../trunk/patches/pixman-0.15.10.patch
+cd ../opt
+mkdir -p pixman
+cd pixman
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pixman-0.15.10.patch -newer Makefile -print`" ];
+then
+	../../src/pixman-0.15.10/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-gtk --disable-sse2 --disable-mmx
+	make 
+	make install
+fi
+cd ../..
+
 # Cairo
 cd src
-if [ ! -f cairo-1.4.10.tar.gz ]; 
+if [ ! -f cairo-1.8.6.tar.gz ]; 
 then
-	wget http://cairographics.org/releases/cairo-1.4.10.tar.gz
+	wget http://cairographics.org/releases/cairo-1.8.6.tar.gz
 fi
-rm -rf cairo-1.4.10
-tar -zxf cairo-1.4.10.tar.gz
-patch -p0 -d . < ../trunk/patches/cairo-1.4.10.patch
+rm -rf cairo-1.8.6
+tar -zxf cairo-1.8.6.tar.gz
+patch -p0 -d . < ../trunk/patches/cairo-1.8.6.patch
+cp cairo-1.8.6/config.sub cairo-1.8.6/build/config.sub
 cd ../opt
 mkdir -p cairo
 cd cairo
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.4.10.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.8.6.patch -newer Makefile -print`" ];
 then
-	../../src/cairo-1.4.10/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig"
+	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1"
 	make
 	make install
 fi
