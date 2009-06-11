@@ -1,0 +1,67 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+#define NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED
+
+#include "es/base/IThread.idl"
+
+module es
+{
+    /** Provides a mechanism that synchronizes access to objects.
+     * <p>
+     * The <code>createMonitor</code> method of <code>ICurrentProcess</code> creates
+     * an unlocked monitor.
+     *
+     * @see ICurrentProcess
+     */
+    [Constructor]
+    interface Monitor
+    {
+        /** Acquires the lock on this monitor.
+         */
+        void lock();
+
+        /** Tries to acquires the lock on this monitor.
+         */
+        boolean tryLock();
+
+        /** Releases the lock on this monitor.
+         */
+        void unlock();
+
+        /** Releases the lock on this monitor and blocks the current thread until
+         * it reacquires the lock.
+         */
+        boolean wait();
+
+        /** Releases the lock on this monitor and blocks the current thread until
+         * either it reacquires the lock, or a specified time has elapsed.
+         */
+        boolean wait(in long long timeout);
+
+        /** Wakes up at least one thread that is waiting on this monitor.
+         */
+        void notify();
+
+        /** Wakes up all threads that are waiting on this monitor.
+         */
+        void notifyAll();
+    };
+};
+
+#endif // NINTENDO_ES_BASE_IMONITOR_IDL_INCLUDED

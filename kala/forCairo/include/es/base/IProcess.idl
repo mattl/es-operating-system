@@ -1,0 +1,194 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
+#define NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
+
+#include "es/base/ICallback.idl"
+#include "es/base/IFile.idl"
+#include "es/base/IPageable.idl"
+#include "es/base/IThread.idl"
+#include "es/base/IMonitor.idl"
+#include "es/naming/IContext.idl"
+
+module es
+{
+    native void_pointer;
+
+    /** This interface provides methods for handling child processes of the current process.
+     */
+    [Constructor]
+    interface Process
+    {
+        /**
+         * Kills this process.
+         */
+        void kill();
+        /**
+         * Starts this process, which executes a program <code>file</code> with arguments.
+         * @param file an executable file.
+         * @param command arguments to be passed to the program.
+         */
+        void start(in File file, in string command);
+        /**
+         * Starts this process, which executes a program <code>file</code>.
+         * @param file an executable file.
+         */
+        void start(in File file);
+        /**
+         * Starts this process.
+         */
+        void start();
+        /**
+         * Waits until this process is complete.
+         */
+        long wait();
+        /**
+         * Tests whether this process has exited.
+         * @return true if this process has exited. Otherwise, false.
+         */
+        boolean hasExited();
+        /**
+         * The root of the namespace for this process.
+         */
+        attribute Context root;
+        /**
+         * The standard input for this process.
+         */
+        attribute Stream input;
+        /**
+         * The standard output for this process.
+         */
+        attribute Stream output;
+        /**
+         * The standard error for this process.
+         */
+        attribute Stream error;
+        /**
+         * The current working context in the namespace for this process.
+         */
+        attribute Context current;
+
+        /**
+         * The exit value of this process.
+         */
+        readonly attribute long exitValue;
+    };
+
+    /** This interface provides methods for handling the current process.
+     */
+    interface CurrentProcess
+    {
+        const unsigned long PROT_NONE = 0x0;
+        const unsigned long PROT_READ = 0x1;
+        const unsigned long PROT_WRITE = 0x2;
+        const unsigned long PROT_EXEC = 0x4;
+        const unsigned long MAP_SHARED = 0x01;
+        const unsigned long MAP_PRIVATE = 0x02;
+        const unsigned long MAP_FIXED = 0x10;
+
+        /** Terminates the currently running process.
+         */
+        void exit(in long status);
+
+        /**
+         * Maps the pageable object into memory.
+         * @param start the preferable address to start mapping (usually 0).
+         * @param length the mapping size.
+         * @param prot <code>PROT_*</code> flags.
+         * @param flags <code>MAP_*</code> flags.
+         * @param pageable a pageable object to be mapped.
+         * @param offset the start offset of <code>pageable</code>.
+         * @return the address of the mapping.
+         */
+        void_pointer map(in void_pointer start, in long long length, in unsigned long prot, in unsigned long flags,
+                         in Pageable pageable, in long long offset);
+
+        /**
+         * Deletes the mappings.
+         * @param start the address of the mapping.
+         * @param length the size of the mapping.
+         */
+        void unmap(in void_pointer start, in long long length);
+
+        /** Returns the currently executing thread.
+         */
+        CurrentThread currentThread();
+
+        /** Creates and returns a new thread.
+         * @return          a new thread.
+         * @param start     the function to be started in a new thread.
+         * @param param     the argument to be passed to <code>start</code>.
+         * @see IThread
+         */
+        Thread createThread(in void_pointer start, in void_pointer param);
+
+        /** Causes the currently executing thread to temporarily pause
+         * and allow other threads to execute.
+         */
+        void yield();
+
+        /** Creates and returns an unlocked monitor.
+         * @return          an unlocked monitor.
+         * @see Monitor
+         */
+        Monitor createMonitor();
+
+        /**
+         * The root of the namespace.
+         */
+        readonly attribute Context root;
+
+        /**
+         * The standard input.
+         */
+        readonly attribute Stream input;
+        /**
+         * The standard output.
+         */
+        readonly attribute Stream output;
+        /**
+         * The standard error.
+         */
+        readonly attribute Stream error;
+
+        /**
+         * Increments the program data space.
+         * @param increment the increment size in bytes.
+         */
+        void_pointer setBreak(in long long increment);
+
+        /**
+         * Traces the system call invocation.
+         * @param on    enable/disable trace.
+         */
+        boolean trace(in boolean on);
+
+        /**
+         * The current time.
+         */
+        readonly attribute long long now;
+
+        /**
+         * The current working context in the namespace.
+         */
+        attribute Context current;
+    };
+};
+
+#endif // NINTENDO_ES_BASE_IPROCESS_IDL_INCLUDED
+
