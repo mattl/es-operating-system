@@ -253,8 +253,8 @@ esjs_SOURCES = \
 	src/string.cpp \
 	include/esjs.h include/value.h include/interface.h include/smartptr.h
 
-@APPLE_FALSE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
-@APPLE_TRUE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
+@APPLE_FALSE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
+@APPLE_TRUE@@POSIX_TRUE@LDADD = ../os/libes++/libes++.a ../os/fs/fat/libesfat.a ../os/fs/iso9660/libesiso9660.a ../os/kernel/libeskernel.a ../os/libes++/libes++.a -lpcreposix -lpcre -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
 @ES_TRUE@LDADD = ../os/libes++/libes++.a -lpcreposix -lpcre
 @POSIX_TRUE@esjs_CXXFLAGS = -D YYERROR_VERBOSE
 @POSIX_TRUE@valueptr_SOURCES = src/valueptr.cpp

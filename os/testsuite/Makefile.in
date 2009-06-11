@@ -244,9 +244,9 @@ top_srcdir = @top_srcdir@
 @ES_TRUE@	-I$(prefix)/include/cairo
 
 @ES_TRUE@AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
-@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo
-@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo 
-@ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm
+@APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
+@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
+@ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm -lpixman-1
 client_SOURCES = client.cpp
 server_SOURCES = server.cpp
 video_SOURCES = video.cpp
