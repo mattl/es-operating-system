@@ -18,3 +18,23 @@ diff -bcrN cairo-1.8.6.org/config.sub cairo-1.8.6/config.sub
   	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
   	      | -uxpv* | -beos* | -mpeix* | -udk* \
   	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+diff -bcrN cairo-1.8.6/build.org/config.sub cairo-1.8.6/build/config.sub
+*** cairo-1.8.6/build.org/config.sub	2007-04-20 11:09:10.000000000 +0900
+--- cairo-1.8.6/build/config.sub	2007-08-09 14:00:55.000000000 +0900
+***************
+*** 1249,1255 ****
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+--- 1249,1255 ----
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* | -es* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \

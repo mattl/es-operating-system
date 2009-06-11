@@ -242,7 +242,6 @@ fi
 rm -rf cairo-1.8.6
 tar -zxf cairo-1.8.6.tar.gz
 patch -p0 -d . < ../trunk/patches/cairo-1.8.6.patch
-cp cairo-1.8.6/config.sub cairo-1.8.6/build/config.sub
 cd ../opt
 mkdir -p cairo
 cd cairo
