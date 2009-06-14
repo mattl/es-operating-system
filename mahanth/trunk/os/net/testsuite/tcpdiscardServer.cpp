@@ -25,7 +25,7 @@
 #include "inet4address.h"
 #include "tcp.h"
 
-extern int esInit(es::Interface** nameSpace);
+extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 static void* discard(void* param);
 int n=0;
@@ -34,7 +34,7 @@ Handle<es::Resolver> resolver;
 
 int main()
 {
-    es::Interface* root = NULL;
+    Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
 
