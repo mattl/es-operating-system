@@ -42,7 +42,9 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	frag$(EXEEXT) timeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	udpEchoClient$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpdiscardClient$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpdiscardServer$(EXEEXT) 
 @ES_TRUE@TESTS = config$(EXEEXT) dhcp$(EXEEXT)
 @ES_FALSE@@POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 @ES_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
@@ -63,7 +65,9 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	frag$(EXEEXT) timeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	dhcp$(EXEEXT) dns$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	udpEchoClient$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT)
+@ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpdiscardClient$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpdiscardServer$(EXEEXT) 
 @ES_TRUE@am__EXEEXT_1 = config$(EXEEXT) dhcp$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_anon_OBJECTS = anon.$(OBJEXT)
@@ -151,6 +155,18 @@ unreach_LDADD = $(LDADD)
 unreach_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
 	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_tcpdiscardClient_OBJECTS = tcpdiscardClient.$(OBJEXT)
+tcpdiscardClient_OBJECTS = $(am_tcpdiscardClient_OBJECTS)
+tcpdiscardClient_LDADD = $(LDADD)
+tcpdiscardClient_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_tcpdiscardServer_OBJECTS = tcpdiscardServer.$(OBJEXT)
+tcpdiscardServer_OBJECTS = $(am_tcpdiscardServer_OBJECTS)
+tcpdiscardServer_LDADD = $(LDADD)
+tcpdiscardServer_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 SCRIPTS = $(noinst_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -164,12 +180,14 @@ SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
 	$(tcp2_SOURCES) $(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(udpEchoServer_SOURCES) $(unreach_SOURCES) \
+	$(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES)
 DIST_SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
 	$(tcp2_SOURCES) $(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(udpEchoServer_SOURCES) $(unreach_SOURCES) \
+        $(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES)
 DATA = $(noinst_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -297,6 +315,8 @@ mcast_SOURCES = mcast.cpp
 tcp_SOURCES = tcp.cpp
 tcp1_SOURCES = tcp1.cpp
 tcp2_SOURCES = tcp2.cpp
+tcpdiscardCient_SOURCES = tcpdiscardClient.cpp
+tcpdiscardServer_SOURCES = tcpdiscardServer.cpp
 timeout_SOURCES = timeout.cpp
 config_SOURCES = config.cpp
 dhcp_SOURCES = dhcp.cpp
@@ -371,6 +391,12 @@ tcp1$(EXEEXT): $(tcp1_OBJECTS) $(tcp1_DEPENDENCIES)
 tcp2$(EXEEXT): $(tcp2_OBJECTS) $(tcp2_DEPENDENCIES) 
 	@rm -f tcp2$(EXEEXT)
 	$(CXXLINK) $(tcp2_OBJECTS) $(tcp2_LDADD) $(LIBS)
+tcpdiscardClient(EXEEXT): $(tcpdiscardClient_OBJECTS) $(tcpdiscardClient_DEPENDENCIES) 
+	@rm -f tcpdiscardClient$(EXEEXT)
+	$(CXXLINK) $(tcpdiscardClient_OBJECTS) $(tcpdiscardClient_LDADD) $(LIBS)
+tcpdiscardServer$(EXEEXT): $(tcpdiscardServer_OBJECTS) $(tcpdiscardServer_DEPENDENCIES) 
+	@rm -f tcpdiscardServer$(EXEEXT)
+	$(CXXLINK) $(tcpdiscardServer_OBJECTS) $(tcpdiscardServer_LDADD) $(LIBS)
 timeout$(EXEEXT): $(timeout_OBJECTS) $(timeout_DEPENDENCIES) 
 	@rm -f timeout$(EXEEXT)
 	$(CXXLINK) $(timeout_OBJECTS) $(timeout_LDADD) $(LIBS)
@@ -400,6 +426,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardServer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpEchoClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpEchoServer.Po@am__quote@
