@@ -213,6 +213,26 @@ then
 fi
 cd ../..
 
+# Libjpeg
+cd src
+if [ ! -f jpegsrc.v6b.tar.gz ]; 
+then
+	wget http://www.ijg.org/files/jpegsrc.v6b.tar.gz
+fi
+rm -rf jpeg-6b
+tar -zxf jpegsrc.v6b.tar.gz
+patch -p0 -d . < ../trunk/patches/jpegsrc.v6b.patch
+cd ../opt
+mkdir -p libjpeg
+cd libjpeg
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/jpegsrc.v6b.patch -newer Makefile -print`" ];
+then
+	../../src/jpeg-6b/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	make 
+	make install
+fi
+cd ../..
+
 # Pixman
 cd src
 if [ ! -f pixman-0.15.10.tar.gz ]; 
