@@ -28,7 +28,7 @@
 extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 static void* discard(void* param);
-int nunThreads = 0;
+int numThreads = 0;
 
 Handle<es::Resolver> resolver;
 
