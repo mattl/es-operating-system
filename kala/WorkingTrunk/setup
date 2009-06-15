@@ -273,6 +273,32 @@ then
 fi
 cd ../..
 
+
+# ICU
+cd src
+if [ ! -f icu4c-4_2_0_1-src.tgz ]; 
+then
+	wget http://download.icu-project.org/files/icu4c/4.2.0.1/icu4c-4_2_0_1-src.tgz
+fi
+rm -rf icu
+tar -zxf icu4c-4_2_0_1-src.tgz
+patch -p0 -d . < ../trunk/patches/icu-4.2.0.1.patch
+cd icu/source
+./runConfigureICU Linux --disable-strict --with-library-bits=32 --disable-draft --disable-release
+cd ../opt
+mkdir -p icu
+cd icu
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.0.1.patch -newer Makefile -print`" ];
+then
+#/      ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+         ../../src/icu/source/configure --prefix=$ES_SDK --build=i386-pc-es --target=i386-pc-es --with-cross-bui    ld=$ES_SDK/../src/icu/source --disable-strict --disable-release --disable-draft
+        make
+        make install
+fi
+cd ../..
+cd ..
+
+
 # ES operating system for PC
 if [ ! -d pc ]; 
 then
