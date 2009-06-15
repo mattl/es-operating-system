@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*Discard TCP Server*/
+/* Discard TCP Server */
 
 #include <string.h>
 #include "arp.h"
@@ -28,7 +28,7 @@
 extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 static void* discard(void* param);
-int n=0;
+int nunThreads = 0;
 
 Handle<es::Resolver> resolver;
 
@@ -54,7 +54,7 @@ int main()
 
     ASSERT(config->getScopeID(nic) == dixID);
 
-    //192.168.2.40 Register host address
+    // 192.168.2.40 Register host address
     InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
     Handle<es::InternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof addr, dixID);
     config->addAddress(host, 16);
@@ -83,28 +83,29 @@ int main()
     
     esReport("done.\n");
 }
-//discard service
+// discard service
 static void* discard(void* param)
 {
-    n++;
+    numThreads++;
+    int id = numThreads;
     Socket* discardServer = static_cast<Socket*>(param);
     char input[9],prev[9];
     strcpy(prev,"dummy");
-    int timeoutcount=0;
-    while(timeoutcount<=10)
+    int timeoutcount = 0;
+    while (timeoutcount <= 10)
     {
        discardServer->read(input,9);
-       if(strcmp(prev,input)==0)
+       if (strcmp(prev,input) == 0)
        {
           timeoutcount++;
           esSleep(9000000);
-       }
-       else
+       } 
+       else 
        {
-          //discard any data sent. Do not reply
-          esReport("                    discarding \"%s\" by thread %d\n",input,n);
+          // discard any data sent. Do not reply
+          esReport("                    discarding \"%s\" by thread %d\n",input,id);
           strcpy(prev,input);
-          timeoutcount=0;
+          timeoutcount = 0;
        }
 	  
        memset(input,0,9);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*Discard TCP Client*/
+/* Discard TCP Client */
 
 #include <es.h>
 #include <es/handle.h>
@@ -59,27 +59,27 @@ int main()
 
     ASSERT(config->getScopeID(nic) == dixID);
 
-    //192.168.2.40 Register host address
+    // 192.168.2.40 Register host address
     InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
     Handle<es::InternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof addr, dixID);
     config->addAddress(host, 16);
     esSleep(80000000);  // Wait for the host address to be settled.
 
-    //192.168.2.20
+    // 192.168.2.20
     InAddr addr1 = { htonl(192 << 24 | 168 << 16 | 2 << 8 |20 ) };
     Handle<es::InternetAddress> server = resolver->getHostByAddress(&addr1.addr, sizeof addr1, dixID);    
     
     Socket discardClient(AF_INET, es::Socket::Stream);
 
-    //connect to discard server 
+    // connect to discard server 
     discardClient.connect(server, 9);
     
-    //start sending messages
+    // start sending messages
     discardClient.write("  hello ",9);
     discardClient.write("  world ",9);
     discardClient.write("Discard ",9);
     
-    //close the connection
+    // close the connection
     discardClient.close();
 
     config->removeAddress(host);
