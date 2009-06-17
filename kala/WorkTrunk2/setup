@@ -213,6 +213,46 @@ then
 fi
 cd ../..
 
+# Libjpeg
+cd src
+if [ ! -f jpegsrc.v6b.tar.gz ]; 
+then
+	wget http://www.ijg.org/files/jpegsrc.v6b.tar.gz
+fi
+rm -rf jpeg-6b
+tar -zxf jpegsrc.v6b.tar.gz
+patch -p0 -d . < ../trunk/patches/jpegsrc.v6b.patch
+cd ../opt
+mkdir -p libjpeg
+cd libjpeg
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/jpegsrc.v6b.patch -newer Makefile -print`" ];
+then
+	../../src/jpeg-6b/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	make 
+	make install
+fi
+cd ../..
+
+# Libxml2
+cd src
+if [ ! -f libxml2-2.7.3.tar.gz ]; 
+then
+	wget ftp://xmlsoft.org/libxml2/libxml2-2.7.3.tar.gz
+fi
+rm -rf libxml2-2.7.3
+tar -zxf libxml2-2.7.3.tar.gz
+patch -p0 -d . < ../trunk/patches/libxml2-2.7.3.patch
+cd ../opt
+mkdir -p libxml2
+cd libxml2
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libxml2-2.7.3.patch -newer Makefile -print`" ];
+then
+	../../src/libxml2-2.7.3/configure --prefix=$ES_SDK --build=i386-pc-es --target=i386-pc-es
+	make 
+	make install
+fi
+cd ../..
+
 # Pixman
 cd src
 if [ ! -f pixman-0.15.10.tar.gz ]; 
@@ -250,6 +290,30 @@ then
 	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1"
 	make
 	make install
+fi
+cd ../..
+
+# ICU
+cd src
+if [ ! -f icu4c-4_2_0_1-src.tgz ]; 
+then
+	wget http://download.icu-project.org/files/icu4c/4.2.0.1/icu4c-4_2_0_1-src.tgz
+fi
+rm -rf icu
+tar -zxf icu4c-4_2_0_1-src.tgz
+patch -p0 -d . < ../trunk/patches/icu-4.2.0.1.patch
+cd icu/source
+autoconf
+./runConfigureICU Linux --with-library-bits=32 --disable-shared --disable-draft --disable-release --disable-debug --enable-static
+cd ../../../opt
+mkdir -p icu
+cd icu
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.0.1.patch -newer Makefile -print`" ];
+then
+#/      ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+         ../../src/icu/source/configure --prefix=$ES_SDK --build=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-draft --disable-debug --enable-static
+        make
+        make install
 fi
 cd ../..
 
