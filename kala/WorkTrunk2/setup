@@ -247,7 +247,7 @@ mkdir -p libxml2
 cd libxml2
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libxml2-2.7.3.patch -newer Makefile -print`" ];
 then
-	../../src/libxml2-2.7.3/configure --prefix=$ES_SDK --build=i386-pc-es --target=i386-pc-es
+        ../../src/libxml2-2.7.3/configure --prefix=$ES_SDK --build=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld --without-debug
 	make 
 	make install
 fi
