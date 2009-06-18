@@ -17,13 +17,10 @@ SUFFIXES = .h .idl .ent
 
 noinst_PROGRAMS = \
 	main hello cairo expat server client \
-	location locationClient \
 	eventManager eventManagerClient \
 	console consoleClient \
 	upcallTest upcallTestClient \
-	fontconfig newlib \
-	# binder binderClient
-
+	fontconfig newlib
 
 AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 AM_CPPFLAGS = -I- \
@@ -52,21 +49,13 @@ client_SOURCES = client.cpp
 
 # binderClient_SOURCES = binderClient.cpp binder.h
 
-location_SOURCES = location.cpp location.h ILocation.idl
-
-locationClient_SOURCES = locationClient.cpp location.h ILocation.idl
-
-nodist_location_SOURCES = ILocation.c
-
-BUILT_SOURCES = ILocation.h ILocation.ent
-
 eventManager_SOURCES = eventManager.cpp eventManager.h IEventQueue.idl
 
 eventManagerClient_SOURCES = eventManagerClient.cpp eventManager.h IEventQueue.idl
 
 nodist_eventManager_SOURCES = IEventQueue.c
 
-BUILT_SOURCES += IEventQueue.h IEventQueue.ent
+BUILT_SOURCES = IEventQueue.h IEventQueue.ent
 
 console_SOURCES = console.cpp canvas.cpp canvas.h
 
@@ -80,7 +69,8 @@ fontconfig_SOURCES = fontconfig.cpp
 
 newlib_SOURCES = newlib.cpp
 
-CLEANFILES = $(BUILT_SOURCES) $(nodist_location_SOURCES) $(nodist_eventManager_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) $(nodist_eventManager_SOURCES)
 
 clean-local:
 	-rm -f  *.map
+

@@ -35,7 +35,6 @@ host_triplet = @host@
 target_triplet = @target@
 noinst_PROGRAMS = main$(EXEEXT) hello$(EXEEXT) cairo$(EXEEXT) \
 	expat$(EXEEXT) server$(EXEEXT) client$(EXEEXT) \
-	location$(EXEEXT) locationClient$(EXEEXT) \
 	eventManager$(EXEEXT) eventManagerClient$(EXEEXT) \
 	console$(EXEEXT) consoleClient$(EXEEXT) upcallTest$(EXEEXT) \
 	upcallTestClient$(EXEEXT) fontconfig$(EXEEXT) newlib$(EXEEXT)
@@ -90,15 +89,6 @@ am_hello_OBJECTS = hello.$(OBJEXT)
 hello_OBJECTS = $(am_hello_OBJECTS)
 hello_LDADD = $(LDADD)
 hello_DEPENDENCIES = ../os/libes++/libes++.a
-am_location_OBJECTS = location.$(OBJEXT)
-nodist_location_OBJECTS = ILocation.$(OBJEXT)
-location_OBJECTS = $(am_location_OBJECTS) $(nodist_location_OBJECTS)
-location_LDADD = $(LDADD)
-location_DEPENDENCIES = ../os/libes++/libes++.a
-am_locationClient_OBJECTS = locationClient.$(OBJEXT)
-locationClient_OBJECTS = $(am_locationClient_OBJECTS)
-locationClient_LDADD = $(LDADD)
-locationClient_DEPENDENCIES = ../os/libes++/libes++.a
 am_main_OBJECTS = main.$(OBJEXT)
 main_OBJECTS = $(am_main_OBJECTS)
 main_LDADD = $(LDADD)
@@ -135,16 +125,13 @@ SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(console_SOURCES) \
 	$(consoleClient_SOURCES) $(eventManager_SOURCES) \
 	$(nodist_eventManager_SOURCES) $(eventManagerClient_SOURCES) \
 	$(expat_SOURCES) $(fontconfig_SOURCES) $(hello_SOURCES) \
-	$(location_SOURCES) $(nodist_location_SOURCES) \
-	$(locationClient_SOURCES) $(main_SOURCES) $(newlib_SOURCES) \
-	$(server_SOURCES) $(upcallTest_SOURCES) \
-	$(upcallTestClient_SOURCES)
+	$(main_SOURCES) $(newlib_SOURCES) $(server_SOURCES) \
+	$(upcallTest_SOURCES) $(upcallTestClient_SOURCES)
 DIST_SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(console_SOURCES) \
 	$(consoleClient_SOURCES) $(eventManager_SOURCES) \
 	$(eventManagerClient_SOURCES) $(expat_SOURCES) \
-	$(fontconfig_SOURCES) $(hello_SOURCES) $(location_SOURCES) \
-	$(locationClient_SOURCES) $(main_SOURCES) $(newlib_SOURCES) \
-	$(server_SOURCES) $(upcallTest_SOURCES) \
+	$(fontconfig_SOURCES) $(hello_SOURCES) $(main_SOURCES) \
+	$(newlib_SOURCES) $(server_SOURCES) $(upcallTest_SOURCES) \
 	$(upcallTestClient_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
@@ -279,9 +266,10 @@ AM_CPPFLAGS = -I- \
 	-I$(srcdir)/../include \
 	-I$(prefix)/include \
 	-I$(prefix)/include/freetype2 \
-	-I$(prefix)/include/cairo
+	-I$(prefix)/include/cairo \
+	-I$(prefix)/include/pixman-1
 
-LDADD = ../os/libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm -lpixman-1
+LDADD = ../os/libes++/libes++.a -lcairo -lpixman-1 -lfontconfig -lexpat -lfreetype -lm
 hello_SOURCES = hello.cpp
 cairo_SOURCES = cairo.cpp
 expat_SOURCES = expat.cpp
@@ -292,21 +280,17 @@ client_SOURCES = client.cpp
 # binder_SOURCES = binder.cpp binder.h
 
 # binderClient_SOURCES = binderClient.cpp binder.h
-location_SOURCES = location.cpp location.h ILocation.idl
-locationClient_SOURCES = locationClient.cpp location.h ILocation.idl
-nodist_location_SOURCES = ILocation.c
-BUILT_SOURCES = ILocation.h ILocation.ent IEventQueue.h \
-	IEventQueue.ent
 eventManager_SOURCES = eventManager.cpp eventManager.h IEventQueue.idl
 eventManagerClient_SOURCES = eventManagerClient.cpp eventManager.h IEventQueue.idl
 nodist_eventManager_SOURCES = IEventQueue.c
+BUILT_SOURCES = IEventQueue.h IEventQueue.ent
 console_SOURCES = console.cpp canvas.cpp canvas.h
 consoleClient_SOURCES = consoleClient.cpp
 upcallTest_SOURCES = upcallTest.cpp
 upcallTestClient_SOURCES = upcallTestClient.cpp
 fontconfig_SOURCES = fontconfig.cpp
 newlib_SOURCES = newlib.cpp
-CLEANFILES = $(BUILT_SOURCES) $(nodist_location_SOURCES) $(nodist_eventManager_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) $(nodist_eventManager_SOURCES)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -375,12 +359,6 @@ fontconfig$(EXEEXT): $(fontconfig_OBJECTS) $(fontconfig_DEPENDENCIES)
 hello$(EXEEXT): $(hello_OBJECTS) $(hello_DEPENDENCIES) 
 	@rm -f hello$(EXEEXT)
 	$(CXXLINK) $(hello_OBJECTS) $(hello_LDADD) $(LIBS)
-location$(EXEEXT): $(location_OBJECTS) $(location_DEPENDENCIES) 
-	@rm -f location$(EXEEXT)
-	$(CXXLINK) $(location_OBJECTS) $(location_LDADD) $(LIBS)
-locationClient$(EXEEXT): $(locationClient_OBJECTS) $(locationClient_DEPENDENCIES) 
-	@rm -f locationClient$(EXEEXT)
-	$(CXXLINK) $(locationClient_OBJECTS) $(locationClient_LDADD) $(LIBS)
 main$(EXEEXT): $(main_OBJECTS) $(main_DEPENDENCIES) 
 	@rm -f main$(EXEEXT)
 	$(CXXLINK) $(main_OBJECTS) $(main_LDADD) $(LIBS)
@@ -404,7 +382,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IEventQueue.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILocation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvas.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
@@ -415,8 +392,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontconfig.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hello.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/location.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/locationClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
