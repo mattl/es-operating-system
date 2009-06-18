@@ -86,11 +86,9 @@ int main()
         esSleep(10000000);
     }
 
-    es::NetworkInterface::Statistics stat;
-    nic->getStatistics(&stat);
-    esReport("outOctets: %llu\n", stat.outOctets);
-    esReport("outUcastPkts: %u\n", stat.outUcastPkts);
-    esReport("outNUcastPkts: %u\n", stat.outNUcastPkts);
+    esReport("outOctets: %llu\n", nic->getOutOctets());
+    esReport("outUcastPkts: %u\n", nic->getOutUcastPkts());
+    esReport("outNUcastPkts: %u\n", nic->getOutNUcastPkts());
 
     esReport("done.\n");
 
@@ -105,11 +103,10 @@ int main()
         }
     }
 
-    nic->getStatistics(&stat);
-    esReport("inOctets: %llu\n", stat.inOctets);
-    esReport("inUcastPkts: %u\n", stat.inUcastPkts);
-    esReport("inNUcastPkts: %u\n", stat.inNUcastPkts);
-    esReport("inErrors: %u\n", stat.inErrors);
+    esReport("inOctets: %llu\n", nic->getInOctets());
+    esReport("inUcastPkts: %u\n", nic->getInUcastPkts());
+    esReport("inNUcastPkts: %u\n", nic->getInNUcastPkts());
+    esReport("inErrors: %u\n", nic->getInErrors());
 
     nic->stop();
 

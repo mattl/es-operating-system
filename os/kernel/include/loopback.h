@@ -62,9 +62,53 @@ public:
     {
         return true;
     }
-    void getStatistics(es::NetworkInterface::Statistics* statistics)
+    unsigned long long getInOctets()
     {
-        memset(statistics, 0, sizeof(es::NetworkInterface::Statistics));
+        return 0;
+    }
+    unsigned int getInUcastPkts()
+    {
+        return 0;
+    }
+    unsigned int getInNUcastPkts()
+    {
+        return 0;
+    }
+    unsigned int getInDiscards()
+    {
+        return 0;
+    }
+    unsigned int getInErrors()
+    {
+        return 0;
+    }
+    unsigned int getInUnknownProtos()
+    {
+        return 0;
+    }
+    unsigned long long getOutOctets()
+    {
+        return 0;
+    }
+    unsigned int getOutUcastPkts()
+    {
+        return 0;
+    }
+    unsigned int getOutNUcastPkts()
+    {
+        return 0;
+    }
+    unsigned int getOutDiscards()
+    {
+        return 0;
+    }
+    unsigned int getOutErrors()
+    {
+        return 0;
+    }
+    unsigned int getOutCollisions()
+    {
+        return 0;
     }
     int getType()
     {

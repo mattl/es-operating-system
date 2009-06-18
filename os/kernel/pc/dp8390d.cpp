@@ -604,14 +604,6 @@ getLinkState()
     return (config0 & CONFIG0_BNC) ? false : true;
 }
 
-void Dp8390d::
-getStatistics(Statistics* statistics)
-{
-    Synchronized<es::Monitor*> method(monitor);
-
-    *statistics = this->statistics;
-};
-
 //
 // IStream
 //

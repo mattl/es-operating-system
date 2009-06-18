@@ -31,6 +31,23 @@
 
 class Tap : public es::NetworkInterface, public es::Stream
 {
+    struct Statistics
+    {
+        unsigned long long  inOctets;        // The total number of octets received.
+        unsigned int        inUcastPkts;     // The number of unicast packets delivered.
+        unsigned int        inNUcastPkts;    // The number of non-unicast delivered.
+        unsigned int        inDiscards;      // The number of inbound packets discarded.
+        unsigned int        inErrors;        // The number of inbound packets that contained errors.
+        unsigned int        inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
+        unsigned long long  outOctets;       // The total number of octets transmitted.
+        unsigned int        outUcastPkts;    // The total number of packets transmitted to a unicast address.
+        unsigned int        outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
+        unsigned int        outDiscards;     // The number of outbound packets discarded.
+        unsigned int        outErrors;       // The number of outbound packets that could not be transmitted because of errors.
+
+        unsigned int        outCollisions;   // Collisions on CSMA
+    };
+
     es::Monitor*  monitor;
     Ref        ref;
     int        sd;
@@ -62,8 +79,54 @@ public:
 
     bool getLinkState();
 
-    void getStatistics(Statistics* statistics);
-
+    unsigned long long getInOctets()
+    {
+        return statistics.inOctets;
+    }
+    unsigned int getInUcastPkts()
+    {
+        return statistics.inUcastPkts;
+    }
+    unsigned int getInNUcastPkts()
+    {
+        return statistics.inNUcastPkts;
+    }
+    unsigned int getInDiscards()
+    {
+        return statistics.inDiscards;
+    }
+    unsigned int getInErrors()
+    {
+        return statistics.inErrors;
+    }
+    unsigned int getInUnknownProtos()
+    {
+        return statistics.inUnknownProtos;
+    }
+    unsigned long long getOutOctets()
+    {
+        return statistics.outOctets;
+    }
+    unsigned int getOutUcastPkts()
+    {
+        return statistics.outUcastPkts;
+    }
+    unsigned int getOutNUcastPkts()
+    {
+        return statistics.outNUcastPkts;
+    }
+    unsigned int getOutDiscards()
+    {
+        return statistics.outDiscards;
+    }
+    unsigned int getOutErrors()
+    {
+        return statistics.outErrors;
+    }
+    unsigned int getOutCollisions()
+    {
+        return statistics.outCollisions;
+    }
     int getMTU()
     {
         return 1500;

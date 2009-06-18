@@ -29,23 +29,6 @@ module es
         const long PPP = 23;       // RFC 1331
         const long Loopback = 24;  // loopback
 
-        struct Statistics
-        {
-            unsigned long long  inOctets;        // The total number of octets received.
-            unsigned long       inUcastPkts;     // The number of unicast packets delivered.
-            unsigned long       inNUcastPkts;    // The number of non-unicast delivered.
-            unsigned long       inDiscards;      // The number of inbound packets discarded.
-            unsigned long       inErrors;        // The number of inbound packets that contained errors.
-            unsigned long       inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
-            unsigned long long  outOctets;       // The total number of octets transmitted.
-            unsigned long       outUcastPkts;    // The total number of packets transmitted to a unicast address.
-            unsigned long       outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
-            unsigned long       outDiscards;     // The number of outbound packets discarded.
-            unsigned long       outErrors;       // The number of outbound packets that could not be transmitted because of errors.
-
-            unsigned long       outCollisions;   // Collisions on CSMA
-        };
-
         typedef octet Mac[6];
 
         /** Allows this network interface to receive frames sent to the specified
@@ -83,7 +66,18 @@ module es
 
         /** The statistics of this network interface.
          */
-        readonly attribute Statistics statistics;
+        readonly attribute unsigned long long  inOctets;        // The total number of octets received.
+        readonly attribute unsigned long       inUcastPkts;     // The number of unicast packets delivered.
+        readonly attribute unsigned long       inNUcastPkts;    // The number of non-unicast delivered.
+        readonly attribute unsigned long       inDiscards;      // The number of inbound packets discarded.
+        readonly attribute unsigned long       inErrors;        // The number of inbound packets that contained errors.
+        readonly attribute unsigned long       inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
+        readonly attribute unsigned long long  outOctets;       // The total number of octets transmitted.
+        readonly attribute unsigned long       outUcastPkts;    // The total number of packets transmitted to a unicast address.
+        readonly attribute unsigned long       outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
+        readonly attribute unsigned long       outDiscards;     // The number of outbound packets discarded.
+        readonly attribute unsigned long       outErrors;       // The number of outbound packets that could not be transmitted because of errors.
+        readonly attribute unsigned long       outCollisions;   // Collisions on CSMA
 
         /** The type of interface.
          */

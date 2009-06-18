@@ -180,42 +180,59 @@ class Dp8390d : public es::NetworkInterface, public es::Stream, public es::Callb
         u8 lenHigh;
     };
 
-    Lock        spinLock;       // for invoke()
-    es::Monitor*   monitor;
-    Ref         ref;
+    struct Statistics
+    {
+        unsigned long long  inOctets;        // The total number of octets received.
+        unsigned int        inUcastPkts;     // The number of unicast packets delivered.
+        unsigned int        inNUcastPkts;    // The number of non-unicast delivered.
+        unsigned int        inDiscards;      // The number of inbound packets discarded.
+        unsigned int        inErrors;        // The number of inbound packets that contained errors.
+        unsigned int        inUnknownProtos; // The number of inbound packets discarded because of an unknown or unsupported protocol.
+        unsigned long long  outOctets;       // The total number of octets transmitted.
+        unsigned int        outUcastPkts;    // The total number of packets transmitted to a unicast address.
+        unsigned int        outNUcastPkts;   // The total number of packets transmitted to a non-unicast address.
+        unsigned int        outDiscards;     // The number of outbound packets discarded.
+        unsigned int        outErrors;       // The number of outbound packets that could not be transmitted because of errors.
 
-    u8          bus;
-    unsigned    base;           // I/O base address
-    int         irq;
+        unsigned int        outCollisions;   // Collisions on CSMA
+    };
 
-    u8          mac[6];
+    Lock         spinLock;       // for invoke()
+    es::Monitor* monitor;
+    Ref          ref;
 
-    u16         ramStart;       // The start address of the buffer memory
-    u16         ramEnd;         // The end address of the buffer memory
+    u8           bus;
+    unsigned     base;           // I/O base address
+    int          irq;
 
-    bool        enabled;
+    u8           mac[6];
 
-    int         sending;        // The number of octets being sent. Zero if not sending.
-    bool        sendingUcast;   // True if sending a ucast packet.
+    u16          ramStart;       // The start address of the buffer memory
+    u16          ramEnd;         // The end address of the buffer memory
 
-    es::Alarm*     alarm;
-    bool        overflow;
-    bool        resend;
+    bool         enabled;
 
-    Statistics  statistics;
+    int          sending;        // The number of octets being sent. Zero if not sending.
+    bool         sendingUcast;   // True if sending a ucast packet.
+
+    es::Alarm*   alarm;
+    bool         overflow;
+    bool         resend;
+
+    Statistics   statistics;
 
     // Ring
-    u8          pageStart;
-    u8          pageStop;
-    u8          nextPacket;
+    u8           pageStart;
+    u8           pageStop;
+    u8           nextPacket;
 
     // Send
-    u8          txPageStart;
+    u8           txPageStart;
 
     // Multicast
-    u8          hashTable[NUM_HASH_REGISTER];
-    int         hashRef[8 * NUM_HASH_REGISTER]; // Reference count of each entry in the hash table.
-    u8          rcr;                            // Saved RCR register value. (because no register for page 2 works properly).
+    u8           hashTable[NUM_HASH_REGISTER];
+    int          hashRef[8 * NUM_HASH_REGISTER]; // Reference count of each entry in the hash table.
+    u8           rcr;                            // Saved RCR register value. (because no register for page 2 works properly).
 
     // Initialization
     bool reset();
@@ -257,7 +274,54 @@ public:
     void getMacAddress(u8 mac[6]);
     bool getLinkState();
 
-    void getStatistics(Statistics* statistics);
+    unsigned long long getInOctets()
+    {
+        return statistics.inOctets;
+    }
+    unsigned int getInUcastPkts()
+    {
+        return statistics.inUcastPkts;
+    }
+    unsigned int getInNUcastPkts()
+    {
+        return statistics.inNUcastPkts;
+    }
+    unsigned int getInDiscards()
+    {
+        return statistics.inDiscards;
+    }
+    unsigned int getInErrors()
+    {
+        return statistics.inErrors;
+    }
+    unsigned int getInUnknownProtos()
+    {
+        return statistics.inUnknownProtos;
+    }
+    unsigned long long getOutOctets()
+    {
+        return statistics.outOctets;
+    }
+    unsigned int getOutUcastPkts()
+    {
+        return statistics.outUcastPkts;
+    }
+    unsigned int getOutNUcastPkts()
+    {
+        return statistics.outNUcastPkts;
+    }
+    unsigned int getOutDiscards()
+    {
+        return statistics.outDiscards;
+    }
+    unsigned int getOutErrors()
+    {
+        return statistics.outErrors;
+    }
+    unsigned int getOutCollisions()
+    {
+        return statistics.outCollisions;
+    }
 
     int getMTU()
     {

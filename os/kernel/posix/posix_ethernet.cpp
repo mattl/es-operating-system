@@ -324,14 +324,6 @@ getLinkState()
     return (ifr.ifr_flags & IFF_RUNNING) ? true : false;
 }
 
-void Tap::
-getStatistics(Statistics* statistics)
-{
-    Synchronized<es::Monitor*> method(monitor);
-
-    *statistics = this->statistics;
-};
-
 //
 // Object
 //
