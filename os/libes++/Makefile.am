@@ -82,7 +82,6 @@ nodist_libessup___a_SOURCES = \
 	es/device/IPic.c \
 	es/device/IRemovableMedia.c \
 	es/device/IRtc.c \
-	es/device/IPartition.c \
 	es/naming/IBinding.c \
 	es/naming/IContext.c \
 	es/net/IInternetAddress.c \

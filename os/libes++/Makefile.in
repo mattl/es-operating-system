@@ -77,15 +77,15 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	es/device/IFatFileSystem.c es/device/IFileSystem.c \
 	es/device/IIso9660FileSystem.c es/device/INetworkInterface.c \
 	es/device/IPic.c es/device/IRemovableMedia.c es/device/IRtc.c \
-	es/device/IPartition.c es/naming/IBinding.c \
-	es/naming/IContext.c es/net/IInternetAddress.c \
-	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
-	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
-	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
-	w3c/traversal.c w3c/validation.c w3c/views.c \
-	src/interfaceStore.cpp src/report.cpp src/system.cpp \
-	src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
+	es/naming/IBinding.c es/naming/IContext.c \
+	es/net/IInternetAddress.c es/net/IInternetConfig.c \
+	es/net/IResolver.c es/net/ISocket.c es/util/IIterator.c \
+	es/util/ISet.c es/util/IOrderedMap.c w3c/css.c w3c/cssomview.c \
+	w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c w3c/ranges.c \
+	w3c/smil.c w3c/stylesheets.c w3c/svg.c w3c/traversal.c \
+	w3c/validation.c w3c/views.c src/interfaceStore.cpp \
+	src/report.cpp src/system.cpp src/posix_system.cpp \
+	src/posix_video.cpp src/rpc.cpp
 am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
 	utf.$(OBJEXT)
 am__objects_2 = color.$(OBJEXT) context.$(OBJEXT) dateTime.$(OBJEXT) \
@@ -106,7 +106,7 @@ am__objects_7 = object.$(OBJEXT) IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
 	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
 	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
-	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
+	IBinding.$(OBJEXT) IContext.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
@@ -134,13 +134,13 @@ am__libesrpc_a_SOURCES_DIST = es/object.c es/base/IAlarm.c \
 	es/device/IFileSystem.c es/device/IIso9660FileSystem.c \
 	es/device/INetworkInterface.c es/device/IPic.c \
 	es/device/IRemovableMedia.c es/device/IRtc.c \
-	es/device/IPartition.c es/naming/IBinding.c \
-	es/naming/IContext.c es/net/IInternetAddress.c \
-	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
-	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
-	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
-	w3c/traversal.c w3c/validation.c w3c/views.c src/rpc.cpp
+	es/naming/IBinding.c es/naming/IContext.c \
+	es/net/IInternetAddress.c es/net/IInternetConfig.c \
+	es/net/IResolver.c es/net/ISocket.c es/util/IIterator.c \
+	es/util/ISet.c es/util/IOrderedMap.c w3c/css.c w3c/cssomview.c \
+	w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c w3c/ranges.c \
+	w3c/smil.c w3c/stylesheets.c w3c/svg.c w3c/traversal.c \
+	w3c/validation.c w3c/views.c src/rpc.cpp
 am__objects_10 = libesrpc_a-object.$(OBJEXT) \
 	libesrpc_a-IAlarm.$(OBJEXT) libesrpc_a-ICache.$(OBJEXT) \
 	libesrpc_a-ICallback.$(OBJEXT) libesrpc_a-IFile.$(OBJEXT) \
@@ -157,8 +157,8 @@ am__objects_10 = libesrpc_a-object.$(OBJEXT) \
 	libesrpc_a-IIso9660FileSystem.$(OBJEXT) \
 	libesrpc_a-INetworkInterface.$(OBJEXT) \
 	libesrpc_a-IPic.$(OBJEXT) libesrpc_a-IRemovableMedia.$(OBJEXT) \
-	libesrpc_a-IRtc.$(OBJEXT) libesrpc_a-IPartition.$(OBJEXT) \
-	libesrpc_a-IBinding.$(OBJEXT) libesrpc_a-IContext.$(OBJEXT) \
+	libesrpc_a-IRtc.$(OBJEXT) libesrpc_a-IBinding.$(OBJEXT) \
+	libesrpc_a-IContext.$(OBJEXT) \
 	libesrpc_a-IInternetAddress.$(OBJEXT) \
 	libesrpc_a-IInternetConfig.$(OBJEXT) \
 	libesrpc_a-IResolver.$(OBJEXT) libesrpc_a-ISocket.$(OBJEXT) \
@@ -192,15 +192,15 @@ nodist_libessup___a_OBJECTS = object.$(OBJEXT) IAlarm.$(OBJEXT) \
 	IDisk.$(OBJEXT) IDmac.$(OBJEXT) IFatFileSystem.$(OBJEXT) \
 	IFileSystem.$(OBJEXT) IIso9660FileSystem.$(OBJEXT) \
 	INetworkInterface.$(OBJEXT) IPic.$(OBJEXT) \
-	IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) IPartition.$(OBJEXT) \
-	IBinding.$(OBJEXT) IContext.$(OBJEXT) \
-	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
-	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
-	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
-	cssomview.$(OBJEXT) dom.$(OBJEXT) events.$(OBJEXT) \
-	html5.$(OBJEXT) ls.$(OBJEXT) ranges.$(OBJEXT) smil.$(OBJEXT) \
-	stylesheets.$(OBJEXT) svg.$(OBJEXT) traversal.$(OBJEXT) \
-	validation.$(OBJEXT) views.$(OBJEXT)
+	IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) IBinding.$(OBJEXT) \
+	IContext.$(OBJEXT) IInternetAddress.$(OBJEXT) \
+	IInternetConfig.$(OBJEXT) IResolver.$(OBJEXT) \
+	ISocket.$(OBJEXT) IIterator.$(OBJEXT) ISet.$(OBJEXT) \
+	IOrderedMap.$(OBJEXT) css.$(OBJEXT) cssomview.$(OBJEXT) \
+	dom.$(OBJEXT) events.$(OBJEXT) html5.$(OBJEXT) ls.$(OBJEXT) \
+	ranges.$(OBJEXT) smil.$(OBJEXT) stylesheets.$(OBJEXT) \
+	svg.$(OBJEXT) traversal.$(OBJEXT) validation.$(OBJEXT) \
+	views.$(OBJEXT)
 libessup___a_OBJECTS = $(am_libessup___a_OBJECTS) \
 	$(nodist_libessup___a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -398,7 +398,6 @@ nodist_libessup___a_SOURCES = \
 	es/device/IPic.c \
 	es/device/IRemovableMedia.c \
 	es/device/IRtc.c \
-	es/device/IPartition.c \
 	es/naming/IBinding.c \
 	es/naming/IContext.c \
 	es/net/IInternetAddress.c \
@@ -539,7 +538,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IOrderedMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPartition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IProcess.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IRemovableMedia.Po@am__quote@
@@ -588,7 +586,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IOrderedMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPageable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPartition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IPic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IProcess.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IRemovableMedia.Po@am__quote@
@@ -1142,20 +1139,6 @@ IRtc.obj: es/device/IRtc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IRtc.c' object='IRtc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IRtc.obj `if test -f 'es/device/IRtc.c'; then $(CYGPATH_W) 'es/device/IRtc.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IRtc.c'; fi`
-
-IPartition.o: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IPartition.o -MD -MP -MF $(DEPDIR)/IPartition.Tpo -c -o IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IPartition.Tpo $(DEPDIR)/IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='IPartition.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-
-IPartition.obj: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IPartition.obj -MD -MP -MF $(DEPDIR)/IPartition.Tpo -c -o IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IPartition.Tpo $(DEPDIR)/IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='IPartition.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
 
 IBinding.o: es/naming/IBinding.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IBinding.o -MD -MP -MF $(DEPDIR)/IBinding.Tpo -c -o IBinding.o `test -f 'es/naming/IBinding.c' || echo '$(srcdir)/'`es/naming/IBinding.c
@@ -1856,20 +1839,6 @@ libesrpc_a-IRtc.obj: es/device/IRtc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IRtc.c' object='libesrpc_a-IRtc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IRtc.obj `if test -f 'es/device/IRtc.c'; then $(CYGPATH_W) 'es/device/IRtc.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IRtc.c'; fi`
-
-libesrpc_a-IPartition.o: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPartition.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IPartition.Tpo -c -o libesrpc_a-IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPartition.Tpo $(DEPDIR)/libesrpc_a-IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='libesrpc_a-IPartition.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-
-libesrpc_a-IPartition.obj: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IPartition.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IPartition.Tpo -c -o libesrpc_a-IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IPartition.Tpo $(DEPDIR)/libesrpc_a-IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='libesrpc_a-IPartition.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
 
 libesrpc_a-IBinding.o: es/naming/IBinding.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IBinding.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IBinding.Tpo -c -o libesrpc_a-IBinding.o `test -f 'es/naming/IBinding.c' || echo '$(srcdir)/'`es/naming/IBinding.c
