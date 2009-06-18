@@ -52,47 +52,6 @@ module es
         const long OptionKeyBit = 4;
         const long CommandKeyBit = 8;
 
-        /* generic input event definition */
-        struct InputEvent
-        {
-            long type; /* type of event; either one of EventTypeXXX */
-            unsigned long timeStamp; /* time stamp */
-             /* the interpretation of the following fields depend on the type of the event */
-            long unused1;
-            long unused2;
-            long unused3;
-            long unused4;
-            long unused5;
-            long unused6;
-        };
-
-        /* mouse input event definition */
-        struct MouseEvent
-        {
-            long type; /* EventTypeMouse */
-            unsigned long timeStamp; /* time stamp */
-            long x; /* mouse position x */
-            long y; /* mouse position y */
-            long buttons; /* combination of xxxButtonBit */
-            long modifiers; /* combination of xxxKeyBit */
-            long reserved1; /* reserved for future use */
-            long reserved2; /* reserved for future use */
-        };
-
-        /* keyboard input event definition */
-        struct KeyboardEvent
-        {
-            long type; /* EventTypeKeyboard */
-            unsigned long timeStamp; /* time stamp */
-            long charCode; /* character code in Mac Roman encoding */
-            long pressCode; /* press code; any of EventKeyXXX */
-            long modifiers; /* combination of xxxKeyBit */
-            long reserved1; /* reserved for future use */
-            long reserved2; /* reserved for future use */
-            long reserved3; /* reserved for future use */
-        };
-
-        readonly attribute InputEvent event;
         readonly attribute long keystroke;
         long peekKeystroke();
         readonly attribute unsigned long buttonState;

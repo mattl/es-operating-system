@@ -20,6 +20,46 @@
 
 #include "IEventQueue.h"
 
+/* generic input event definition */
+struct InputEvent
+{
+    int type; /* type of event; either one of EventTypeXXX */
+    unsigned int timeStamp; /* time stamp */
+        /* the interpretation of the following fields depend on the type of the event */
+    int unused1;
+    int unused2;
+    int unused3;
+    int unused4;
+    int unused5;
+    int unused6;
+};
+
+/* mouse input event definition */
+struct MouseEvent
+{
+    int type; /* EventTypeMouse */
+    unsigned int timeStamp; /* time stamp */
+    int x; /* mouse position x */
+    int y; /* mouse position y */
+    int buttons; /* combination of xxxButtonBit */
+    int modifiers; /* combination of xxxKeyBit */
+    int reserved1; /* reserved for future use */
+    int reserved2; /* reserved for future use */
+};
+
+/* keyboard input event definition */
+struct KeyboardEvent
+{
+    int type; /* EventTypeKeyboard */
+    unsigned int timeStamp; /* time stamp */
+    int charCode; /* character code in Mac Roman encoding */
+    int pressCode; /* press code; any of EventKeyXXX */
+    int modifiers; /* combination of xxxKeyBit */
+    int reserved1; /* reserved for future use */
+    int reserved2; /* reserved for future use */
+    int reserved3; /* reserved for future use */
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif

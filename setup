@@ -266,52 +266,6 @@ make
 make install
 cd ..
 
-# Squeak port for ES
-if [ ! -d trunk/cmd/squeak-3.7.1 ];
-then
-	cd src
-	wget http://es-operating-system.googlecode.com/files/squeak-es-3.7.1-0.1.4.tar.gz
-	cd ../trunk/cmd
-	tar -zxf ../../src/squeak-es-3.7.1-0.1.4.tar.gz
-	mv squeak-es-3.7.1-0.1.4 squeak-3.7.1
-	cd ../..
-fi
-if [ ! -f src/Squeak3.7-5989-full.zip ];
-then
-	cd src
-	wget http://ftp.squeak.org/3.7/Squeak3.7-5989-full.zip
-	cd ..
-fi
-if [ ! -f src/SqueakV3.sources.gz ];
-then
-	cd src
-	wget http://ftp.squeak.org/3.7/SqueakV3.sources.gz
-	cd ..
-fi
-if [ -e trunk/cmd/squeak-3.7.1/configure ];
-then
-	cd pc/cmd
-	if [ ! -d squeak-3.7.1 ]; 
-	then
-		mkdir squeak-3.7.1
-		cd squeak-3.7.1
-		CFLAGS=-g CXXFLAGS=-g ../../../trunk/cmd/squeak-3.7.1/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
-	else
-		cd squeak-3.7.1
-	fi
-	make
-	cd ../../../trunk/cmd/squeak-3.7.1/
-	if [ ! -f Squeak3.7-5989-full.image ]; 
-	then 
-		unzip ../../../src/Squeak3.7-5989-full.zip
-	fi
-	if [ ! -f SqueakV3.sources ]; 
-	then
-		gunzip -c ../../../src/SqueakV3.sources.gz > SqueakV3.sources
-	fi
-	cd ../../../
-fi
-
 # Generate ES boot disk image
 cd pc/init/
 ./es

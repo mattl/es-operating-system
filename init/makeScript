@@ -8,10 +8,12 @@ echo '#!/bin/sh' > $SCRIPT
 echo 'vformat '$DIR'/fat32.img > /dev/null' >> $SCRIPT
 echo 'vcopy '$DIR'/fat32.img '$DIR'/../os/bootsect/es.ldr > /dev/null' >> $SCRIPT
 echo 'vcopy '$DIR'/fat32.img '$DIR'/es.img > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img '$DIR'/../cmd/squeak-3.7.1/squeak.elf > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/SqueakV3.sources > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/Squeak3.7-5989-full.changes > /dev/null' >> $SCRIPT
-echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/Squeak3.7-5989-full.image > /dev/null' >> $SCRIPT
+
+# echo 'vcopy '$DIR'/fat32.img '$DIR'/../cmd/squeak-3.7.1/squeak.elf > /dev/null' >> $SCRIPT
+# echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/SqueakV3.sources > /dev/null' >> $SCRIPT
+# echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/Squeak3.7-5989-full.changes > /dev/null' >> $SCRIPT
+# echo 'vcopy '$DIR'/fat32.img '$SRC'/../cmd/squeak-3.7.1/Squeak3.7-5989-full.image > /dev/null' >> $SCRIPT
+
 echo 'vcopy '$DIR'/fat32.img '$DIR'/../esjs/esjs.elf > /dev/null' >> $SCRIPT
 
 echo 'vcopy '$DIR'/fat32.img '$SRC'/../esjs/scripts/cat.js > /dev/null' >> $SCRIPT
