@@ -27,7 +27,6 @@
 #include <es/base/ICache.h>
 #include <es/base/IFile.h>
 #include <es/base/IStream.h>
-#include <es/device/IDiskManagement.h>
 #include <es/device/IIso9660FileSystem.h>
 #include <es/util/IIterator.h>
 #include <es/naming/IBinding.h>

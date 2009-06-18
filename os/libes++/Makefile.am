@@ -73,7 +73,7 @@ nodist_libessup___a_SOURCES = \
 	es/device/IBeep.c \
 	es/device/ICursor.c \
 	es/device/IDevice.c \
-	es/device/IDiskManagement.c \
+	es/device/IDisk.c \
 	es/device/IDmac.c \
 	es/device/IFatFileSystem.c \
 	es/device/IFileSystem.c \

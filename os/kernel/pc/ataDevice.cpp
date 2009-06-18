@@ -18,12 +18,10 @@
 #include <string.h>
 #include <es.h>
 #include <es/handle.h>
-#include <es/device/IPartition.h>
 #include "io.h"
 #include "ataController.h"
 
 // #define VERBOSE
-
 
 using namespace ATAttachment;
 using namespace Register;
@@ -37,8 +35,7 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
     multiple(0),
     packetSize(0),
     dma(0),
-    removal(false),
-    partition(0)
+    removal(false)
 {
     using namespace Command;
     using namespace DeviceIdentification;
@@ -156,12 +153,6 @@ AtaDevice(AtaController* ctlr, u8 device, u8* signature) :
 AtaDevice::
 ~AtaDevice()
 {
-    if (partition)
-    {
-        Handle<es::Partition> handle(partition);
-        handle->unmount();
-        partition->release();
-    }
     monitor->release();
 }
 
@@ -257,121 +248,34 @@ flush()
 {
 }
 
-int AtaDevice::initialize()
+unsigned int AtaDevice::
+getHeads()
 {
-    return 0;
+    return id[3];   // 0..255
 }
 
-void AtaDevice::
-getGeometry(Geometry* geometry)
+unsigned int AtaDevice::
+getCylinders()
 {
-    geometry->cylinders = id[1];        // 0..1023
-    geometry->heads = id[3];            // 0..255
-    geometry->sectorsPerTrack = id[6];  // 1..63
-    geometry->bytesPerSector = sectorSize;
-    geometry->diskSize = size;
+    return id[1];   // 0..1023
 }
 
-void AtaDevice::
-getLayout(Partition* partition)
+unsigned int AtaDevice::
+getSectorsPerTrack()
 {
-    // [check] throw excpetion.
+    return id[6];   // 1..63
 }
 
-void AtaDevice::
-setLayout(const Partition* partition)
+unsigned int AtaDevice::
+getBytesPerSector()
 {
-    // [check] throw excpetion.
+    return sectorSize;
 }
 
-es::Partition* AtaDevice::
-getPartition()
+long long AtaDevice::
+getDiskSize()
 {
-    if (!partition)
-    {
-        Synchronized<es::Monitor*> method(monitor);
-
-        partition = es::Partition::createInstance();
-        if (partition)
-        {
-            Handle<es::Partition> handle(partition);
-            if (handle)
-            {
-                handle->mount(this);
-            }
-        }
-    }
-    return partition;
-}
-
-es::Binding* AtaDevice::
-bind(const char* name, Object* object)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->bind(name, object);
-}
-
-es::Context* AtaDevice::
-createSubcontext(const char* name)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->createSubcontext(name);
-}
-
-int AtaDevice::
-destroySubcontext(const char* name)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->destroySubcontext(name);
-}
-
-Object* AtaDevice::
-lookup(const char* name)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->lookup(name);
-}
-
-int AtaDevice::
-rename(const char* oldName, const char* newName)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->rename(oldName, newName);
-}
-
-int AtaDevice::
-unbind(const char* name)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->unbind(name);
-}
-
-es::Iterator* AtaDevice::
-list(const char* name)
-{
-    if (!getPartition())
-    {
-        return 0;
-    }
-    return partition->list(name);
+    return size;
 }
 
 Object* AtaDevice::
@@ -382,13 +286,9 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, es::DiskManagement::iid()) == 0)
+    else if (strcmp(riid, es::Disk::iid()) == 0)
     {
-        objectPtr = static_cast<es::DiskManagement*>(this);
-    }
-    else if (strcmp(riid, es::Context::iid()) == 0 && getPartition())
-    {
-        objectPtr = static_cast<es::Context*>(this);
+        objectPtr = static_cast<es::Disk*>(this);
     }
     else if (strcmp(riid, Object::iid()) == 0)
     {

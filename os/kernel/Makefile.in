@@ -122,13 +122,11 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/elf.cpp port/init.cpp \
 	port/cacheFactory.cpp port/heap.cpp port/line.cpp \
 	port/loopback.cpp port/page.cpp port/pageSet.cpp \
 	port/pageTable.cpp port/stream.cpp port/zero.cpp \
-	port/alarm.cpp port/partitionContext.cpp \
-	port/partitionStream.cpp port/partitionIterator.cpp \
-	port/lock.cpp port/malloc.cpp port/map.cpp port/mmu.cpp \
-	port/monitor.cpp port/process.cpp port/rendezvous.cpp \
-	port/sched.cpp port/spinlock.cpp port/swap.cpp \
-	port/syscall.cpp port/thread.cpp port/upcall.cpp pc/8042.cpp \
-	pc/8237a.cpp pc/8254.cpp pc/8259.cpp pc/apic.cpp \
+	port/alarm.cpp port/lock.cpp port/malloc.cpp port/map.cpp \
+	port/mmu.cpp port/monitor.cpp port/process.cpp \
+	port/rendezvous.cpp port/sched.cpp port/spinlock.cpp \
+	port/swap.cpp port/syscall.cpp port/thread.cpp port/upcall.cpp \
+	pc/8042.cpp pc/8237a.cpp pc/8254.cpp pc/8259.cpp pc/apic.cpp \
 	pc/ataController.cpp pc/ataDevice.cpp pc/ataPacket.cpp \
 	pc/cga.cpp pc/fdc.cpp pc/fdd.cpp pc/gdbstub.cpp pc/mps.cpp \
 	pc/pci.cpp pc/pc_core.cpp pc/pc_dateTime.cpp pc/pc_init.cpp \
@@ -139,15 +137,15 @@ am__libeskernel_a_SOURCES_DIST = pc/label.S port/elf.cpp port/init.cpp \
 	posix/posix_init.cpp posix/posix_ethernet.cpp include/alarm.h \
 	include/arena.h include/cache.h include/elfFile.h \
 	include/heap.h include/interfaceStore.h include/line.h \
-	include/loopback.h include/partition.h include/process.h \
-	include/spinlock.h include/thread.h include/zero.h \
-	include/ata.h include/uart.h include/i386/8042.h \
-	include/i386/8237a.h include/i386/8254.h include/i386/8259.h \
-	include/i386/apic.h include/i386/ataController.h \
-	include/i386/cga.h include/i386/core.h include/i386/cpu.h \
-	include/i386/fdc.h include/i386/io.h include/i386/label.h \
-	include/i386/mps.h include/i386/pci.h include/i386/rtc.h \
-	include/i386/sb16.h include/i386/es1370.h include/i386/vesa.h \
+	include/loopback.h include/process.h include/spinlock.h \
+	include/thread.h include/zero.h include/ata.h include/uart.h \
+	include/i386/8042.h include/i386/8237a.h include/i386/8254.h \
+	include/i386/8259.h include/i386/apic.h \
+	include/i386/ataController.h include/i386/cga.h \
+	include/i386/core.h include/i386/cpu.h include/i386/fdc.h \
+	include/i386/io.h include/i386/label.h include/i386/mps.h \
+	include/i386/pci.h include/i386/rtc.h include/i386/sb16.h \
+	include/i386/es1370.h include/i386/vesa.h \
 	include/i386/dp8390d.h include/posix/core.h \
 	include/posix/tap.h
 @ES_TRUE@am__objects_1 = label.$(OBJEXT)
@@ -175,8 +173,7 @@ am__objects_5 = elf.$(OBJEXT) init.$(OBJEXT) interface.$(OBJEXT) \
 	heap.$(OBJEXT) line.$(OBJEXT) loopback.$(OBJEXT) \
 	page.$(OBJEXT) pageSet.$(OBJEXT) pageTable.$(OBJEXT) \
 	stream.$(OBJEXT) zero.$(OBJEXT) alarm.$(OBJEXT) \
-	partitionContext.$(OBJEXT) partitionStream.$(OBJEXT) \
-	partitionIterator.$(OBJEXT) $(am__objects_3) $(am__objects_4)
+	$(am__objects_3) $(am__objects_4)
 am__objects_6 = $(am__objects_2) $(am__objects_2)
 am_libeskernel_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_5) $(am__objects_6)
@@ -187,18 +184,18 @@ nodist_libeskernel_a_OBJECTS = object.$(OBJEXT) IAlarm.$(OBJEXT) \
 	IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) IService.$(OBJEXT) \
 	IStream.$(OBJEXT) IThread.$(OBJEXT) IAudioFormat.$(OBJEXT) \
 	IBeep.$(OBJEXT) ICursor.$(OBJEXT) IDevice.$(OBJEXT) \
-	IDiskManagement.$(OBJEXT) IDmac.$(OBJEXT) \
-	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
-	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
-	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
-	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
-	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
-	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
-	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
-	cssomview.$(OBJEXT) dom.$(OBJEXT) events.$(OBJEXT) \
-	html5.$(OBJEXT) ls.$(OBJEXT) ranges.$(OBJEXT) smil.$(OBJEXT) \
-	stylesheets.$(OBJEXT) svg.$(OBJEXT) traversal.$(OBJEXT) \
-	validation.$(OBJEXT) views.$(OBJEXT) mbr.$(OBJEXT)
+	IDisk.$(OBJEXT) IDmac.$(OBJEXT) IFatFileSystem.$(OBJEXT) \
+	IFileSystem.$(OBJEXT) IIso9660FileSystem.$(OBJEXT) \
+	INetworkInterface.$(OBJEXT) IPic.$(OBJEXT) \
+	IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) IBinding.$(OBJEXT) \
+	IContext.$(OBJEXT) IInternetAddress.$(OBJEXT) \
+	IInternetConfig.$(OBJEXT) IResolver.$(OBJEXT) \
+	ISocket.$(OBJEXT) IIterator.$(OBJEXT) ISet.$(OBJEXT) \
+	IOrderedMap.$(OBJEXT) css.$(OBJEXT) cssomview.$(OBJEXT) \
+	dom.$(OBJEXT) events.$(OBJEXT) html5.$(OBJEXT) ls.$(OBJEXT) \
+	ranges.$(OBJEXT) smil.$(OBJEXT) stylesheets.$(OBJEXT) \
+	svg.$(OBJEXT) traversal.$(OBJEXT) validation.$(OBJEXT) \
+	views.$(OBJEXT) mbr.$(OBJEXT)
 libeskernel_a_OBJECTS = $(am_libeskernel_a_OBJECTS) \
 	$(nodist_libeskernel_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -350,17 +347,17 @@ nodist_libeskernel_a_SOURCES = es/object.c es/base/IAlarm.c \
 	es/base/IRuntime.c es/base/ISelectable.c es/base/IService.c \
 	es/base/IStream.c es/base/IThread.c es/device/IAudioFormat.c \
 	es/device/IBeep.c es/device/ICursor.c es/device/IDevice.c \
-	es/device/IDiskManagement.c es/device/IDmac.c \
-	es/device/IFatFileSystem.c es/device/IFileSystem.c \
-	es/device/IIso9660FileSystem.c es/device/INetworkInterface.c \
-	es/device/IPic.c es/device/IRemovableMedia.c es/device/IRtc.c \
-	es/device/IPartition.c es/naming/IBinding.c \
-	es/naming/IContext.c es/net/IInternetAddress.c \
-	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
-	es/util/IIterator.c es/util/ISet.c es/util/IOrderedMap.c \
-	w3c/css.c w3c/cssomview.c w3c/dom.c w3c/events.c w3c/html5.c \
-	w3c/ls.c w3c/ranges.c w3c/smil.c w3c/stylesheets.c w3c/svg.c \
-	w3c/traversal.c w3c/validation.c w3c/views.c mbr.c
+	es/device/IDisk.c es/device/IDmac.c es/device/IFatFileSystem.c \
+	es/device/IFileSystem.c es/device/IIso9660FileSystem.c \
+	es/device/INetworkInterface.c es/device/IPic.c \
+	es/device/IRemovableMedia.c es/device/IRtc.c \
+	es/naming/IBinding.c es/naming/IContext.c \
+	es/net/IInternetAddress.c es/net/IInternetConfig.c \
+	es/net/IResolver.c es/net/ISocket.c es/util/IIterator.c \
+	es/util/ISet.c es/util/IOrderedMap.c w3c/css.c w3c/cssomview.c \
+	w3c/dom.c w3c/events.c w3c/html5.c w3c/ls.c w3c/ranges.c \
+	w3c/smil.c w3c/stylesheets.c w3c/svg.c w3c/traversal.c \
+	w3c/validation.c w3c/views.c mbr.c
 
 #
 # port
@@ -374,9 +371,7 @@ cpp_source_files = port/elf.cpp port/init.cpp port/interface.cpp \
 	port/arena.cpp port/cache.cpp port/cacheFactory.cpp \
 	port/heap.cpp port/line.cpp port/loopback.cpp port/page.cpp \
 	port/pageSet.cpp port/pageTable.cpp port/stream.cpp \
-	port/zero.cpp port/alarm.cpp port/partitionContext.cpp \
-	port/partitionStream.cpp port/partitionIterator.cpp \
-	$(am__append_2) $(am__append_4)
+	port/zero.cpp port/alarm.cpp $(am__append_2) $(am__append_4)
 
 # The filenames of the header files not intalled but used by the kernel
 
@@ -385,10 +380,9 @@ cpp_source_files = port/elf.cpp port/init.cpp port/interface.cpp \
 # extra header files
 header_files = include/alarm.h include/arena.h include/cache.h \
 	include/elfFile.h include/heap.h include/interfaceStore.h \
-	include/line.h include/loopback.h include/partition.h \
-	include/process.h include/spinlock.h include/thread.h \
-	include/zero.h include/ata.h include/uart.h $(am__append_3) \
-	$(am__append_5)
+	include/line.h include/loopback.h include/process.h \
+	include/spinlock.h include/thread.h include/zero.h \
+	include/ata.h include/uart.h $(am__append_3) $(am__append_5)
 
 # cpp_source_files += \
 #	pc/acpios.cpp
@@ -485,7 +479,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDevice.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDiskManagement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDisk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDmac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFile.Po@am__quote@
@@ -500,7 +494,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IOrderedMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPageable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPartition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IPic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IProcess.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IRemovableMedia.Po@am__quote@
@@ -551,9 +544,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageTable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partitionContext.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partitionIterator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partitionStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pc_core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pc_dateTime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pc_init.Po@am__quote@
@@ -896,19 +886,19 @@ IDevice.obj: es/device/IDevice.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDevice.obj `if test -f 'es/device/IDevice.c'; then $(CYGPATH_W) 'es/device/IDevice.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDevice.c'; fi`
 
-IDiskManagement.o: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDiskManagement.o -MD -MP -MF $(DEPDIR)/IDiskManagement.Tpo -c -o IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDiskManagement.Tpo $(DEPDIR)/IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='IDiskManagement.o' libtool=no @AMDEPBACKSLASH@
+IDisk.o: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDisk.o -MD -MP -MF $(DEPDIR)/IDisk.Tpo -c -o IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDisk.Tpo $(DEPDIR)/IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='IDisk.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
 
-IDiskManagement.obj: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDiskManagement.obj -MD -MP -MF $(DEPDIR)/IDiskManagement.Tpo -c -o IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDiskManagement.Tpo $(DEPDIR)/IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='IDiskManagement.obj' libtool=no @AMDEPBACKSLASH@
+IDisk.obj: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDisk.obj -MD -MP -MF $(DEPDIR)/IDisk.Tpo -c -o IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDisk.Tpo $(DEPDIR)/IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='IDisk.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
 
 IDmac.o: es/device/IDmac.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDmac.o -MD -MP -MF $(DEPDIR)/IDmac.Tpo -c -o IDmac.o `test -f 'es/device/IDmac.c' || echo '$(srcdir)/'`es/device/IDmac.c
@@ -1021,20 +1011,6 @@ IRtc.obj: es/device/IRtc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IRtc.c' object='IRtc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IRtc.obj `if test -f 'es/device/IRtc.c'; then $(CYGPATH_W) 'es/device/IRtc.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IRtc.c'; fi`
-
-IPartition.o: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IPartition.o -MD -MP -MF $(DEPDIR)/IPartition.Tpo -c -o IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IPartition.Tpo $(DEPDIR)/IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='IPartition.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IPartition.o `test -f 'es/device/IPartition.c' || echo '$(srcdir)/'`es/device/IPartition.c
-
-IPartition.obj: es/device/IPartition.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IPartition.obj -MD -MP -MF $(DEPDIR)/IPartition.Tpo -c -o IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IPartition.Tpo $(DEPDIR)/IPartition.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IPartition.c' object='IPartition.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IPartition.obj `if test -f 'es/device/IPartition.c'; then $(CYGPATH_W) 'es/device/IPartition.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IPartition.c'; fi`
 
 IBinding.o: es/naming/IBinding.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IBinding.o -MD -MP -MF $(DEPDIR)/IBinding.Tpo -c -o IBinding.o `test -f 'es/naming/IBinding.c' || echo '$(srcdir)/'`es/naming/IBinding.c
@@ -1567,48 +1543,6 @@ alarm.obj: port/alarm.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/alarm.cpp' object='alarm.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alarm.obj `if test -f 'port/alarm.cpp'; then $(CYGPATH_W) 'port/alarm.cpp'; else $(CYGPATH_W) '$(srcdir)/port/alarm.cpp'; fi`
-
-partitionContext.o: port/partitionContext.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionContext.o -MD -MP -MF $(DEPDIR)/partitionContext.Tpo -c -o partitionContext.o `test -f 'port/partitionContext.cpp' || echo '$(srcdir)/'`port/partitionContext.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionContext.Tpo $(DEPDIR)/partitionContext.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionContext.cpp' object='partitionContext.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionContext.o `test -f 'port/partitionContext.cpp' || echo '$(srcdir)/'`port/partitionContext.cpp
-
-partitionContext.obj: port/partitionContext.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionContext.obj -MD -MP -MF $(DEPDIR)/partitionContext.Tpo -c -o partitionContext.obj `if test -f 'port/partitionContext.cpp'; then $(CYGPATH_W) 'port/partitionContext.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionContext.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionContext.Tpo $(DEPDIR)/partitionContext.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionContext.cpp' object='partitionContext.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionContext.obj `if test -f 'port/partitionContext.cpp'; then $(CYGPATH_W) 'port/partitionContext.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionContext.cpp'; fi`
-
-partitionStream.o: port/partitionStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionStream.o -MD -MP -MF $(DEPDIR)/partitionStream.Tpo -c -o partitionStream.o `test -f 'port/partitionStream.cpp' || echo '$(srcdir)/'`port/partitionStream.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionStream.Tpo $(DEPDIR)/partitionStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionStream.cpp' object='partitionStream.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionStream.o `test -f 'port/partitionStream.cpp' || echo '$(srcdir)/'`port/partitionStream.cpp
-
-partitionStream.obj: port/partitionStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionStream.obj -MD -MP -MF $(DEPDIR)/partitionStream.Tpo -c -o partitionStream.obj `if test -f 'port/partitionStream.cpp'; then $(CYGPATH_W) 'port/partitionStream.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionStream.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionStream.Tpo $(DEPDIR)/partitionStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionStream.cpp' object='partitionStream.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionStream.obj `if test -f 'port/partitionStream.cpp'; then $(CYGPATH_W) 'port/partitionStream.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionStream.cpp'; fi`
-
-partitionIterator.o: port/partitionIterator.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionIterator.o -MD -MP -MF $(DEPDIR)/partitionIterator.Tpo -c -o partitionIterator.o `test -f 'port/partitionIterator.cpp' || echo '$(srcdir)/'`port/partitionIterator.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionIterator.Tpo $(DEPDIR)/partitionIterator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionIterator.cpp' object='partitionIterator.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionIterator.o `test -f 'port/partitionIterator.cpp' || echo '$(srcdir)/'`port/partitionIterator.cpp
-
-partitionIterator.obj: port/partitionIterator.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT partitionIterator.obj -MD -MP -MF $(DEPDIR)/partitionIterator.Tpo -c -o partitionIterator.obj `if test -f 'port/partitionIterator.cpp'; then $(CYGPATH_W) 'port/partitionIterator.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionIterator.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/partitionIterator.Tpo $(DEPDIR)/partitionIterator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='port/partitionIterator.cpp' object='partitionIterator.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o partitionIterator.obj `if test -f 'port/partitionIterator.cpp'; then $(CYGPATH_W) 'port/partitionIterator.cpp'; else $(CYGPATH_W) '$(srcdir)/port/partitionIterator.cpp'; fi`
 
 lock.o: port/lock.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lock.o -MD -MP -MF $(DEPDIR)/lock.Tpo -c -o lock.o `test -f 'port/lock.cpp' || echo '$(srcdir)/'`port/lock.cpp

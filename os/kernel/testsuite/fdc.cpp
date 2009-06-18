@@ -40,15 +40,13 @@ int main()
 
     esDump(sec, 512);
 
-    es::DiskManagement::Geometry geo;
-    Handle<es::DiskManagement> dm(floppy);
-    dm->getGeometry(&geo);
+    Handle<es::Disk> dm(floppy);
     esReport("%d %d %d %d %lld\n",
-             geo.heads,
-             geo.cylinders,
-             geo.sectorsPerTrack,
-             geo.bytesPerSector,
-             geo.diskSize);
+             dm->getHeads(),
+             dm->getCylinders(),
+             dm->getSectorsPerTrack(),
+             dm->getBytesPerSector(),
+             dm->getDiskSize());
 
     esSleep(50000000);      // for motor stop
 

@@ -46,37 +46,6 @@ void testDisk(Handle<es::Stream> disk)
     esReport("!\n");
 }
 
-void PrintPartitions(es::Context* context)
-{
-    char name[16];
-    es::DiskManagement::Partition params;
-    esReport("boot type offset   size\n");
-    Handle<es::Iterator> iter = context->list("");
-    Handle<es::Binding> binding;
-    while ((binding = iter->next()))
-    {
-        Handle<es::DiskManagement> diskManagement = binding->getObject();
-        TEST(diskManagement);
-        diskManagement->getLayout(&params);
-        TEST(0 < binding->getName(name, sizeof(name)));
-        esReport("%02x   %02x   %08llx %08llx %s\n",
-                 params.bootIndicator,
-                 params.partitionType,
-                 params.startingOffset,
-                 params.partitionLength,
-                 name);
-
-        Handle<es::Stream> stream = context->lookup(name);
-        TEST(stream);
-        long long size;
-        size = stream->getSize();
-        TEST(params.partitionLength == size);
-        TEST(params.bootIndicator == 0x00 || params.bootIndicator == 0x80);
-        TEST(params.partitionType != 0x00);
-    }
-    esReport("\n");
-}
-
 int main()
 {
     Object* nameSpace;
@@ -104,13 +73,6 @@ int main()
 
     Handle<es::Stream> disk(root->lookup("device/ata/channel0/device0"));
     testDisk(disk);
-
-    Handle<es::Context> partiton(root->lookup("device/ata/channel0/device0"));
-    if (partiton)
-    {
-        esReport("partiton test\n");
-        PrintPartitions(partiton);
-    }
 
     esPanic(__FILE__, __LINE__, "done.\n");
 }

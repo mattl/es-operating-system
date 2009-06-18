@@ -47,7 +47,7 @@ nodist_libeskernel_a_SOURCES = \
 	es/device/IBeep.c \
 	es/device/ICursor.c \
 	es/device/IDevice.c \
-	es/device/IDiskManagement.c \
+	es/device/IDisk.c \
 	es/device/IDmac.c \
 	es/device/IFatFileSystem.c \
 	es/device/IFileSystem.c \
@@ -56,7 +56,6 @@ nodist_libeskernel_a_SOURCES = \
 	es/device/IPic.c \
 	es/device/IRemovableMedia.c \
 	es/device/IRtc.c \
-	es/device/IPartition.c \
 	es/naming/IBinding.c \
 	es/naming/IContext.c \
 	es/net/IInternetAddress.c \
@@ -115,7 +114,6 @@ header_files = \
 	include/interfaceStore.h \
 	include/line.h \
 	include/loopback.h \
-	include/partition.h \
 	include/process.h \
 	include/spinlock.h \
 	include/thread.h \
@@ -123,10 +121,7 @@ header_files = \
 
 # extra source files
 cpp_source_files += \
-	port/alarm.cpp \
-	port/partitionContext.cpp \
-	port/partitionStream.cpp \
-	port/partitionIterator.cpp
+	port/alarm.cpp
 
 # 	port/zero.cpp
 

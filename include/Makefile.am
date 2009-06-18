@@ -87,7 +87,7 @@ nobase_nodist_include_HEADERS = \
 	es/device/IBeep.h \
 	es/device/ICursor.h \
 	es/device/IDevice.h \
-	es/device/IDiskManagement.h \
+	es/device/IDisk.h \
 	es/device/IDmac.h \
 	es/device/IFatFileSystem.h \
 	es/device/IFileSystem.h \
@@ -96,7 +96,6 @@ nobase_nodist_include_HEADERS = \
 	es/device/IPic.h \
 	es/device/IRemovableMedia.h \
 	es/device/IRtc.h \
-	es/device/IPartition.h \
 	es/naming/IBinding.h \
 	es/naming/IContext.h \
 	es/net/IInternetAddress.h \
@@ -145,7 +144,7 @@ nobase_nodist_include_HEADERS += \
 	es/device/IBeep.ent \
 	es/device/ICursor.ent \
 	es/device/IDevice.ent \
-	es/device/IDiskManagement.ent \
+	es/device/IDisk.ent \
 	es/device/IDmac.ent \
 	es/device/IFatFileSystem.ent \
 	es/device/IFileSystem.ent \
@@ -154,7 +153,6 @@ nobase_nodist_include_HEADERS += \
 	es/device/IPic.ent \
 	es/device/IRemovableMedia.ent \
 	es/device/IRtc.ent \
-	es/device/IPartition.ent \
 	es/naming/IBinding.ent \
 	es/naming/IContext.ent \
 	es/net/IInternetAddress.ent \
@@ -203,7 +201,7 @@ nobase_include_HEADERS += \
 	es/device/IBeep.idl \
 	es/device/ICursor.idl \
 	es/device/IDevice.idl \
-	es/device/IDiskManagement.idl \
+	es/device/IDisk.idl \
 	es/device/IDmac.idl \
 	es/device/IFatFileSystem.idl \
 	es/device/IFileSystem.idl \
@@ -212,7 +210,6 @@ nobase_include_HEADERS += \
 	es/device/IPic.idl \
 	es/device/IRemovableMedia.idl \
 	es/device/IRtc.idl \
-	es/device/IPartition.idl \
 	es/naming/IBinding.idl \
 	es/naming/IContext.idl \
 	es/net/IInternetAddress.idl \

@@ -73,11 +73,10 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	es/base/IProcess.c es/base/IRuntime.c es/base/ISelectable.c \
 	es/base/IService.c es/base/IStream.c es/base/IThread.c \
 	es/device/IAudioFormat.c es/device/IBeep.c es/device/ICursor.c \
-	es/device/IDevice.c es/device/IDiskManagement.c \
-	es/device/IDmac.c es/device/IFatFileSystem.c \
-	es/device/IFileSystem.c es/device/IIso9660FileSystem.c \
-	es/device/INetworkInterface.c es/device/IPic.c \
-	es/device/IRemovableMedia.c es/device/IRtc.c \
+	es/device/IDevice.c es/device/IDisk.c es/device/IDmac.c \
+	es/device/IFatFileSystem.c es/device/IFileSystem.c \
+	es/device/IIso9660FileSystem.c es/device/INetworkInterface.c \
+	es/device/IPic.c es/device/IRemovableMedia.c es/device/IRtc.c \
 	es/device/IPartition.c es/naming/IBinding.c \
 	es/naming/IContext.c es/net/IInternetAddress.c \
 	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
@@ -103,7 +102,7 @@ am__objects_7 = object.$(OBJEXT) IAlarm.$(OBJEXT) ICache.$(OBJEXT) \
 	IProcess.$(OBJEXT) IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) \
 	IService.$(OBJEXT) IStream.$(OBJEXT) IThread.$(OBJEXT) \
 	IAudioFormat.$(OBJEXT) IBeep.$(OBJEXT) ICursor.$(OBJEXT) \
-	IDevice.$(OBJEXT) IDiskManagement.$(OBJEXT) IDmac.$(OBJEXT) \
+	IDevice.$(OBJEXT) IDisk.$(OBJEXT) IDmac.$(OBJEXT) \
 	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
 	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
 	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
@@ -131,10 +130,10 @@ am__libesrpc_a_SOURCES_DIST = es/object.c es/base/IAlarm.c \
 	es/base/IRuntime.c es/base/ISelectable.c es/base/IService.c \
 	es/base/IStream.c es/base/IThread.c es/device/IAudioFormat.c \
 	es/device/IBeep.c es/device/ICursor.c es/device/IDevice.c \
-	es/device/IDiskManagement.c es/device/IDmac.c \
-	es/device/IFatFileSystem.c es/device/IFileSystem.c \
-	es/device/IIso9660FileSystem.c es/device/INetworkInterface.c \
-	es/device/IPic.c es/device/IRemovableMedia.c es/device/IRtc.c \
+	es/device/IDisk.c es/device/IDmac.c es/device/IFatFileSystem.c \
+	es/device/IFileSystem.c es/device/IIso9660FileSystem.c \
+	es/device/INetworkInterface.c es/device/IPic.c \
+	es/device/IRemovableMedia.c es/device/IRtc.c \
 	es/device/IPartition.c es/naming/IBinding.c \
 	es/naming/IContext.c es/net/IInternetAddress.c \
 	es/net/IInternetConfig.c es/net/IResolver.c es/net/ISocket.c \
@@ -152,8 +151,7 @@ am__objects_10 = libesrpc_a-object.$(OBJEXT) \
 	libesrpc_a-IService.$(OBJEXT) libesrpc_a-IStream.$(OBJEXT) \
 	libesrpc_a-IThread.$(OBJEXT) libesrpc_a-IAudioFormat.$(OBJEXT) \
 	libesrpc_a-IBeep.$(OBJEXT) libesrpc_a-ICursor.$(OBJEXT) \
-	libesrpc_a-IDevice.$(OBJEXT) \
-	libesrpc_a-IDiskManagement.$(OBJEXT) \
+	libesrpc_a-IDevice.$(OBJEXT) libesrpc_a-IDisk.$(OBJEXT) \
 	libesrpc_a-IDmac.$(OBJEXT) libesrpc_a-IFatFileSystem.$(OBJEXT) \
 	libesrpc_a-IFileSystem.$(OBJEXT) \
 	libesrpc_a-IIso9660FileSystem.$(OBJEXT) \
@@ -191,11 +189,11 @@ nodist_libessup___a_OBJECTS = object.$(OBJEXT) IAlarm.$(OBJEXT) \
 	IRuntime.$(OBJEXT) ISelectable.$(OBJEXT) IService.$(OBJEXT) \
 	IStream.$(OBJEXT) IThread.$(OBJEXT) IAudioFormat.$(OBJEXT) \
 	IBeep.$(OBJEXT) ICursor.$(OBJEXT) IDevice.$(OBJEXT) \
-	IDiskManagement.$(OBJEXT) IDmac.$(OBJEXT) \
-	IFatFileSystem.$(OBJEXT) IFileSystem.$(OBJEXT) \
-	IIso9660FileSystem.$(OBJEXT) INetworkInterface.$(OBJEXT) \
-	IPic.$(OBJEXT) IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) \
-	IPartition.$(OBJEXT) IBinding.$(OBJEXT) IContext.$(OBJEXT) \
+	IDisk.$(OBJEXT) IDmac.$(OBJEXT) IFatFileSystem.$(OBJEXT) \
+	IFileSystem.$(OBJEXT) IIso9660FileSystem.$(OBJEXT) \
+	INetworkInterface.$(OBJEXT) IPic.$(OBJEXT) \
+	IRemovableMedia.$(OBJEXT) IRtc.$(OBJEXT) IPartition.$(OBJEXT) \
+	IBinding.$(OBJEXT) IContext.$(OBJEXT) \
 	IInternetAddress.$(OBJEXT) IInternetConfig.$(OBJEXT) \
 	IResolver.$(OBJEXT) ISocket.$(OBJEXT) IIterator.$(OBJEXT) \
 	ISet.$(OBJEXT) IOrderedMap.$(OBJEXT) css.$(OBJEXT) \
@@ -391,7 +389,7 @@ nodist_libessup___a_SOURCES = \
 	es/device/IBeep.c \
 	es/device/ICursor.c \
 	es/device/IDevice.c \
-	es/device/IDiskManagement.c \
+	es/device/IDisk.c \
 	es/device/IDmac.c \
 	es/device/IFatFileSystem.c \
 	es/device/IFileSystem.c \
@@ -526,7 +524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDevice.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDiskManagement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDisk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IDmac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IFile.Po@am__quote@
@@ -575,7 +573,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-ICursor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDevice.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDiskManagement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDisk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IDmac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFatFileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-IFile.Po@am__quote@
@@ -1019,19 +1017,19 @@ IDevice.obj: es/device/IDevice.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDevice.obj `if test -f 'es/device/IDevice.c'; then $(CYGPATH_W) 'es/device/IDevice.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDevice.c'; fi`
 
-IDiskManagement.o: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDiskManagement.o -MD -MP -MF $(DEPDIR)/IDiskManagement.Tpo -c -o IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDiskManagement.Tpo $(DEPDIR)/IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='IDiskManagement.o' libtool=no @AMDEPBACKSLASH@
+IDisk.o: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDisk.o -MD -MP -MF $(DEPDIR)/IDisk.Tpo -c -o IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDisk.Tpo $(DEPDIR)/IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='IDisk.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
 
-IDiskManagement.obj: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDiskManagement.obj -MD -MP -MF $(DEPDIR)/IDiskManagement.Tpo -c -o IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDiskManagement.Tpo $(DEPDIR)/IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='IDiskManagement.obj' libtool=no @AMDEPBACKSLASH@
+IDisk.obj: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDisk.obj -MD -MP -MF $(DEPDIR)/IDisk.Tpo -c -o IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/IDisk.Tpo $(DEPDIR)/IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='IDisk.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
 
 IDmac.o: es/device/IDmac.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT IDmac.o -MD -MP -MF $(DEPDIR)/IDmac.Tpo -c -o IDmac.o `test -f 'es/device/IDmac.c' || echo '$(srcdir)/'`es/device/IDmac.c
@@ -1733,19 +1731,19 @@ libesrpc_a-IDevice.obj: es/device/IDevice.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDevice.obj `if test -f 'es/device/IDevice.c'; then $(CYGPATH_W) 'es/device/IDevice.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDevice.c'; fi`
 
-libesrpc_a-IDiskManagement.o: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDiskManagement.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo -c -o libesrpc_a-IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo $(DEPDIR)/libesrpc_a-IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='libesrpc_a-IDiskManagement.o' libtool=no @AMDEPBACKSLASH@
+libesrpc_a-IDisk.o: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDisk.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDisk.Tpo -c -o libesrpc_a-IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDisk.Tpo $(DEPDIR)/libesrpc_a-IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='libesrpc_a-IDisk.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDiskManagement.o `test -f 'es/device/IDiskManagement.c' || echo '$(srcdir)/'`es/device/IDiskManagement.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDisk.o `test -f 'es/device/IDisk.c' || echo '$(srcdir)/'`es/device/IDisk.c
 
-libesrpc_a-IDiskManagement.obj: es/device/IDiskManagement.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDiskManagement.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo -c -o libesrpc_a-IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDiskManagement.Tpo $(DEPDIR)/libesrpc_a-IDiskManagement.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDiskManagement.c' object='libesrpc_a-IDiskManagement.obj' libtool=no @AMDEPBACKSLASH@
+libesrpc_a-IDisk.obj: es/device/IDisk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDisk.obj -MD -MP -MF $(DEPDIR)/libesrpc_a-IDisk.Tpo -c -o libesrpc_a-IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libesrpc_a-IDisk.Tpo $(DEPDIR)/libesrpc_a-IDisk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='es/device/IDisk.c' object='libesrpc_a-IDisk.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDiskManagement.obj `if test -f 'es/device/IDiskManagement.c'; then $(CYGPATH_W) 'es/device/IDiskManagement.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDiskManagement.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libesrpc_a-IDisk.obj `if test -f 'es/device/IDisk.c'; then $(CYGPATH_W) 'es/device/IDisk.c'; else $(CYGPATH_W) '$(srcdir)/es/device/IDisk.c'; fi`
 
 libesrpc_a-IDmac.o: es/device/IDmac.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libesrpc_a-IDmac.o -MD -MP -MF $(DEPDIR)/libesrpc_a-IDmac.Tpo -c -o libesrpc_a-IDmac.o `test -f 'es/device/IDmac.c' || echo '$(srcdir)/'`es/device/IDmac.c

@@ -27,7 +27,6 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFatFileSystem.h>
 #include <es/device/IIso9660FileSystem.h>
-#include <es/device/IPartition.h>
 
 unsigned char* InterfaceStore::defaultInterfaceInfo[] =
 {
@@ -53,7 +52,7 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IBeepInfo,
     ICursorInfo,
     IDeviceInfo,
-    IDiskManagementInfo,
+    IDiskInfo,
     IDmacInfo,
     IFatFileSystemInfo,
     IFileSystemInfo,
@@ -61,7 +60,6 @@ unsigned char* InterfaceStore::defaultInterfaceInfo[] =
     IPicInfo,
     IRemovableMediaInfo,
     IRtcInfo,
-    IPartitionInfo,
 
     IBindingInfo,
     IContextInfo,
@@ -132,11 +130,6 @@ ConstructorAccessors defaultConstructorInfo[] =
         es::Iso9660FileSystem::iid(),
         reinterpret_cast<Object* (*)()>(es::Iso9660FileSystem::getConstructor),
         reinterpret_cast<void (*)(Object*)>(es::Iso9660FileSystem::setConstructor)
-    },
-    {
-        es::Partition::iid(),
-        reinterpret_cast<Object* (*)()>(es::Partition::getConstructor),
-        reinterpret_cast<void (*)(Object*)>(es::Partition::setConstructor)
     },
 };
 

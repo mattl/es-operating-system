@@ -32,10 +32,19 @@ int esInit(Object** nameSpace);
 #include <es/ref.h>
 #include <es/endian.h>
 #include <es/base/IStream.h>
-#include <es/device/IDiskManagement.h>
+#include <es/device/IDisk.h>
 
-class VDisk : public es::Stream, public es::DiskManagement
+class VDisk : public es::Disk
 {
+    struct Geometry
+    {
+        unsigned int heads;
+        unsigned int cylinders;
+        unsigned int sectorsPerTrack;
+        unsigned int bytesPerSector;
+        long long diskSize;
+    };
+
     Ref      ref;
     int      fd;
     Geometry geometry;
@@ -209,27 +218,28 @@ public:
     }
 
     //
-    // es::DiskManagement
+    // es::Disk
     //
 
-    int initialize()
+    unsigned int getHeads()
     {
-        return -1;
+        return geometry.heads;
     }
-
-    void getGeometry(Geometry* geometry)
+    unsigned int getCylinders()
     {
-        memmove(geometry, &this->geometry, sizeof(Geometry));
+        return geometry.cylinders;
     }
-
-    void getLayout(Partition* partition)
+    unsigned int getSectorsPerTrack()
     {
-        esThrow(ENODEV);
+        return geometry.sectorsPerTrack;
     }
-
-    void setLayout(const Partition* partition)
+    unsigned int getBytesPerSector()
     {
-        esThrow(ENODEV);
+        return geometry.bytesPerSector;
+    }
+    long long getDiskSize()
+    {
+        return geometry.diskSize;
     }
 
     //
@@ -243,9 +253,9 @@ public:
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, es::DiskManagement::iid()) == 0)
+        else if (strcmp(riid, es::Disk::iid()) == 0)
         {
-            objectPtr = static_cast<es::DiskManagement*>(this);
+            objectPtr = static_cast<es::Disk*>(this);
         }
         else if (strcmp(riid, Object::iid()) == 0)
         {

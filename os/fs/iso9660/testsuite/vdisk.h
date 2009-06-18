@@ -32,10 +32,19 @@ int esInit(Object** nameSpace);
 #include <es/ref.h>
 #include <es/endian.h>
 #include <es/base/IStream.h>
-#include <es/device/IDiskManagement.h>
+#include <es/device/IDisk.h>
 
-class VDisk : public es::Stream, public es::DiskManagement
+class VDisk : public es::Disk
 {
+    struct Geometry
+    {
+        unsigned int heads;
+        unsigned int cylinders;
+        unsigned int sectorsPerTrack;
+        unsigned int bytesPerSector;
+        long long diskSize;
+    };
+
     Ref      ref;
     int      fd;
     Geometry geometry;
@@ -43,6 +52,12 @@ class VDisk : public es::Stream, public es::DiskManagement
 public:
     VDisk(char* vdisk)
     {
+        geometry.cylinders = 0;
+        geometry.heads = 0;
+        geometry.sectorsPerTrack = 0;
+        geometry.bytesPerSector = 0;
+        geometry.diskSize = 0;
+
         fd = open(vdisk, O_RDWR);
         if (fd < 0)
         {
@@ -92,6 +107,7 @@ public:
             geometry.sectorsPerTrack = BigEndian::byte(chs + 3);
             geometry.bytesPerSector = 512;
             geometry.diskSize = size;
+            setPosition(0);
         }
         esReport("CHS: %u %u %u\n",
                  geometry.cylinders, geometry.heads, geometry.sectorsPerTrack);
@@ -103,14 +119,13 @@ public:
     }
 
     //
-    // IStream
+    // es::Stream
     //
 
     long long getPosition()
     {
         int err;
         long long pos;
-
         pos = lseek(fd, 0, SEEK_CUR);
         if (pos < 0)
         {
@@ -123,6 +138,11 @@ public:
     {
         int err;
 
+        if (geometry.diskSize && (pos % 512))
+        {
+            esThrow(EINVAL);
+        }
+
         err = lseek(fd, pos, SEEK_SET);
         if (err < 0)
         {
@@ -132,11 +152,10 @@ public:
 
     long long getSize()
     {
-        long long size;
         long long tmp;
-
         tmp = getPosition();
         lseek(fd, 0, SEEK_END);
+        long long size;
         size = getPosition();
         setPosition(tmp);
         if (512 * 2880 * 2 < size)
@@ -144,7 +163,6 @@ public:
             // .vhd
             size -= 512;
         }
-
         return size;
     }
 
@@ -170,7 +188,7 @@ public:
     int read(void* buffer, int size, long long offset)
     {
 #ifdef VERBOSE
-        esReport("vdisk::read %ld byte from 0x%llx.\n", size, offset);
+        esReport("vdisk::read %ld byte at 0x%llx to %p.\n", size, offset, buffer);
 #endif
         setPosition(offset);
         size_t n = ::read(fd, buffer, size);
@@ -188,7 +206,7 @@ public:
     int write(const void* buffer, int size, long long offset)
     {
 #ifdef VERBOSE
-        esReport("vdisk::write %ld byte from 0x%llx.\n", size, offset);
+        esReport("vdisk::write %ld byte at 0x%llx from %p.\n", size, offset, buffer);
 #endif
         setPosition(offset);
         size_t n = ::write(fd, buffer, size);
@@ -200,31 +218,32 @@ public:
     }
 
     //
-    // IDiskManagement
+    // es::Disk
     //
 
-    int initialize()
+    unsigned int getHeads()
     {
-        return -1;
+        return geometry.heads;
     }
-
-    void getGeometry(Geometry* geometry)
+    unsigned int getCylinders()
     {
-        memmove(geometry, &this->geometry, sizeof(Geometry));
+        return geometry.cylinders;
     }
-
-    void getLayout(Partition* partition)
+    unsigned int getSectorsPerTrack()
     {
-        esThrow(ENODEV);
+        return geometry.sectorsPerTrack;
     }
-
-    void setLayout(const Partition* partition)
+    unsigned int getBytesPerSector()
     {
-        esThrow(ENODEV);
+        return geometry.bytesPerSector;
+    }
+    long long getDiskSize()
+    {
+        return geometry.diskSize;
     }
 
     //
-    // IInterface
+    // Object
     //
 
     Object* queryInterface(const char* riid)
@@ -234,9 +253,9 @@ public:
         {
             objectPtr = static_cast<es::Stream*>(this);
         }
-        else if (strcmp(riid, es::DiskManagement::iid()) == 0)
+        else if (strcmp(riid, es::Disk::iid()) == 0)
         {
-            objectPtr = static_cast<es::DiskManagement*>(this);
+            objectPtr = static_cast<es::Disk*>(this);
         }
         else if (strcmp(riid, Object::iid()) == 0)
         {

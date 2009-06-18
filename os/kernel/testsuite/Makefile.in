@@ -50,12 +50,6 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	thread_cancel$(EXEEXT) monitor0$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	monitor1$(EXEEXT) monitor2$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	monitor3$(EXEEXT) pageSet$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_error$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_extended$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_iterator$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_bind$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_print$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT)
 @ES_TRUE@TESTS = handle$(EXEEXT) interlocked$(EXEEXT) \
@@ -100,12 +94,6 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	thread_cancel$(EXEEXT) monitor0$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	monitor1$(EXEEXT) monitor2$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	monitor3$(EXEEXT) pageSet$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_error$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_extended$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_iterator$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_bind$(EXEEXT) \
-@ES_FALSE@@POSIX_TRUE@	partition_print$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	loopback$(EXEEXT) ethernet$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	timer$(EXEEXT)
 @ES_TRUE@am__EXEEXT_1 = handle$(EXEEXT) interlocked$(EXEEXT) \
@@ -273,41 +261,6 @@ pageSet_OBJECTS = $(am_pageSet_OBJECTS)
 pageSet_LDADD = $(LDADD)
 pageSet_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_partition_OBJECTS = partition.$(OBJEXT)
-partition_OBJECTS = $(am_partition_OBJECTS)
-partition_LDADD = $(LDADD)
-partition_DEPENDENCIES = ../libeskernel.a ../../libes++/libessup++.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_partition_bind_OBJECTS = partition_bind.$(OBJEXT)
-partition_bind_OBJECTS = $(am_partition_bind_OBJECTS)
-partition_bind_LDADD = $(LDADD)
-partition_bind_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_partition_error_OBJECTS = partition_error.$(OBJEXT)
-partition_error_OBJECTS = $(am_partition_error_OBJECTS)
-partition_error_LDADD = $(LDADD)
-partition_error_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_partition_extended_OBJECTS = partition_extended.$(OBJEXT)
-partition_extended_OBJECTS = $(am_partition_extended_OBJECTS)
-partition_extended_LDADD = $(LDADD)
-partition_extended_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_partition_iterator_OBJECTS = partition_iterator.$(OBJEXT)
-partition_iterator_OBJECTS = $(am_partition_iterator_OBJECTS)
-partition_iterator_LDADD = $(LDADD)
-partition_iterator_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_partition_print_OBJECTS = partition_print.$(OBJEXT)
-partition_print_OBJECTS = $(am_partition_print_OBJECTS)
-partition_print_LDADD = $(LDADD)
-partition_print_DEPENDENCIES = ../libeskernel.a \
-	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
 am_position_OBJECTS = position.$(OBJEXT)
 position_OBJECTS = $(am_position_OBJECTS)
 position_LDADD = $(LDADD)
@@ -408,10 +361,7 @@ SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(interlocked_SOURCES) $(invalidate_SOURCES) \
 	$(loopback_SOURCES) $(monitor0_SOURCES) $(monitor1_SOURCES) \
 	$(monitor2_SOURCES) $(monitor3_SOURCES) $(page_SOURCES) \
-	$(pageSet_SOURCES) $(partition_SOURCES) \
-	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
-	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
+	$(pageSet_SOURCES) $(position_SOURCES) $(read_SOURCES) \
 	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
 	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(timer_SOURCES) $(utf_SOURCES) \
@@ -427,10 +377,7 @@ DIST_SOURCES = $(8042_SOURCES) $(ata_SOURCES) $(beep_SOURCES) \
 	$(interlocked_SOURCES) $(invalidate_SOURCES) \
 	$(loopback_SOURCES) $(monitor0_SOURCES) $(monitor1_SOURCES) \
 	$(monitor2_SOURCES) $(monitor3_SOURCES) $(page_SOURCES) \
-	$(pageSet_SOURCES) $(partition_SOURCES) \
-	$(partition_bind_SOURCES) $(partition_error_SOURCES) \
-	$(partition_extended_SOURCES) $(partition_iterator_SOURCES) \
-	$(partition_print_SOURCES) $(position_SOURCES) $(read_SOURCES) \
+	$(pageSet_SOURCES) $(position_SOURCES) $(read_SOURCES) \
 	$(replace_SOURCES) $(ring_SOURCES) $(sb16_SOURCES) \
 	$(size_SOURCES) $(thread_SOURCES) $(thread_cancel_SOURCES) \
 	$(thread_smp_SOURCES) $(am__timer_SOURCES_DIST) $(utf_SOURCES) \
@@ -607,12 +554,6 @@ monitor3_SOURCES = monitor3.cpp
 bpi_SOURCES = bpi.cpp
 bpi2_SOURCES = bpi2.cpp
 bpi3_SOURCES = bpi3.cpp
-partition_SOURCES = partition.cpp vdisk.h
-partition_error_SOURCES = partition_error.cpp vdisk.h
-partition_extended_SOURCES = partition_extended.cpp vdisk.h
-partition_iterator_SOURCES = partition_iterator.cpp vdisk.h
-partition_bind_SOURCES = partition_bind.cpp vdisk.h
-partition_print_SOURCES = partition_print.cpp vdisk.h
 ethernet_SOURCES = ethernet.cpp
 loopback_SOURCES = loopback.cpp
 @POSIX_TRUE@timer_SOURCES = timer.cpp
@@ -740,24 +681,6 @@ page$(EXEEXT): $(page_OBJECTS) $(page_DEPENDENCIES)
 pageSet$(EXEEXT): $(pageSet_OBJECTS) $(pageSet_DEPENDENCIES) 
 	@rm -f pageSet$(EXEEXT)
 	$(CXXLINK) $(pageSet_OBJECTS) $(pageSet_LDADD) $(LIBS)
-partition$(EXEEXT): $(partition_OBJECTS) $(partition_DEPENDENCIES) 
-	@rm -f partition$(EXEEXT)
-	$(CXXLINK) $(partition_OBJECTS) $(partition_LDADD) $(LIBS)
-partition_bind$(EXEEXT): $(partition_bind_OBJECTS) $(partition_bind_DEPENDENCIES) 
-	@rm -f partition_bind$(EXEEXT)
-	$(CXXLINK) $(partition_bind_OBJECTS) $(partition_bind_LDADD) $(LIBS)
-partition_error$(EXEEXT): $(partition_error_OBJECTS) $(partition_error_DEPENDENCIES) 
-	@rm -f partition_error$(EXEEXT)
-	$(CXXLINK) $(partition_error_OBJECTS) $(partition_error_LDADD) $(LIBS)
-partition_extended$(EXEEXT): $(partition_extended_OBJECTS) $(partition_extended_DEPENDENCIES) 
-	@rm -f partition_extended$(EXEEXT)
-	$(CXXLINK) $(partition_extended_OBJECTS) $(partition_extended_LDADD) $(LIBS)
-partition_iterator$(EXEEXT): $(partition_iterator_OBJECTS) $(partition_iterator_DEPENDENCIES) 
-	@rm -f partition_iterator$(EXEEXT)
-	$(CXXLINK) $(partition_iterator_OBJECTS) $(partition_iterator_LDADD) $(LIBS)
-partition_print$(EXEEXT): $(partition_print_OBJECTS) $(partition_print_DEPENDENCIES) 
-	@rm -f partition_print$(EXEEXT)
-	$(CXXLINK) $(partition_print_OBJECTS) $(partition_print_LDADD) $(LIBS)
 position$(EXEEXT): $(position_OBJECTS) $(position_DEPENDENCIES) 
 	@rm -f position$(EXEEXT)
 	$(CXXLINK) $(position_OBJECTS) $(position_LDADD) $(LIBS)
@@ -839,12 +762,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/monitor3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageSet.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_bind.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_error.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_extended.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_iterator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partition_print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/position.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/read.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/replace.Po@am__quote@

@@ -22,8 +22,6 @@ TESTS = handle interlocked exception utf ring \
 	create_release getPageCount invalidate \
 	context datetime thread thread_cancel \
 	monitor0 monitor1 monitor2 monitor3 pageSet \
-	partition partition_error partition_extended partition_iterator \
-	partition_bind partition_print \
 	loopback ethernet timer
 
 noinst_PROGRAMS = $(TESTS)
@@ -166,18 +164,6 @@ bpi_SOURCES = bpi.cpp
 bpi2_SOURCES = bpi2.cpp
 
 bpi3_SOURCES = bpi3.cpp
-
-partition_SOURCES = partition.cpp vdisk.h
-
-partition_error_SOURCES = partition_error.cpp vdisk.h
-
-partition_extended_SOURCES = partition_extended.cpp vdisk.h
-
-partition_iterator_SOURCES = partition_iterator.cpp vdisk.h
-
-partition_bind_SOURCES = partition_bind.cpp vdisk.h
-
-partition_print_SOURCES = partition_print.cpp vdisk.h
 
 ethernet_SOURCES = ethernet.cpp
 

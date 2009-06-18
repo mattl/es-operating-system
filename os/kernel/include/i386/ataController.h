@@ -24,9 +24,8 @@
 #include <es/base/ICallback.h>
 #include <es/base/IMonitor.h>
 #include <es/base/IStream.h>
-#include <es/device/IDiskManagement.h>
+#include <es/device/IDisk.h>
 #include <es/device/IRemovableMedia.h>
-#include <es/device/IPartition.h>
 #include "ata.h"
 #include "thread.h" // XXX
 
@@ -98,30 +97,27 @@ public:
     void detect();
 };
 
-class AtaDevice : public es::Stream, public es::Context, public es::DiskManagement
+class AtaDevice : public es::Disk
 {
     friend class AtaController;
 
 protected:
     es::Monitor*   monitor;
-    Ref             ref;
-    AtaController*  ctlr;
-    u8              device;
-    u16             id[256];
-    long long       size;
-    u16             sectorSize;
-    u8              readCmd;
-    u8              writeCmd;
-    u16             multiple;
+    Ref            ref;
+    AtaController* ctlr;
+    u8             device;
+    u16            id[256];
+    long long      size;
+    u16            sectorSize;
+    u8             readCmd;
+    u8             writeCmd;
+    u16            multiple;
 
-    u16             packetSize;
-    u16             dma;
-    bool            removal;
-
-    es::Partition* partition;
+    u16            packetSize;
+    u16            dma;
+    bool           removal;
 
     bool identify(u8* signature);
-    es::Partition* getPartition();
 
 public:
     AtaDevice(AtaController* ctlr, u8 device, u8* signature);
@@ -138,20 +134,12 @@ public:
     int write(const void* src, int count, long long offset);
     void flush();
 
-    // IContext
-    es::Binding* bind(const char* name, Object* object);
-    es::Context* createSubcontext(const char* name);
-    int destroySubcontext(const char* name);
-    Object* lookup(const char* name);
-    int rename(const char* oldName, const char* newName);
-    int unbind(const char* name);
-    es::Iterator* list(const char* name);
-
-    // IDiskManagement
-    int initialize();
-    void getGeometry(Geometry* geometry);
-    void getLayout(Partition* partition);
-    void setLayout(const Partition* partition);
+    // IDisk
+    unsigned int getHeads();
+    unsigned int getCylinders();
+    unsigned int getSectorsPerTrack();
+    unsigned int getBytesPerSector();
+    long long getDiskSize();
 
     Object* queryInterface(const char* riid);
     unsigned int addRef();

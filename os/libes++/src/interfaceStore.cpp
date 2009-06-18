@@ -27,7 +27,6 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFatFileSystem.h>
 #include <es/device/IIso9660FileSystem.h>
-#include <es/device/IPartition.h>
 
 //
 // Reflection data of the default interface set
@@ -54,7 +53,7 @@ extern unsigned char IAudioFormatInfo[];
 extern unsigned char IBeepInfo[];
 extern unsigned char ICursorInfo[];
 extern unsigned char IDeviceInfo[];
-extern unsigned char IDiskManagementInfo[];
+extern unsigned char IDiskInfo[];
 extern unsigned char IDmacInfo[];
 extern unsigned char IFatFileSystemInfo[];
 extern unsigned char IFileSystemInfo[];
@@ -62,7 +61,6 @@ extern unsigned char IIso9660FileSystemInfo[];
 extern unsigned char IPicInfo[];
 extern unsigned char IRemovableMediaInfo[];
 extern unsigned char IRtcInfo[];
-extern unsigned char IPartitionInfo[];
 
 extern unsigned char IBindingInfo[];
 extern unsigned char IContextInfo[];
@@ -232,7 +230,7 @@ unsigned char* defaultInterfaceInfo[] =
     IBeepInfo,
     ICursorInfo,
     IDeviceInfo,
-    IDiskManagementInfo,
+    IDiskInfo,
     IDmacInfo,
     IFatFileSystemInfo,
     IFileSystemInfo,
@@ -240,7 +238,6 @@ unsigned char* defaultInterfaceInfo[] =
     IPicInfo,
     IRemovableMediaInfo,
     IRtcInfo,
-    IPartitionInfo,
 
     IBindingInfo,
     IContextInfo,
@@ -313,8 +310,6 @@ InterfaceStore(int capacity) :
                         reinterpret_cast<Object* (*)()>(FatFileSystem::getConstructor), reinterpret_cast<void (*)(Object*)>(FatFileSystem::setConstructor));
     registerConstructor(Iso9660FileSystem::iid(),
                         reinterpret_cast<Object* (*)()>(Iso9660FileSystem::getConstructor), reinterpret_cast<void (*)(Object*)>(Iso9660FileSystem::setConstructor));
-    registerConstructor(Partition::iid(),
-                        reinterpret_cast<Object* (*)()>(Partition::getConstructor), reinterpret_cast<void (*)(Object*)>(Partition::setConstructor));
 }
 
 namespace

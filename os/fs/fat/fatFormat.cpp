@@ -40,7 +40,6 @@ extern "C"
 
 namespace
 {
-
     struct DSKSZTOSECPERCLUS
     {
         u32 diskSize;
@@ -99,7 +98,7 @@ namespace
 int FatFileSystem::
 updateBootCode()
 {
-    es::DiskManagement::Geometry geometry;
+    Geometry geometry;
 
     getGeometry(partition, &geometry);
 
@@ -172,14 +171,18 @@ format(es::Stream* partition)
 }
 
 void FatFileSystem::
-getGeometry(es::Stream* partition, es::DiskManagement::Geometry* geometry)
+getGeometry(es::Stream* partition, Geometry* geometry)
 {
-    Handle<es::DiskManagement> dm(partition, true);
-    if (dm)
+    Handle<es::Disk> disk(partition, true);
+    if (disk)
     {
         try
         {
-            dm->getGeometry(geometry);
+            geometry->heads = disk->getHeads();
+            geometry->cylinders = disk->getCylinders();
+            geometry->sectorsPerTrack = disk->getSectorsPerTrack();
+            geometry->bytesPerSector = disk->getBytesPerSector();
+            geometry->diskSize = disk->getDiskSize();
             if (geometry->diskSize < (512LL << 24) &&   // less than 8GB?
                 geometry->sectorsPerTrack < (1 << 6))   // less than 64?
             {
@@ -222,8 +225,7 @@ getGeometry(es::Stream* partition, es::DiskManagement::Geometry* geometry)
 int FatFileSystem::
 formatFat12(es::Stream* partition)
 {
-    es::DiskManagement::Geometry geometry;
-    es::DiskManagement::Partition layout;
+    Geometry geometry;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -298,8 +300,7 @@ formatFat12(es::Stream* partition)
 int FatFileSystem::
 formatFat16(es::Stream* partition)
 {
-    es::DiskManagement::Geometry geometry;
-    es::DiskManagement::Partition layout;
+    Geometry geometry;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -327,19 +328,9 @@ formatFat16(es::Stream* partition)
                    (geometry.bytesPerSector / 2);
     ASSERT(0 <= diff);
 
-    Handle<es::DiskManagement> dm(partition, true);
-    if (dm)
-    {
-        try
-        {
-            dm->getLayout(&layout);
-            hiddSec = layout.startingOffset / geometry.bytesPerSector;
-        }
-        catch (Exception& error)
-        {
-            // [check]
-        }
-    }
+    Handle<es::Disk> disk(partition, true);
+    // TODO: Adjust hiddSec if a partition is used
+    // hiddSec = layout.startingOffset / geometry.bytesPerSector;
 
     u8* sector = new u8[geometry.bytesPerSector];
     memset(sector, 0, geometry.bytesPerSector);
@@ -393,8 +384,7 @@ formatFat16(es::Stream* partition)
 int FatFileSystem::
 formatFat32(es::Stream* partition)
 {
-    es::DiskManagement::Geometry geometry;
-    es::DiskManagement::Partition layout;
+    Geometry geometry;
     u32 diskSize;   // total sectors
     u8  secPerClus; // sector per cluster
     u32 fatSz;
@@ -422,19 +412,9 @@ formatFat32(es::Stream* partition)
                    (geometry.bytesPerSector / 4);
     ASSERT(0 <= diff);
 
-    Handle<es::DiskManagement> dm(partition, true);
-    if (dm)
-    {
-        try
-        {
-            dm->getLayout(&layout);
-            hiddSec = layout.startingOffset / geometry.bytesPerSector;
-        }
-        catch (Exception& error)
-        {
-            // [check]
-        }
-    }
+    Handle<es::Disk> disk(partition, true);
+    // TODO: Adjust hiddSec if a partition is used
+    // hiddSec = layout.startingOffset / geometry.bytesPerSector;
 
     u8* sector = new u8[geometry.bytesPerSector];
     memset(sector, 0, geometry.bytesPerSector);

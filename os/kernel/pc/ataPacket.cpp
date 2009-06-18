@@ -23,7 +23,6 @@
 
 // #define VERBOSE
 
-
 using namespace BigEndian;
 using namespace ATAttachment;
 using namespace Register;
@@ -257,9 +256,9 @@ queryInterface(const char* riid)
     {
         objectPtr = static_cast<es::Stream*>(this);
     }
-    else if (strcmp(riid, es::DiskManagement::iid()) == 0)
+    else if (strcmp(riid, es::Disk::iid()) == 0)
     {
-        objectPtr = static_cast<es::DiskManagement*>(this);
+        objectPtr = static_cast<es::Disk*>(this);
     }
     else if (strcmp(riid, es::RemovableMedia::iid()) == 0 && removal)
     {

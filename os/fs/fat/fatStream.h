@@ -41,7 +41,7 @@
 #include <es/util/IIterator.h>
 #include <es/naming/IBinding.h>
 #include <es/naming/IContext.h>
-#include <es/device/IDiskManagement.h>
+#include <es/device/IDisk.h>
 #include <es/device/IFatFileSystem.h>
 #include "fat.h"
 
@@ -164,19 +164,28 @@ class FatFileSystem : public es::FatFileSystem
     friend class FatStream;
     friend class PartitionStream;
 
+    struct Geometry
+    {
+        unsigned int heads;
+        unsigned int cylinders;
+        unsigned int sectorsPerTrack;
+        unsigned int bytesPerSector;
+        long long diskSize;
+    };
+
     Ref             ref;
-    es::Stream*        partition;
-    es::PageSet*       pageSet;
-    es::Cache*         diskCache;
-    es::Stream*        diskStream;
+    es::Stream*     partition;
+    es::PageSet*    pageSet;
+    es::Cache*      diskCache;
+    es::Stream*     diskStream;
     FatStream*      root;
 
-    es::Monitor*       hashMonitor;    // monitor for the hash table and standby list
+    es::Monitor*    hashMonitor;    // monitor for the hash table and standby list
     size_t          hashSize;
     FatStreamChain* hashTable;
     FatStreamList   standbyList;
 
-    es::Monitor*       fatMonitor;     // monitor for FAT
+    es::Monitor*    fatMonitor;     // monitor for FAT
 
     // bpb
     u8      bpb[512];
@@ -276,7 +285,7 @@ public:
     static int formatFat12(es::Stream* partition);
     static int formatFat16(es::Stream* partition);
     static int formatFat32(es::Stream* partition);
-    static void getGeometry(es::Stream* partition, es::DiskManagement::Geometry* geometry);
+    static void getGeometry(es::Stream* partition, Geometry* geometry);
     int updateBootCode();
 
     // es::FileSystem

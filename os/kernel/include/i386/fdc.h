@@ -27,16 +27,14 @@
 #include <es/base/ICallback.h>
 #include <es/base/IMonitor.h>
 #include <es/base/IStream.h>
-#include <es/device/IDiskManagement.h>
+#include <es/device/IDisk.h>
 #include <es/device/IDmac.h>
 #include <es/device/IRemovableMedia.h>
 
 class FloppyController;
 class FloppyDrive;
 
-
-
-class FloppyDrive : public es::DiskManagement, public es::Stream , public es::Callback // public es::RemovableMedia
+class FloppyDrive : public es::Disk, public es::Callback // public es::RemovableMedia
 {
     friend class FloppyController;
 
@@ -70,6 +68,8 @@ public:
     FloppyDrive(FloppyController* ctlr, u8 drive);
     ~FloppyDrive();
 
+    int initialize();   // XXX how this is called?
+
     // ICallback
     int invoke(int);
 
@@ -84,11 +84,12 @@ public:
     int write(const void* src, int count, long long offset);
     void flush();
 
-    // IDiskManagement
-    int initialize();
-    void getGeometry(Geometry* geometry);
-    void getLayout(Partition* partition);
-    void setLayout(const Partition* partition);
+    // IDisk
+    unsigned int getHeads();
+    unsigned int getCylinders();
+    unsigned int getSectorsPerTrack();
+    unsigned int getBytesPerSector();
+    long long getDiskSize();
 
     // IInterface
     Object* queryInterface(const char* riid);

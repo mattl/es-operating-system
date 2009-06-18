@@ -144,7 +144,7 @@ extern unsigned char IAudioFormatInfo[];
 extern unsigned char IBeepInfo[];
 extern unsigned char ICursorInfo[];
 extern unsigned char IDeviceInfo[];
-extern unsigned char IDiskManagementInfo[];
+extern unsigned char IDiskInfo[];
 extern unsigned char IDmacInfo[];
 extern unsigned char IFatFileSystemInfo[];
 extern unsigned char IFileSystemInfo[];
@@ -152,7 +152,6 @@ extern unsigned char IIso9660FileSystemInfo[];
 extern unsigned char IPicInfo[];
 extern unsigned char IRemovableMediaInfo[];
 extern unsigned char IRtcInfo[];
-extern unsigned char IPartitionInfo[];
 
 extern unsigned char IBindingInfo[];
 extern unsigned char IContextInfo[];

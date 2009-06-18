@@ -372,38 +372,43 @@ initialize()
     return 0;
 }
 
-void FloppyDrive::
-getGeometry(Geometry* geometry)
+unsigned int FloppyDrive::
+getHeads()
 {
-    Synchronized<es::Monitor*> method(ctlr->monitor);
-
-    geometry->cylinders = 80;
-    geometry->heads = 2;
-    geometry->sectorsPerTrack = eot;
-    geometry->bytesPerSector = 128 * (1 << recordLength);
-    geometry->diskSize = geometry->cylinders *
-                         geometry->heads *
-                         geometry->sectorsPerTrack *
-                         geometry->bytesPerSector;
+    return 2;
 }
 
-void FloppyDrive::
-getLayout(Partition* partition)
+unsigned int FloppyDrive::
+getCylinders()
 {
+    return 80;
 }
 
-void FloppyDrive::
-setLayout(const Partition* partition)
+unsigned int FloppyDrive::
+getSectorsPerTrack()
 {
+    return eot;
+}
+
+unsigned int FloppyDrive::
+getBytesPerSector()
+{
+    return 128 * (1 << recordLength);
+}
+
+long long FloppyDrive::
+getDiskSize()
+{
+    return getCylinders() * getHeads() * getSectorsPerTrack() * getBytesPerSector();
 }
 
 Object* FloppyDrive::
 queryInterface(const char* riid)
 {
     Object* objectPtr;
-    if (strcmp(riid, es::DiskManagement::iid()) == 0)
+    if (strcmp(riid, es::Disk::iid()) == 0)
     {
-        objectPtr = static_cast<es::DiskManagement*>(this);
+        objectPtr = static_cast<es::Disk*>(this);
     }
     else if (strcmp(riid, es::Stream::iid()) == 0)
     {
@@ -411,7 +416,7 @@ queryInterface(const char* riid)
     }
     else if (strcmp(riid, Object::iid()) == 0)
     {
-        objectPtr = static_cast<es::DiskManagement*>(this);
+        objectPtr = static_cast<es::Disk*>(this);
     }
     else
     {

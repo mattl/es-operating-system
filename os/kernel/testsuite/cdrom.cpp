@@ -65,20 +65,18 @@ int main()
     Handle<es::Stream> disk(root->lookup("device/ata/channel1/device0"));
     TEST(disk.get());
 
-    es::DiskManagement::Geometry geo;
-    Handle<es::DiskManagement> dm(disk);
+    Handle<es::Disk> dm(disk);
     TEST(dm);
-    dm->getGeometry(&geo);
     esReport("%d %d %d %d %lld\n",
-             geo.heads,
-             geo.cylinders,
-             geo.sectorsPerTrack,
-             geo.bytesPerSector,
-             geo.diskSize);
+             dm->getHeads(),
+             dm->getCylinders(),
+             dm->getSectorsPerTrack(),
+             dm->getBytesPerSector(),
+             dm->getDiskSize());
 
-    if (0 < geo.bytesPerSector)
+    if (0 < dm->getBytesPerSector())
     {
-        testDisk(disk, geo.bytesPerSector);
+        testDisk(disk, dm->getBytesPerSector());
     }
 
     esPanic(__FILE__, __LINE__, "done.\n");

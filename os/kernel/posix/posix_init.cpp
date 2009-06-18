@@ -35,7 +35,6 @@
 #include "alarm.h"
 #include "cache.h"
 #include "loopback.h"
-#include "partition.h"
 #include "posix/tap.h"
 
 #include <sys/mman.h>
@@ -74,7 +73,6 @@ void esInitThread()
     Alarm::initializeConstructor();
     Monitor::initializeConstructor();
     PageSet::initializeConstructor();
-    PartitionContext::initializeConstructor();
 }
 
 int esInit(Object** nameSpace)
@@ -129,9 +127,6 @@ int esInit(Object** nameSpace)
     Cache::initializeConstructor();
     es::Cache::setConstructor(new Cache::Constructor);
     classStore->bind(es::Cache::iid(), es::Cache::getConstructor());
-
-    // Register es::Partition constructor
-    classStore->bind(es::Partition::iid(), es::Partition::getConstructor());
 
     // Register the global page set
     classStore->bind(es::PageSet::iid(), es::PageSet::getConstructor());

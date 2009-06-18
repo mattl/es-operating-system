@@ -234,18 +234,20 @@ top_srcdir = @top_srcdir@
 @ES_FALSE@	-I- \
 @ES_FALSE@	-I ../../include \
 @ES_FALSE@	-I $(srcdir)/../../include \
-@ES_FALSE@	-I/usr/include/cairo
+@ES_FALSE@	-I/usr/include/cairo \
+@ES_FALSE@	-I/usr/include/pixman-1
 
 @ES_TRUE@AM_CPPFLAGS = -I- \
 @ES_TRUE@	-I../../include \
 @ES_TRUE@	-I$(srcdir)/../../include \
 @ES_TRUE@	-I$(prefix)/include \
 @ES_TRUE@	-I$(prefix)/include/freetype2 \
-@ES_TRUE@	-I$(prefix)/include/cairo
+@ES_TRUE@	-I$(prefix)/include/cairo \
+@ES_TRUE@	-I$(prefix)/include/pixman-1 
 
 @ES_TRUE@AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 @APPLE_FALSE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
-@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
+@APPLE_TRUE@@ES_FALSE@LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1 
 @ES_TRUE@LDADD = ../libes++/libes++.a -lcairo -lfontconfig -lexpat -lfreetype -lm -lpixman-1
 client_SOURCES = client.cpp
 server_SOURCES = server.cpp

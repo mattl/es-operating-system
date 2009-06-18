@@ -38,7 +38,6 @@
 #include "interfaceStore.h"
 #include "loopback.h"
 #include "mps.h"
-#include "partition.h"
 #include "i386/pci.h"
 #include "rtc.h"
 #include "sb16.h"
@@ -57,13 +56,13 @@ void putDebugChar(int ch);
 
 namespace
 {
-    es::Context*       root;
-    es::Context*       classStore;
+    es::Context*    root;
+    es::Context*    classStore;
     InterfaceStore* interfaceStore;
     Sched*          sched;
     Pit*            pit;
-    es::Rtc*           rtc;
-    es::Stream*        reportStream;
+    es::Rtc*        rtc;
+    es::Stream*     reportStream;
     Dmac*           master;
     Dmac*           slave;
     Pic*            pic;
@@ -72,7 +71,7 @@ namespace
     u8              loopbackBuffer[64 * 1024];
     Uart*           uart;
     Pci*            pci;
-    es::Stream*        stubStream;
+    es::Stream*     stubStream;
 };
 
 const int Page::SIZE = 4096;
@@ -158,7 +157,6 @@ int esInit(Object** nameSpace)
     Alarm::initializeConstructor();
     Monitor::initializeConstructor();
     PageSet::initializeConstructor();
-    PartitionContext::initializeConstructor();
     Process::initializeConstructor();
 
     if (root)
@@ -319,9 +317,6 @@ int esInit(Object** nameSpace)
 
     // Bind Alarm constructor
     classStore->bind(es::Alarm::iid(), es::Alarm::getConstructor());
-
-    // Bind Partition constructor
-    classStore->bind(es::Partition::iid(), es::Partition::getConstructor());
 
     slave = new Dmac(0x00, 0x80, 0);
     master = new Dmac(0xc0, 0x88, 1);

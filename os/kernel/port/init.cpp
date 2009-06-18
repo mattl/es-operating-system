@@ -22,7 +22,6 @@
 #include "alarm.h"
 #include "cache.h"
 #include "core.h"
-#include "partition.h"
 #include "process.h"
 #include "thread.h"
 

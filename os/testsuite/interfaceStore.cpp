@@ -24,7 +24,6 @@
 #include <es/base/IProcess.h>
 #include <es/device/IFatFileSystem.h>
 #include <es/device/IIso9660FileSystem.h>
-#include <es/device/IPartition.h>
 
 namespace es
 {
@@ -55,7 +54,6 @@ int main(int argc, char* argv[])
     printf("%p\n", es::getConstructor(es::Process::iid()));
     printf("%p\n", es::getConstructor(es::FatFileSystem::iid()));
     printf("%p\n", es::getConstructor(es::Iso9660FileSystem::iid()));
-    printf("%p\n", es::getConstructor(es::Partition::iid()));
 
     printf("done.\n");
     return EXIT_SUCCESS;
