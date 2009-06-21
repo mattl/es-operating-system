@@ -181,6 +181,20 @@ read(SocketMessenger* m, Conduit* c)
             m->setErrorCode(EAGAIN);
             return false;
         }
+        if (socket->getTimeout())
+        {
+           monitor->wait(socket->getTimeout());
+
+           if (!isReadable())
+           {
+              m->setErrorCode(ETIMEDOUT);
+              return false;
+           }
+           else
+           {
+              break ;
+           }
+        }
         monitor->wait();
     }
 
