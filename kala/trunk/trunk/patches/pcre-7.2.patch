@@ -1,0 +1,60 @@
+diff -bcrN pcre-7.2.org/config.sub pcre-7.2/config.sub
+*** pcre-7.2.org/config.sub	2007-06-19 22:26:13.000000000 +0900
+--- pcre-7.2/config.sub	2007-07-31 13:19:46.000000000 +0900
+***************
+*** 1231,1237 ****
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+--- 1231,1237 ----
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* | -es* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+diff -bcrN pcre-7.2.org/pcretest.c pcre-7.2/pcretest.c
+*** pcre-7.2.org/pcretest.c	2007-06-05 19:36:58.000000000 +0900
+--- pcre-7.2/pcretest.c	2007-07-31 13:21:48.000000000 +0900
+***************
+*** 59,64 ****
+--- 59,75 ----
+  #define INPUT_MODE   "r"
+  #define OUTPUT_MODE  "wb"
+  
++ #elif  defined(__es__)
++ #include <sys/time.h>          /* These two includes are needed */
++ #include <sys/resource.h>      /* for setrlimit(). */
++ #define INPUT_MODE   "rb"
++ #define OUTPUT_MODE  "wb"
++ 
++ clock_t clock(void)
++ {
++     return 0;
++ }
++ 
+  #else
+  #include <sys/time.h>          /* These two includes are needed */
+  #include <sys/resource.h>      /* for setrlimit(). */
+***************
+*** 819,825 ****
+        ((stack_size = get_value((unsigned char *)argv[op+1], &endptr)),
+          *endptr == 0))
+      {
+! #if defined(_WIN32) || defined(WIN32)
+      printf("PCRE: -S not supported on this OS\n");
+      exit(1);
+  #else
+--- 830,836 ----
+        ((stack_size = get_value((unsigned char *)argv[op+1], &endptr)),
+          *endptr == 0))
+      {
+! #if defined(_WIN32) || defined(WIN32) || defined(__es__)
+      printf("PCRE: -S not supported on this OS\n");
+      exit(1);
+  #else
