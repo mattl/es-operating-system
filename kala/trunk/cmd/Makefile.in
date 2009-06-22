@@ -37,7 +37,8 @@ noinst_PROGRAMS = main$(EXEEXT) hello$(EXEEXT) cairo$(EXEEXT) \
 	expat$(EXEEXT) server$(EXEEXT) client$(EXEEXT) \
 	eventManager$(EXEEXT) eventManagerClient$(EXEEXT) \
 	console$(EXEEXT) consoleClient$(EXEEXT) upcallTest$(EXEEXT) \
-	upcallTestClient$(EXEEXT) fontconfig$(EXEEXT) newlib$(EXEEXT)
+	upcallTestClient$(EXEEXT) fontconfig$(EXEEXT) newlib$(EXEEXT) \
+	ustring$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure config.guess \
@@ -89,6 +90,10 @@ am_hello_OBJECTS = hello.$(OBJEXT)
 hello_OBJECTS = $(am_hello_OBJECTS)
 hello_LDADD = $(LDADD)
 hello_DEPENDENCIES = ../os/libes++/libes++.a
+am_ustring_OBJECTS = ustring.$(OBJEXT)
+ustring_OBJECTS = $(am_ustring_OBJECTS)
+ustring_LDADD = $(LDADD)
+ustring_DEPENDENCIES = ../os/libes++/libes++.a
 am_main_OBJECTS = main.$(OBJEXT)
 main_OBJECTS = $(am_main_OBJECTS)
 main_LDADD = $(LDADD)
@@ -126,13 +131,13 @@ SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(console_SOURCES) \
 	$(nodist_eventManager_SOURCES) $(eventManagerClient_SOURCES) \
 	$(expat_SOURCES) $(fontconfig_SOURCES) $(hello_SOURCES) \
 	$(main_SOURCES) $(newlib_SOURCES) $(server_SOURCES) \
-	$(upcallTest_SOURCES) $(upcallTestClient_SOURCES)
+	$(upcallTest_SOURCES) $(upcallTestClient_SOURCES) $(ustring_SOURCES)
 DIST_SOURCES = $(cairo_SOURCES) $(client_SOURCES) $(console_SOURCES) \
 	$(consoleClient_SOURCES) $(eventManager_SOURCES) \
 	$(eventManagerClient_SOURCES) $(expat_SOURCES) \
 	$(fontconfig_SOURCES) $(hello_SOURCES) $(main_SOURCES) \
 	$(newlib_SOURCES) $(server_SOURCES) $(upcallTest_SOURCES) \
-	$(upcallTestClient_SOURCES)
+	$(upcallTestClient_SOURCES) $(ustring_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -276,6 +281,7 @@ expat_SOURCES = expat.cpp
 main_SOURCES = main.cpp
 server_SOURCES = server.cpp
 client_SOURCES = client.cpp
+ustring_SOURCES = ustring.cpp
 
 # binder_SOURCES = binder.cpp binder.h
 
@@ -359,6 +365,9 @@ fontconfig$(EXEEXT): $(fontconfig_OBJECTS) $(fontconfig_DEPENDENCIES)
 hello$(EXEEXT): $(hello_OBJECTS) $(hello_DEPENDENCIES) 
 	@rm -f hello$(EXEEXT)
 	$(CXXLINK) $(hello_OBJECTS) $(hello_LDADD) $(LIBS)
+ustring$(EXEEXT): $(ustring_OBJECTS) $(ustring_DEPENDENCIES) 
+	@rm -f ustring$(EXEEXT)
+	$(CXXLINK) $(ustring_OBJECTS) $(ustring_LDADD) $(LIBS)
 main$(EXEEXT): $(main_OBJECTS) $(main_DEPENDENCIES) 
 	@rm -f main$(EXEEXT)
 	$(CXXLINK) $(main_OBJECTS) $(main_LDADD) $(LIBS)
@@ -397,6 +406,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upcallTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upcallTestClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ustring.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

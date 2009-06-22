@@ -20,7 +20,8 @@ noinst_PROGRAMS = \
 	eventManager eventManagerClient \
 	console consoleClient \
 	upcallTest upcallTestClient \
-	fontconfig newlib
+	fontconfig newlib \
+	ustring
 
 AM_LDFLAGS = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 AM_CPPFLAGS = -I- \
@@ -68,6 +69,8 @@ upcallTestClient_SOURCES = upcallTestClient.cpp
 fontconfig_SOURCES = fontconfig.cpp
 
 newlib_SOURCES = newlib.cpp
+
+ustring_SOURCES = ustring.cpp
 
 CLEANFILES = $(BUILT_SOURCES) $(nodist_eventManager_SOURCES)
 
