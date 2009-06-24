@@ -45,6 +45,7 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpdiscardClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpdiscardServer$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytime$(EXEEXT)
@@ -71,6 +72,7 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	udpEchoServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpdiscardClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpdiscardServer$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	tcpTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytime$(EXEEXT)
@@ -155,6 +157,12 @@ tcpDaytimeServer_LDADD = $(LDADD)
 tcpDaytimeServer_DEPENDENCIES = ../libesnet.a \
 	../../kernel/libeskernel.a ../../libes++/libessup++.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_tcpTimeout_OBJECTS = tcpTimeout.$(OBJEXT)
+tcpTimeout_OBJECTS = $(am_tcpTimeout_OBJECTS)
+tcpTimeout_LDADD = $(LDADD)
+tcpTimeout_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_tcpdiscardClient_OBJECTS = tcpdiscardClient.$(OBJEXT)
 tcpdiscardClient_OBJECTS = $(am_tcpdiscardClient_OBJECTS)
 tcpdiscardClient_LDADD = $(LDADD)
@@ -205,17 +213,19 @@ SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
 	$(tcp2_SOURCES) $(tcpDaytime_SOURCES) \
 	$(tcpDaytimeClient_SOURCES) $(tcpDaytimeServer_SOURCES) \
-	$(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES) \
-	$(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(tcpTimeout_SOURCES) $(tcpdiscardClient_SOURCES) \
+	$(tcpdiscardServer_SOURCES) $(timeout_SOURCES) \
+	$(udpEchoClient_SOURCES) $(udpEchoServer_SOURCES) \
+	$(unreach_SOURCES)
 DIST_SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
 	$(tcp2_SOURCES) $(tcpDaytime_SOURCES) \
 	$(tcpDaytimeClient_SOURCES) $(tcpDaytimeServer_SOURCES) \
-	$(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES) \
-	$(timeout_SOURCES) $(udpEchoClient_SOURCES) \
-	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
+	$(tcpTimeout_SOURCES) $(tcpdiscardClient_SOURCES) \
+	$(tcpdiscardServer_SOURCES) $(timeout_SOURCES) \
+	$(udpEchoClient_SOURCES) $(udpEchoServer_SOURCES) \
+	$(unreach_SOURCES)
 DATA = $(noinst_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -319,7 +329,6 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LDADD = ../libesnet.a ../../kernel/libeskernel.a \
@@ -352,9 +361,10 @@ udpEchoClient_SOURCES = udpEchoClient.cpp
 udpEchoServer_SOURCES = udpEchoServer.cpp
 tcpdiscardClient_SOURCES = tcpdiscardClient.cpp
 tcpdiscardServer_SOURCES = tcpdiscardServer.cpp
-tcpDaytime_SOURCES = tcpDaytime.cpp
+tcpTimeout_SOURCES = tcpTimeout.cpp
 tcpDaytimeServer_SOURCES = tcpDaytimeServer.cpp
 tcpDaytimeClient_SOURCES = tcpDaytimeClient.cpp
+tcpDaytime_SOURCES = tcpDaytime.cpp
 EXTRA_DIST = makeScript testLoader
 all: all-am
 
@@ -431,6 +441,9 @@ tcpDaytimeClient$(EXEEXT): $(tcpDaytimeClient_OBJECTS) $(tcpDaytimeClient_DEPEND
 tcpDaytimeServer$(EXEEXT): $(tcpDaytimeServer_OBJECTS) $(tcpDaytimeServer_DEPENDENCIES) 
 	@rm -f tcpDaytimeServer$(EXEEXT)
 	$(CXXLINK) $(tcpDaytimeServer_OBJECTS) $(tcpDaytimeServer_LDADD) $(LIBS)
+tcpTimeout$(EXEEXT): $(tcpTimeout_OBJECTS) $(tcpTimeout_DEPENDENCIES) 
+	@rm -f tcpTimeout$(EXEEXT)
+	$(CXXLINK) $(tcpTimeout_OBJECTS) $(tcpTimeout_LDADD) $(LIBS)
 tcpdiscardClient$(EXEEXT): $(tcpdiscardClient_OBJECTS) $(tcpdiscardClient_DEPENDENCIES) 
 	@rm -f tcpdiscardClient$(EXEEXT)
 	$(CXXLINK) $(tcpdiscardClient_OBJECTS) $(tcpdiscardClient_LDADD) $(LIBS)
@@ -469,6 +482,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpDaytime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpDaytimeClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpDaytimeServer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpTimeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardServer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeout.Po@am__quote@
