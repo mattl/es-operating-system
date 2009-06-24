@@ -66,8 +66,7 @@ nobase_include_HEADERS = \
 	es/net/udp.h \
 	es/orderedMap.h
 
-# Specify nobase_ first when used in conjunction with either dist_ or nodist_.
-nobase_nodist_include_HEADERS = \
+generated_headers = \
 	es/object.h \
 	es/base/IAlarm.h \
 	es/base/ICache.h \
@@ -123,6 +122,10 @@ nobase_nodist_include_HEADERS = \
 	w3c/webworkers.h \
 	w3c/views.h \
 	w3c/xhr.h
+
+# Specify nobase_ first when used in conjunction with either dist_ or nodist_.
+nobase_nodist_include_HEADERS = \
+	$(generated_headers)
 	
 nobase_nodist_include_HEADERS += \
 	es/object.ent \
@@ -238,6 +241,11 @@ nobase_include_HEADERS += \
 	w3c/views.idl \
 	w3c/xhr.idl
 
+nobase_nodist_include_HEADERS += interface.list
+
+interface.list : $(generated_headers)
+	grep 'static const char\* const name' $^ | awk '{ print substr($$8, 2, length($$8) - 3) }' > $@
+
 clean-local:
-	-rm -rf es -rf w3c
+	rm -rf es w3c interface.list
 
