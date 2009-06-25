@@ -1,0 +1,20 @@
+diff -bcrN jpeg-6b.org/config.sub jpeg-6b/config.sub
+*** jpeg-6b.org/config.sub	2009-06-15 17:17:41.000000000 +0800
+--- jpeg-6b/config.sub	2009-06-15 17:18:12.000000000 +0800
+***************
+*** 713,719 ****
+  	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
+  	      | -hiux* | -386bsd* | -netbsd* | -openbsd* | -freebsd* | -riscix* \
+  	      | -lynxos* | -bosx* | -nextstep* | -cxux* | -aout* | -elf* \
+! 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -cygwin32* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -uxpv*)
+--- 713,719 ----
+  	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
+  	      | -hiux* | -386bsd* | -netbsd* | -openbsd* | -freebsd* | -riscix* \
+  	      | -lynxos* | -bosx* | -nextstep* | -cxux* | -aout* | -elf* \
+! 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* | -es* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -cygwin32* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -uxpv*)
