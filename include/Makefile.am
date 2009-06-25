@@ -241,10 +241,17 @@ nobase_include_HEADERS += \
 	w3c/views.idl \
 	w3c/xhr.idl
 
-nobase_nodist_include_HEADERS += interface.list
+nobase_nodist_include_HEADERS += interface.list es/includeAllInterfaces.h
 
 interface.list : $(generated_headers)
 	grep 'static const char\* const name' $^ | awk '{ print substr($$8, 2, length($$8) - 3) }' > $@
+	
+es/includeAllInterfaces.h : $(generated_headers)
+	rm -f $@; \
+	for i in $(generated_headers); \
+	do \
+		printf "#include <%s>\n" $$i >> $@; \
+	done 
 
 clean-local:
 	rm -rf es w3c interface.list

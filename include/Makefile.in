@@ -280,7 +280,8 @@ nobase_nodist_include_HEADERS = $(generated_headers) es/object.ent \
 	w3c/eventsource.ent w3c/html5.ent w3c/ls.ent w3c/ranges.ent \
 	w3c/smil.ent w3c/stylesheets.ent w3c/svg.ent w3c/traversal.ent \
 	w3c/validation.ent w3c/websockets.ent w3c/webstorage.ent \
-	w3c/webworkers.ent w3c/views.ent w3c/xhr.ent interface.list
+	w3c/webworkers.ent w3c/views.ent w3c/xhr.ent interface.list \
+	es/includeAllInterfaces.h
 all: all-am
 
 .SUFFIXES:
@@ -580,6 +581,13 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 
 interface.list : $(generated_headers)
 	grep 'static const char\* const name' $^ | awk '{ print substr($$8, 2, length($$8) - 3) }' > $@
+
+es/includeAllInterfaces.h : $(generated_headers)
+	rm -f $@; \
+	for i in $(generated_headers); \
+	do \
+		printf "#include <%s>\n" $$i >> $@; \
+	done 
 
 clean-local:
 	rm -rf es w3c interface.list
