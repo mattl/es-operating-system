@@ -2738,7 +2738,7 @@ interfaceList.cpp : ../../include/interface.list $(srcdir)/interfaceList.awk
 	$(srcdir)/interfaceList.awk $< > $@
 
 clean-local:
-	rm interfaceList.cpp
+	rm -f interfaceList.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

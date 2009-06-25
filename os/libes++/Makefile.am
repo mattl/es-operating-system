@@ -144,7 +144,7 @@ libesrpc_a_CPPFLAGS = \
 endif POSIX
 
 clean-local:
-	rm interfaceList.cpp
+	rm -f interfaceList.cpp
 
 EXTRA_DIST = interfaceList.awk
 
