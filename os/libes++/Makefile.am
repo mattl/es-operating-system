@@ -34,7 +34,7 @@ cpp_source_files = \
 	src/throw.cpp \
 	src/formatter.cpp \
 	src/ring.cpp
-	
+
 header_files = \
 	include/core.h \
 	include/posix_system.h \
@@ -103,11 +103,17 @@ nodist_libessup___a_SOURCES = \
 	w3c/svg.c \
 	w3c/traversal.c \
 	w3c/validation.c \
-	w3c/views.c
+	w3c/views.c \
+	interfaceList.cpp
 
-libes___a_SOURCES = $(libessup___a_SOURCES) $(nodist_libessup___a_SOURCES) \
+nodist_libes___a_SOURCES = $(nodist_libessup___a_SOURCES)
+
+libes___a_SOURCES = $(libessup___a_SOURCES)  \
 	src/interfaceStore.cpp \
 	src/report.cpp
+
+interfaceList.cpp : ../../include/interface.list $(srcdir)/interfaceList.awk
+	$(srcdir)/interfaceList.awk $< > $@
 
 if ES
 
@@ -124,7 +130,9 @@ AM_CPPFLAGS += -I/usr/include/GL
 
 libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 
-libesrpc_a_SOURCES = $(rpc_source_files) $(nodist_libessup___a_SOURCES) src/rpc.cpp
+nodist_libesrpc_a_SOURCES = $(nodist_libessup___a_SOURCES)
+
+libesrpc_a_SOURCES = $(rpc_source_files)  src/rpc.cpp
 
 # -fno-exceptions
 libesrpc_a_CPPFLAGS = \
@@ -134,4 +142,9 @@ libesrpc_a_CPPFLAGS = \
 	-pedantic -fno-strict-aliasing -fshort-wchar -pthread -pipe
 
 endif POSIX
+
+clean-local:
+	rm interfaceList.cpp
+
+EXTRA_DIST = interfaceList.awk
 
