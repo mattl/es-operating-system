@@ -6,19 +6,19 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 
 if ES
 
-%.h %.ent : %.idl
-	esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
+%.h : %.idl
+	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
 es/object.h es/object.ent : es/object.idl
-	esidl -isystem $(srcdir) -ent $<
+	esidl -isystem $(srcdir) $<
 
 else !ES
 
-%.h %.ent : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
+%.h : %.idl
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
 es/object.h es/object.ent : es/object.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) $<
 
 endif !ES
 
@@ -38,6 +38,7 @@ nobase_include_HEADERS = \
 	es/formatter.h \
 	es/handle.h \
 	es/hashtable.h \
+	es/interfaceData.h \
 	es/interlocked.h \
 	es/list.h \
 	es/md5.h \
@@ -127,63 +128,6 @@ generated_headers = \
 nobase_nodist_include_HEADERS = \
 	$(generated_headers)
 	
-nobase_nodist_include_HEADERS += \
-	es/object.ent \
-	es/base/IAlarm.ent \
-	es/base/ICache.ent \
-	es/base/ICallback.ent \
-	es/base/IFile.ent \
-	es/base/IInterfaceStore.ent \
-	es/base/IMonitor.ent \
-	es/base/IPageable.ent \
-	es/base/IPageSet.ent \
-	es/base/IProcess.ent \
-	es/base/IRuntime.ent \
-	es/base/ISelectable.ent \
-	es/base/IService.ent \
-	es/base/IStream.ent \
-	es/base/IThread.ent \
-	es/device/IAudioFormat.ent \
-	es/device/IBeep.ent \
-	es/device/ICursor.ent \
-	es/device/IDevice.ent \
-	es/device/IDisk.ent \
-	es/device/IDmac.ent \
-	es/device/IFatFileSystem.ent \
-	es/device/IFileSystem.ent \
-	es/device/IIso9660FileSystem.ent \
-	es/device/INetworkInterface.ent \
-	es/device/IPic.ent \
-	es/device/IRemovableMedia.ent \
-	es/device/IRtc.ent \
-	es/naming/IBinding.ent \
-	es/naming/IContext.ent \
-	es/net/IInternetAddress.ent \
-	es/net/IInternetConfig.ent \
-	es/net/IResolver.ent \
-	es/net/ISocket.ent \
-	es/util/IIterator.ent \
-	es/util/ISet.ent \
-	es/util/IOrderedMap.ent \
-	w3c/css.ent \
-	w3c/cssomview.ent \
-	w3c/dom.ent \
-	w3c/events.ent \
-	w3c/eventsource.ent \
-	w3c/html5.ent \
-	w3c/ls.ent \
-	w3c/ranges.ent \
-	w3c/smil.ent \
-	w3c/stylesheets.ent \
-	w3c/svg.ent \
-	w3c/traversal.ent \
-	w3c/validation.ent \
-	w3c/websockets.ent \
-	w3c/webstorage.ent \
-	w3c/webworkers.ent \
-	w3c/views.ent \
-	w3c/xhr.ent
-
 nobase_include_HEADERS += \
 	es/object.idl \
 	es/base/IAlarm.idl \

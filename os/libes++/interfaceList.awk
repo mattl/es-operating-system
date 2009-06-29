@@ -1,9 +1,9 @@
 #!/usr/bin/awk -f
 
 BEGIN {
-    print "#include \"interfaceData.h\""
     print "#include <es/any.h>"
     print "#include <es/includeAllInterfaces.h>"
+    print "#include <es/interfaceData.h>"
     print ""
     print "namespace es"
     print "{"

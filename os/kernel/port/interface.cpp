@@ -16,76 +16,7 @@
  */
 
 #include "interfaceStore.h"
-#include <string.h>
-#include <es.h>
-#include <es/hashtable.h>
-#include <es/object.h>
-#include <es/base/IAlarm.h>
-#include <es/base/ICache.h>
-#include <es/base/IMonitor.h>
-#include <es/base/IPageSet.h>
-#include <es/base/IProcess.h>
-#include <es/device/IFatFileSystem.h>
-#include <es/device/IIso9660FileSystem.h>
-
-unsigned char* InterfaceStore::defaultInterfaceInfo[] =
-{
-    // Base classes first
-    objectInfo,
-
-    IAlarmInfo,
-    ICacheInfo,
-    ICallbackInfo,
-    IFileInfo,
-    IInterfaceStoreInfo,
-    IMonitorInfo,
-    IPageableInfo,
-    IPageSetInfo,
-    IProcessInfo,
-    IRuntimeInfo,
-    ISelectableInfo,
-    IServiceInfo,
-    IStreamInfo,
-    IThreadInfo,
-
-    IAudioFormatInfo,
-    IBeepInfo,
-    ICursorInfo,
-    IDeviceInfo,
-    IDiskInfo,
-    IDmacInfo,
-    IFatFileSystemInfo,
-    IFileSystemInfo,
-    IIso9660FileSystemInfo,
-    IPicInfo,
-    IRemovableMediaInfo,
-    IRtcInfo,
-
-    IBindingInfo,
-    IContextInfo,
-
-    IInternetAddressInfo,
-    IInternetConfigInfo,
-    IResolverInfo,
-    ISocketInfo,
-
-    IIteratorInfo,
-    ISetInfo,
-
-    cssInfo,
-    cssomviewInfo,
-    domInfo,
-    eventsInfo,
-    html5Info,
-    lsInfo,
-    rangesInfo,
-    smilInfo,
-    stylesheetsInfo,
-    svgInfo,
-    traversalInfo,
-    validationInfo,
-    viewsInfo,
-};
+#include <es/interfaceData.h>
 
 struct ConstructorAccessors
 {
@@ -134,42 +65,50 @@ ConstructorAccessors defaultConstructorInfo[] =
 };
 
 void InterfaceStore::
-registerInterface(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface(module.getInterface(i));
-
-        SpinLock::Synchronized method(spinLock);
-        hashtable.add(interface.getFullyQualifiedName(), interface);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
-    {
-        Reflect::Module m(module.getModule(i));
-        registerInterface(m);
-    }
-}
-
-void InterfaceStore::
 registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*))
 {
-    InterfaceData* data = &hashtable.get(iid);
+    MetaData* data = &hashtable.get(iid);
     data->constructorGetter = getter;
     data->constructorSetter = setter;
 }
 
-InterfaceStore::
-InterfaceStore(int capacity) :
-    hashtable(capacity)
+void InterfaceStore::
+updateInheritedMethodCount(const char* iid)
 {
-    for (int i = 0;
-         i < sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];
-         ++i)
+    unsigned inheritedMethodCount = 0;
+    Reflect::Interface* interface = &getInterface(iid);
+    Reflect::Interface* super = interface;
+    for (;;)
     {
-        Reflect r(defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        registerInterface(global);
+        char qualifiedName[256];
+        unsigned length;
+        const char* superName = super->getQualifiedSuperName(&length);
+        if (!superName)
+        {
+            break;
+        }
+        ASSERT(length < sizeof qualifiedName);
+        memcpy(qualifiedName, superName, length);
+        qualifiedName[length] = 0;
+        super = &getInterface(qualifiedName);
+        inheritedMethodCount += super->getMethodCount();
+    }
+    interface->setInheritedMethodCount(inheritedMethodCount);
+}
+
+InterfaceStore::
+InterfaceStore()
+{
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
+    {
+        MetaData metaData(data->info(), data->iid());
+        hashtable.add(data->iid(), metaData);
+    }
+
+    // Update inheritedMethodCount of each interface data.
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
+    {
+        updateInheritedMethodCount(data->iid());
     }
 
     for (int i = 0;
@@ -187,39 +126,42 @@ InterfaceStore::
 }
 
 void InterfaceStore::
-add(const void* data, int length)
+add(const char* iid, const char* info)
 {
-    void* buffer = new u8[length];
-    memmove(buffer, data, length);
-    Reflect r(buffer);
-    Reflect::Module global(r.getGlobalModule());
-    registerInterface(global);
+    char* kiid = strdup(iid);
+    char* kinfo = strdup(info);
+    if (!kiid || !kinfo)
+    {
+        free(kiid);
+        free(kinfo);
+        return;
+    }
+    MetaData metaData(kinfo, kiid);
+    hashtable.add(kiid, metaData);
+    updateInheritedMethodCount(kiid);
 }
 
 void InterfaceStore::
-remove(const char* riid)
+remove(const char* iid)
 {
-    SpinLock::Synchronized method(spinLock);
-
-    hashtable.remove(riid);
-    // XXX release buffer
+    // TODO: not implemented
 }
 
 Object* InterfaceStore::
-queryInterface(const char* riid)
+queryInterface(const char* iid)
 {
     Object* objectPtr;
-    if (strcmp(riid, es::InterfaceStore::iid()) == 0)
+    if (strcmp(iid, es::InterfaceStore::iid()) == 0)
     {
         objectPtr = static_cast<es::InterfaceStore*>(this);
     }
-    else if (strcmp(riid, Object::iid()) == 0)
+    else if (strcmp(iid, Object::iid()) == 0)
     {
         objectPtr = static_cast<es::InterfaceStore*>(this);
     }
     else
     {
-        return NULL;
+        return 0;
     }
     objectPtr->addRef();
     return objectPtr;

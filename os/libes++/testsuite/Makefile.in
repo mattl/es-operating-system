@@ -39,7 +39,7 @@ target_triplet = @target@
 @POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
 @POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
 @POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
-@POSIX_TRUE@	variant$(EXEEXT) interfaceList$(EXEEXT)
+@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT)
 @POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = libes++/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -54,7 +54,7 @@ CONFIG_CLEAN_VPATH_FILES =
 @POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
 @POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
 @POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
-@POSIX_TRUE@	variant$(EXEEXT) interfaceList$(EXEEXT)
+@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am__broker_SOURCES_DIST = broker.cpp
 @POSIX_TRUE@am_broker_OBJECTS = broker.$(OBJEXT)
@@ -81,11 +81,6 @@ am__hashtable_SOURCES_DIST = hashtable.cpp
 hashtable_OBJECTS = $(am_hashtable_OBJECTS)
 hashtable_LDADD = $(LDADD)
 hashtable_DEPENDENCIES = ../libessup++.a
-am__interfaceList_SOURCES_DIST = interfaceList.cpp
-@POSIX_TRUE@am_interfaceList_OBJECTS = interfaceList.$(OBJEXT)
-interfaceList_OBJECTS = $(am_interfaceList_OBJECTS)
-interfaceList_LDADD = $(LDADD)
-interfaceList_DEPENDENCIES = ../libessup++.a
 am__list_SOURCES_DIST = list.cpp
 @POSIX_TRUE@am_list_OBJECTS = list.$(OBJEXT)
 list_OBJECTS = $(am_list_OBJECTS)
@@ -101,6 +96,12 @@ am__smartptr_SOURCES_DIST = smartptr.cpp
 smartptr_OBJECTS = $(am_smartptr_OBJECTS)
 smartptr_LDADD = $(LDADD)
 smartptr_DEPENDENCIES = ../libessup++.a
+am__testInterfaceList_SOURCES_DIST = testInterfaceList.cpp
+@POSIX_TRUE@am_testInterfaceList_OBJECTS =  \
+@POSIX_TRUE@	testInterfaceList.$(OBJEXT)
+testInterfaceList_OBJECTS = $(am_testInterfaceList_OBJECTS)
+testInterfaceList_LDADD = $(LDADD)
+testInterfaceList_DEPENDENCIES = ../libessup++.a
 am__tree_SOURCES_DIST = tree.cpp
 @POSIX_TRUE@am_tree_OBJECTS = tree.$(OBJEXT)
 tree_OBJECTS = $(am_tree_OBJECTS)
@@ -121,15 +122,17 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(broker_SOURCES) $(collection_SOURCES) $(colorTest_SOURCES) \
-	$(formatter_SOURCES) $(hashtable_SOURCES) \
-	$(interfaceList_SOURCES) $(list_SOURCES) $(rand_SOURCES) \
-	$(smartptr_SOURCES) $(tree_SOURCES) $(variant_SOURCES)
+	$(formatter_SOURCES) $(hashtable_SOURCES) $(list_SOURCES) \
+	$(rand_SOURCES) $(smartptr_SOURCES) \
+	$(testInterfaceList_SOURCES) $(tree_SOURCES) \
+	$(variant_SOURCES)
 DIST_SOURCES = $(am__broker_SOURCES_DIST) \
 	$(am__collection_SOURCES_DIST) $(am__colorTest_SOURCES_DIST) \
 	$(am__formatter_SOURCES_DIST) $(am__hashtable_SOURCES_DIST) \
-	$(am__interfaceList_SOURCES_DIST) $(am__list_SOURCES_DIST) \
-	$(am__rand_SOURCES_DIST) $(am__smartptr_SOURCES_DIST) \
-	$(am__tree_SOURCES_DIST) $(am__variant_SOURCES_DIST)
+	$(am__list_SOURCES_DIST) $(am__rand_SOURCES_DIST) \
+	$(am__smartptr_SOURCES_DIST) \
+	$(am__testInterfaceList_SOURCES_DIST) $(am__tree_SOURCES_DIST) \
+	$(am__variant_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -254,7 +257,7 @@ AM_CPPFLAGS = \
 @POSIX_TRUE@tree_SOURCES = tree.cpp
 @POSIX_TRUE@formatter_SOURCES = formatter.cpp
 @POSIX_TRUE@variant_SOURCES = variant.cpp
-@POSIX_TRUE@interfaceList_SOURCES = interfaceList.cpp
+@POSIX_TRUE@testInterfaceList_SOURCES = testInterfaceList.cpp
 all: all-am
 
 .SUFFIXES:
@@ -307,9 +310,6 @@ formatter$(EXEEXT): $(formatter_OBJECTS) $(formatter_DEPENDENCIES)
 hashtable$(EXEEXT): $(hashtable_OBJECTS) $(hashtable_DEPENDENCIES) 
 	@rm -f hashtable$(EXEEXT)
 	$(CXXLINK) $(hashtable_OBJECTS) $(hashtable_LDADD) $(LIBS)
-interfaceList$(EXEEXT): $(interfaceList_OBJECTS) $(interfaceList_DEPENDENCIES) 
-	@rm -f interfaceList$(EXEEXT)
-	$(CXXLINK) $(interfaceList_OBJECTS) $(interfaceList_LDADD) $(LIBS)
 list$(EXEEXT): $(list_OBJECTS) $(list_DEPENDENCIES) 
 	@rm -f list$(EXEEXT)
 	$(CXXLINK) $(list_OBJECTS) $(list_LDADD) $(LIBS)
@@ -319,6 +319,9 @@ rand$(EXEEXT): $(rand_OBJECTS) $(rand_DEPENDENCIES)
 smartptr$(EXEEXT): $(smartptr_OBJECTS) $(smartptr_DEPENDENCIES) 
 	@rm -f smartptr$(EXEEXT)
 	$(CXXLINK) $(smartptr_OBJECTS) $(smartptr_LDADD) $(LIBS)
+testInterfaceList$(EXEEXT): $(testInterfaceList_OBJECTS) $(testInterfaceList_DEPENDENCIES) 
+	@rm -f testInterfaceList$(EXEEXT)
+	$(CXXLINK) $(testInterfaceList_OBJECTS) $(testInterfaceList_LDADD) $(LIBS)
 tree$(EXEEXT): $(tree_OBJECTS) $(tree_DEPENDENCIES) 
 	@rm -f tree$(EXEEXT)
 	$(CXXLINK) $(tree_OBJECTS) $(tree_LDADD) $(LIBS)
@@ -337,10 +340,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colorTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formatter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hashtable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interfaceList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartptr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testInterfaceList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/variant.Po@am__quote@
 

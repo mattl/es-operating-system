@@ -75,7 +75,7 @@ void transform(es::CanvasRenderingContext2D* canvas)
         canvas->fillRect(0, 0, 100, 10);
         canvas->transform(cosT,sinT, -sinT, cosT, 0, 0);
     }
-										                                   
+
     canvas->setTransform(-1, 0, 0, 1, 200, 200);
     canvas->setFillStyle("rgba(255, 128, 255, 0.5)");
     canvas->fillRect(0, 50, 100, 100);
@@ -225,8 +225,8 @@ int main(int argc, char* argv[])
 
     if (argc < 2)
     {
-        //figure(canvas);
-	transform(canvas);
+        figure(canvas);
+        // transform(canvas);
 #ifndef __es__
         esSleep(40000000);
 #endif

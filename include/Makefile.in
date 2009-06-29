@@ -170,9 +170,9 @@ SUFFIXES = .h .idl
 nobase_include_HEADERS = es.h es/any.h es/broker.h es/capability.h \
 	es/color.h es/collection.h es/context.h es/dateTime.h es/elf.h \
 	es/endian.h es/ent.h es/exception.h es/formatter.h es/handle.h \
-	es/hashtable.h es/interlocked.h es/list.h es/md5.h \
-	es/objectTable.h es/ref.h es/reflect.h es/ring.h es/rpc.h \
-	es/synchronized.h es/timer.h es/timeSpan.h es/tree.h \
+	es/hashtable.h es/interfaceData.h es/interlocked.h es/list.h \
+	es/md5.h es/objectTable.h es/ref.h es/reflect.h es/ring.h \
+	es/rpc.h es/synchronized.h es/timer.h es/timeSpan.h es/tree.h \
 	es/types.h es/usage.h es/utf.h es/uuid.h es/net/arp.h \
 	es/net/dhcp.h es/net/dns.h es/net/dix.h es/net/icmp.h \
 	es/net/igmp.h es/net/inet4.h es/net/inet6.h es/net/tcp.h \
@@ -258,29 +258,7 @@ generated_headers = \
 
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
-nobase_nodist_include_HEADERS = $(generated_headers) es/object.ent \
-	es/base/IAlarm.ent es/base/ICache.ent es/base/ICallback.ent \
-	es/base/IFile.ent es/base/IInterfaceStore.ent \
-	es/base/IMonitor.ent es/base/IPageable.ent \
-	es/base/IPageSet.ent es/base/IProcess.ent es/base/IRuntime.ent \
-	es/base/ISelectable.ent es/base/IService.ent \
-	es/base/IStream.ent es/base/IThread.ent \
-	es/device/IAudioFormat.ent es/device/IBeep.ent \
-	es/device/ICursor.ent es/device/IDevice.ent \
-	es/device/IDisk.ent es/device/IDmac.ent \
-	es/device/IFatFileSystem.ent es/device/IFileSystem.ent \
-	es/device/IIso9660FileSystem.ent \
-	es/device/INetworkInterface.ent es/device/IPic.ent \
-	es/device/IRemovableMedia.ent es/device/IRtc.ent \
-	es/naming/IBinding.ent es/naming/IContext.ent \
-	es/net/IInternetAddress.ent es/net/IInternetConfig.ent \
-	es/net/IResolver.ent es/net/ISocket.ent es/util/IIterator.ent \
-	es/util/ISet.ent es/util/IOrderedMap.ent w3c/css.ent \
-	w3c/cssomview.ent w3c/dom.ent w3c/events.ent \
-	w3c/eventsource.ent w3c/html5.ent w3c/ls.ent w3c/ranges.ent \
-	w3c/smil.ent w3c/stylesheets.ent w3c/svg.ent w3c/traversal.ent \
-	w3c/validation.ent w3c/websockets.ent w3c/webstorage.ent \
-	w3c/webworkers.ent w3c/views.ent w3c/xhr.ent interface.list \
+nobase_nodist_include_HEADERS = $(generated_headers) interface.list \
 	es/includeAllInterfaces.h
 all: all-am
 
@@ -567,17 +545,17 @@ es/ent.h : $(srcdir)/../esidl/es/ent.h
 	mkdir -p es
 	cp $? es
 
-@ES_TRUE@%.h %.ent : %.idl
-@ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
+@ES_TRUE@%.h : %.idl
+@ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
 @ES_TRUE@es/object.h es/object.ent : es/object.idl
-@ES_TRUE@	esidl -isystem $(srcdir) -ent $<
+@ES_TRUE@	esidl -isystem $(srcdir) $<
 
-@ES_FALSE@%.h %.ent : %.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -ent -namespace es $<
+@ES_FALSE@%.h : %.idl
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
 @ES_FALSE@es/object.h es/object.ent : es/object.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -ent $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) $<
 
 interface.list : $(generated_headers)
 	grep 'static const char\* const name' $^ | awk '{ print substr($$8, 2, length($$8) - 3) }' > $@

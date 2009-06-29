@@ -44,9 +44,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+#if 0
     es::Alarm* alarm = es::Alarm::createInstance();
     alarm->getPeriodic();
     alarm->release();
+#endif
 
     printf("%p\n", es::getConstructor(es::Cache::iid()));
     printf("%p\n", es::getConstructor(es::Monitor::iid()));

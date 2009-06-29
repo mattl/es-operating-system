@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-#include "interfaceData.h"
+#include <es/interfaceData.h>
+#include <es/reflect.h>
 
 #include <stdio.h>
 
 int main()
 {
-    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
+    int n = 0;
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data, ++n)
     {
-        printf("%s %s\n", data->iid(), data->info());
+        printf("%d: %s %s\n", n, data->iid(), data->info());
+        Reflect::Interface meta(data->info(), data->iid());
     }
 }

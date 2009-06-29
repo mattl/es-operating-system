@@ -10,87 +10,205 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF Any KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
-#ifndef NINTENDO_ES_REFLECT_H_INCLUDED
-#define NINTENDO_ES_REFLECT_H_INCLUDED
+#ifndef GOOGLE_ESIDL_REFLECT_H_INCLUDED
+#define GOOGLE_ESIDL_REFLECT_H_INCLUDED
 
-#include <es.h>
-#include <es/ent.h>
+#include <cctype>
 #include <cstring>
+#include <cstdlib>
+#include <string>
 
 /**
- * This class provides an access to the reflection data.
+ * This class provides access to the string-encoded interface meta-data.
+ *
+ *  ws -> ' '
+ *  name -> digits identifier  // digits represents the # of characters in the identifier
+ *
+ *  interface ->
+ *    I name
+ *    extends*
+ *    [ operation, setter, getter, constructor, constant ]*
+ *
+ *  extends -> X name
+ *  operation -> F digits type name (type name)* raises*   // digits represent the # of parameters
+ *  setter -> S 1 v name type raises*
+ *  getter -> G 0 type name raises*
+ *  constructor -> N digits type name (type name)* raises* // digits represent the # of parameters
+ *  constant  -> C name value ws  // value represents a double value parseable by strtold()
+ *
+ *  type ->
+ *    A: any
+ *    D: DOMString
+ *    Q type: sequence<type>
+ *    O name: Object
+ *    B type: Boxed valuetype
+ *    V type: [Variadic] in type
+ *    v: void
+ *    b: boolean
+ *    h: octet
+ *    s: short
+ *    t: unsigned short
+ *    l: long
+ *    m: unsigned long
+ *    x: long long
+ *    y: unsigned long long
+ *    f: float
+ *    d: double
+ *    p: void*                              // XXX To be unsupported
+ *    YnT: array of n elements of type T    // XXX To be unsupported
+ *
+ *  raises ->
+ *    R name
+ *
+ *  TODO: embed other extended attributes in the meta-data.
  */
 class Reflect
 {
-    uint8_t* ent;
-
 public:
-
-    /**
-     * Gets the pointer of the specified record in the specified reflection data.
-     * @param ent the reflection data.
-     * @param offset the offset to the record.
-     * @return the record.
-     */
-    static void* getPointer(uint8_t* ent, uint32_t offset)
-    {
-        return static_cast<void*>(ent + offset);
-    }
+    // Type
+    static const char kVoid = 'v';
+    static const char kBoolean = 'b';
+    static const char kOctet = 'h';
+    static const char kShort = 's';
+    static const char kUnsignedShort = 't';
+    static const char kLong = 'l';
+    static const char kUnsignedLong = 'm';
+    static const char kLongLong = 'x';
+    static const char kUnsignedLongLong = 'y';
+    static const char kFloat = 'f';
+    static const char kDouble = 'd';
+    static const char kString = 'D';
+    static const char kAny = 'A';
+    static const char kObject = 'O';
+    static const char kBoxedValueType = 'B';
+    static const char kSequence = 'Q';
+    static const char kVariadic = 'V';
+    // Misc.
+    static const char kInterface = 'I';
+    static const char kExtends = 'X';
+    static const char kConstant = 'C';
+    static const char kOperation = 'F';
+    static const char kGetter = 'G';
+    static const char kSetter = 'S';
+    static const char kConstructor = 'N';
+    static const char kException = 'E';
+    static const char kRaises = 'R';
+    // Obsolete
+    static const char kArray = 'Y';
+    static const char kPointer = 'p';
 
     class Interface;
+
+    static bool isParam(const char* info)
+    {
+        switch (*info)
+        {
+        case kBoolean:
+        case kOctet:
+        case kShort:
+        case kUnsignedShort:
+        case kLong:
+        case kUnsignedLong:
+        case kLongLong:
+        case kUnsignedLongLong:
+        case kFloat:
+        case kDouble:
+        case kString:
+        case kAny:
+        case kObject:
+        case kBoxedValueType:
+        case kSequence:
+        case kVariadic:
+        case kArray:
+        case kPointer:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    static const char* skipDigits(const char* info, unsigned* value = 0)
+    {
+        unsigned n = 0;
+        while (std::isdigit(*info))
+        {
+            n = 10 * n + (*info - '0');
+            ++info;
+        }
+        if (value)
+        {
+            *value = n;
+        }
+        return info;
+    }
+
+    static const char* skipName(const char* info)
+    {
+        unsigned length;
+        info = skipDigits(info, &length);
+        return info + length;
+    }
+
+    static const char* skipType(const char* info)
+    {
+        switch (*info)
+        {
+        case kVoid:
+        case kBoolean:
+        case kOctet:
+        case kShort:
+        case kUnsignedShort:
+        case kLong:
+        case kUnsignedLong:
+        case kLongLong:
+        case kUnsignedLongLong:
+        case kFloat:
+        case kDouble:
+        case kString:
+        case kAny:
+        case kPointer:
+            return ++info;
+        case kBoxedValueType:
+        case kSequence:
+        case kVariadic:
+            return skipType(++info);
+        case kObject:
+            return skipName(++info);
+        case kArray:
+            return skipType(skipDigits(++info));
+        default:
+            return 0;
+        }
+    }
 
     /**
      * This represents a type record from the specified reflection data.
      */
     class Type
     {
-        uint8_t* ent;
-        uint32_t spec;
+        const char* info;
 
     public:
         /**
          * Constructs an object which represents the specified type.
-         * @param ent the reflection data.
-         * @param spec the offset to the type record.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Type(uint8_t* ent, uint32_t spec) :
-            ent(ent),
-            spec(spec)
+        Type(const char* info) :
+            info(info)
         {
         }
 
         /**
          * Gets the type of this type descriptor.
          */
-        uint32_t getType() const
+        char getType() const
         {
-            if (isPrimitive())
-            {
-                return spec;
-            }
-
-            return *static_cast<uint32_t*>(getPointer(ent, spec));
-        }
-
-        /**
-         * Checks if this type is primitive.
-         */
-        bool isPrimitive() const
-        {
-            return Ent::isPrimitive(spec);
-        }
-
-        /**
-         * Checks if this type is a module.
-         */
-        bool isModule() const
-        {
-            return (getType() == Ent::TypeModule) ? true : false;
+            return *info;
         }
 
         /**
@@ -98,15 +216,7 @@ public:
          */
         bool isInterface() const
         {
-            return (getType() == Ent::TypeInterface) ? true : false;
-        }
-
-        /**
-         * Checks if this type is a structure.
-         */
-        bool isStructure() const
-        {
-            return (getType() == Ent::TypeStructure) ? true : false;
+            return (getType() == kInterface) ? true : false;
         }
 
         /**
@@ -114,15 +224,7 @@ public:
          */
         bool isException() const
         {
-            return (getType() == Ent::TypeException) ? true : false;
-        }
-
-        /**
-         * Checks if this type is an enum.
-         */
-        bool isEnum() const
-        {
-            return (getType() == Ent::TypeEnum) ? true : false;
+            return (getType() == kException) ? true : false;
         }
 
         /**
@@ -130,7 +232,7 @@ public:
          */
         bool isArray() const
         {
-            return (getType() == Ent::TypeArray) ? true : false;
+            return (getType() == kArray) ? true : false;
         }
 
         /**
@@ -138,22 +240,7 @@ public:
          */
         bool isSequence() const
         {
-            return (getType() == Ent::TypeSequence) ? true : false;
-        }
-
-        /**
-         * Checks if this type is a character.
-         */
-        bool isCharacter() const
-        {
-            switch (spec)
-            {
-            case Ent::SpecChar:
-            case Ent::SpecWChar:
-                return true;
-            default:
-                return false;
-            }
+            return (getType() == kSequence) ? true : false;
         }
 
         /**
@@ -161,16 +248,15 @@ public:
          */
         bool isInteger() const
         {
-            switch (spec)
+            switch (getType())
             {
-            case Ent::SpecS8:
-            case Ent::SpecS16:
-            case Ent::SpecS32:
-            case Ent::SpecS64:
-            case Ent::SpecU8:
-            case Ent::SpecU16:
-            case Ent::SpecU32:
-            case Ent::SpecU64:
+            case kOctet:
+            case kShort:
+            case kUnsignedShort:
+            case kLong:
+            case kUnsignedLong:
+            case kLongLong:
+            case kUnsignedLongLong:
                 return true;
             default:
                 return false;
@@ -182,7 +268,7 @@ public:
          */
         bool isBoolean() const
         {
-            return (spec == Ent::SpecBool) ? true : false;
+            return (getType() == kBoolean) ? true : false;
         }
 
         /**
@@ -190,12 +276,10 @@ public:
          */
         bool isFloat() const
         {
-            switch (spec)
+            switch (getType())
             {
-            case Ent::SpecF32:
-            case Ent::SpecF64:
-            case Ent::SpecF128:
-            case Ent::SpecFixed:
+            case kFloat:
+            case kDouble:
                 return true;
             default:
                 return false;
@@ -207,7 +291,7 @@ public:
          */
         bool isObject() const
         {
-            return (spec == Ent::SpecObject) ? true : false;
+            return (getType() == kObject) ? true : false;
         }
 
         /**
@@ -215,7 +299,7 @@ public:
          */
         bool isAny() const
         {
-            return (spec == Ent::SpecAny) ? true : false;
+            return (getType() == kAny) ? true : false;
         }
 
         /**
@@ -223,15 +307,7 @@ public:
          */
         bool isString() const
         {
-            return (spec == Ent::SpecString) ? true : false;
-        }
-
-        /**
-         * Checks if this type is a reference to uuid.
-         */
-        bool isUuid() const
-        {
-            return (spec == Ent::SpecUuid) ? true : false;
+            return (getType() == kString) ? true : false;
         }
 
         /**
@@ -241,65 +317,42 @@ public:
         {
             switch (getType())
             {
-            case Ent::SpecChar:
-            case Ent::SpecS8:
-            case Ent::SpecU8:
-                return sizeof(uint8_t);
-            case Ent::SpecS16:
-            case Ent::SpecU16:
-                return sizeof(uint16_t);
-            case Ent::SpecS32:
-            case Ent::SpecU32:
-                return sizeof(uint32_t);
-            case Ent::SpecS64:
-            case Ent::SpecU64:
-                return sizeof(uint64_t);
-            case Ent::SpecF32:
-                return sizeof(float);
-            case Ent::SpecF64:
-                return sizeof(double);
-            case Ent::SpecF128:
-                return sizeof(long double);
-            case Ent::SpecBool:
-                return sizeof(bool);
-            case Ent::SpecWChar:
-                return sizeof(wchar_t);
-            case Ent::SpecVoid:
+            case kVoid:
                 return 0;
-            case Ent::SpecAny:
-            case Ent::SpecObject:
+            case kBoolean:
+                return sizeof(bool);
+            case kOctet:
+                return sizeof(uint8_t);
+            case kShort:
+            case kUnsignedShort:
+                return sizeof(uint16_t);
+            case kLong:
+            case kUnsignedLong:
+                return sizeof(uint32_t);
+            case kLongLong:
+            case kUnsignedLongLong:
+                return sizeof(uint64_t);
+            case kFloat:
+                return sizeof(float);
+            case kDouble:
+                return sizeof(double);
+            case kPointer:
+            case kObject:
                 return sizeof(void*);
-
-            case Ent::TypeInterface:
-                return sizeof(void*);
-            case Ent::TypeArray:
+            case kArray:
                 {
-                    Array a(ent, spec);
-                    return a.getSize();
+                    Array a(info);
+                    return a.getType().getSize() * a.getRank();
                 }
                 break;
-            case Ent::TypeStructure:
+            case kSequence:
                 {
-                    Structure st(ent, spec);
-                    return st.getSize();
+                    Sequence seq(info);
+                    return seq.getType().getSize();
                 }
                 break;
-#if 0
-            case Ent::TypeException:
-                {
-                    Exception ex(ent, spec);
-                    return ex.getSize();
-                }
-                break;
-#endif
-            case Ent::TypeSequence:
-                {
-                    Sequence seq(ent, spec);
-                    return seq.getSize();
-                }
-                break;
+            case kBoxedValueType:
             default:
-                ASSERT(0);  // XXX
                 return 0;
             }
         }
@@ -307,10 +360,15 @@ public:
         /**
          * Gets the interface of this type.
          */
-        Interface getInterface()
+        const std::string getQualifiedName() const
         {
-            ASSERT(isInterface());
-            return Interface(ent, spec);
+            if (!isObject())
+            {
+                return "";
+            }
+            unsigned length;
+            const char* name = skipDigits(info + 1, &length);
+            return std::string(name, length);
         }
     };
 
@@ -319,54 +377,23 @@ public:
      */
     class Parameter
     {
-        uint8_t* ent;
-        const Ent::Param* param;
+        const char* info;
 
     public:
         /** Default constructor
          */
         Parameter() :
-            ent(0),
-            param(0)
+            info("")
         {
         }
 
         /**
          * Constructs an object which represents the specified parameter.
-         * @param ent the reflection data.
-         * @param param pointer to the parameter record.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Parameter(uint8_t* ent, const Ent::Param* param) :
-            ent(ent),
-            param(param)
+        Parameter(const char* info) :
+            info(info)
         {
-        }
-
-        /**
-         * Checks if this parameter is passed from the calling procedure
-         * to the called procedure.
-         */
-        bool isInput() const
-        {
-            return param->isInput();
-        }
-
-        /**
-         * Checks if this parameter is returned from the called procedure
-         * to the calling procedure.
-         */
-        bool isOutput() const
-        {
-            return param->isOutput();
-        }
-
-        /**
-         * Checks if this parameter is both passed and returned from/to the
-         * calling procedure to/from the called procedure.
-         */
-        bool isInOut() const
-        {
-            return param->isInOut();
         }
 
         /**
@@ -374,61 +401,97 @@ public:
          */
         Type getType() const
         {
-            return Type(ent, param->spec);
+            return Type(info);
         }
 
         /**
          * Gets the name of this parameter.
          */
-        const char* getName() const
+        const std::string getName() const
         {
-            return static_cast<const char*>(getPointer(ent, param->name));
+            const char* name = skipType(info);
+            unsigned length;
+            name = skipDigits(name, &length);
+            return std::string(name, length);
+        }
+
+        bool next()
+        {
+            info = skipType(info);
+            info = skipName(info);
+            if (!isParam(info))
+            {
+                info = "";
+                return false;
+            }
+            return true;
         }
     };
 
     /**
-     * This represents a function loaded from the specified reflection data.
+     * This represents an operation loaded from the specified reflection data.
      */
     class Method
     {
-        uint8_t* ent;
-        Ent::Method* method;
+        const char* info;
 
     public:
         /** Default constructor
          */
         Method() :
-            ent(0),
-            method(0)
+            info(0)
         {
         }
 
         /**
-         * Constructs an object which represents the specified function.
-         * @param ent the reflection data.
-         * @param offset the offset to the function record.
+         * Constructs an object which represents the specified operation.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Method(uint8_t* ent, uint32_t spec) :
-            ent(ent),
-            method(static_cast<Ent::Method*>(getPointer(ent, spec)))
+        Method(const char* info) :
+            info(info)
         {
         }
 
         /**
          * Copy-constructor.
          */
-        Method(const Method& function) :
-            ent(function.ent),
-            method(function.method)
+        Method(const Method& operation) :
+            info(operation.info)
         {
+        }
+
+        /**
+         * Gets the type of this type descriptor.
+         */
+        char getType() const
+        {
+            return *info;
+        }
+
+        bool isOperation() const
+        {
+            return (getType() == kOperation) ? true : false;
+        }
+
+        bool isGetter() const
+        {
+            return (getType() == kGetter) ? true : false;
+        }
+
+        bool isSetter() const
+        {
+            return (getType() == kSetter) ? true : false;
         }
 
         /**
          * Gets the name of this function.
          */
-        const char* getName() const
+        const std::string getName() const
         {
-            return static_cast<const char*>(getPointer(ent, method->name));
+            const char* name = skipType(skipDigits(info + 1));
+            unsigned length;
+            name = skipDigits(name, &length);
+            return std::string(name, length);
         }
 
         /**
@@ -436,41 +499,46 @@ public:
          */
         Type getReturnType() const
         {
-            return Type(ent, method->spec);
+            return Type(skipDigits(info + 1));
         }
 
         /**
          * Gets the number of arguments.
          */
-        int getParameterCount() const
+        unsigned getParameterCount() const
         {
-            return method->paramCount;
+            unsigned paramCount;
+            skipDigits(info + 1, &paramCount);
+            return paramCount;
         }
 
         /**
-         * Gets the specified parameter.
-         * @param n the parameter number.
+         * Gets an argument iterater.
          */
-        Parameter getParameter(uint32_t n) const
+        Parameter listParameter() const
         {
-            return Parameter(ent, method->getParam(n));
+            return Parameter(skipDigits(info + 1));
         }
 
-        bool isOperation() const
+        static const char* skip(const char* info)
         {
-            return method->isOperation();
+            const char* p = info + 1;
+            unsigned count;
+            p = skipDigits(p, &count);
+            ++count;  // for name
+            do {
+                p = skipType(p);
+                p = skipName(p);
+            } while (--count != 0);
+            // skip R
+            while (*p == kRaises)
+            {
+                p = skipName(p + 1);
+            }
+            return p;
         }
 
-        bool isGetter() const
-        {
-            return method->isGetter();
-        }
-
-        bool isSetter() const
-        {
-            return method->isSetter();
-        }
-
+#if 0
         bool isIndexGetter() const
         {
             return method->isIndexGetter();
@@ -490,122 +558,7 @@ public:
         {
             return method->isNameSetter();
         }
-    };
-
-    /**
-     * This represents a structure/exception member loaded from the specified reflection data.
-     */
-    class Member
-    {
-        uint8_t* ent;
-        const Ent::Member* member;
-
-    public:
-        /** Default constructor
-         */
-        Member() :
-            ent(0),
-            member(0)
-        {
-        }
-
-        /**
-         * Constructs an object which represents the specified member.
-         * @param ent the reflection data.
-         * @param member pointer to the parameter record.
-         */
-        Member(uint8_t* ent, const Ent::Member* member) :
-            ent(ent),
-            member(member)
-        {
-        }
-
-        /**
-         * Gets the type of this member.
-         */
-        Type getType() const
-        {
-            return Type(ent, member->spec);
-        }
-
-        /**
-         * Gets the name of this member.
-         */
-        const char* getName() const
-        {
-            return static_cast<const char*>(getPointer(ent, member->name));
-        }
-    };
-
-    /**
-     * This represents a structure loaded from the specified reflection data.
-     */
-    class Structure
-    {
-        uint8_t* ent;
-        Ent::Structure* record;
-
-    public:
-        /**
-         * Constructs a new object.
-         */
-        Structure() :
-            ent(0),
-            record(0)
-        {
-        }
-
-        /**
-         * Constructs a new object which represents the specified structure.
-         * @param ent the reflection data.
-         * @param offset the offset to the structure record.
-         */
-        Structure(uint8_t* ent, uint32_t offset) :
-            ent(ent),
-            record(static_cast<Ent::Structure*>(getPointer(ent, offset)))
-        {
-        }
-
-        /**
-         * Copy-constructor.
-         */
-        Structure(const Structure& st) :
-            ent(st.ent),
-            record(st.record)
-        {
-        }
-
-        /**
-         * Gets the number of members in this interface.
-         */
-        int getMemberCount() const
-        {
-            return record->memberCount;
-        }
-
-        /**
-         * Gets the specified member.
-         * @param n the member number.
-         */
-        Member getMember(uint32_t n) const
-        {
-            return Member(ent, record->getMember(n));
-        }
-
-        /**
-         * Gets the size of this type.
-         */
-        int getSize() const
-        {
-            int size = 0;
-            for (int i = 0; i < getMemberCount(); ++i)
-            {
-                Member member(getMember(i));
-                Type type(member.getType());
-                size += type.getSize(); // XXX alignment
-            }
-            return size;
-        }
+#endif
     };
 
     /**
@@ -613,26 +566,22 @@ public:
      */
     class Constant
     {
-        uint8_t* ent;
-        const Ent::Constant* c;
+        const char* info;
 
     public:
         /** Default constructor
          */
         Constant() :
-            ent(0),
-            c(0)
+            info(0)
         {
         }
 
         /**
          * Constructs an object which represents the specified constant.
-         * @param ent the reflection data.
-         * @param c pointer to the parameter record.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Constant(uint8_t* ent, const Ent::Constant* c) :
-            ent(ent),
-            c(c)
+        Constant(const char* info) :
+            info(info)
         {
         }
 
@@ -641,33 +590,33 @@ public:
          */
         Type getType() const
         {
-            return Type(ent, c->spec);
+            return Type(info + 1);
         }
 
         /**
          * Gets the name of this constant.
          */
-        const char* getName() const
+        const std::string getName() const
         {
-            return static_cast<const char*>(getPointer(ent, c->name));
+            const char* name = skipType(info + 1);
+            unsigned length;
+            name = skipDigits(name, &length);
+            return std::string(name, length);
         }
 
-        template <typename T>
-        T getValue() const
+        /**
+         * Gets the value of this constant.
+         */
+        double getValue() const
         {
-            if (sizeof(T) <= sizeof(uint32_t))
-            {
-                return *reinterpret_cast<const T*>(&c->value);
-            }
-            else
-            {
-                return *reinterpret_cast<const T*>(ent + c->value);
-            }
+            return std::strtod(skipName(skipType(info + 1)), 0);
         }
 
-        const char* getString() const
+        static const char* skip(const char* info)
         {
-            return reinterpret_cast<const char*>(ent + c->value);
+            const char* p = skipType(info + 1);
+            p = strchr(p, ' ');
+            return p ? ++p : 0;
         }
     };
 
@@ -676,234 +625,284 @@ public:
      */
     class Interface
     {
-        uint8_t* ent;
-        Ent::Interface* record;
+        const char* info;
+        const char* qualifiedName;
+        int methodCount;
+        int constantCount;
+        int constructorCount;
+        int inheritedMethodCount;
+
+        static const char* step(const char* info)
+        {
+            if (!info)
+            {
+                return info;
+            }
+            switch (*info)
+            {
+            case kInterface:
+            case kExtends:
+                info = skipName(++info);
+                break;
+            case kConstant:
+                info = Constant::skip(info);
+                break;
+            case kOperation:
+            case kSetter:
+            case kGetter:
+            case kConstructor:
+                info = Method::skip(info);
+                break;
+            }
+        }
 
     public:
         /**
-         * Constructs a new object.
+         * Default constructor.
          */
         Interface() :
-            ent(0),
-            record(0)
+            info(0),
+            qualifiedName(0),
+            methodCount(0),
+            constantCount(0),
+            constructorCount(0),
+            inheritedMethodCount(0)
         {
         }
 
         /**
          * Constructs a new object which represents the specified interface.
-         * @param ent the reflection data.
-         * @param offset the offset to the interface record.
+         * @param info the string encoded reflection data generated by esidl.
+         * @param qualifiedName the qualified name of this interface.
          */
-        Interface(uint8_t* ent, uint32_t offset) :
-            ent(ent),
-            record(static_cast<Ent::Interface*>(getPointer(ent, offset)))
+        Interface(const char* info, const char* qualifiedName) :
+            info(info),
+            qualifiedName(qualifiedName),
+            methodCount(0),
+            constantCount(0),
+            constructorCount(0),
+            inheritedMethodCount(0)
         {
+            // TODO: Validate info and qualifiedName
+            const char* p = info;
+            // skip I
+            p = skipName(++p);
+            // skip X
+            while (*p == kExtends)
+            {
+                p = skipName(++p);
+            }
+            while (p && *p)
+            {
+                switch (*p)
+                {
+                case kConstant:
+                    p = Constant::skip(p);
+                    if (p)
+                    {
+                        ++constantCount;
+                    }
+                    break;
+                case kOperation:
+                case kSetter:
+                case kGetter:
+                    p = Method::skip(p);
+                    if (p)
+                    {
+                        ++methodCount;
+                    }
+                    break;
+                case kConstructor:
+                    p = Method::skip(p);
+                    if (p)
+                    {
+                        ++constructorCount;
+                    }
+                    break;
+                default:
+                    p = 0;
+                    break;
+                }
+            }
         }
 
         /**
          * Copy-constructor.
          */
         Interface(const Interface& interface) :
-            ent(interface.ent),
-            record(interface.record)
+            info(interface.info),
+            qualifiedName(interface.qualifiedName),
+            methodCount(interface.methodCount),
+            constantCount(interface.constantCount),
+            constructorCount(interface.constructorCount),
+            inheritedMethodCount(interface.inheritedMethodCount)
         {
         }
 
         /**
          * Gets the name of this interface.
          */
-        char* getName() const
+        std::string getName() const
         {
-            return static_cast<char*>(getPointer(ent, record->name));
+            unsigned length;
+            const char* name = skipDigits(info + 1, &length);
+            return std::string(name, length);
         }
 
         /**
-         * Gets the fully qualified name of this interface.
+         * Gets the qualified name of this interface.
          */
-        const char* getFullyQualifiedName() const
+        const char* getQualifiedName() const
         {
-            return record->fullyQualifiedName ?
-                   static_cast<char*>(getPointer(ent, record->fullyQualifiedName)) :
-                   0;
+            return qualifiedName;
         }
 
         /**
-         * Gets the fully qualified name of the super interface.
+         * Gets the module name of this interface.
          */
-        const char* getFullyQualifiedSuperName() const
+        std::string getQualifiedModuleName() const
         {
-            return record->fullyQualifiedBaseName ?
-                   static_cast<char*>(getPointer(ent, record->fullyQualifiedBaseName)) :
-                   0;
+            char* colon = std::strrchr(qualifiedName, ':');
+            if (!colon)
+            {
+                return "";
+            }
+            return std::string(qualifiedName, colon - qualifiedName - 1);
+        }
+
+        /**
+         * Gets the qualified name of the super interface.
+         */
+        std::string getQualifiedSuperName() const
+        {
+            const char* super = skipName(info + 1);
+            if (*super != kExtends)
+            {
+                return "";
+            }
+            unsigned length;
+            super = skipDigits(super + 1, &length);
+            return std::string(super, length);
+        }
+
+        const char* getQualifiedSuperName(unsigned* length) const
+        {
+            const char* super = skipName(info + 1);
+            if (*super != kExtends)
+            {
+                return 0;
+            }
+            return skipDigits(super + 1, length);
         }
 
         /**
          * Gets the number of methods in this interface.
          * @return the method count excluding super class methods.
          */
-        int getMethodCount() const
+        unsigned getMethodCount() const
         {
-            return record->methodCount;
+            return methodCount;
         }
 
         /**
          * Gets the specified method.
          * @param n the method number excluding super class methods.
          */
-        Method getMethod(int n) const
+        Method getMethod(unsigned n) const
         {
-            ASSERT(0 <= n && n < getMethodCount());
-            return Method(ent, record->getMethod(n));
+            const char* p = info;
+            while (p)
+            {
+                switch (*p)
+                {
+                case kOperation:
+                case kSetter:
+                case kGetter:
+                    if (n == 0)
+                    {
+                        return Method(p);
+                    }
+                    --n;
+                }
+                p = step(p);
+            }
+            return Method();
         }
 
         /**
          * Gets the number of constants in this interface.
          */
-        int getConstantCount() const
+        unsigned getConstantCount() const
         {
-            return record->constCount;
+            return constantCount;
         }
 
         /**
          * Gets the specified constant.
          * @param n the constant number.
          */
-        Constant getConstant(int n) const
+        Constant getConstant(unsigned n) const
         {
-            ASSERT(0 <= n && n < getConstantCount());
-            return Constant(ent, record->getConstant(n));
+            const char* p = info;
+            while (p)
+            {
+                if (*p == kConstant)
+                {
+                    if (n == 0)
+                    {
+                        return Constant(p);
+                    }
+                    --n;
+                }
+                p = step(p);
+            }
+            return Constant();
         }
 
         /**
-         * Gets the number of super class methods.
-         * @return the method count excluding this interface methods.
-         */
-        int getInheritedMethodCount() const
-        {
-            return record->inheritedMethodCount;
-        }
-
-        /**
-         * Checks if this interface has a constructor interface.
+         * Gets the number of constructors in this interface.
          * @return true if this interface has a constructor interface.
          */
-        bool hasConstructor() const
+        unsigned getConstructorCount() const
         {
-            return record->constructor ? true : false;
+            return constructorCount;
         }
 
         /**
          * Gets the constructor interface for this interface.
-         * @return the constructor interface.
+         * @param n the constructor number.
+         * @return the constructor method.
          */
-        Interface getConstructor() const
+        Method getConstructor(unsigned n) const
         {
-            ASSERT(hasConstructor());
-            return Interface(ent, record->constructor);
-        }
-    };
-
-    /**
-     * This represents a module loaded from the specified reflection data.
-     */
-    class Module
-    {
-        uint8_t* ent;
-        Ent::Module* record;
-
-    public:
-        /**
-         * Constructs a new object.
-         */
-        Module() :
-            ent(0),
-            record(0)
-        {
+            const char* p = info;
+            while (p)
+            {
+                if (*p == kConstructor)
+                {
+                    if (n == 0)
+                    {
+                        return Method(p);
+                    }
+                    --n;
+                }
+                p = step(p);
+            }
+            return Method();
         }
 
         /**
-         * Constructs a new object which represents the specified module.
-         * @param ent the reflection data.
-         * @param offset the offset to the module record.
+         * Gets the number of methods in this interface.
+         * @return the method count excluding super class methods.
          */
-        Module(uint8_t* ent, uint32_t offset) :
-            ent(ent),
-            record(static_cast<Ent::Module*>(getPointer(ent, offset)))
+        unsigned getInheritedMethodCount() const
         {
+            return inheritedMethodCount;
         }
 
-        /**
-         * Copy-constructor.
-         */
-        Module(const Module& interface) :
-            ent(interface.ent),
-            record(interface.record)
+        void setInheritedMethodCount(unsigned count)
         {
-        }
-
-        /**
-         * Gets the name of this module.
-         */
-        char* getName() const
-        {
-            return static_cast<char*>(getPointer(ent, record->name));
-        }
-
-        /**
-         * Gets the number of interfaces in this module.
-         * @return the number of interfaces.
-         */
-        int getInterfaceCount() const
-        {
-            return record->interfaceCount;
-        }
-
-        /**
-         * Gets the specified interface.
-         * @param n the interface number.
-         * @return the interface.
-         */
-        Interface getInterface(int n) const
-        {
-            ASSERT(0 <= n && n < getInterfaceCount());
-            return Interface(ent, record->getInterface(n));
-        }
-
-        /**
-         * Gets the number of constants in this module.
-         */
-        int getConstantCount() const
-        {
-            return record->constCount;
-        }
-
-        /**
-         * Gets the specified constant.
-         * @param n the constant number.
-         */
-        Constant getConstant(int n) const
-        {
-            ASSERT(0 <= n && n < getConstantCount());
-            return Constant(ent, record->getConstant(n));
-        }
-
-        /**
-         * Gets the number of modules in this module.
-         * @return the number of modules.
-         */
-        int getModuleCount() const
-        {
-            return record->moduleCount;
-        }
-
-        /**
-         * Gets the specified module.
-         * @param n the module number.
-         * @return the module.
-         */
-        Module getModule(int n) const
-        {
-            return Module(ent, record->getModule(n));
+            inheritedMethodCount = count;
         }
     };
 
@@ -912,27 +911,23 @@ public:
      */
     class Array
     {
-        uint8_t* ent;
-        Ent::Array* record;
+        const char* info;
 
     public:
         /**
-         * Constructs a new object.
+         * Default constructor.
          */
         Array() :
-            ent(0),
-            record(0)
+            info(0)
         {
         }
 
         /**
          * Constructs a new object which represents the specified array.
-         * @param ent the reflection data.
-         * @param offset the offset to the array record.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Array(uint8_t* ent, uint32_t offset) :
-            ent(ent),
-            record(static_cast<Ent::Array*>(getPointer(ent, offset)))
+        Array(const char* info) :
+            info(info)
         {
         }
 
@@ -941,38 +936,17 @@ public:
          */
         Type getType() const
         {
-            return Type(ent, record->spec);
+            return Type(skipDigits(info + 1));
         }
 
         /**
-         * Gets the number of dimensions of this array type.
+         * Gets the rank of this array.
          */
-        uint32_t getDimension() const
+        unsigned getRank() const
         {
-            return record->dim;
-        }
-
-        /**
-         * Gets the rank of the specified dimension.
-         * @param n the dimension number.
-         */
-        uint32_t getRank(uint32_t n) const
-        {
-            return record->getRank(n);
-        }
-
-        /**
-         * Gets the size of this array type.
-         */
-        int getSize() const
-        {
-            Type type = getType();
-            int size = type.getSize();
-            for (uint32_t i = 0; i < getDimension(); ++i)
-            {
-                size *= getRank(i);
-            }
-            return size;
+            unsigned rank;
+            skipDigits(info + 1, &rank);
+            return rank;
         }
     };
 
@@ -981,27 +955,23 @@ public:
      */
     class Sequence
     {
-        uint8_t* ent;
-        Ent::Sequence* record;
+        const char* info;
 
     public:
         /**
-         * Constructs a new object.
+         * Default constructor.
          */
         Sequence() :
-            ent(0),
-            record(0)
+            info(0)
         {
         }
 
         /**
          * Constructs a new object which represents the specified sequence.
-         * @param ent the reflection data.
-         * @param offset the offset to the sequence record.
+         * @param info the string encoded reflection data generated by esidl.
          */
-        Sequence(uint8_t* ent, uint32_t offset) :
-            ent(ent),
-            record(static_cast<Ent::Sequence*>(getPointer(ent, offset)))
+        Sequence(const char* info) :
+            info(info)
         {
         }
 
@@ -1010,54 +980,22 @@ public:
          */
         Type getType() const
         {
-            return Type(ent, record->spec);
+            return Type(info + 1);
         }
 
+#if 0
         /**
          * Gets the maximum number of elements in this sequence type.
          */
         uint64_t getMax() const
         {
-            return record->max;
+            unsigned max;
+            skipDigits(info + 1, &max);
+            return max;
         }
-
-        /**
-         * Gets the size of the sequence of 'count' elements.
-         * @param count the number of elements.
-         */
-        int getSize(int count = 1) const
-        {
-            Type type = getType();
-            int size = type.getSize();
-            return count * size;
-        }
-    };
-
-    /**
-     * Constructs a new reflection object.
-     * @param ent the reflection data to be loaded.
-     */
-    Reflect(void* ent) :
-        ent(static_cast<uint8_t*>(ent))
-    {
-    }
-
-    /**
-     * Gets the global module.
-     * @return the global module.
-     */
-    Module getGlobalModule() const
-    {
-        return Module(ent, sizeof(Ent::Header));
-    }
-
-    struct CompareName
-    {
-        bool operator() (const char* a, const char* b) const
-        {
-            return (a == b) || (std::strcmp(a, b) == 0);
-        }
+#endif
     };
 };
 
-#endif  // #ifndef NINTENDO_ES_REFLECT_H_INCLUDED
+#endif  // #ifndef GOOGLE_ESIDL_REFLECT_H_INCLUDED
+

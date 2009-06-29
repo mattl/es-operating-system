@@ -127,19 +127,19 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         {
             break;
         }
-        super = es::getInterface(super.getFullyQualifiedSuperName());
+        super = es::getInterface(super.getQualifiedSuperName().c_str());
     }
     Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
     if (log)
     {
         esReport("upcall[%d:%p]: %s::%s(",
-                 interfaceNumber, server, interface.getName(), method.getName());
+                 interfaceNumber, server, interface.getName().c_str(), method.getName().c_str());
     }
 
     unsigned long ref;
     bool stringIsInterfaceName = false;
-    if (super.getFullyQualifiedSuperName() == 0)
+    if (super.getQualifiedSuperName() == "")
     {
         switch (methodNumber - baseMethodCount)
         {
@@ -279,20 +279,14 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                 Reflect::Type returnType(record->method.getReturnType());
                 switch (returnType.getType())
                 {
-                case Ent::SpecVariant:
+                case Reflect::kAny:
                     if (record->variant->getType() == Any::TypeObject)
                     {
                         ip = reinterpret_cast<void**>(static_cast<Object*>(*(record->variant)));
                     }
                     result = reinterpret_cast<intptr_t>(record->variant);
                     break;
-                case Ent::TypeInterface:
-                    if (!stringIsInterfaceName)
-                    {
-                        iid = returnType.getInterface().getFullyQualifiedName();
-                    }
-                    // FALL THROUGH
-                case Ent::SpecObject:
+                case Reflect::kObject:
                     // Convert the received interface pointer to kernel's interface pointer
                     ip = reinterpret_cast<void**>(result);
                     if (ip == 0)
@@ -322,7 +316,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
                     {
                         // Allocate an entry in the upcall table and set the
                         // interface pointer to the broker for the upcall table.
-                        int n = set(server, reinterpret_cast<Object*>(ip), iid, true);
+                        int n = set(server, reinterpret_cast<Object*>(ip), stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str(), true);
                         if (0 <= n)
                         {
                             result = reinterpret_cast<long>(&(broker.getInterfaceTable())[n]);
@@ -348,7 +342,7 @@ upcall(void* self, void* base, int methodNumber, va_list ap)
         break;
     }
 
-    if (super.getFullyQualifiedSuperName() == 0)
+    if (super.getQualifiedSuperName() == "")
     {
         switch (methodNumber - baseMethodCount)
         {
@@ -538,10 +532,8 @@ copyIn(UpcallRecord* record)
 
     int count = 0;
 
-    const char* iid = Object::iid();
-
     Reflect::Type returnType = record->method.getReturnType();
-    if (returnType.getType() == Ent::SpecVariant)
+    if (returnType.getType() == Reflect::kAny)
     {
         // Make space for the return value of Any type
         count = sizeof(Any);
@@ -554,9 +546,9 @@ copyIn(UpcallRecord* record)
 
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         // Any op(void* buf, int len);
-    case Ent::SpecString:
+    case Reflect::kString:
         // const char* op(char* buf, int len, ...);
         count = paramp[1];                          // XXX check count
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -564,15 +556,7 @@ copyIn(UpcallRecord* record)
         *argp++ = count;
         paramp += 2;
         break;
-    case Ent::SpecWString:
-        // const wchar_t* op(wchar_t* buf, int len, ...);
-        count = sizeof(wchar_t) * paramp[1];        // XXX check count
-        esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-        *argp++ = (int) esp;
-        *argp++ = paramp[1];
-        paramp += 2;
-        break;
-    case Ent::TypeSequence: // XXX
+    case Reflect::kSequence: // XXX
         // int op(xxx* buf, int len, ...);
         count = returnType.getSize() * paramp[1];   // XXX check count
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -580,8 +564,7 @@ copyIn(UpcallRecord* record)
         *argp++ = paramp[1];
         paramp += 2;
         break;
-    case Ent::TypeStructure:
-    case Ent::TypeArray:
+    case Reflect::kArray:
         // void op(struct* buf, ...);
         // void op(xxx[x] buf, ...);
         count = returnType.getSize();               // XXX check count
@@ -593,18 +576,19 @@ copyIn(UpcallRecord* record)
         break;
     }
 
-    for (int i = 0; i < record->method.getParameterCount(); ++i)
+    Reflect::Parameter param(record->method.listParameter());
+    for (int i = 0; param.next(); ++i)
     {
-        Reflect::Parameter param(record->method.getParameter(i));
+
         Reflect::Type type(param.getType());
         if (log)
         {
-            esReport("%s ", param.getName());
+            esReport("%s ", param.getName().c_str());
         }
 
         switch (type.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             {
                 Any* var = reinterpret_cast<Any*>(paramp);
                 switch (var->getType())
@@ -618,7 +602,7 @@ copyIn(UpcallRecord* record)
                     *var = Any(reinterpret_cast<const char*>(esp));
                     break;
                 case Any::TypeObject:
-                    *var = Any(reinterpret_cast<Object*>(copyInObject(static_cast<Object*>(*var), iid)));
+                    *var = Any(reinterpret_cast<Object*>(copyInObject(static_cast<Object*>(*var), Object::iid())));
                     break;
                 }
                 memcpy(argp, paramp, sizeof(AnyBase));
@@ -627,26 +611,23 @@ copyIn(UpcallRecord* record)
                 var->makeVariant();
             }
             break;
-        case Ent::SpecAny:  // XXX x86 specific
-        case Ent::SpecBool:
-        case Ent::SpecChar:
-        case Ent::SpecWChar:
-        case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
-        case Ent::SpecU8:
-        case Ent::SpecU16:
-        case Ent::SpecU32:
-        case Ent::SpecF32:
+        case Reflect::kPointer:  // XXX x86 specific
+        case Reflect::kBoolean:
+        case Reflect::kShort:
+        case Reflect::kLong:
+        case Reflect::kOctet:
+        case Reflect::kUnsignedShort:
+        case Reflect::kUnsignedLong:
+        case Reflect::kFloat:
             *argp++ = *paramp++;
             break;
-        case Ent::SpecS64:
-        case Ent::SpecU64:
-        case Ent::SpecF64:
+        case Reflect::kLongLong:
+        case Reflect::kUnsignedLongLong:
+        case Reflect::kDouble:
             *argp++ = *paramp++;
             *argp++ = *paramp++;
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             esp = copyInString(*reinterpret_cast<char**>(paramp), esp);
             if (!esp)
             {
@@ -655,7 +636,7 @@ copyIn(UpcallRecord* record)
             *argp++ = (int) esp;
             ++paramp;
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // xxx* buf, int len, ...
             count = type.getSize() * paramp[1]; // XXX check count
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -664,19 +645,15 @@ copyIn(UpcallRecord* record)
             *argp++ = paramp[1];
             paramp += 2;
             break;
-        case Ent::TypeStructure:    // struct* buf, ...
-        case Ent::TypeArray:        // xxx[x] buf, ...
+        case Reflect::kArray:        // xxx[x] buf, ...
             count = type.getSize();
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
             write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
             *argp++ = (int) esp;
             ++paramp;
             break;
-        case Ent::TypeInterface:
-            iid = type.getInterface().getFullyQualifiedName();
-            // FALL THROUGH
-        case Ent::SpecObject:
-            *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<Object**>(paramp), iid);
+        case Reflect::kObject:
+            *argp++ = *paramp = (int) copyInObject(*reinterpret_cast<Object**>(paramp), type.getQualifiedName().c_str());  // XXX c_str() can cause a problem here
             // Note the reference count to the created syscall proxy must
             // be decremented by one at the end of this upcall.
             ++paramp;
@@ -704,6 +681,7 @@ copyIn(UpcallRecord* record)
 }
 
 // Note copyOut() is called against the server process.
+// iid is updaed only when stringIsInterfaceName is true
 int Process::
 copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
 {
@@ -727,13 +705,13 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
             return error.getResult();
         }
         esReport("return from upcall %p: %s::%s(",
-                 esp, interface.getName(), record->method.getName());
+                 esp, interface.getName().c_str(), record->method.getName().c_str());
     }
 
     int count;
 
     Reflect::Type returnType = record->method.getReturnType();
-    if (returnType.getType() == Ent::SpecVariant)
+    if (returnType.getType() == Reflect::kAny)
     {
         count = sizeof(Any);
         esp -= count;
@@ -741,7 +719,7 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
     }
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         // Any op(void* buf, int len);
         rc = paramp[1]; // XXX check type and string length if type is string
         if (record->variant->getType() != Any::TypeString)
@@ -749,7 +727,7 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
             break;
         }
         // FALL THROUGH
-    case Ent::SpecString:
+    case Reflect::kString:
         // const char* op(char* buf, int len, ...);
         count = paramp[1];
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -761,17 +739,7 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
         }
         paramp += 2;
         break;
-    case Ent::SpecWString:
-        // const wchar_t* op(wchar_t* buf, int len, ...);
-        count = sizeof(wchar_t) * paramp[1];
-        esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-        if (0 < rc)
-        {
-            read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-        }
-        paramp += 2;
-        break;
-    case Ent::TypeSequence:
+    case Reflect::kSequence:
         // int op(xxx* buf, int len, ...);
         count = returnType.getSize() * paramp[1];
         esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
@@ -781,8 +749,7 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
         }
         paramp += 2;
         break;
-    case Ent::TypeStructure:
-    case Ent::TypeArray:
+    case Reflect::kArray:
         // void op(struct* buf, ...);
         // void op(xxx[x] buf, ...);
         count = returnType.getSize();   // XXX check count
@@ -795,19 +762,19 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
     }
 
     int argc = 0;
-    for (int i = 0; i < record->method.getParameterCount(); ++i)
+    Reflect::Parameter param(record->method.listParameter());
+    for (int i = 0; param.next(); ++i)
     {
-        Reflect::Parameter param(record->method.getParameter(i));
         Reflect::Type type(param.getType());
         if (log)
         {
-            esReport("%s", param.getName());
+            esReport("%s", param.getName().c_str());
         }
 
         void** ip = 0;
         switch (type.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             {
                 Any* var = reinterpret_cast<Any*>(paramp);
                 if (var->getType() == Any::TypeObject)
@@ -817,48 +784,40 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
                 paramp += sizeof(AnyBase) / sizeof(int);
             }
             break;
-        case Ent::SpecAny:  // XXX x86 specific
-        case Ent::SpecBool:
-        case Ent::SpecChar:
-        case Ent::SpecWChar:
-        case Ent::SpecS8:
-        case Ent::SpecS16:
-        case Ent::SpecS32:
-        case Ent::SpecU8:
-        case Ent::SpecU16:
-        case Ent::SpecU32:
-        case Ent::SpecF32:
+        case Reflect::kPointer:  // XXX x86 specific
+        case Reflect::kBoolean:
+        case Reflect::kShort:
+        case Reflect::kLong:
+        case Reflect::kOctet:
+        case Reflect::kUnsignedShort:
+        case Reflect::kUnsignedLong:
+        case Reflect::kFloat:
             ++paramp;
             break;
-        case Ent::SpecS64:
-        case Ent::SpecU64:
-        case Ent::SpecF64:
+        case Reflect::kLongLong:
+        case Reflect::kUnsignedLongLong:
+        case Reflect::kDouble:
             paramp += 2;
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             if (stringIsInterfaceName)
             {
                 iid = *reinterpret_cast<const char**>(paramp);
             }
             ++paramp;
             break;
-        case Ent::SpecWString:
-            ++paramp;
-            break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // xxx* buf, int len, ...
             count = type.getSize() * paramp[1];
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
             paramp += 2;
             break;
-        case Ent::TypeStructure:    // struct* buf, ...
-        case Ent::TypeArray:        // xxx[x] buf, ...
+        case Reflect::kArray:        // xxx[x] buf, ...
             count = type.getSize();
             esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
             ++paramp;
             break;
-        case Ent::SpecObject:
-        case Ent::TypeInterface:
+        case Reflect::kObject:
             ip = *reinterpret_cast<void***>(paramp);
             ++paramp;
             break;

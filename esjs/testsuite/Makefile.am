@@ -5,7 +5,7 @@ TESTS = 1.js 2.js 3.js 4.js 5.js 6.js 7.js 8.js 9.js 10.js \
 	31.js 32.js 33.js 34.js 35.js 36.js 37.js 38.js 39.js 40.js \
 	41.js 42.js 43.js 44.js 45.js 46.js 47.js 48.js 49.js 50.js \
 	51.js 52.js 53.js 54.js 55.js 56.js 57.js 58.js 59.js 60.js \
-	61.js 62.js 63.js 64.js       66.js 67.js 68.js 69.js 70.js \
+	61.js 62.js 63.js 64.js 65.js 66.js 67.js 68.js 69.js 70.js \
 	71.js 72.js 73.js 74.js 75.js 76.js 77.js 78.js 79.js 80.js \
 	81.js 82.js \
 	1000.js 1001.js 1002.js 1003.js 1004.js 1005.js 1006.js 1007.js \

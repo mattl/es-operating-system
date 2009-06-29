@@ -65,8 +65,8 @@ unsigned int SyscallProxy::release()
         if (object)
         {
 #ifdef VERBOSE
-            Reflect::Interface interface = getInterface(iid);
-            esReport("SyscallProxy::%s %s %p\n", __func__, interface.getName(), object);
+            Reflect::Interface interface = es::getInterface(iid);
+            esReport("SyscallProxy::%s %s %p\n", __func__, interface.getName().c_str(), object);
 #endif
             this->object = 0;
             object->release();
@@ -100,6 +100,10 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 {
     bool log = this->log;
     int* paramp = reinterpret_cast<int*>(paramv);
+
+#ifdef VERBOSE
+    log = true;
+#endif
 
     if (base)
     {
@@ -156,7 +160,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     if (log)
     {
-        esReport("system call[%d:%p]: %s", interfaceNumber, this, interface.getName());
+        esReport("system call[%d:%p]: %s", interfaceNumber, this, interface.getName().c_str());
     }
 
     // If this interface inherits another interface,
@@ -178,25 +182,25 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         {
             break;
         }
-        super = es::getInterface(super.getFullyQualifiedSuperName());
+        super = es::getInterface(super.getQualifiedSuperName().c_str());
     }
 
     Reflect::Method method(super.getMethod(methodNumber - baseMethodCount));
     Reflect::Type returnType = method.getReturnType();
-    if (variant && returnType.getType() != Ent::SpecVariant ||
-        !variant && returnType.getType() == Ent::SpecVariant)
+    if (variant && returnType.getType() != Reflect::kAny ||
+        !variant && returnType.getType() == Reflect::kAny)
     {
         throw SystemException<EBADF>();
     }
 
     if (log)
     {
-        esReport("::%s(", method.getName());
+        esReport("::%s(", method.getName().c_str());
     }
 
     // Process addRef() and release() locally
     bool stringIsInterfaceName = false;
-    if (super.getFullyQualifiedSuperName() == 0)
+    if (super.getQualifiedSuperName() == "")
     {
         unsigned long count;
         switch (methodNumber - baseMethodCount)
@@ -243,9 +247,9 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         //  Any op(void* buf, int len);
-    case Ent::SpecString:
+    case Reflect::kString:
         // const char* op(char* buf, int len, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
         {
@@ -262,7 +266,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         *argp++ = Any(static_cast<int32_t>(count));
         ++paramp;
         break;
-    case Ent::TypeSequence:
+    case Reflect::kSequence:
         // int op(xxx* buf, int len, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
         {
@@ -279,18 +283,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         count = *paramp * returnType.getSize();
         ++paramp;
         break;
-    case Ent::TypeStructure:
-        // void op(struct* buf, ...);
-        if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
-        {
-            throw SystemException<EFAULT>();
-        }
-        ptr = *reinterpret_cast<void**>(paramp);
-        *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
-        count = returnType.getSize();
-        ++paramp;
-        break;
-    case Ent::TypeArray:
+    case Reflect::kArray:
         // void op(xxx[x] buf, ...);
         if (!isValid(reinterpret_cast<void**>(paramp), sizeof(void*)))
         {
@@ -311,26 +304,27 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         throw SystemException<EFAULT>();
     }
 
-    for (int i = 0; i < method.getParameterCount(); ++i, ++argp)
+    Reflect::Parameter param = method.listParameter();
+    for (int i = 0;
+         param.next();
+         ++argp, ++i)
     {
-        Reflect::Parameter param(method.getParameter(i));
         Reflect::Type type(param.getType());
-        assert(param.isInput());
 
         const void* ptr = 0;
         int count = 0;
 
-        u32 entType = type.getType();
+        char entType = type.getType();
         u32 stackBytes;
         switch (entType)
         {
-        case Ent::SpecS64:
-        case Ent::SpecU64:
-        case Ent::SpecF64:
-        case Ent::TypeSequence:
+        case Reflect::kLongLong:
+        case Reflect::kUnsignedLongLong:
+        case Reflect::kDouble:
+        case Reflect::kSequence:
             stackBytes = 8;
             break;
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             stackBytes = sizeof(AnyBase);
             break;
         default:
@@ -344,7 +338,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
 
         switch (entType)
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             *argp = Any(*reinterpret_cast<AnyBase*>(paramp));
             paramp += sizeof(AnyBase) / sizeof(int);
             switch (argp->getType())
@@ -390,44 +384,43 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                 break;
             }
             break;
-        case Ent::SpecBool:
+        case Reflect::kBoolean:
             *argp = Any(static_cast<bool>(*paramp++));
             break;
-        case Ent::SpecAny:
+        case Reflect::kPointer:
             *argp = Any(static_cast<uint32_t>(*paramp++)); // x86 only
             break;
-        case Ent::SpecS16:
+        case Reflect::kShort:
             *argp = Any(static_cast<int16_t>(*paramp++));
             break;
-        case Ent::SpecS32:
+        case Reflect::kLong:
             *argp = Any(static_cast<int32_t>(*paramp++));
             break;
-        case Ent::SpecS8:
-        case Ent::SpecU8:
+        case Reflect::kOctet:
             *argp = Any(static_cast<uint8_t>(*paramp++));
             break;
-        case Ent::SpecU16:
+        case Reflect::kUnsignedShort:
             *argp = Any(static_cast<uint16_t>(*paramp++));
             break;
-        case Ent::SpecU32:
+        case Reflect::kUnsignedLong:
             *argp = Any(static_cast<uint32_t>(*paramp++));
             break;
-        case Ent::SpecS64:
+        case Reflect::kLongLong:
             *argp = Any(*reinterpret_cast<int64_t*>(paramp));
             paramp += 2;
             break;
-        case Ent::SpecU64:
+        case Reflect::kUnsignedLongLong:
             *argp = Any(*reinterpret_cast<uint64_t*>(paramp));
             paramp += 2;
             break;
-        case Ent::SpecF32:
+        case Reflect::kFloat:
             *argp = Any(*reinterpret_cast<float*>(paramp++));
             break;
-        case Ent::SpecF64:
+        case Reflect::kDouble:
             *argp = Any(*reinterpret_cast<double*>(paramp));
             paramp += 2;
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             ptr = *reinterpret_cast<void**>(paramp);
             if (stringIsInterfaceName)
             {
@@ -437,7 +430,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             ++paramp;
             count = sizeof(char);       // XXX check string length?
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // xxx* buf, int len, ...
             ptr = *reinterpret_cast<void**>(paramp);
             *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
@@ -446,17 +439,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             count = *paramp * type.getSize();
             ++paramp;
             break;
-        case Ent::TypeStructure:    // struct* buf, ...
-        case Ent::TypeArray:        // xxx[x] buf, ...
+        case Reflect::kArray:        // xxx[x] buf, ...
             ptr = *reinterpret_cast<void**>(paramp);
             *argp = Any(reinterpret_cast<intptr_t>(ptr));
             count = type.getSize();
             ++paramp;
             break;
-        case Ent::TypeInterface:
-            iid = type.getInterface().getFullyQualifiedName();
-            // FALL THROUGH
-        case Ent::SpecObject:
+        case Reflect::kObject:
             if (void** ip = *reinterpret_cast<void***>(paramp++))
             {
                 if (base <= ip && ip < base + INTERFACE_POINTER_MAX)
@@ -474,7 +463,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
                 {
                     // Allocate an entry in the upcall table and set the
                     // interface pointer to the broker for the upcall table.
-                    int n = set(this, (Object*) ip, iid, false);
+                    int n = set(this, (Object*) ip, stringIsInterfaceName ? iid : type.getQualifiedName().c_str(), false);
                     if (n < 0)
                     {
                         throw SystemException<ENFILE>();
@@ -517,65 +506,56 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     void* ip = 0;
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         *variant = apply(argc, argv, (Any (*)()) ((*object)[methodNumber]));
         result = Any(reinterpret_cast<intptr_t>(variant));
         if (variant->getType() == Any::TypeObject) {
             ip = static_cast<Object*>(*variant);
         }
         break;
-    case Ent::SpecBool:
+    case Reflect::kBoolean:
         result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecChar:
-    case Ent::SpecS8:
-    case Ent::SpecU8:
+    case Reflect::kOctet:
         result = apply(argc, argv, (uint8_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecWChar:
-    case Ent::SpecS16:
+    case Reflect::kShort:
         result = apply(argc, argv, (int16_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecU16:
+    case Reflect::kUnsignedShort:
         result = apply(argc, argv, (uint16_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecS32:
+    case Reflect::kLong:
         result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecAny:  // XXX x86 specific
-    case Ent::SpecU32:
+    case Reflect::kPointer:  // XXX x86 specific
+    case Reflect::kUnsignedLong:
         result = apply(argc, argv, (uint32_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecS64:
+    case Reflect::kLongLong:
         result = apply(argc, argv, (int64_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecU64:
+    case Reflect::kUnsignedLongLong:
         result = apply(argc, argv, (uint64_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecF32:
+    case Reflect::kFloat:
         result = apply(argc, argv, (float (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecF64:
+    case Reflect::kDouble:
         result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::SpecString:
+    case Reflect::kString:
         result = apply(argc, argv, (const char* (*)()) ((*object)[methodNumber]));
         // TODO: If the returned string resides in the kernel space, it must be copied out.
         break;
-    case Ent::TypeSequence:
+    case Reflect::kSequence:
         result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::TypeArray:
-    case Ent::SpecVoid:
+    case Reflect::kArray:
+    case Reflect::kVoid:
         apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
         break;
-    case Ent::TypeInterface:
-        if (!stringIsInterfaceName)
-        {
-            iid = returnType.getInterface().getFullyQualifiedName();
-        }
-        // FALL THROUGH
-    case Ent::SpecObject:
+    case Reflect::kObject:
         result = apply(argc, argv, (Object* (*)()) ((*object)[methodNumber]));
         ip = static_cast<Object*>(result);
         break;
@@ -584,7 +564,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     // Process the returned interface pointer
     if (ip)
     {
-        int n = set(syscallTable, ip, iid, true);
+        int n = set(syscallTable, ip, stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str(), true);
         if (0 <= n)
         {
             result = Any(reinterpret_cast<Object*>(&base[n]));
@@ -599,7 +579,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
     }
 
     // Process addRef() and release() locally
-    if (interface.getFullyQualifiedName() == es::Monitor::iid())   // TODO(shiki): strcmp?
+    if (interface.getQualifiedName() == es::Monitor::iid())
     {
         unsigned long count;
         switch (methodNumber)

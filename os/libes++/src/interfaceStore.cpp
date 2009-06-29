@@ -17,99 +17,41 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <es/any.h>
 #include <es/hashtable.h>
 #include <es/reflect.h>
-#include <es/object.h>
-#include <es/base/IAlarm.h>
-#include <es/base/ICache.h>
-#include <es/base/IMonitor.h>
-#include <es/base/IPageSet.h>
-#include <es/base/IProcess.h>
-#include <es/device/IFatFileSystem.h>
-#include <es/device/IIso9660FileSystem.h>
-
-//
-// Reflection data of the default interface set
-//
-
-extern unsigned char objectInfo[];
-
-extern unsigned char IAlarmInfo[];
-extern unsigned char ICacheInfo[];
-extern unsigned char ICallbackInfo[];
-extern unsigned char IFileInfo[];
-extern unsigned char IInterfaceStoreInfo[];
-extern unsigned char IMonitorInfo[];
-extern unsigned char IPageableInfo[];
-extern unsigned char IPageSetInfo[];
-extern unsigned char IProcessInfo[];
-extern unsigned char IRuntimeInfo[];
-extern unsigned char ISelectableInfo[];
-extern unsigned char IServiceInfo[];
-extern unsigned char IStreamInfo[];
-extern unsigned char IThreadInfo[];
-
-extern unsigned char IAudioFormatInfo[];
-extern unsigned char IBeepInfo[];
-extern unsigned char ICursorInfo[];
-extern unsigned char IDeviceInfo[];
-extern unsigned char IDiskInfo[];
-extern unsigned char IDmacInfo[];
-extern unsigned char IFatFileSystemInfo[];
-extern unsigned char IFileSystemInfo[];
-extern unsigned char IIso9660FileSystemInfo[];
-extern unsigned char IPicInfo[];
-extern unsigned char IRemovableMediaInfo[];
-extern unsigned char IRtcInfo[];
-
-extern unsigned char IBindingInfo[];
-extern unsigned char IContextInfo[];
-
-extern unsigned char IInternetAddressInfo[];
-extern unsigned char IInternetConfigInfo[];
-extern unsigned char IResolverInfo[];
-extern unsigned char ISocketInfo[];
-
-extern unsigned char IIteratorInfo[];
-extern unsigned char ISetInfo[];
-
-extern unsigned char IOrderedMapInfo[];
-
-extern unsigned char cssInfo[];
-extern unsigned char cssomviewInfo[];
-extern unsigned char domInfo[];
-extern unsigned char eventsInfo[];
-extern unsigned char html5Info[];
-extern unsigned char lsInfo[];
-extern unsigned char rangesInfo[];
-extern unsigned char smilInfo[];
-extern unsigned char stylesheetsInfo[];
-extern unsigned char svgInfo[];
-extern unsigned char traversalInfo[];
-extern unsigned char validationInfo[];
-extern unsigned char viewsInfo[];
+#include <es/includeAllInterfaces.h>
+#include <es/interfaceData.h>
 
 namespace es
 {
 
-class InterfaceStore
+class InterfaceDataStore
 {
-    struct InterfaceData
+    struct CompareName
+    {
+        bool operator() (const char* a, const char* b) const
+        {
+            return (a == b) || (strcmp(a, b) == 0);
+        }
+    };
+
+    struct MetaData
     {
         Reflect::Interface meta;
         Object* (*constructorGetter)();                 // for statically created data
         void (*constructorSetter)(Object* constructor); // for statically created data
         Object* constructor;                            // for dynamically created data
 
-        InterfaceData() :
+        MetaData() :
             constructorGetter(0),
             constructorSetter(0),
             constructor(0)
         {
         }
 
-        InterfaceData(Reflect::Interface interface) :
-            meta(interface),
+        MetaData(const char* info, const char* iid) :
+            meta(info, iid),
             constructorGetter(0),
             constructorSetter(0),
             constructor(0)
@@ -140,12 +82,10 @@ class InterfaceStore
         }
     };
 
-    Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
-
-    void registerInterface(Reflect::Module& module);
+    Hashtable<const char*, MetaData, 1024, Hash<const char*>, CompareName> hashtable;
 
 public:
-    InterfaceStore(int capacity = 1024);
+    InterfaceDataStore();
 
     Reflect::Interface& getInterface(const char* iid)
     {
@@ -173,7 +113,7 @@ public:
     {
         try
         {
-            InterfaceData* data = &hashtable.get(iid);
+            MetaData* data = &hashtable.get(iid);
             data->constructorGetter = getter;
             data->constructorSetter = setter;
         }
@@ -197,7 +137,7 @@ public:
     {
         try
         {
-            return hashtable.get(iid).meta.getFullyQualifiedName();
+            return hashtable.get(iid).meta.getQualifiedName();
         }
         catch (...)
         {
@@ -206,96 +146,40 @@ public:
     }
 };
 
-unsigned char* defaultInterfaceInfo[] =
+InterfaceDataStore::
+InterfaceDataStore()
 {
-    // Base classes first
-    objectInfo,
-
-    IAlarmInfo,
-    ICacheInfo,
-    ICallbackInfo,
-    IFileInfo,
-    IInterfaceStoreInfo,
-    IMonitorInfo,
-    IPageableInfo,
-    IPageSetInfo,
-    IProcessInfo,
-    IRuntimeInfo,
-    ISelectableInfo,
-    IServiceInfo,
-    IStreamInfo,
-    IThreadInfo,
-
-    IAudioFormatInfo,
-    IBeepInfo,
-    ICursorInfo,
-    IDeviceInfo,
-    IDiskInfo,
-    IDmacInfo,
-    IFatFileSystemInfo,
-    IFileSystemInfo,
-    IIso9660FileSystemInfo,
-    IPicInfo,
-    IRemovableMediaInfo,
-    IRtcInfo,
-
-    IBindingInfo,
-    IContextInfo,
-
-    IInternetAddressInfo,
-    IInternetConfigInfo,
-    IResolverInfo,
-    ISocketInfo,
-
-    IIteratorInfo,
-    ISetInfo,
-
-    IOrderedMapInfo,
-
-    cssInfo,
-    cssomviewInfo,
-    domInfo,
-    eventsInfo,
-    html5Info,
-    lsInfo,
-    rangesInfo,
-    smilInfo,
-    stylesheetsInfo,
-    svgInfo,
-    traversalInfo,
-    validationInfo,
-    viewsInfo,
-};
-
-size_t defaultInterfaceCount = sizeof defaultInterfaceInfo / sizeof defaultInterfaceInfo[0];
-
-void InterfaceStore::
-registerInterface(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
     {
-        InterfaceData data(module.getInterface(i));
-        hashtable.add(data.meta.getFullyQualifiedName(), data);
+        MetaData metaData(data->info(), data->iid());
+        hashtable.add(data->iid(), metaData);
     }
 
-    for (int i = 0; i < module.getModuleCount(); ++i)
+    // Update inheritedMethodCount of each interface data.
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
     {
-        Reflect::Module m(module.getModule(i));
-        registerInterface(m);
+        unsigned inheritedMethodCount = 0;
+        Reflect::Interface* interface = &getInterface(data->iid());
+        Reflect::Interface* super = interface;
+        for (;;)
+        {
+            char qualifiedName[256];
+            unsigned length;
+            const char* superName = super->getQualifiedSuperName(&length);
+            if (!superName)
+            {
+                break;
+            }
+            ASSERT(length < sizeof qualifiedName);
+            memcpy(qualifiedName, superName, length);
+            qualifiedName[length] = 0;
+            super = &getInterface(qualifiedName);
+            inheritedMethodCount += super->getMethodCount();
+        }
+        interface->setInheritedMethodCount(inheritedMethodCount);
     }
-}
 
-InterfaceStore::
-InterfaceStore(int capacity) :
-    hashtable(capacity)
-{
-    for (int i = 0; i < defaultInterfaceCount; ++i)
-    {
-        Reflect r(defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        registerInterface(global);
-    }
-
+    // TODO: Constructor registration should be automated, too.
     registerConstructor(Alarm::iid(),
                         reinterpret_cast<Object* (*)()>(Alarm::getConstructor), reinterpret_cast<void (*)(Object*)>(Alarm::setConstructor));
     registerConstructor(Cache::iid(),
@@ -314,7 +198,7 @@ InterfaceStore(int capacity) :
 
 namespace
 {
-    InterfaceStore interfaceStore __attribute__((init_priority(1000)));    // Before System
+    InterfaceDataStore interfaceStore __attribute__((init_priority(1000)));    // Before System
 }
 
 Reflect::Interface& getInterface(const char* iid)

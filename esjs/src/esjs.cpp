@@ -22,8 +22,6 @@
 #include "esjs.h"
 #include "parser.h"
 
-
-
 //
 // yacc declarations
 //

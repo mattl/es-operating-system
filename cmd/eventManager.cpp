@@ -829,7 +829,7 @@ int main(int argc, char* argv[])
 
     // Register es::EventQueue interface.
     Handle<es::InterfaceStore> interfaceStore = nameSpace->lookup("interface");
-    interfaceStore->add(IEventQueueInfo, IEventQueueInfoSize);
+    interfaceStore->add(es::EventQueue::iid(), es::EventQueue::info());
 
     inputProcess(nameSpace);
 

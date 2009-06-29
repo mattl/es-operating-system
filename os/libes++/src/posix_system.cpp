@@ -57,6 +57,8 @@
 #include "posix_system.h"
 #include "posix_video.h"
 
+// #define VERBOSE
+
 namespace es
 {
     Reflect::Interface& getInterface(const char* iid);
@@ -805,13 +807,17 @@ public:
             {
                 break;
             }
-            super = getInterface(super.getFullyQualifiedSuperName());
+            super = getInterface(super.getQualifiedSuperName().c_str());
         }
         Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
+#ifdef VERBOSE
+        printf("%s\n", method.getName().c_str());
+#endif
+
         bool stringIsInterfaceName = false;
         // TODO Review later. Probably wrong...
-        if (super.getFullyQualifiedSuperName() == 0)
+        if (super.getQualifiedSuperName() == "")
         {
             unsigned int count;
 
@@ -856,38 +862,31 @@ public:
         Reflect::Type returnType = method.getReturnType();
         switch (returnType.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             resultSize = std::max(static_cast<int32_t>(sizeof(Capability)), static_cast<int32_t>(argp[1]));
             resultPtr = RpcStack::alloc(resultSize);
             *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             // int op(char* buf, int len, ...);
             resultPtr = RpcStack::alloc(static_cast<int32_t>(argp[1]));
             *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // int op(xxx* buf, int len, ...);
             resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
             *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             ++argp;
             break;
-        case Ent::TypeStructure:
-            // void op(struct* buf, ...);
-            resultSize = returnType.getSize();
-            resultPtr = RpcStack::alloc(resultSize);
-            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
-            break;
-        case Ent::TypeArray:
+        case Reflect::kArray:
             // void op(xxx[x] buf, ...);
             resultSize = returnType.getSize();
             resultPtr = RpcStack::alloc(resultSize);
             *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
             break;
-        case Ent::TypeInterface:
-        case Ent::SpecObject:
+        case Reflect::kObject:
             resultSize = sizeof(Capability);
             resultPtr = RpcStack::alloc(resultSize);
             break;
@@ -896,15 +895,13 @@ public:
         // Convert argp->size to argp->ptr
         u8* data = static_cast<u8*>(hdr->getData());    // TODO review alignment issues
         size_t size;
-        for (int i = 0; i < method.getParameterCount(); ++i, ++argp)
+        for (Reflect::Parameter param = method.listParameter(); param.next(); ++argp)
         {
-            Reflect::Parameter param(method.getParameter(i));
             Reflect::Type type(param.getType());
-            assert(param.isInput());
 
             switch (type.getType())
             {
-            case Ent::SpecVariant:
+            case Reflect::kAny:
                 switch (argp->getType())
                 {
                 case Any::TypeString:
@@ -932,13 +929,13 @@ public:
                 }
                 argp->makeVariant();
                 break;
-            case Ent::TypeSequence:
+            case Reflect::kSequence:
                 // xxx* buf, int len, ...
                 size = type.getSize() * static_cast<uint32_t>(argp[1]);
                 *argp++ = Any(reinterpret_cast<intptr_t>(data));
                 data += size;
                 break;
-            case Ent::SpecString:
+            case Reflect::kString:
                 if (static_cast<const char*>(*argp))
                 {
                     if (stringIsInterfaceName)
@@ -950,16 +947,12 @@ public:
                     data += size;
                 }
                 break;
-            case Ent::TypeStructure:
-            case Ent::TypeArray:
+            case Reflect::kArray:
                 size = type.getSize();
                 *argp = Any(reinterpret_cast<intptr_t>(data));
                 data += size;
                 break;
-            case Ent::TypeInterface:
-                iid = type.getInterface().getFullyQualifiedName();
-                // FALL THROUGH
-            case Ent::SpecObject:
+            case Reflect::kObject:
                 if (static_cast<Object*>(*argp))
                 {
                     // Import object
@@ -968,23 +961,10 @@ public:
                     {
                         cap->object = *fdv++;   // TODO check range
                     }
-                    Object* object = importObject(*cap, iid, true); // TODO false?
+                    Object* object = importObject(*cap, stringIsInterfaceName ? iid : type.getQualifiedName().c_str(), true); // TODO false?
                     *argp = Any(object);
                     data += sizeof(Capability);
                 }
-                break;
-            case Ent::SpecBool:
-            case Ent::SpecAny:
-            case Ent::SpecS8:
-            case Ent::SpecS16:
-            case Ent::SpecS32:
-            case Ent::SpecU8:
-            case Ent::SpecU16:
-            case Ent::SpecU32:
-            case Ent::SpecS64:
-            case Ent::SpecU64:
-            case Ent::SpecF32:
-            case Ent::SpecF64:
                 break;
             default:
                 break;
@@ -1000,44 +980,41 @@ public:
         // TODO catch exception while applying
         switch (returnType.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             res.result = apply(argc, argv, (Any (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecBool:
+        case Reflect::kBoolean:
             res.result = apply(argc, argv, (bool (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecChar:
-        case Ent::SpecS8:
-        case Ent::SpecU8:
+        case Reflect::kOctet:
             res.result = apply(argc, argv, (uint8_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecWChar:
-        case Ent::SpecS16:
+        case Reflect::kShort:
             res.result = apply(argc, argv, (int16_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecU16:
+        case Reflect::kUnsignedShort:
             res.result = apply(argc, argv, (uint16_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecS32:
+        case Reflect::kLong:
             res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecAny:  // XXX x86 specific
-        case Ent::SpecU32:
+        case Reflect::kPointer:  // XXX x86 specific
+        case Reflect::kUnsignedLong:
             res.result = apply(argc, argv, (uint32_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecS64:
+        case Reflect::kLongLong:
             res.result = apply(argc, argv, (int64_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecU64:
+        case Reflect::kUnsignedLongLong:
             res.result = apply(argc, argv, (uint64_t (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecF32:
+        case Reflect::kFloat:
             res.result = apply(argc, argv, (float (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecF64:
+        case Reflect::kDouble:
             res.result = apply(argc, argv, (double (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             res.result = apply(argc, argv, (const char* (*)()) ((*object)[methodNumber]));
             if (static_cast<const char*>(res.result))
             {
@@ -1048,21 +1025,15 @@ public:
                 resultSize = 0;
             }
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
             resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));  // TODO: maybe set just the # of elements
             break;
-        case Ent::TypeInterface:
-            if (!stringIsInterfaceName)
-            {
-                iid = returnType.getInterface().getFullyQualifiedName();
-            }
-            // FALL THROUGH
-        case Ent::SpecObject:
+        case Reflect::kObject:  // TODO check Object and others
             res.result = apply(argc, argv, (Object* (*)()) ((*object)[methodNumber]));
             break;
-        case Ent::TypeArray:
-        case Ent::SpecVoid:
+        case Reflect::kArray:
+        case Reflect::kVoid:
             apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
             break;
         }
@@ -1071,13 +1042,13 @@ public:
         if (res.result.getType() == Any::TypeObject && static_cast<Object*>(res.result))
         {
             Capability* cap = static_cast<Capability*>(resultPtr);
-            exportObject(res.result, iid, cap, false);   // TODO error check, TODO true??
+            exportObject(res.result, stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str(), cap, false);   // TODO error check, TODO true??
             if (cap->check == 0)
             {
                 *fdp++ = cap->object;
             }
 #ifdef VERBOSE
-            printf("<<(%s) ", iid);
+            printf("<<(%s) ", stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str());
             cap->report();
 #endif
         }
@@ -1174,12 +1145,12 @@ public:
             {
                 break;
             }
-            super = getInterface(super.getFullyQualifiedSuperName());
+            super = getInterface(super.getQualifiedSuperName().c_str());
         }
         Reflect::Method method(Reflect::Method(super.getMethod(methodNumber - baseMethodCount)));
 
         bool stringIsInterfaceName = false;
-        if (super.getFullyQualifiedSuperName() == 0)
+        if (super.getQualifiedSuperName() == "")
         {
             int count;
 
@@ -1863,35 +1834,28 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         // Any op(void* buf, int len, ...);
         // FALL THROUGH
-    case Ent::TypeSequence:
-    case Ent::SpecString:
+    case Reflect::kSequence:
+    case Reflect::kString:
         // const char* op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         *argp++ = Any(va_arg(ap, int32_t));
         break;
-    case Ent::TypeStructure:
-        // void op(struct* buf, ...);
-        *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
-        break;
-    case Ent::TypeArray:
+    case Reflect::kArray:
         // void op(xxx[x] buf, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         break;
     }
 
     // TODO: padding
-    for (int i = 0; i < method.getParameterCount(); ++i, ++argp)
+    for (Reflect::Parameter param = method.listParameter(); param.next(); ++argp)
     {
-        Reflect::Parameter param(method.getParameter(i));
         Reflect::Type type(param.getType());
-        assert(param.isInput());
-
         switch (type.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             // Any variant, ...
             *argp = Any(va_arg(ap, AnyBase));
             switch (argp->getType())
@@ -1921,7 +1885,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 break;
             }
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // xxx* buf, int len, ...
             iop->iov_base = va_arg(ap, void*);
             *argp++ = Any(reinterpret_cast<intptr_t>(iop->iov_base));
@@ -1929,7 +1893,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             iop->iov_len = type.getSize() * static_cast<int32_t>(*argp);
             ++iop;
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             iop->iov_base = va_arg(ap, char*);
             if (stringIsInterfaceName)
             {
@@ -1942,27 +1906,18 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 ++iop;
             }
             break;
-        case Ent::TypeStructure:
+        case Reflect::kArray:
             iop->iov_base = va_arg(ap, void*);
             *argp = Any(reinterpret_cast<intptr_t>(iop->iov_base));
             iop->iov_len = type.getSize();
             ++iop;
             break;
-        case Ent::TypeArray:
-            iop->iov_base = va_arg(ap, void*);
-            *argp = Any(reinterpret_cast<intptr_t>(iop->iov_base));
-            iop->iov_len = type.getSize();
-            ++iop;
-            break;
-        case Ent::TypeInterface:
-            iid = type.getInterface().getFullyQualifiedName();
-            // FALL THROUGH
-        case Ent::SpecObject: {
+        case Reflect::kObject: {
             Object* object = va_arg(ap, Object*);
             *argp = Any(object);
             if (object)
             {
-                current.exportObject(object, iid, capp, true);  // TODO check error
+                current.exportObject(object, stringIsInterfaceName ? iid : type.getQualifiedName().c_str(), capp, true);  // TODO check error
                 iop->iov_base = capp;
                 iop->iov_len = sizeof(Capability);
                 if (capp->check == 0)
@@ -1974,42 +1929,41 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             }
             break;
         }
-        case Ent::SpecBool:
+        case Reflect::kBoolean:
             *argp = Any(static_cast<bool>(va_arg(ap, int)));
             break;
-        case Ent::SpecAny:
+        case Reflect::kPointer:
             *argp = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
             break;
-        case Ent::SpecS16:
+        case Reflect::kShort:
             *argp = Any(static_cast<int16_t>(va_arg(ap, int)));
             break;
-        case Ent::SpecS32:
+        case Reflect::kLong:
             *argp = Any(va_arg(ap, int32_t));
             break;
-        case Ent::SpecS8:
-        case Ent::SpecU8:
+        case Reflect::kOctet:
             *argp = Any(static_cast<uint8_t>(va_arg(ap, int)));
             break;
-        case Ent::SpecU16:
+        case Reflect::kUnsignedShort:
             *argp = Any(static_cast<uint16_t>(va_arg(ap, int)));
             break;
-        case Ent::SpecU32:
+        case Reflect::kUnsignedLong:
             *argp = Any(va_arg(ap, uint32_t));
             break;
-        case Ent::SpecS64:
+        case Reflect::kLongLong:
             *argp = Any(va_arg(ap, int64_t));
             break;
-        case Ent::SpecU64:
+        case Reflect::kUnsignedLongLong:
             *argp = Any(va_arg(ap, uint64_t));
             break;
-        case Ent::SpecF32:
+        case Reflect::kFloat:
             {
                 // XXX works on X86 only probably
                 uint32_t value = va_arg(ap, uint32_t);
                 *argp = Any(*reinterpret_cast<float*>(&value));
             }
             break;
-        case Ent::SpecF64:
+        case Reflect::kDouble:
             *argp = Any(va_arg(ap, double));
             break;
         default:
@@ -2109,7 +2063,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
             long long rc;
             switch (returnType.getType())
             {
-            case Ent::SpecVariant:
+            case Reflect::kAny:
                 switch (res->result.getType())
                 {
                 case Any::TypeString:
@@ -2145,14 +2099,14 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 *variant = res->result;
                 res->result = Any(reinterpret_cast<intptr_t>(variant));
                 break;
-            case Ent::SpecString:
+            case Reflect::kString:
                 if (static_cast<const char*>(res->result))
                 {
                     res->result = Any(reinterpret_cast<const char*>(static_cast<intptr_t>(rpcmsg.argv[1])));
                     strcpy(const_cast<char*>(static_cast<const char*>(res->result)), reinterpret_cast<const char*>(res->getData()));  // TODO: Check length
                 }
                 break;
-            case Ent::TypeSequence:
+            case Reflect::kSequence:
                 rc = static_cast<int32_t>(res->result);
                 if (0 < rc)
                 {
@@ -2160,13 +2114,7 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                             returnType.getSize() * rc);
                 }
                 break;
-            case Ent::TypeInterface:
-                if (!stringIsInterfaceName)
-                {
-                    iid = returnType.getInterface().getFullyQualifiedName();
-                }
-                // FALL THROUGH
-            case Ent::SpecObject:
+            case Reflect::kObject:
                 if (static_cast<Object*>(res->result))
                 {
                     Capability* cap = static_cast<Capability*>(res->getData());
@@ -2177,21 +2125,21 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                         // TODO Set exec on close to cap->object
                     }
 #ifdef VERBOSE
-                    printf(">>(%s:%d) ", iid, stringIsInterfaceName);
+                    printf(">>(%s:%d) ", stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str(), stringIsInterfaceName);
                     cap->report();
 #endif
-                    res->result = current.importObject(*cap, iid, false);
+                    res->result = current.importObject(*cap, stringIsInterfaceName ? iid : returnType.getQualifiedName().c_str(), false);
                 }
                 else
                 {
                     res->result = Any(static_cast<Object*>(0));
                 }
                 break;
-            case Ent::TypeArray:
+            case Reflect::kArray:
                 memcpy(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
                        returnType.getSize());
                 break;
-            case Ent::SpecVoid:
+            case Reflect::kVoid:
                 break;
             }
             while (fdp < fdmax)

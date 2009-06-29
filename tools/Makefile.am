@@ -4,7 +4,7 @@ else
 LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lrt
 endif
 	
-bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen vget vdel reflect
+bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen vget vdel
 
 trunc_SOURCES = trunc.c
 
@@ -21,8 +21,6 @@ vcopy_SOURCES = vcopy.cpp vdisk.h
 vlist_SOURCES = vlist.cpp vdisk.h
 
 guidgen_SOURCES = guidgen.cpp
-
-reflect_SOURCES = reflect.cpp
 
 AM_CPPFLAGS = -I- \
 	-I../include \

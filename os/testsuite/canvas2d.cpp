@@ -698,7 +698,7 @@ transform(float m11, float m12, float m21, float m22, float dx, float dy)
     cairo_matrix_init (&mat, m11, m12, m21, m22, dx, dy);
     cairo_transform (cr, &mat);
 }
- 
+
 void Canvas::
 setTransform(float m11, float m12, float m21, float m22, float dx, float dy)
 {

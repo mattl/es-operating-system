@@ -27,57 +27,7 @@ AM_CPPFLAGS = \
 #
 # default interface information
 #
-nodist_libeskernel_a_SOURCES = \
-	es/object.c \
-	es/base/IAlarm.c \
-	es/base/ICache.c \
-	es/base/ICallback.c \
-	es/base/IFile.c \
-	es/base/IInterfaceStore.c \
-	es/base/IMonitor.c \
-	es/base/IPageable.c \
-	es/base/IPageSet.c \
-	es/base/IProcess.c \
-	es/base/IRuntime.c \
-	es/base/ISelectable.c \
-	es/base/IService.c \
-	es/base/IStream.c \
-	es/base/IThread.c \
-	es/device/IAudioFormat.c \
-	es/device/IBeep.c \
-	es/device/ICursor.c \
-	es/device/IDevice.c \
-	es/device/IDisk.c \
-	es/device/IDmac.c \
-	es/device/IFatFileSystem.c \
-	es/device/IFileSystem.c \
-	es/device/IIso9660FileSystem.c \
-	es/device/INetworkInterface.c \
-	es/device/IPic.c \
-	es/device/IRemovableMedia.c \
-	es/device/IRtc.c \
-	es/naming/IBinding.c \
-	es/naming/IContext.c \
-	es/net/IInternetAddress.c \
-	es/net/IInternetConfig.c \
-	es/net/IResolver.c \
-	es/net/ISocket.c \
-	es/util/IIterator.c \
-	es/util/ISet.c \
-	es/util/IOrderedMap.c \
-	w3c/css.c \
-	w3c/cssomview.c \
-	w3c/dom.c \
-	w3c/events.c \
-	w3c/html5.c \
-	w3c/ls.c \
-	w3c/ranges.c \
-	w3c/smil.c \
-	w3c/stylesheets.c \
-	w3c/svg.c \
-	w3c/traversal.c \
-	w3c/validation.c \
-	w3c/views.c
+nodist_libeskernel_a_SOURCES =
 	
 #
 # port

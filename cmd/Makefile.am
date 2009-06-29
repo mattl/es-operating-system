@@ -1,19 +1,9 @@
 SUBDIRS = . testsuite
 
-SUFFIXES = .h .idl .ent
+SUFFIXES = .h .idl
 
-%.h %.ent: %.idl
-	esidl -I$(srcdir)/../include -include es/object.idl -ent $<
-
-%.c : %.ent
-	mkdir -p $(*D);
-	printf 'unsigned char %s' $(*F) > $@;
-	echo "Info[] = {" >> $@;
-	hexdump -v -e '1/1 "0x%02x,"' $< >> $@;
-	echo "};" >> $@
-	printf 'unsigned %s' $(*F) >> $@;
-	printf 'InfoSize = sizeof %s' $(*F) >> $@;
-	echo "Info;" >> $@;
+%.h : %.idl
+	esidl -I$(srcdir)/../include -include es/object.idl $<
 
 noinst_PROGRAMS = \
 	main hello cairo expat server client \
@@ -53,9 +43,7 @@ eventManager_SOURCES = eventManager.cpp eventManager.h IEventQueue.idl
 
 eventManagerClient_SOURCES = eventManagerClient.cpp eventManager.h IEventQueue.idl
 
-nodist_eventManager_SOURCES = IEventQueue.c
-
-BUILT_SOURCES = IEventQueue.h IEventQueue.ent
+BUILT_SOURCES = IEventQueue.h
 
 console_SOURCES = console.cpp canvas.cpp canvas.h
 

@@ -28,7 +28,7 @@ using namespace es;
 
 int main()
 {
-    Hashtable<const char*, int> h(100);
+    Hashtable<const char*, int, 100> h;
 
     printf("h.size() : %d\n", h.size());
 

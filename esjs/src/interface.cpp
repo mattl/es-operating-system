@@ -19,7 +19,7 @@
 #include <es/any.h>
 #include <es/endian.h>
 #include <es/formatter.h>
-#include <es/uuid.h>
+#include <es/interfaceData.h>
 #include <es/object.h>
 #include <es/base/IProcess.h>
 #include <es/hashtable.h>
@@ -33,8 +33,6 @@ namespace es
     extern unsigned char* defaultInterfaceInfo[];
     extern size_t defaultInterfaceCount;
 }  // namespace es
-
-// #define VERBOSE
 
 #ifndef VERBOSE
 #define PRINTF(...)     (__VA_ARGS__)
@@ -51,69 +49,6 @@ extern es::CurrentProcess* System();
 namespace
 {
     const int GuidStringLength = 37;        // Including terminating zero
-}
-
-bool parseGuid(const char* str, Guid* u)
-{
-    int x;
-    int b;
-    u8* p = (u8*) u;
-    int i;
-    int j;
-
-    // 0         1         2         3
-    // 012345678901234567890123456789012345
-    // 2772cebc-0e69-4582-ae3c-c151bf5a9a55
-    for (i = 0, j = 0; i < GuidStringLength - 1; ++i)
-    {
-        switch (i)
-        {
-          case 8: case 13: case 18: case 23:
-            if (str[i] != '-')
-            {
-                return false;
-            }
-            continue;
-            break;
-          default:
-            break;
-        }
-
-        x = str[i];
-        if (!isxdigit(x))
-        {
-            return false;
-        }
-        if (isdigit(x))
-        {
-            x -= '0';
-        }
-        else
-        {
-            x = tolower(x);
-            x -= 'a';
-            x += 10;
-        }
-
-        if (j & 1)
-        {
-            b = (b << 4) | x;
-            *p++ = (u8) b;
-        }
-        else
-        {
-            b = x;
-        }
-        ++j;
-        ASSERT(b < 256);
-    }
-    ASSERT(j == 32);
-
-    u->Data1 = ntohl(u->Data1);
-    u->Data2 = ntohs(u->Data2);
-    u->Data3 = ntohs(u->Data3);
-
-    return true;
 }
 
 //
@@ -133,15 +68,12 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
 
     Reflect::Interface interface = es::getInterface(iid);
     Reflect::Method method(interface.getMethod(number));
-    PRINTF("invoke %s.%s(%p)\n", interface.getName(), method.getName(), self);
+    PRINTF("invoke %s.%s(%p)\n", interface.getName().c_str(), method.getName().c_str(), self);
 
     // Set up parameters
     Any argv[9];
     Any* argp = argv;
-    Guid iidv[9];
-    Guid* iidp = iidv;
     int ext = 0;    // extra parameter count
-    const char* riid = Object::iid();
 
     // Set this
     *argp++ = Any(reinterpret_cast<intptr_t>(self));
@@ -152,42 +84,34 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     Reflect::Type returnType = method.getReturnType();
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         // Any op(void* buf, int len, ...);
         // FALL THROUGH
-    case Ent::SpecString:
+    case Reflect::kString:
         // const char* op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         *argp++ = Any(sizeof(heap));
         break;
-    case Ent::TypeSequence:
+    case Reflect::kSequence:
         // int op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         ++ext;
         *argp++ = Any(static_cast<int32_t>(((*list)[0])->toNumber()));
         break;
-    case Ent::SpecUuid:
-    case Ent::TypeStructure:
-        // void op(struct* buf, ...);
-        *argp++ = Any(reinterpret_cast<intptr_t>(heap));
-        break;
-    case Ent::TypeArray:
+    case Reflect::kArray:
         // void op(xxx[x] buf, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(heap));
         break;
     }
 
-    for (int i = ext; i < ext + method.getParameterCount(); ++i, ++argp)
+    Reflect::Parameter param = method.listParameter();
+    for (int i = ext; param.next(); ++i, ++argp)
     {
-        Reflect::Parameter param(method.getParameter(i));
         Reflect::Type type(param.getType());
-        assert(param.isInput());
-
         Value* value = (*list)[i];
-
         switch (type.getType())
         {
-        case Ent::SpecVariant:
+        case Reflect::kAny:
             // Any variant, ...
             switch (value->getType()) {
             case Value::BoolType:
@@ -216,35 +140,21 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             }
             argp->makeVariant();
             break;
-        case Ent::TypeSequence:
+        case Reflect::kSequence:
             // xxx* buf, int len, ...
             // XXX Assume sequence<octet> now...
             *argp++ = Any(reinterpret_cast<intptr_t>(value->toString().c_str()));
             value = (*list)[++i];
             *argp = Any(static_cast<int32_t>(value->toNumber()));
             break;
-        case Ent::SpecString:
+        case Reflect::kString:
             *argp = Any(value->toString().c_str());
             break;
-        case Ent::SpecUuid:
-            if (!parseGuid(value->toString().c_str(), iidp))
-            {
-                throw getErrorInstance("TypeError");
-            }
-            *argp = Any(iidp);
-            // riid = *iidp; TODO: Fix this line later
-            ++iidp;
-            break;
-        case Ent::TypeStructure:
-            // void op(struct* buf, ...);
-            // XXX expand data
-            break;
-        case Ent::TypeArray:
+        case Reflect::kArray:
             // void op(xxx[x] buf, ...);
             // XXX expand data
             break;
-        case Ent::SpecObject:
-        case Ent::TypeInterface:
+        case Reflect::kObject:
             if (InterfacePointerValue* unknown = dynamic_cast<InterfacePointerValue*>(value))
             {
                 *argp = Any(unknown->getObject());
@@ -254,38 +164,37 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 *argp = Any(static_cast<Object*>(0));
             }
             break;
-        case Ent::SpecBool:
+        case Reflect::kBoolean:
             *argp = Any(static_cast<bool>(value->toBoolean()));
             break;
-        case Ent::SpecAny:
+        case Reflect::kPointer:
             *argp = Any(static_cast<intptr_t>(value->toNumber()));
             break;
-        case Ent::SpecS16:
+        case Reflect::kShort:
             *argp = Any(static_cast<int16_t>(value->toNumber()));
             break;
-        case Ent::SpecS32:
+        case Reflect::kLong:
             *argp = Any(static_cast<int32_t>(value->toNumber()));
             break;
-        case Ent::SpecS8:
-        case Ent::SpecU8:
+        case Reflect::kOctet:
             *argp = Any(static_cast<uint8_t>(value->toNumber()));
             break;
-        case Ent::SpecU16:
+        case Reflect::kUnsignedShort:
             *argp = Any(static_cast<uint16_t>(value->toNumber()));
             break;
-        case Ent::SpecU32:
+        case Reflect::kUnsignedLong:
             *argp = Any(static_cast<uint32_t>(value->toNumber()));
             break;
-        case Ent::SpecS64:
+        case Reflect::kLongLong:
             *argp = Any(static_cast<int64_t>(value->toNumber()));
             break;
-        case Ent::SpecU64:
+        case Reflect::kUnsignedLongLong:
             *argp = Any(static_cast<uint64_t>(value->toNumber()));
             break;
-        case Ent::SpecF32:
+        case Reflect::kFloat:
             *argp = Any(static_cast<float>(value->toNumber()));
             break;
-        case Ent::SpecF64:
+        case Reflect::kDouble:
             *argp = Any(static_cast<double>(value->toNumber()));
             break;
         default:
@@ -299,7 +208,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
     int argc = argp - argv;
     switch (returnType.getType())
     {
-    case Ent::SpecVariant:
+    case Reflect::kAny:
         {
             Any result = apply(argc, argv, (Any (*)()) ((*self)[methodNumber]));
             switch (result.getType())
@@ -351,7 +260,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
                 if (Object* unknown = static_cast<Object*>(result))
                 {
                     ObjectValue* instance = new InterfacePointerValue(unknown);
-                    instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+                    instance->setPrototype(getGlobal()->get(es::getInterface(Object::iid()).getName())->get("prototype"));   // XXX Should use IID
                     value = instance;
                 }
                 else
@@ -365,43 +274,40 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             }
         }
         break;
-    case Ent::SpecBool:
+    case Reflect::kBoolean:
         value = BoolValue::getInstance(static_cast<bool>(apply(argc, argv, (bool (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecChar:
-    case Ent::SpecS8:
-    case Ent::SpecU8:
+    case Reflect::kOctet:
         value = new NumberValue(static_cast<uint8_t>(apply(argc, argv, (uint8_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecWChar:
-    case Ent::SpecS16:
+    case Reflect::kShort:
         value = new NumberValue(static_cast<int16_t>(apply(argc, argv, (int16_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecU16:
+    case Reflect::kUnsignedShort:
         value = new NumberValue(static_cast<uint16_t>(apply(argc, argv, (uint16_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecS32:
+    case Reflect::kLong:
         value = new NumberValue(static_cast<int32_t>(apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecU32:
+    case Reflect::kUnsignedLong:
         value = new NumberValue(static_cast<uint32_t>(apply(argc, argv, (uint32_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecS64:
+    case Reflect::kLongLong:
         value = new NumberValue(static_cast<int64_t>(apply(argc, argv, (int64_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecU64:
+    case Reflect::kUnsignedLongLong:
         value = new NumberValue(static_cast<uint64_t>(apply(argc, argv, (uint64_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecF32:
+    case Reflect::kFloat:
         value = new NumberValue(static_cast<float>(apply(argc, argv, (float (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecF64:
+    case Reflect::kDouble:
         value = new NumberValue(apply(argc, argv, (double (*)()) ((*self)[methodNumber])));
         break;
-    case Ent::SpecAny:
+    case Reflect::kPointer:
         value = new NumberValue(static_cast<intptr_t>(apply(argc, argv, (intptr_t (*)()) ((*self)[methodNumber]))));
         break;
-    case Ent::SpecString:
+    case Reflect::kString:
         {
             heap[0] = '\0';
             Any result = apply(argc, argv, (const char* (*)()) ((*self)[methodNumber]));
@@ -415,7 +321,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             }
         }
         break;
-    case Ent::TypeSequence:
+    case Reflect::kSequence:
         {
             // XXX Assume sequence<octet> now...
             int32_t count = apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
@@ -427,14 +333,12 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             value = new StringValue(heap);
         }
         break;
-    case Ent::TypeInterface:
-        riid = returnType.getInterface().getFullyQualifiedName();
-        // FALL THROUGH
-    case Ent::SpecObject:
+    case Reflect::kObject:
         if (Object* unknown = apply(argc, argv, (Object* (*)()) ((*self)[methodNumber])))
         {
             ObjectValue* instance = new InterfacePointerValue(unknown);
-            instance->setPrototype(getGlobal()->get(es::getInterface(riid).getName())->get("prototype"));   // XXX Should use IID
+            // TODO: check Object and others
+            instance->setPrototype(getGlobal()->get(es::getInterface(returnType.getQualifiedName().c_str()).getName())->get("prototype"));   // XXX Should use IID
             value = instance;
         }
         else
@@ -442,7 +346,7 @@ static Value* invoke(const char* iid, int number, InterfaceMethod** self, ListVa
             value = NullValue::getInstance();
         }
         break;
-    case Ent::SpecVoid:
+    case Reflect::kVoid:
         apply(argc, argv, (int32_t (*)()) ((*self)[methodNumber]));
         value = NullValue::getInstance();
         break;
@@ -719,7 +623,7 @@ public:
         object->setScope(getGlobal());
 
         Reflect::Interface interface = es::getInterface(iid);
-        PRINTF("interface: %s\n", interface.getName());
+        // PRINTF("interface: %s\n", interface.getName().c_str());
         for (int i = 0; i < interface.getMethodCount(); ++i)
         {
             // Construct Method object
@@ -750,6 +654,7 @@ public:
                     ObjectValue* function = new ObjectValue;
                     function->setCode(new InterfaceMethodCode(function, iid, i));
                     prototype->put(method.getName(), function);
+#if 0
                     if (method.isIndexGetter())
                     {
                         AttributeGetterValue* getter = new AttributeGetterValue(iid, i);
@@ -770,6 +675,7 @@ public:
                         AttributeSetterValue* setter = new AttributeSetterValue(iid, i);
                         prototype->setOpObject(InterfacePrototypeValue::NameSetter, setter);
                     }
+#endif
                 }
                 else
                 {
@@ -788,13 +694,13 @@ public:
             }
         }
 
-        if (interface.getFullyQualifiedSuperName() == 0)
+        if (interface.getQualifiedSuperName() == "")
         {
             prototype->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype()->getPrototype());
         }
         else
         {
-            Reflect::Interface super = es::getInterface(interface.getFullyQualifiedSuperName());
+            Reflect::Interface super = es::getInterface(interface.getQualifiedSuperName().c_str());
             prototype->setPrototype(getGlobal()->get(super.getName())->get("prototype"));
         }
 
@@ -997,34 +903,17 @@ ObjectValue* constructInterfaceObject()
     return object;
 }
 
-static void constructSystemObject(Reflect::Module& module)
-{
-    for (int i = 0; i < module.getInterfaceCount(); ++i)
-    {
-        Reflect::Interface interface = module.getInterface(i);
-
-        // Construct Default Interface Object
-        PRINTF("%s\n", interface.getName());
-        ObjectValue* object = new ObjectValue;
-        object->setCode(new InterfaceConstructor(object, interface.getFullyQualifiedName()));
-        object->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype());
-        getGlobal()->put(interface.getName(), object);
-    }
-
-    for (int i = 0; i < module.getModuleCount(); ++i)
-    {
-        Reflect::Module m(module.getModule(i));
-        constructSystemObject(m);
-    }
-}
-
 ObjectValue* constructSystemObject(void* system)
 {
-    for (int i = 0; i < es::defaultInterfaceCount; ++i)
+    for (es::InterfaceData* data = es::interfaceData; data->iid; ++data)
     {
-        Reflect r(es::defaultInterfaceInfo[i]);
-        Reflect::Module global(r.getGlobalModule());
-        constructSystemObject(global);
+        // Construct Default Interface Object
+        Reflect::Interface interface = es::getInterface(data->iid());
+        PRINTF("%s\n", interface.getName().c_str());
+        ObjectValue* object = new ObjectValue;
+        object->setCode(new InterfaceConstructor(object, interface.getQualifiedName()));
+        object->setPrototype(getGlobal()->get("InterfaceStore")->getPrototype());
+        getGlobal()->put(interface.getName(), object);
     }
 
     System()->addRef();

@@ -857,7 +857,7 @@ start(es::File* file, const char* argument)
 
     char name[32];
     file->getName(name, sizeof name);
-    esReport("start %p %s\n", this, name);
+    esReport("start %p %s from %p\n", this, name, elf.getEntry());
 
 #ifdef VERBOSE
     dump();

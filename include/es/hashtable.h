@@ -45,7 +45,7 @@ struct Hash<const char*>
 };
 
 // usage: Hashtable<Guid, Reflect::Interface> hashtable;
-template <class K, class V,
+template <class K, class V, int capacity,
           class H = Hash<K>,
           class EQ = std::equal_to<K> >
 class Hashtable
@@ -57,11 +57,10 @@ class Hashtable
         Element* next;
     };
 
-    Element*  entries;  // the actual entries
-    Element** table;    // the hash table
+    Element   entries[capacity];  // the actual entries
+    Element*  table[capacity];    // the hash table
     Element*  free;
 
-    int       capacity; // size
     H         hash;     // hash function
     EQ        eq;       // equality
 
@@ -83,12 +82,9 @@ class Hashtable
     }
 
 public:
-    Hashtable(int capacity, const H& hash = H(), const EQ& eq = EQ()) :
-        free(0), capacity(capacity), hash(hash), eq(eq)
+    Hashtable(const H& hash = H(), const EQ& eq = EQ()) :
+        free(0), hash(hash), eq(eq)
     {
-        ASSERT(0 < capacity);
-        entries = new Element[size()];
-        table = new Element*[size()];
         for (int i = 0; i < size(); ++i)
         {
             Element* elm = &entries[i];
@@ -101,13 +97,10 @@ public:
 
     ~Hashtable()
     {
-        delete[] table;
-        delete[] entries;
     }
 
     int size() const
     {
-        ASSERT(0 < capacity);
         return capacity;
     }
 

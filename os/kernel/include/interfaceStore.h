@@ -19,32 +19,39 @@
 #define NINTENDO_ES_KERNEL_INTERFACE_STORE_H_INCLUDED
 
 #include <es.h>
+#include <es/any.h>
 #include <es/hashtable.h>
 #include <es/ref.h>
 #include <es/reflect.h>
-#include <es/base/IInterfaceStore.h>
+#include <es/includeAllInterfaces.h>
 #include "thread.h"
 
 class InterfaceStore : public es::InterfaceStore
 {
-    static unsigned char* defaultInterfaceInfo[];
+    struct CompareName
+    {
+        bool operator() (const char* a, const char* b) const
+        {
+            return (a == b) || (strcmp(a, b) == 0);
+        }
+    };
 
-    struct InterfaceData
+    struct MetaData
     {
         Reflect::Interface meta;
         Object* (*constructorGetter)();                 // for statically created data
         void (*constructorSetter)(Object* constructor); // for statically created data
         Object* constructor;                            // for dynamically created data
 
-        InterfaceData() :
+        MetaData() :
             constructorGetter(0),
             constructorSetter(0),
             constructor(0)
         {
         }
 
-        InterfaceData(Reflect::Interface interface) :
-            meta(interface),
+        MetaData(const char* info, const char* iid) :
+            meta(info, iid),
             constructorGetter(0),
             constructorSetter(0),
             constructor(0)
@@ -65,13 +72,13 @@ class InterfaceStore : public es::InterfaceStore
 
     SpinLock spinLock;
     Ref ref;
-    Hashtable<const char*, InterfaceData, Hash<const char*>, Reflect::CompareName> hashtable;
+    Hashtable<const char*, MetaData, 1024, Hash<const char*>, CompareName> hashtable;
 
-    void registerInterface(Reflect::Module& module);
     void registerConstructor(const char* iid, Object* (*getter)(), void (*setter)(Object*));
+    void updateInheritedMethodCount(const char* iid);
 
 public:
-    InterfaceStore(int capacity = 1024);
+    InterfaceStore();
     ~InterfaceStore();
 
     Reflect::Interface& getInterface(const char* iid)
@@ -101,7 +108,7 @@ public:
 
         try
         {
-            return hashtable.get(iid).meta.getFullyQualifiedName();
+            return hashtable.get(iid).meta.getQualifiedName();
         }
         catch (...)
         {
@@ -110,73 +117,14 @@ public:
     }
 
     // IInterfaceStore
-    void add(const void* data, int length);
-    void remove(const char* riid);
+    void add(const char* iid, const char* info);
+    void remove(const char* iid);
 
     // IInterface
-    Object* queryInterface(const char* riid);
+    Object* queryInterface(const char* iid);
     unsigned int addRef();
     unsigned int release();
 };
-
-//
-// Reflection data of the default interface set
-//
-
-extern unsigned char objectInfo[];
-
-extern unsigned char IAlarmInfo[];
-extern unsigned char ICacheInfo[];
-extern unsigned char ICallbackInfo[];
-extern unsigned char IFileInfo[];
-extern unsigned char IInterfaceStoreInfo[];
-extern unsigned char IMonitorInfo[];
-extern unsigned char IPageableInfo[];
-extern unsigned char IPageSetInfo[];
-extern unsigned char IProcessInfo[];
-extern unsigned char IRuntimeInfo[];
-extern unsigned char ISelectableInfo[];
-extern unsigned char IServiceInfo[];
-extern unsigned char IStreamInfo[];
-extern unsigned char IThreadInfo[];
-
-extern unsigned char IAudioFormatInfo[];
-extern unsigned char IBeepInfo[];
-extern unsigned char ICursorInfo[];
-extern unsigned char IDeviceInfo[];
-extern unsigned char IDiskInfo[];
-extern unsigned char IDmacInfo[];
-extern unsigned char IFatFileSystemInfo[];
-extern unsigned char IFileSystemInfo[];
-extern unsigned char IIso9660FileSystemInfo[];
-extern unsigned char IPicInfo[];
-extern unsigned char IRemovableMediaInfo[];
-extern unsigned char IRtcInfo[];
-
-extern unsigned char IBindingInfo[];
-extern unsigned char IContextInfo[];
-
-extern unsigned char IInternetAddressInfo[];
-extern unsigned char IInternetConfigInfo[];
-extern unsigned char IResolverInfo[];
-extern unsigned char ISocketInfo[];
-
-extern unsigned char IIteratorInfo[];
-extern unsigned char ISetInfo[];
-
-extern unsigned char cssInfo[];
-extern unsigned char cssomviewInfo[];
-extern unsigned char domInfo[];
-extern unsigned char eventsInfo[];
-extern unsigned char html5Info[];
-extern unsigned char lsInfo[];
-extern unsigned char rangesInfo[];
-extern unsigned char smilInfo[];
-extern unsigned char stylesheetsInfo[];
-extern unsigned char svgInfo[];
-extern unsigned char traversalInfo[];
-extern unsigned char validationInfo[];
-extern unsigned char viewsInfo[];
 
 namespace es
 {
