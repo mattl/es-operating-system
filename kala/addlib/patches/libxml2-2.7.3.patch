@@ -1,6 +1,6 @@
-diff -BcrN libxml2-2.7.3.org/config.sub libxml2-2.7.3/config.sub
-*** libxml2-2.7.3.org/config.sub	2009-06-16 00:43:39.049775684 +0800
---- libxml2-2.7.3/config.sub	2009-06-16 00:44:37.145778276 +0800
+diff -bcrN libxml2-2.7.3.org/config.sub libxml2-2.7.3/config.sub
+*** libxml2-2.7.3.org/config.sub	2009-06-29 12:11:01.920856443 +0800
+--- libxml2-2.7.3/config.sub	2009-06-29 14:27:05.020857896 +0800
 ***************
 *** 1217,1223 ****
   	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
@@ -18,3 +18,50 @@ diff -BcrN libxml2-2.7.3.org/config.sub libxml2-2.7.3/config.sub
   	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
   	      | -uxpv* | -beos* | -mpeix* | -udk* \
   	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+diff -bcrN libxml2-2.7.3.org/Makefile.am libxml2-2.7.3/Makefile.am
+*** libxml2-2.7.3.org/Makefile.am	2009-06-29 12:11:01.812856581 +0800
+--- libxml2-2.7.3/Makefile.am	2009-06-29 15:31:41.944856319 +0800
+***************
+*** 6,15 ****
+  
+  INCLUDES = -I$(top_builddir)/include -I@srcdir@/include @THREAD_CFLAGS@ @Z_CFLAGS@ 
+  
+! noinst_PROGRAMS=testSchemas testRelax testSAX testHTML testXPath testURI \
+!                 testThreads testC14N testAutomata testRegexp \
+!                 testReader testapi testModule runtest runsuite testchar \
+! 		testdict runxmlconf testrecurse
+  
+  bin_PROGRAMS = xmllint xmlcatalog
+  
+--- 6,15 ----
+  
+  INCLUDES = -I$(top_builddir)/include -I@srcdir@/include @THREAD_CFLAGS@ @Z_CFLAGS@ 
+  
+! #noinst_PROGRAMS=testSchemas testRelax testSAX testHTML testXPath testURI \
+! #                testThreads testC14N testAutomata testRegexp \
+! #                testReader testapi testModule runtest runsuite testchar \
+! #		testdict runxmlconf testrecurse
+  
+  bin_PROGRAMS = xmllint xmlcatalog
+  
+***************
+*** 146,154 ****
+  testModule_DEPENDENCIES = $(DEPS)
+  testModule_LDADD= $(LDADDS)
+  
+! noinst_LTLIBRARIES = testdso.la
+! testdso_la_SOURCES = testdso.c
+! testdso_la_LDFLAGS = -module -rpath $(libdir)
+  
+  # that one forces the rebuild when "make rebuild" is run on doc/
+  rebuild_testapi:
+--- 146,154 ----
+  testModule_DEPENDENCIES = $(DEPS)
+  testModule_LDADD= $(LDADDS)
+  
+! #noinst_LTLIBRARIES = testdso.la
+! #testdso_la_SOURCES = testdso.c
+! #testdso_la_LDFLAGS = -module -rpath $(libdir)
+  
+  # that one forces the rebuild when "make rebuild" is run on doc/
+  rebuild_testapi:
