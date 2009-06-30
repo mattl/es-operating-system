@@ -16,7 +16,7 @@ if POSIX
 
 TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
 	udpEchoClient udpEchoServer tcpdiscardClient tcpdiscardServer tcpTimeout \
-tcpDaytimeServer tcpDaytimeClient tcpDaytime
+tcpDaytimeServer tcpDaytimeClient tcpDaytime tcpChargenServer tcpChargenClient
 
 noinst_PROGRAMS = $(TESTS)
 
@@ -88,5 +88,9 @@ tcpDaytimeServer_SOURCES = tcpDaytimeServer.cpp
 tcpDaytimeClient_SOURCES = tcpDaytimeClient.cpp
 
 tcpDaytime_SOURCES = tcpDaytime.cpp
+
+tcpChargenServer_SOURCES = tcpChargenServer.cpp
+
+tcpChargenClient_SOURCES = tcpChargenClient.cpp
 
 EXTRA_DIST = makeScript testLoader
