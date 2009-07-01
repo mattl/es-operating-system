@@ -76,21 +76,25 @@ private:
     static NetworkInterface*    interfaces[INTERFACE_MAX];
     static Timer*               timer;
 
-    Ref             ref;
-    int             family;
-    int             type;
-    int             protocol;
-    Adapter*        adapter;
-    AddressFamily*  af;
-    int             recvBufferSize;
-    int             sendBufferSize;
-    int             errorCode;
-    TimeSpan        timeout;
-    Collection<Address*>    addresses;
+    Ref                  ref;
+    int                  family;
+    int                  type;
+    int                  protocol;
+    Adapter*             adapter;
+    AddressFamily*       af;
+    int                  recvBufferSize;
+    int                  sendBufferSize;
+    int                  errorCode;
+    TimeSpan             timeout;
+    Collection<Address*> addresses;
 
     // Asynchronous I/O
-    es::Monitor*    selector;
-    bool            blocking;
+    es::Monitor*         selector;
+    bool                 blocking;
+
+    // recvFrom
+    es::InternetAddress* recvFromAddress;
+    int                  recvFromPort;
 
 public:
     static void initialize();
@@ -249,7 +253,9 @@ public:
     void connect(es::InternetAddress* addr, int port);
     void listen(int backlog);
     int read(void* dst, int count);
-    int recvFrom(void* dst, int count, int flags, es::InternetAddress** addr, int* port);
+    int recvFrom(void* buf, int bufLength, int flags);
+    es::InternetAddress* getRecvFromAddress() ;
+    int getRecvFromPort();
     int sendTo(const void* src, int count, int flags, es::InternetAddress* addr, int port);
     void shutdownInput();
     void shutdownOutput();

@@ -28,8 +28,6 @@
 #include <es/net/IResolver.h>
 #include <es/net/arp.h>
 
-
-
 extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
 
@@ -49,7 +47,9 @@ void echo(int dixID)
     char input[4];
     es::InternetAddress* remoteAddress;
     int remotePort;
-    socket->recvFrom(input, 4, 0, &remoteAddress, &remotePort);
+    socket->recvFrom(input, 4, 0);
+    remoteAddress = socket->getRecvFromAddress();
+    remotePort = socket->getRecvFromPort();
     esReport("'%s', %d\n", input, remotePort);
     if (remoteAddress)
     {

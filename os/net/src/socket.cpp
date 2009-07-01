@@ -141,7 +141,9 @@ Socket(int family, int type, int protocol) :
     sendBufferSize(8192),
     errorCode(0),
     selector(0),
-    blocking(true)
+    blocking(true),
+    recvFromAddress(0),
+    recvFromPort(0)
 {
     af = getAddressFamily(family);
 }
@@ -443,7 +445,7 @@ read(void* dst, int count)
 }
 
 int Socket::
-recvFrom(void* dst, int count, int flags, es::InternetAddress** addr, int* port)
+recvFrom(void* dst, int count, int flags)
 {
     if (!adapter)
     {
@@ -463,15 +465,29 @@ recvFrom(void* dst, int count, int flags, es::InternetAddress** addr, int* port)
         }
         return -errorCode;
     }
-    if (addr)
+    if (recvFromAddress)
     {
-        *addr = m.getRemote();
+        recvFromAddress->release();
     }
-    if (port)
-    {
-        *port = m.getRemotePort();
-    }
+    recvFromAddress = m.getRemote();
+    recvFromPort = m.getRemotePort();
     return m.getLength();
+}
+
+es::InternetAddress* Socket::
+getRecvFromAddress()
+{
+    es::InternetAddress* addr = recvFromAddress;
+    recvFromAddress = 0;
+    return addr;
+}
+
+int Socket::
+getRecvFromPort()
+{
+    int port = recvFromPort;
+    recvFromPort = 0;
+    return port;
 }
 
 int Socket::

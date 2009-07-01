@@ -86,7 +86,9 @@ module es
          * @param port  the port number of the peer.
          * @return the number of bytes received in the buffer.
          */
-        Buf recvFrom(in long flags, out InternetAddress addr, out long port);
+        Buf recvFrom(in long flags);
+        readonly attribute InternetAddress recvFromAddress;
+        readonly attribute long recvFromPort;
 
         /** Sends a message to the specified destination through this socket.
          * @param src   the buffer containing the message to send.

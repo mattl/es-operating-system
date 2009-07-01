@@ -63,7 +63,7 @@ setup(u8 chan, u32 buffer, int len, u8 mode)
 }
 
 void Dmac::
-Chan::setup(void* buffer, int len, u8 mode)
+Chan::setup(const void* buffer, int len, u8 mode)
 {
     Lock::Synchronized method(dmac->spinLock);
 

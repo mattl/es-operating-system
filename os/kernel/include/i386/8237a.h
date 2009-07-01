@@ -51,7 +51,7 @@ public:
 
     public:
         // es::Dmac
-        void setup(void* addr, int count, u8 mode);
+        void setup(const void* addr, int count, u8 mode);
         void start();
         void stop();
         bool isDone();

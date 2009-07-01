@@ -66,7 +66,9 @@ int main()
     char input[4];
     es::InternetAddress* remoteAddress;
     int remotePort;
-    socket->recvFrom(input, 4, 0, &remoteAddress, &remotePort);
+    socket->recvFrom(input, 4, 0);
+    remoteAddress = socket->getRecvFromAddress();
+    remotePort = socket->getRecvFromPort();
     esReport("'%s', %d\n", input, remotePort);
     ASSERT(remoteAddress->isLoopback());
     if (remoteAddress)

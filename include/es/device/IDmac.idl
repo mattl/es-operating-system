@@ -40,7 +40,7 @@ module es
          * @param addrLength the DMA transfer counter.
          * @param mode <code>READ</code>, <code>WRITE</code> or <code>AUTO_INITIALIZE</code>.
          */
-        void setup(inout Buf addr, in octet mode);
+        void setup(in Buf addr, in octet mode);
         /**
          * Starts the DMA transfer.
          */
