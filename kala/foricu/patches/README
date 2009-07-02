@@ -51,6 +51,11 @@ original software.
            $ patch -p0 -d . < cairo-1.4.10.patch
 
 
+- ICU 4.2.0.1 (icu-4.2.0.1.patch)
+    http://site.icu-project.org/
+    usage: $ tar -zxf icu4c-4_2_0_1-src.tgz
+           $ patch -p0 -d . < icu-4.2.0.1.patch
+
 See http://code.google.com/p/es-operating-system/ for how to report bugs
 usefully.
 
