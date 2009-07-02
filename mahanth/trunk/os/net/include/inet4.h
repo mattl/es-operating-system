@@ -105,7 +105,8 @@ class InFamily : public AddressFamily
     Protocol                    paramProbProtocol;
 
     // ICMP Redirect
-    // ...
+    ICMPRedirectReceiver        redirectReceiver;
+    Protocol                    redirectProtocol;
 
     // IGMP
     IGMPReceiver                igmpReceiver;

@@ -194,4 +194,19 @@ public:
     bool output(InetMessenger* m, Conduit* c);
 };
 
+class ICMPRedirectReceiver : public InetReceiver
+{
+public:
+    ICMPRedirectReceiver()
+    {
+    }
+
+    ~ICMPRedirectReceiver()
+    {
+    }
+
+    bool input(InetMessenger* m, Conduit* c);
+    bool output(InetMessenger* m, Conduit* c);
+};
+
 #endif  // ICMP4_H_INCLUDED
