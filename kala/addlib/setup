@@ -227,7 +227,7 @@ mkdir -p libjpeg
 cd libjpeg
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/jpegsrc.v7.patch -newer Makefile -print`" ];
 then
-	../../src/jpeg-7/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-shared --with-gnu-ld
+	../../src/jpeg-7/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld
 	make 
 	make install
 fi
@@ -243,7 +243,7 @@ rm -rf libxml2-2.7.3
 tar -zxf libxml2-2.7.3.tar.gz
 patch -p0 -d . < ../trunk/patches/libxml2-2.7.3.patch
 cd libxml2-2.7.3
-autoreconf
+libtoolize;aclocal;autoconf;automake
 cd ../../opt
 mkdir -p libxml2
 cd libxml2
