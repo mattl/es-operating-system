@@ -289,3 +289,30 @@ bool ICMPParamProbReceiver::output(InetMessenger* m, Conduit* c)
 
     return true;
 }
+
+//
+// ICMPRedirectReceiver
+//
+
+bool ICMPRedirectReceiver::input(InetMessenger* m, Conduit* c)
+{
+    esReport("ICMPRedirectReceiver::input\n");
+
+    int len = m->getLength();
+    if (len < sizeof(ICMPRedirect))
+    {
+        return false;
+    }
+    ICMPRedirect* icmphdr = static_cast<ICMPRedirect*>(m->fix(sizeof(ICMPRedirect)));
+
+    esReport("%x      %x        %x",icmphdr->type,icmphdr->code,icmphdr->gateway.addr);
+    m->movePosition(sizeof(ICMPRedirect));
+    m->setCommand(&InetReceiver::input);
+
+    return true;
+}
+
+bool ICMPRedirectReceiver::output(InetMessenger* m, Conduit* c)
+{
+    return true;
+}

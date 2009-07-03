@@ -84,6 +84,7 @@ InFamily::InFamily() :
     sourceQuenchProtocol.setReceiver(&sourceQuenchReceiver);
     timeExceededProtocol.setReceiver(&timeExceededReceiver);
     paramProbProtocol.setReceiver(&paramProbReceiver);
+    redirectProtocol.setReceiver(&redirectReceiver);
 
     Conduit::connectAA(&scopeMux, &inProtocol);
     Conduit::connectBA(&inProtocol, &inMux);
@@ -101,10 +102,12 @@ InFamily::InFamily() :
     Conduit::connectBA(&icmpMux, &sourceQuenchProtocol, reinterpret_cast<void*>(ICMPHdr::SourceQuench));
     Conduit::connectBA(&icmpMux, &timeExceededProtocol, reinterpret_cast<void*>(ICMPHdr::TimeExceeded));
     Conduit::connectBA(&icmpMux, &paramProbProtocol, reinterpret_cast<void*>(ICMPHdr::ParamProb));
+    Conduit::connectBA(&icmpMux, &redirectProtocol, reinterpret_cast<void*>(ICMPHdr::Redirect));
     unreachProtocol.setB(&inProtocol);      // loop
     sourceQuenchProtocol.setB(&inProtocol); // loop
     timeExceededProtocol.setB(&inProtocol); // loop
     paramProbProtocol.setB(&inProtocol);    // loop
+    redirectProtocol.setB(&inProtocol);     // loop
 
     // IGMP
     igmpAdapter.setReceiver(&addressAny);
