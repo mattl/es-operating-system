@@ -242,9 +242,7 @@ fi
 rm -rf libxml2-2.7.3
 tar -zxf libxml2-2.7.3.tar.gz
 patch -p0 -d . < ../trunk/patches/libxml2-2.7.3.patch
-cd libxml2-2.7.3
-libtoolize;aclocal;autoconf;automake
-cd ../../opt
+cd ../opt
 mkdir -p libxml2
 cd libxml2
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libxml2-2.7.3.patch -newer Makefile -print`" ];
