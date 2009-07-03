@@ -213,6 +213,46 @@ then
 fi
 cd ../..
 
+# Libjpeg
+cd src
+if [ ! -f jpegsrc.v7.tar.gz ]; 
+then
+	wget http://www.ijg.org/files/jpegsrc.v7.tar.gz
+fi
+rm -rf jpeg-7
+tar -zxf jpegsrc.v7.tar.gz
+patch -p0 -d . < ../trunk/patches/jpegsrc.v7.patch
+cd ../opt
+mkdir -p libjpeg
+cd libjpeg
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/jpegsrc.v7.patch -newer Makefile -print`" ];
+then
+	../../src/jpeg-7/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld
+	make 
+	make install
+fi
+cd ../..
+
+# Libxml2
+cd src
+if [ ! -f libxml2-2.7.3.tar.gz ]; 
+then
+	wget ftp://xmlsoft.org/libxml2/libxml2-2.7.3.tar.gz
+fi
+rm -rf libxml2-2.7.3
+tar -zxf libxml2-2.7.3.tar.gz
+patch -p0 -d . < ../trunk/patches/libxml2-2.7.3.patch
+cd ../opt
+mkdir -p libxml2
+cd libxml2
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libxml2-2.7.3.patch -newer Makefile -print`" ];
+then
+        ../../src/libxml2-2.7.3/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld --without-debug --without-ftp --without-http  --without-python
+	make 
+	make install
+fi
+cd ../..
+
 # Pixman
 cd src
 if [ ! -f pixman-0.15.10.tar.gz ]; 

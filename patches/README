@@ -45,11 +45,25 @@ original software.
     usage: $ tar -zxvf fontconfig-2.4.2.tar.gz
            $ patch -p0 -d . < fontconfig-2.4.2.patch
 
-- cairo 1.4.10 (cairo-1.4.10.patch)
+- pixman 0.15.10 (pixman-0.15.10.patch)
     http://cairographics.org/
-    usage: $ tar -zxvf cairo-1.4.10.tar.gz
-           $ patch -p0 -d . < cairo-1.4.10.patch
+    usage: $ tar -zxf pixman-0.15.10.tar.gz
+           $ patch -p0 -d . < ../trunk/patches/pixman-0.15.10.patch
 
+- cairo 1.8.6 (cairo-1.8.6.patch)
+    http://cairographics.org/
+    usage: $ tar -zxvf cairo-1.8.6.tar.gz
+           $ patch -p0 -d . < cairo-1.8.6.patch
+
+- libxml2 2.7.3 (libxml2-2.7.3.patch)
+    http://cairographics.org/
+    usage: $ tar -zxf libxml2-2.7.3.tar.gz
+           $ patch -p0 -d . < libxml2-2.7.3.patch
+
+- libjpeg v7 (jpegsrc.v7.patch)
+    http://cairographics.org/
+    usage: $ tar -zxf jpegsrc.v7.tar.gz
+           $ patch -p0 -d . < jpegsrc.v7.patch
 
 See http://code.google.com/p/es-operating-system/ for how to report bugs
 usefully.
