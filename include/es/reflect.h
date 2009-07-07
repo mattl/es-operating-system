@@ -35,11 +35,20 @@
  *    [ operation, setter, getter, constructor, constant ]*
  *
  *  extends -> X name
- *  operation -> F digits type name (type name)* raises*   // digits represent the # of parameters
- *  setter -> S 1 v name type raises*
- *  getter -> G 0 type name raises*
+ *  operation -> F special* digits type name (type name)* raises*   // digits represent the # of parameters
+ *  setter -> S special* 1 v name type raises*
+ *  getter -> G special* 0 type name raises*
  *  constructor -> N digits type name (type name)* raises* // digits represent the # of parameters
  *  constant  -> C name value ws  // value represents a double value parseable by strtold()
+ *
+ *  special ->
+ *    g: getter
+ *    s: setter
+ *    c: creator
+ *    d: deleter
+ *    f: caller
+ *    t: stringifier
+ *    o: omittable
  *
  *  type ->
  *    A: any
@@ -98,6 +107,15 @@ public:
     static const char kConstructor = 'N';
     static const char kException = 'E';
     static const char kRaises = 'R';
+    // Special
+    static const char kSpecialGetter = 'g';
+    static const char kSpecialSetter = 's';
+    static const char kSpecialCreator = 'c';
+    static const char kSpecialDeleter = 'd';
+    static const char kSpecialCaller = 'f';
+    static const char kSpecialStringifier = 't';
+    static const char kSpecialOmittable = 'o';
+
     // Obsolete
     static const char kArray = 'Y';
     static const char kPointer = 'p';
@@ -488,7 +506,7 @@ public:
          */
         const std::string getName() const
         {
-            const char* name = skipType(skipDigits(info + 1));
+            const char* name = skipType(skipDigits(skipSpecial(info + 1)));
             unsigned length;
             name = skipDigits(name, &length);
             return std::string(name, length);
@@ -499,7 +517,7 @@ public:
          */
         Type getReturnType() const
         {
-            return Type(skipDigits(info + 1));
+            return Type(skipDigits(skipSpecial(info + 1)));
         }
 
         /**
@@ -508,7 +526,7 @@ public:
         unsigned getParameterCount() const
         {
             unsigned paramCount;
-            skipDigits(info + 1, &paramCount);
+            skipDigits(skipSpecial(info + 1), &paramCount);
             return paramCount;
         }
 
@@ -517,12 +535,12 @@ public:
          */
         Parameter listParameter() const
         {
-            return Parameter(skipDigits(info + 1));
+            return Parameter(skipDigits(skipSpecial(info + 1)));
         }
 
         static const char* skip(const char* info)
         {
-            const char* p = info + 1;
+            const char* p = skipSpecial(info + 1);
             unsigned count;
             p = skipDigits(p, &count);
             ++count;  // for name
@@ -538,27 +556,61 @@ public:
             return p;
         }
 
-#if 0
-        bool isIndexGetter() const
+        static const char* skipSpecial(const char* info)
         {
-            return method->isIndexGetter();
+            while (*info && !std::isdigit(*info))
+            {
+                ++info;
+            }
+            return info;
         }
 
-        bool isIndexSetter() const
+        bool hasSpecial(char special) const
         {
-            return method->isIndexSetter();
+            for (const char* p = info + 1; *p && !std::isdigit(*p); ++p)
+            {
+                if (*p == special)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        bool isNameGetter() const
+        bool isSpecialGetter() const
         {
-            return method->isNameGetter();
+            return hasSpecial(kSpecialGetter);
         }
 
-        bool isNameSetter() const
+        bool isSpecialSetter() const
         {
-            return method->isNameSetter();
+            return hasSpecial(kSpecialSetter);
         }
-#endif
+
+        bool isSpecialCreator() const
+        {
+            return hasSpecial(kSpecialCreator);
+        }
+
+        bool isSpecialDeleter() const
+        {
+            return hasSpecial(kSpecialDeleter);
+        }
+
+        bool isSpecialCaller() const
+        {
+            return hasSpecial(kSpecialCaller);
+        }
+
+        bool isSpecialStringifier() const
+        {
+            return hasSpecial(kSpecialStringifier);
+        }
+
+        bool isSpecialOmittable() const
+        {
+            return hasSpecial(kSpecialOmittable);
+        }
     };
 
     /**
