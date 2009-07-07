@@ -104,6 +104,18 @@ long long returnLongLong(int a, double x0, int b, int c,
     return 200LL;
 }
 
+int raise()
+{
+    throw 1;
+    return 0;
+}
+
+void* map(void* start, long long length, unsigned prot, unsigned flags, long long offset)
+{
+    printf("%s(%p, %lld, %x, %x, %lld)\n", __func__, start, length, prot, flags, offset);
+    return 0;
+}
+
 int main()
 {
     VariantHolder vh;
@@ -181,6 +193,26 @@ int main()
     value = vh.getVar(buf, sizeof buf);
     assert(value.getType() == Any::TypeString);
     printf("string value: %s\n", static_cast<const char*>(value));
+
+    bool caught = false;
+    try
+    {
+        value = apply(0, 0, reinterpret_cast<int32_t (*)()>(raise));
+    }
+    catch (...)
+    {
+        caught = true;
+        printf("caught\n");
+    }
+    assert(caught);
+
+    param[0] = Any(static_cast<intptr_t>(0));
+    param[1] = Any(10414200LL);
+    param[2] = Any(3u);
+    param[3] = Any(1u);
+    param[4] = Any(0LL);
+    value = apply(5, param, reinterpret_cast<intptr_t (*)()>(map));
+    printf("map: %u\n", value.getType());
 
     printf("done.\n");
 }

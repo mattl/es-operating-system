@@ -31,8 +31,10 @@ header_files = \
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) $(header_files)
 
+libessup___a_CPPFLAGS = -fnon-call-exceptions $(AM_CPPFLAGS)
+
 if I386
-libessup___a_SOURCES += src/variant386.S
+libessup___a_SOURCES += src/variant386.cpp
 endif I386
 
 if X86_64

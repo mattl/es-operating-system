@@ -35,7 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@I386_TRUE@am__append_1 = src/variant386.S
+@I386_TRUE@am__append_1 = src/variant386.cpp
 @X86_64_TRUE@am__append_2 = src/variantx64.S
 @ES_TRUE@am__append_3 = src/system.cpp
 
@@ -83,7 +83,7 @@ am__libes___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/utf.c src/color.cpp src/context.cpp src/dateTime.cpp \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
 	src/ring.cpp include/core.h include/posix_system.h \
-	include/posix_video.h src/variant386.S src/variantx64.S \
+	include/posix_video.h src/variant386.cpp src/variantx64.S \
 	src/interfaceStore.cpp src/report.cpp src/system.cpp \
 	src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 am__objects_1 = md5.$(OBJEXT) rand48.$(OBJEXT) string.$(OBJEXT) \
@@ -119,10 +119,20 @@ am__libessup___a_SOURCES_DIST = src/md5.c src/rand48.c src/string.c \
 	src/utf.c src/color.cpp src/context.cpp src/dateTime.cpp \
 	src/dump.cpp src/inet.cpp src/throw.cpp src/formatter.cpp \
 	src/ring.cpp include/core.h include/posix_system.h \
-	include/posix_video.h src/variant386.S src/variantx64.S
-am_libessup___a_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	$(am__objects_3) $(am__objects_4) $(am__objects_5)
-nodist_libessup___a_OBJECTS = interfaceList.$(OBJEXT)
+	include/posix_video.h src/variant386.cpp src/variantx64.S
+am__objects_11 = libessup___a-md5.$(OBJEXT) \
+	libessup___a-rand48.$(OBJEXT) libessup___a-string.$(OBJEXT) \
+	libessup___a-utf.$(OBJEXT)
+am__objects_12 = libessup___a-color.$(OBJEXT) \
+	libessup___a-context.$(OBJEXT) libessup___a-dateTime.$(OBJEXT) \
+	libessup___a-dump.$(OBJEXT) libessup___a-inet.$(OBJEXT) \
+	libessup___a-throw.$(OBJEXT) libessup___a-formatter.$(OBJEXT) \
+	libessup___a-ring.$(OBJEXT)
+@I386_TRUE@am__objects_13 = libessup___a-variant386.$(OBJEXT)
+@X86_64_TRUE@am__objects_14 = libessup___a-variantx64.$(OBJEXT)
+am_libessup___a_OBJECTS = $(am__objects_11) $(am__objects_12) \
+	$(am__objects_3) $(am__objects_13) $(am__objects_14)
+nodist_libessup___a_OBJECTS = libessup___a-interfaceList.$(OBJEXT)
 libessup___a_OBJECTS = $(am_libessup___a_OBJECTS) \
 	$(nodist_libessup___a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -316,6 +326,7 @@ header_files = \
 
 libessup___a_SOURCES = $(c_source_files) $(cpp_source_files) \
 	$(header_files) $(am__append_1) $(am__append_2)
+libessup___a_CPPFLAGS = -fnon-call-exceptions $(AM_CPPFLAGS)
 
 #
 # default interface descriptions
@@ -432,6 +443,21 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interfaceStore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-interfaceList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libesrpc_a-rpc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-color.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-context.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-dateTime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-dump.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-formatter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-inet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-interfaceList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-md5.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-rand48.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-ring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-string.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-throw.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-utf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-variant386.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libessup___a-variantx64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_system.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/posix_video.Po@am__quote@
@@ -460,20 +486,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CPPASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-variant386.o: src/variant386.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT variant386.o -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
-@am__fastdepCCAS_TRUE@	$(am__mv) $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='variant386.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variant386.o `test -f 'src/variant386.S' || echo '$(srcdir)/'`src/variant386.S
-
-variant386.obj: src/variant386.S
-@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT variant386.obj -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
-@am__fastdepCCAS_TRUE@	$(am__mv) $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variant386.S' object='variant386.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variant386.obj `if test -f 'src/variant386.S'; then $(CYGPATH_W) 'src/variant386.S'; else $(CYGPATH_W) '$(srcdir)/src/variant386.S'; fi`
-
 variantx64.o: src/variantx64.S
 @am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT variantx64.o -MD -MP -MF $(DEPDIR)/variantx64.Tpo -c -o variantx64.o `test -f 'src/variantx64.S' || echo '$(srcdir)/'`src/variantx64.S
 @am__fastdepCCAS_TRUE@	$(am__mv) $(DEPDIR)/variantx64.Tpo $(DEPDIR)/variantx64.Po
@@ -487,6 +499,20 @@ variantx64.obj: src/variantx64.S
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='variantx64.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
+
+libessup___a-variantx64.o: src/variantx64.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libessup___a-variantx64.o -MD -MP -MF $(DEPDIR)/libessup___a-variantx64.Tpo -c -o libessup___a-variantx64.o `test -f 'src/variantx64.S' || echo '$(srcdir)/'`src/variantx64.S
+@am__fastdepCCAS_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-variantx64.Tpo $(DEPDIR)/libessup___a-variantx64.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='libessup___a-variantx64.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libessup___a-variantx64.o `test -f 'src/variantx64.S' || echo '$(srcdir)/'`src/variantx64.S
+
+libessup___a-variantx64.obj: src/variantx64.S
+@am__fastdepCCAS_TRUE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT libessup___a-variantx64.obj -MD -MP -MF $(DEPDIR)/libessup___a-variantx64.Tpo -c -o libessup___a-variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
+@am__fastdepCCAS_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-variantx64.Tpo $(DEPDIR)/libessup___a-variantx64.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	source='src/variantx64.S' object='libessup___a-variantx64.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o libessup___a-variantx64.obj `if test -f 'src/variantx64.S'; then $(CYGPATH_W) 'src/variantx64.S'; else $(CYGPATH_W) '$(srcdir)/src/variantx64.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -557,6 +583,62 @@ utf.obj: src/utf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/utf.c' object='utf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o utf.obj `if test -f 'src/utf.c'; then $(CYGPATH_W) 'src/utf.c'; else $(CYGPATH_W) '$(srcdir)/src/utf.c'; fi`
+
+libessup___a-md5.o: src/md5.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-md5.o -MD -MP -MF $(DEPDIR)/libessup___a-md5.Tpo -c -o libessup___a-md5.o `test -f 'src/md5.c' || echo '$(srcdir)/'`src/md5.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-md5.Tpo $(DEPDIR)/libessup___a-md5.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/md5.c' object='libessup___a-md5.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-md5.o `test -f 'src/md5.c' || echo '$(srcdir)/'`src/md5.c
+
+libessup___a-md5.obj: src/md5.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-md5.obj -MD -MP -MF $(DEPDIR)/libessup___a-md5.Tpo -c -o libessup___a-md5.obj `if test -f 'src/md5.c'; then $(CYGPATH_W) 'src/md5.c'; else $(CYGPATH_W) '$(srcdir)/src/md5.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-md5.Tpo $(DEPDIR)/libessup___a-md5.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/md5.c' object='libessup___a-md5.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-md5.obj `if test -f 'src/md5.c'; then $(CYGPATH_W) 'src/md5.c'; else $(CYGPATH_W) '$(srcdir)/src/md5.c'; fi`
+
+libessup___a-rand48.o: src/rand48.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-rand48.o -MD -MP -MF $(DEPDIR)/libessup___a-rand48.Tpo -c -o libessup___a-rand48.o `test -f 'src/rand48.c' || echo '$(srcdir)/'`src/rand48.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-rand48.Tpo $(DEPDIR)/libessup___a-rand48.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/rand48.c' object='libessup___a-rand48.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-rand48.o `test -f 'src/rand48.c' || echo '$(srcdir)/'`src/rand48.c
+
+libessup___a-rand48.obj: src/rand48.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-rand48.obj -MD -MP -MF $(DEPDIR)/libessup___a-rand48.Tpo -c -o libessup___a-rand48.obj `if test -f 'src/rand48.c'; then $(CYGPATH_W) 'src/rand48.c'; else $(CYGPATH_W) '$(srcdir)/src/rand48.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-rand48.Tpo $(DEPDIR)/libessup___a-rand48.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/rand48.c' object='libessup___a-rand48.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-rand48.obj `if test -f 'src/rand48.c'; then $(CYGPATH_W) 'src/rand48.c'; else $(CYGPATH_W) '$(srcdir)/src/rand48.c'; fi`
+
+libessup___a-string.o: src/string.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-string.o -MD -MP -MF $(DEPDIR)/libessup___a-string.Tpo -c -o libessup___a-string.o `test -f 'src/string.c' || echo '$(srcdir)/'`src/string.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-string.Tpo $(DEPDIR)/libessup___a-string.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/string.c' object='libessup___a-string.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-string.o `test -f 'src/string.c' || echo '$(srcdir)/'`src/string.c
+
+libessup___a-string.obj: src/string.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-string.obj -MD -MP -MF $(DEPDIR)/libessup___a-string.Tpo -c -o libessup___a-string.obj `if test -f 'src/string.c'; then $(CYGPATH_W) 'src/string.c'; else $(CYGPATH_W) '$(srcdir)/src/string.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-string.Tpo $(DEPDIR)/libessup___a-string.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/string.c' object='libessup___a-string.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-string.obj `if test -f 'src/string.c'; then $(CYGPATH_W) 'src/string.c'; else $(CYGPATH_W) '$(srcdir)/src/string.c'; fi`
+
+libessup___a-utf.o: src/utf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-utf.o -MD -MP -MF $(DEPDIR)/libessup___a-utf.Tpo -c -o libessup___a-utf.o `test -f 'src/utf.c' || echo '$(srcdir)/'`src/utf.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-utf.Tpo $(DEPDIR)/libessup___a-utf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/utf.c' object='libessup___a-utf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-utf.o `test -f 'src/utf.c' || echo '$(srcdir)/'`src/utf.c
+
+libessup___a-utf.obj: src/utf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libessup___a-utf.obj -MD -MP -MF $(DEPDIR)/libessup___a-utf.Tpo -c -o libessup___a-utf.obj `if test -f 'src/utf.c'; then $(CYGPATH_W) 'src/utf.c'; else $(CYGPATH_W) '$(srcdir)/src/utf.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-utf.Tpo $(DEPDIR)/libessup___a-utf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/utf.c' object='libessup___a-utf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libessup___a-utf.obj `if test -f 'src/utf.c'; then $(CYGPATH_W) 'src/utf.c'; else $(CYGPATH_W) '$(srcdir)/src/utf.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -684,6 +766,20 @@ ring.obj: src/ring.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ring.obj `if test -f 'src/ring.cpp'; then $(CYGPATH_W) 'src/ring.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ring.cpp'; fi`
 
+variant386.o: src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT variant386.o -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.o `test -f 'src/variant386.cpp' || echo '$(srcdir)/'`src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant386.cpp' object='variant386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o variant386.o `test -f 'src/variant386.cpp' || echo '$(srcdir)/'`src/variant386.cpp
+
+variant386.obj: src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT variant386.obj -MD -MP -MF $(DEPDIR)/variant386.Tpo -c -o variant386.obj `if test -f 'src/variant386.cpp'; then $(CYGPATH_W) 'src/variant386.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant386.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/variant386.Tpo $(DEPDIR)/variant386.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant386.cpp' object='variant386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o variant386.obj `if test -f 'src/variant386.cpp'; then $(CYGPATH_W) 'src/variant386.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant386.cpp'; fi`
+
 interfaceStore.o: src/interfaceStore.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT interfaceStore.o -MD -MP -MF $(DEPDIR)/interfaceStore.Tpo -c -o interfaceStore.o `test -f 'src/interfaceStore.cpp' || echo '$(srcdir)/'`src/interfaceStore.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/interfaceStore.Tpo $(DEPDIR)/interfaceStore.Po
@@ -795,6 +891,146 @@ libesrpc_a-interfaceList.obj: interfaceList.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaceList.cpp' object='libesrpc_a-interfaceList.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libesrpc_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libesrpc_a-interfaceList.obj `if test -f 'interfaceList.cpp'; then $(CYGPATH_W) 'interfaceList.cpp'; else $(CYGPATH_W) '$(srcdir)/interfaceList.cpp'; fi`
+
+libessup___a-color.o: src/color.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-color.o -MD -MP -MF $(DEPDIR)/libessup___a-color.Tpo -c -o libessup___a-color.o `test -f 'src/color.cpp' || echo '$(srcdir)/'`src/color.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-color.Tpo $(DEPDIR)/libessup___a-color.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/color.cpp' object='libessup___a-color.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-color.o `test -f 'src/color.cpp' || echo '$(srcdir)/'`src/color.cpp
+
+libessup___a-color.obj: src/color.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-color.obj -MD -MP -MF $(DEPDIR)/libessup___a-color.Tpo -c -o libessup___a-color.obj `if test -f 'src/color.cpp'; then $(CYGPATH_W) 'src/color.cpp'; else $(CYGPATH_W) '$(srcdir)/src/color.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-color.Tpo $(DEPDIR)/libessup___a-color.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/color.cpp' object='libessup___a-color.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-color.obj `if test -f 'src/color.cpp'; then $(CYGPATH_W) 'src/color.cpp'; else $(CYGPATH_W) '$(srcdir)/src/color.cpp'; fi`
+
+libessup___a-context.o: src/context.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-context.o -MD -MP -MF $(DEPDIR)/libessup___a-context.Tpo -c -o libessup___a-context.o `test -f 'src/context.cpp' || echo '$(srcdir)/'`src/context.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-context.Tpo $(DEPDIR)/libessup___a-context.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/context.cpp' object='libessup___a-context.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-context.o `test -f 'src/context.cpp' || echo '$(srcdir)/'`src/context.cpp
+
+libessup___a-context.obj: src/context.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-context.obj -MD -MP -MF $(DEPDIR)/libessup___a-context.Tpo -c -o libessup___a-context.obj `if test -f 'src/context.cpp'; then $(CYGPATH_W) 'src/context.cpp'; else $(CYGPATH_W) '$(srcdir)/src/context.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-context.Tpo $(DEPDIR)/libessup___a-context.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/context.cpp' object='libessup___a-context.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-context.obj `if test -f 'src/context.cpp'; then $(CYGPATH_W) 'src/context.cpp'; else $(CYGPATH_W) '$(srcdir)/src/context.cpp'; fi`
+
+libessup___a-dateTime.o: src/dateTime.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-dateTime.o -MD -MP -MF $(DEPDIR)/libessup___a-dateTime.Tpo -c -o libessup___a-dateTime.o `test -f 'src/dateTime.cpp' || echo '$(srcdir)/'`src/dateTime.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-dateTime.Tpo $(DEPDIR)/libessup___a-dateTime.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/dateTime.cpp' object='libessup___a-dateTime.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-dateTime.o `test -f 'src/dateTime.cpp' || echo '$(srcdir)/'`src/dateTime.cpp
+
+libessup___a-dateTime.obj: src/dateTime.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-dateTime.obj -MD -MP -MF $(DEPDIR)/libessup___a-dateTime.Tpo -c -o libessup___a-dateTime.obj `if test -f 'src/dateTime.cpp'; then $(CYGPATH_W) 'src/dateTime.cpp'; else $(CYGPATH_W) '$(srcdir)/src/dateTime.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-dateTime.Tpo $(DEPDIR)/libessup___a-dateTime.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/dateTime.cpp' object='libessup___a-dateTime.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-dateTime.obj `if test -f 'src/dateTime.cpp'; then $(CYGPATH_W) 'src/dateTime.cpp'; else $(CYGPATH_W) '$(srcdir)/src/dateTime.cpp'; fi`
+
+libessup___a-dump.o: src/dump.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-dump.o -MD -MP -MF $(DEPDIR)/libessup___a-dump.Tpo -c -o libessup___a-dump.o `test -f 'src/dump.cpp' || echo '$(srcdir)/'`src/dump.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-dump.Tpo $(DEPDIR)/libessup___a-dump.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/dump.cpp' object='libessup___a-dump.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-dump.o `test -f 'src/dump.cpp' || echo '$(srcdir)/'`src/dump.cpp
+
+libessup___a-dump.obj: src/dump.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-dump.obj -MD -MP -MF $(DEPDIR)/libessup___a-dump.Tpo -c -o libessup___a-dump.obj `if test -f 'src/dump.cpp'; then $(CYGPATH_W) 'src/dump.cpp'; else $(CYGPATH_W) '$(srcdir)/src/dump.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-dump.Tpo $(DEPDIR)/libessup___a-dump.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/dump.cpp' object='libessup___a-dump.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-dump.obj `if test -f 'src/dump.cpp'; then $(CYGPATH_W) 'src/dump.cpp'; else $(CYGPATH_W) '$(srcdir)/src/dump.cpp'; fi`
+
+libessup___a-inet.o: src/inet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-inet.o -MD -MP -MF $(DEPDIR)/libessup___a-inet.Tpo -c -o libessup___a-inet.o `test -f 'src/inet.cpp' || echo '$(srcdir)/'`src/inet.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-inet.Tpo $(DEPDIR)/libessup___a-inet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/inet.cpp' object='libessup___a-inet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-inet.o `test -f 'src/inet.cpp' || echo '$(srcdir)/'`src/inet.cpp
+
+libessup___a-inet.obj: src/inet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-inet.obj -MD -MP -MF $(DEPDIR)/libessup___a-inet.Tpo -c -o libessup___a-inet.obj `if test -f 'src/inet.cpp'; then $(CYGPATH_W) 'src/inet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/inet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-inet.Tpo $(DEPDIR)/libessup___a-inet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/inet.cpp' object='libessup___a-inet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-inet.obj `if test -f 'src/inet.cpp'; then $(CYGPATH_W) 'src/inet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/inet.cpp'; fi`
+
+libessup___a-throw.o: src/throw.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-throw.o -MD -MP -MF $(DEPDIR)/libessup___a-throw.Tpo -c -o libessup___a-throw.o `test -f 'src/throw.cpp' || echo '$(srcdir)/'`src/throw.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-throw.Tpo $(DEPDIR)/libessup___a-throw.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/throw.cpp' object='libessup___a-throw.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-throw.o `test -f 'src/throw.cpp' || echo '$(srcdir)/'`src/throw.cpp
+
+libessup___a-throw.obj: src/throw.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-throw.obj -MD -MP -MF $(DEPDIR)/libessup___a-throw.Tpo -c -o libessup___a-throw.obj `if test -f 'src/throw.cpp'; then $(CYGPATH_W) 'src/throw.cpp'; else $(CYGPATH_W) '$(srcdir)/src/throw.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-throw.Tpo $(DEPDIR)/libessup___a-throw.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/throw.cpp' object='libessup___a-throw.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-throw.obj `if test -f 'src/throw.cpp'; then $(CYGPATH_W) 'src/throw.cpp'; else $(CYGPATH_W) '$(srcdir)/src/throw.cpp'; fi`
+
+libessup___a-formatter.o: src/formatter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-formatter.o -MD -MP -MF $(DEPDIR)/libessup___a-formatter.Tpo -c -o libessup___a-formatter.o `test -f 'src/formatter.cpp' || echo '$(srcdir)/'`src/formatter.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-formatter.Tpo $(DEPDIR)/libessup___a-formatter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/formatter.cpp' object='libessup___a-formatter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-formatter.o `test -f 'src/formatter.cpp' || echo '$(srcdir)/'`src/formatter.cpp
+
+libessup___a-formatter.obj: src/formatter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-formatter.obj -MD -MP -MF $(DEPDIR)/libessup___a-formatter.Tpo -c -o libessup___a-formatter.obj `if test -f 'src/formatter.cpp'; then $(CYGPATH_W) 'src/formatter.cpp'; else $(CYGPATH_W) '$(srcdir)/src/formatter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-formatter.Tpo $(DEPDIR)/libessup___a-formatter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/formatter.cpp' object='libessup___a-formatter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-formatter.obj `if test -f 'src/formatter.cpp'; then $(CYGPATH_W) 'src/formatter.cpp'; else $(CYGPATH_W) '$(srcdir)/src/formatter.cpp'; fi`
+
+libessup___a-ring.o: src/ring.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-ring.o -MD -MP -MF $(DEPDIR)/libessup___a-ring.Tpo -c -o libessup___a-ring.o `test -f 'src/ring.cpp' || echo '$(srcdir)/'`src/ring.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-ring.Tpo $(DEPDIR)/libessup___a-ring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/ring.cpp' object='libessup___a-ring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-ring.o `test -f 'src/ring.cpp' || echo '$(srcdir)/'`src/ring.cpp
+
+libessup___a-ring.obj: src/ring.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-ring.obj -MD -MP -MF $(DEPDIR)/libessup___a-ring.Tpo -c -o libessup___a-ring.obj `if test -f 'src/ring.cpp'; then $(CYGPATH_W) 'src/ring.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-ring.Tpo $(DEPDIR)/libessup___a-ring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/ring.cpp' object='libessup___a-ring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-ring.obj `if test -f 'src/ring.cpp'; then $(CYGPATH_W) 'src/ring.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ring.cpp'; fi`
+
+libessup___a-variant386.o: src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-variant386.o -MD -MP -MF $(DEPDIR)/libessup___a-variant386.Tpo -c -o libessup___a-variant386.o `test -f 'src/variant386.cpp' || echo '$(srcdir)/'`src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-variant386.Tpo $(DEPDIR)/libessup___a-variant386.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant386.cpp' object='libessup___a-variant386.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-variant386.o `test -f 'src/variant386.cpp' || echo '$(srcdir)/'`src/variant386.cpp
+
+libessup___a-variant386.obj: src/variant386.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-variant386.obj -MD -MP -MF $(DEPDIR)/libessup___a-variant386.Tpo -c -o libessup___a-variant386.obj `if test -f 'src/variant386.cpp'; then $(CYGPATH_W) 'src/variant386.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant386.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-variant386.Tpo $(DEPDIR)/libessup___a-variant386.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/variant386.cpp' object='libessup___a-variant386.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-variant386.obj `if test -f 'src/variant386.cpp'; then $(CYGPATH_W) 'src/variant386.cpp'; else $(CYGPATH_W) '$(srcdir)/src/variant386.cpp'; fi`
+
+libessup___a-interfaceList.o: interfaceList.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-interfaceList.o -MD -MP -MF $(DEPDIR)/libessup___a-interfaceList.Tpo -c -o libessup___a-interfaceList.o `test -f 'interfaceList.cpp' || echo '$(srcdir)/'`interfaceList.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-interfaceList.Tpo $(DEPDIR)/libessup___a-interfaceList.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaceList.cpp' object='libessup___a-interfaceList.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-interfaceList.o `test -f 'interfaceList.cpp' || echo '$(srcdir)/'`interfaceList.cpp
+
+libessup___a-interfaceList.obj: interfaceList.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libessup___a-interfaceList.obj -MD -MP -MF $(DEPDIR)/libessup___a-interfaceList.Tpo -c -o libessup___a-interfaceList.obj `if test -f 'interfaceList.cpp'; then $(CYGPATH_W) 'interfaceList.cpp'; else $(CYGPATH_W) '$(srcdir)/interfaceList.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libessup___a-interfaceList.Tpo $(DEPDIR)/libessup___a-interfaceList.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaceList.cpp' object='libessup___a-interfaceList.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libessup___a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libessup___a-interfaceList.obj `if test -f 'interfaceList.cpp'; then $(CYGPATH_W) 'interfaceList.cpp'; else $(CYGPATH_W) '$(srcdir)/interfaceList.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
