@@ -27,5 +27,7 @@ EXTRA_DIST = \
 	patches/fontconfig-2.4.2.patch \
 	patches/cairo-1.8.6.patch \
 	patches/pixman-0.15.10.patch \
-	patches/icu-4.2.0.1.patch
+	patches/libxml2-2.7.3.patch \
+	patches/jpegsrc.v7.patch \
+	patches/icu-4.2.1.patch
 

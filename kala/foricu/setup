@@ -254,18 +254,18 @@ fi
 cd ../..
 
 # ICU
-if [ ! -f src/icu4c-4_2_0_1-src.tgz ]; 
+if [ ! -f src/icu4c-4_2_1-src.tgz ]; 
 then
 	cd src
-	wget http://download.icu-project.org/files/icu4c/4.2.0.1/icu4c-4_2_0_1-src.tgz
+	wget http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz
 	cd ..
 fi
-if [ ! -d src/icu ] || [ ! -f opt/icu/Makefile ] || [ -n "`find trunk/patches/icu-4.2.0.1.patch -newer opt/icu/Makefile -print`" ];
+if [ ! -d src/icu ] || [ ! -f opt/icu/Makefile ] || [ -n "`find trunk/patches/icu-4.2.1.patch -newer opt/icu/Makefile -print`" ];
 then
 	cd src
 	rm -rf icu
-	tar -zxf icu4c-4_2_0_1-src.tgz
-	patch -p0 -d . < ../trunk/patches/icu-4.2.0.1.patch
+	tar -zxf icu4c-4_2_1-src.tgz
+	patch -p0 -d . < ../trunk/patches/icu-4.2.1.patch
 	cd icu/source
 	autoconf
 	./runConfigureICU Linux --with-library-bits=32 --disable-shared --disable-release --disable-debug --enable-static
@@ -275,7 +275,7 @@ fi
 cd opt
 mkdir -p icu
 cd icu
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.0.1.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.1.patch -newer Makefile -print`" ];
 then
          ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-debug --enable-static
         make
