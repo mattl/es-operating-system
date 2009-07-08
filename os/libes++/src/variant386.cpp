@@ -17,8 +17,7 @@
 #include <es/any.h>
 
 // The apply functions are implemented in C++ so that these can support C++
-// exceptions. Note the -fnon-call-exceptions g++ option must be specified
-// to support exceptions.
+// exceptions.
 
 namespace
 {
@@ -103,39 +102,30 @@ Any apply(int argc, Any* argv, void (*function)())
     {
         __asm__ __volatile__ (
             "pushl  %0\n"
-            "call   *%1\n"
-            ::"r"(result), "r"(function)
+            ::"r"(result)
         );
+        function();
     }
     else
     {
         switch (type)
         {
         case Any::TypeFloat:
-            __asm__ __volatile__ (
-                "call   *%0\n"
-                ::"r"(function)
-            );
+            function();
             __asm__ __volatile__ (
                 "fstps  0(%0)\n"
                 ::"r"(result)
             );
             break;
         case Any::TypeDouble:
-            __asm__ __volatile__ (
-                "call   *%0\n"
-                ::"r"(function)
-            );
+            function();
             __asm__ __volatile__ (
                 "fstpl  0(%0)\n"
                 ::"r"(result)
             );
             break;
         default:
-            __asm__ __volatile__ (
-                "call   *%0\n"
-                ::"r"(function)
-            );
+            function();
             __asm__ __volatile__ (
                 "movl   %%eax, 0(%0)\n"
                 "movl   %%edx, 4(%0)\n"
