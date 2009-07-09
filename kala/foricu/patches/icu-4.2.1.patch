@@ -1,6 +1,6 @@
 diff -bcrN icu.org/source/aclocal.m4 icu/source/aclocal.m4
 *** icu.org/source/aclocal.m4	2009-07-05 08:52:39.607390567 +0800
---- icu/source/aclocal.m4	2009-07-05 08:52:55.624932065 +0800
+--- icu/source/aclocal.m4	2009-07-09 21:30:04.478612982 +0800
 ***************
 *** 64,69 ****
 --- 64,70 ----
@@ -40,7 +40,7 @@ diff -bcrN icu.org/source/aclocal.m4 icu/source/aclocal.m4
       # do we need to check for buildable/runnable 32 or 64 bit?
 diff -bcrN icu.org/source/common/putil.c icu/source/common/putil.c
 *** icu.org/source/common/putil.c	2009-07-05 08:52:39.771388018 +0800
---- icu/source/common/putil.c	2009-07-05 09:25:53.870282045 +0800
+--- icu/source/common/putil.c	2009-07-09 21:30:04.478612982 +0800
 ***************
 *** 606,612 ****
   /* Note that U_TZNAME does *not* have to be tzname, but if it is,
@@ -60,7 +60,7 @@ diff -bcrN icu.org/source/common/putil.c icu/source/common/putil.c
   #endif
 diff -bcrN icu.org/source/common/unicode/uconfig.h icu/source/common/unicode/uconfig.h
 *** icu.org/source/common/unicode/uconfig.h	2009-07-05 08:52:39.771388018 +0800
---- icu/source/common/unicode/uconfig.h	2009-07-05 08:54:54.239387650 +0800
+--- icu/source/common/unicode/uconfig.h	2009-07-09 21:30:04.478612982 +0800
 ***************
 *** 195,201 ****
    * @stable ICU 2.4
@@ -80,7 +80,7 @@ diff -bcrN icu.org/source/common/unicode/uconfig.h icu/source/common/unicode/uco
   /**
 diff -bcrN icu.org/source/config/mh-es icu/source/config/mh-es
 *** icu.org/source/config/mh-es	1970-01-01 08:00:00.000000000 +0800
---- icu/source/config/mh-es	2009-07-05 08:52:55.624932065 +0800
+--- icu/source/config/mh-es	2009-07-09 21:30:04.478612982 +0800
 ***************
 *** 0 ****
 --- 1,78 ----
@@ -164,7 +164,7 @@ diff -bcrN icu.org/source/config/mh-es icu/source/config/mh-es
 + 
 diff -bcrN icu.org/source/config.sub icu/source/config.sub
 *** icu.org/source/config.sub	2009-07-05 08:52:39.931388268 +0800
---- icu/source/config.sub	2009-07-05 08:52:55.627387957 +0800
+--- icu/source/config.sub	2009-07-09 21:30:04.478612982 +0800
 ***************
 *** 1249,1255 ****
   	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
@@ -184,20 +184,10 @@ diff -bcrN icu.org/source/config.sub icu/source/config.sub
   	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
 diff -bcrN icu.org/source/configure icu/source/configure
 *** icu.org/source/configure	2009-07-05 08:52:39.587387584 +0800
---- icu/source/configure	2009-07-05 08:52:55.631388681 +0800
-***************
-*** 3921,3926 ****
---- 3921,3927 ----
-  $as_echo_n "checking checking for executable suffix... " >&6; }
-  case "${host}" in
-      *-*-cygwin*|*-*-mingw*)  EXEEXT=.exe ;;
-+     *-*-es*)  EXEEXT=.elf ;;
-      *)      EXEEXT="" ;;
-  esac
-  ac_exeext=$EXEEXT
+--- icu/source/configure	2009-07-09 21:30:04.486612503 +0800
 ***************
 *** 4706,4711 ****
---- 4707,4713 ----
+--- 4706,4712 ----
   		icu_cv_host_frag=mh-linux-va
   	fi ;;
   *-*-linux*|*-pc-gnu) icu_cv_host_frag=mh-linux ;;
@@ -207,7 +197,7 @@ diff -bcrN icu.org/source/configure icu/source/configure
   		cat >conftest.$ac_ext <<_ACEOF
 ***************
 *** 4780,4785 ****
---- 4782,4788 ----
+--- 4781,4787 ----
   *-dec-osf*) icu_cv_host_frag=mh-alpha-osf ;;
   *-*-nto*)	icu_cv_host_frag=mh-qnx ;;
   *-ncr-*)	icu_cv_host_frag=mh-mpras ;;
@@ -217,7 +207,7 @@ diff -bcrN icu.org/source/configure icu/source/configure
   
 ***************
 *** 10339,10344 ****
---- 10342,10348 ----
+--- 10341,10347 ----
   	*-*-beos)		platform=U_BEOS ;;
   	*-*-irix*)		platform=U_IRIX ;;
   	*-ncr-*)		platform=U_MPRAS ;;
@@ -227,7 +217,7 @@ diff -bcrN icu.org/source/configure icu/source/configure
   
 diff -bcrN icu.org/source/configure.in icu/source/configure.in
 *** icu.org/source/configure.in	2009-07-05 08:52:39.587387584 +0800
---- icu/source/configure.in	2009-07-07 11:11:25.507310096 +0800
+--- icu/source/configure.in	2009-07-09 21:30:30.342613280 +0800
 ***************
 *** 107,112 ****
 --- 107,113 ----
@@ -305,9 +295,29 @@ diff -bcrN icu.org/source/configure.in icu/source/configure.in
   	*) 		platform=U_UNKNOWN_PLATFORM ;;
   esac
   AC_SUBST(ICUDATA_CHAR)
+diff -bcrN icu.org/source/data/Makefile.in icu/source/data/Makefile.in
+*** icu.org/source/data/Makefile.in	2009-07-05 08:52:39.931388268 +0800
+--- icu/source/data/Makefile.in	2009-07-09 21:30:52.206612966 +0800
+***************
+*** 462,468 ****
+  #          The $(word n, ...) selects the nth word from the following stuff.
+  #          There must be a nicer way to do this.
+  
+! $(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(EXEEXT) $(DAT_FILES)
+  	$(INVOKE) echo ALL_CFU_SOURCE: $(ALL_CFU_SOURCE)
+  	$(INVOKE) echo CFU_FILES: $(CFU_FILES)
+  	$(INVOKE) echo CFU_FILES_SHORT: $(CFU_FILES_SHORT)
+--- 462,468 ----
+  #          The $(word n, ...) selects the nth word from the following stuff.
+  #          There must be a nicer way to do this.
+  
+! $(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(TOOLEXEEXT) $(DAT_FILES)
+  	$(INVOKE) echo ALL_CFU_SOURCE: $(ALL_CFU_SOURCE)
+  	$(INVOKE) echo CFU_FILES: $(CFU_FILES)
+  	$(INVOKE) echo CFU_FILES_SHORT: $(CFU_FILES_SHORT)
 diff -bcrN icu.org/source/tools/gentest/gentest.c icu/source/tools/gentest/gentest.c
 *** icu.org/source/tools/gentest/gentest.c	2009-07-05 08:52:39.699388169 +0800
---- icu/source/tools/gentest/gentest.c	2009-07-07 11:59:42.913990833 +0800
+--- icu/source/tools/gentest/gentest.c	2009-07-09 21:30:04.486612503 +0800
 ***************
 *** 196,210 ****
               fprintf(out, 
