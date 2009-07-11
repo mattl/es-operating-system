@@ -268,7 +268,7 @@ then
 	patch -p0 -d . < ../trunk/patches/icu-4.2.1.patch
 	cd icu/source
 	autoconf
-	./runConfigureICU Linux --with-library-bits=32 --disable-shared --disable-release --disable-debug --enable-static
+	./runConfigureICU Linux --with-library-bits=32 --disable-shared --disable-release --disable-debug --enable-static --with-data-packaging=common
 	make
 	cd ../../..
 fi
@@ -277,7 +277,7 @@ mkdir -p icu
 cd icu
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.1.patch -newer Makefile -print`" ];
 then
-         ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-debug --enable-static
+         ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-debug --enable-static --with-data-packaging=common
         make
         make install
 fi
