@@ -1,6 +1,0 @@
-interface I
-{
-    typedef boolean B;
-    attribute boolean on;
-    attribute B off;
-};
