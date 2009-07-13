@@ -1,6 +1,6 @@
 diff -bcrN icu.org/source/aclocal.m4 icu/source/aclocal.m4
-*** icu.org/source/aclocal.m4	2009-07-05 08:52:39.607390567 +0800
---- icu/source/aclocal.m4	2009-07-09 21:30:04.478612982 +0800
+*** icu.org/source/aclocal.m4	2009-07-13 23:26:23.000000000 +0800
+--- icu/source/aclocal.m4	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 64,69 ****
 --- 64,70 ----
@@ -39,8 +39,8 @@ diff -bcrN icu.org/source/aclocal.m4 icu/source/aclocal.m4
   
       # do we need to check for buildable/runnable 32 or 64 bit?
 diff -bcrN icu.org/source/common/putil.c icu/source/common/putil.c
-*** icu.org/source/common/putil.c	2009-07-05 08:52:39.771388018 +0800
---- icu/source/common/putil.c	2009-07-09 21:30:04.478612982 +0800
+*** icu.org/source/common/putil.c	2009-07-13 23:26:23.000000000 +0800
+--- icu/source/common/putil.c	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 606,612 ****
   /* Note that U_TZNAME does *not* have to be tzname, but if it is,
@@ -59,8 +59,8 @@ diff -bcrN icu.org/source/common/putil.c icu/source/common/putil.c
   extern U_IMPORT char *U_TZNAME[];
   #endif
 diff -bcrN icu.org/source/common/unicode/uconfig.h icu/source/common/unicode/uconfig.h
-*** icu.org/source/common/unicode/uconfig.h	2009-07-05 08:52:39.771388018 +0800
---- icu/source/common/unicode/uconfig.h	2009-07-09 21:30:04.478612982 +0800
+*** icu.org/source/common/unicode/uconfig.h	2009-07-13 23:26:23.000000000 +0800
+--- icu/source/common/unicode/uconfig.h	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 195,201 ****
    * @stable ICU 2.4
@@ -80,7 +80,7 @@ diff -bcrN icu.org/source/common/unicode/uconfig.h icu/source/common/unicode/uco
   /**
 diff -bcrN icu.org/source/config/mh-es icu/source/config/mh-es
 *** icu.org/source/config/mh-es	1970-01-01 08:00:00.000000000 +0800
---- icu/source/config/mh-es	2009-07-09 21:30:04.478612982 +0800
+--- icu/source/config/mh-es	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 0 ****
 --- 1,78 ----
@@ -163,8 +163,8 @@ diff -bcrN icu.org/source/config/mh-es icu/source/config/mh-es
 + ## End Linux-specific setup
 + 
 diff -bcrN icu.org/source/config.sub icu/source/config.sub
-*** icu.org/source/config.sub	2009-07-05 08:52:39.931388268 +0800
---- icu/source/config.sub	2009-07-09 21:30:04.478612982 +0800
+*** icu.org/source/config.sub	2009-07-13 23:26:24.000000000 +0800
+--- icu/source/config.sub	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 1249,1255 ****
   	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
@@ -183,21 +183,48 @@ diff -bcrN icu.org/source/config.sub icu/source/config.sub
   	      | -uxpv* | -beos* | -mpeix* | -udk* \
   	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
 diff -bcrN icu.org/source/configure icu/source/configure
-*** icu.org/source/configure	2009-07-05 08:52:39.587387584 +0800
---- icu/source/configure	2009-07-09 21:30:04.486612503 +0800
+*** icu.org/source/configure	2009-07-13 23:26:23.000000000 +0800
+--- icu/source/configure	2009-07-14 00:42:41.000000000 +0800
 ***************
-*** 4706,4711 ****
---- 4706,4712 ----
-  		icu_cv_host_frag=mh-linux-va
-  	fi ;;
-  *-*-linux*|*-pc-gnu) icu_cv_host_frag=mh-linux ;;
-+ *-*-es*) icu_cv_host_frag=mh-es ;;
-  *-*-cygwin|*-*-mingw32)
-  	if test "$GCC" = yes; then
-  		cat >conftest.$ac_ext <<_ACEOF
+*** 3921,3926 ****
+--- 3921,3927 ----
+  $as_echo_n "checking checking for executable suffix... " >&6; }
+  case "${host}" in
+      *-*-cygwin*|*-*-mingw*)  EXEEXT=.exe ;;
++     *-*-es*)  EXEEXT=.elf ;;
+      *)      EXEEXT="" ;;
+  esac
+  ac_exeext=$EXEEXT
+***************
+*** 3990,3996 ****
+  
+  
+      BITS_REQ=nochange
+!     ENABLE_64BIT_LIBS=unknown
+      ## revisit this for cross-compile.
+  
+      # Check whether --enable-64bit-libs was given.
+--- 3991,3997 ----
+  
+  
+      BITS_REQ=nochange
+!     ENABLE_64BIT_LIBS=no
+      ## revisit this for cross-compile.
+  
+      # Check whether --enable-64bit-libs was given.
+***************
+*** 4075,4080 ****
+--- 4076,4082 ----
+      BITS_GOT=unknown
+  
+      # 'OK' here means, we can exit any further checking, everything's copa
++     DEFAULT_64BIT=no
+      BITS_OK=yes
+  
+      # do we need to check for buildable/runnable 32 or 64 bit?
 ***************
 *** 4780,4785 ****
---- 4781,4787 ----
+--- 4782,4788 ----
   *-dec-osf*) icu_cv_host_frag=mh-alpha-osf ;;
   *-*-nto*)	icu_cv_host_frag=mh-qnx ;;
   *-ncr-*)	icu_cv_host_frag=mh-mpras ;;
@@ -206,8 +233,65 @@ diff -bcrN icu.org/source/configure icu/source/configure
   esac
   
 ***************
+*** 6104,6110 ****
+  $as_echo_n "checking for genccode assembly... " >&6; }
+  
+  # Check to see if genccode can generate simple assembly.
+! GENCCODE_ASSEMBLY=
+  case "${host}" in
+  i*86-*-linux*|x86_64-*-linux*|powerpc*-*-linux*|i*86-*-*bsd*|i*86-pc-gnu)
+      if test "$GCC" = yes; then
+--- 6107,6113 ----
+  $as_echo_n "checking for genccode assembly... " >&6; }
+  
+  # Check to see if genccode can generate simple assembly.
+! GENCCODE_ASSEMBLY="-a gcc"
+  case "${host}" in
+  i*86-*-linux*|x86_64-*-linux*|powerpc*-*-linux*|i*86-*-*bsd*|i*86-pc-gnu)
+      if test "$GCC" = yes; then
+***************
+*** 7663,7672 ****
+  { $as_echo "$as_me:$LINENO: result: $ac_cv_namespace_ok" >&5
+  $as_echo "$ac_cv_namespace_ok" >&6; }
+  U_HAVE_NAMESPACE=1
+! if test $ac_cv_namespace_ok = no
+! then
+!     U_HAVE_NAMESPACE=0
+! fi
+  
+  
+  { $as_echo "$as_me:$LINENO: checking for properly overriding new and delete" >&5
+--- 7666,7675 ----
+  { $as_echo "$as_me:$LINENO: result: $ac_cv_namespace_ok" >&5
+  $as_echo "$ac_cv_namespace_ok" >&6; }
+  U_HAVE_NAMESPACE=1
+! #if test $ac_cv_namespace_ok = no
+! #then
+! #    U_HAVE_NAMESPACE=0
+! #fi
+  
+  
+  { $as_echo "$as_me:$LINENO: checking for properly overriding new and delete" >&5
+***************
+*** 8293,8299 ****
+  fi
+  { $as_echo "$as_me:$LINENO: result: $ac_cv_var_timezone" >&5
+  $as_echo "$ac_cv_var_timezone" >&6; }
+! U_HAVE_TIMEZONE=0
+  if test $ac_cv_var_timezone = yes; then
+    U_TIMEZONE=timezone
+    U_HAVE_TIMEZONE=1
+--- 8296,8302 ----
+  fi
+  { $as_echo "$as_me:$LINENO: result: $ac_cv_var_timezone" >&5
+  $as_echo "$ac_cv_var_timezone" >&6; }
+! U_HAVE_TIMEZONE=1
+  if test $ac_cv_var_timezone = yes; then
+    U_TIMEZONE=timezone
+    U_HAVE_TIMEZONE=1
+***************
 *** 10339,10344 ****
---- 10341,10347 ----
+--- 10342,10348 ----
   	*-*-beos)		platform=U_BEOS ;;
   	*-*-irix*)		platform=U_IRIX ;;
   	*-ncr-*)		platform=U_MPRAS ;;
@@ -215,9 +299,26 @@ diff -bcrN icu.org/source/configure icu/source/configure
   	*) 		platform=U_UNKNOWN_PLATFORM ;;
   esac
   
+***************
+*** 11081,11087 ****
+  if test -n "$CONFIG_FILES"; then
+  
+  
+! ac_cr=`echo X |tr X "\015"`
+  ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+  if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+    ac_cs_awk_cr='\\r'
+--- 11085,11091 ----
+  if test -n "$CONFIG_FILES"; then
+  
+  
+! ac_cr=''
+  ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+  if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+    ac_cs_awk_cr='\\r'
 diff -bcrN icu.org/source/configure.in icu/source/configure.in
-*** icu.org/source/configure.in	2009-07-05 08:52:39.587387584 +0800
---- icu/source/configure.in	2009-07-09 21:30:30.342613280 +0800
+*** icu.org/source/configure.in	2009-07-13 23:26:23.000000000 +0800
+--- icu/source/configure.in	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 107,112 ****
 --- 107,113 ----
@@ -296,8 +397,8 @@ diff -bcrN icu.org/source/configure.in icu/source/configure.in
   esac
   AC_SUBST(ICUDATA_CHAR)
 diff -bcrN icu.org/source/data/Makefile.in icu/source/data/Makefile.in
-*** icu.org/source/data/Makefile.in	2009-07-05 08:52:39.931388268 +0800
---- icu/source/data/Makefile.in	2009-07-09 21:30:52.206612966 +0800
+*** icu.org/source/data/Makefile.in	2009-07-13 23:26:24.000000000 +0800
+--- icu/source/data/Makefile.in	2009-07-14 00:56:03.000000000 +0800
 ***************
 *** 462,468 ****
   #          The $(word n, ...) selects the nth word from the following stuff.
@@ -316,8 +417,8 @@ diff -bcrN icu.org/source/data/Makefile.in icu/source/data/Makefile.in
   	$(INVOKE) echo CFU_FILES: $(CFU_FILES)
   	$(INVOKE) echo CFU_FILES_SHORT: $(CFU_FILES_SHORT)
 diff -bcrN icu.org/source/tools/gentest/gentest.c icu/source/tools/gentest/gentest.c
-*** icu.org/source/tools/gentest/gentest.c	2009-07-05 08:52:39.699388169 +0800
---- icu/source/tools/gentest/gentest.c	2009-07-09 21:30:04.486612503 +0800
+*** icu.org/source/tools/gentest/gentest.c	2009-07-13 23:26:24.000000000 +0800
+--- icu/source/tools/gentest/gentest.c	2009-07-14 00:13:19.000000000 +0800
 ***************
 *** 196,210 ****
               fprintf(out, 

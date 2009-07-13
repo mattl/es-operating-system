@@ -267,7 +267,6 @@ then
 	tar -zxf icu4c-4_2_1-src.tgz
 	patch -p0 -d . < ../trunk/patches/icu-4.2.1.patch
 	cd icu/source
-	autoconf
 	./runConfigureICU Linux --with-library-bits=32 --disable-shared --disable-release --disable-debug --enable-static --with-data-packaging=common
 	make
 	cd ../../..
