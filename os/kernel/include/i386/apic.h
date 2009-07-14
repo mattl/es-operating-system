@@ -18,13 +18,11 @@
 #ifndef NINTENDO_ES_KERNEL_I386_APIC_H_INCLUDED
 #define NINTENDO_ES_KERNEL_I386_APIC_H_INCLUDED
 
+#include <es.h>
+#include <es/ref.h>
 #include <es/base/ICallback.h>
 #include <es/device/IPic.h>
-#include <es/ref.h>
-#include <es.h>
 #include "mps.h"
-
-
 
 class Apic : public es::Pic, public es::Callback
 {

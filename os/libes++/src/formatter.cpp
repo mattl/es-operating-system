@@ -21,10 +21,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <es.h>
-#include <es/types.h>
 #include <es/formatter.h>
-
-
+#include <es/types.h>
 
 extern "C"
 {

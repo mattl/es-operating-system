@@ -19,6 +19,7 @@
 #define NINTENDO_ES_KERNEL_I386_CORE_H_INCLUDED
 
 #include <new>
+#include <es/object.h>
 #include <es/base/ICallback.h>
 #include "cache.h"
 #include "process.h"

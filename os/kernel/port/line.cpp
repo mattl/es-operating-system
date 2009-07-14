@@ -17,6 +17,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <es/object.h>
 #include <es/exception.h>
 #include <es/synchronized.h>
 #include <es/base/IMonitor.h>

@@ -21,6 +21,7 @@
 // 8254 programmable interval timer
 
 #include <es/dateTime.h>
+#include <es/object.h>
 #include <es/ref.h>
 #include <es/base/ICallback.h>
 #include <es/device/IBeep.h>

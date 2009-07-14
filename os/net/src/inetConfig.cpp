@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <es/object.h>
 #include <es/naming/IBinding.h>
 #include "inetConfig.h"
 

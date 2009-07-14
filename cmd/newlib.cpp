@@ -24,10 +24,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <es/object.h>
 #include <es/base/IProcess.h>
 #include <es/base/IThread.h>
-
-
 
 extern es::CurrentProcess* System();
 

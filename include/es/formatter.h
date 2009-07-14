@@ -20,6 +20,7 @@
 
 #include <string>
 #include <stdarg.h>
+#include <es/object.h>
 #include <es/base/IStream.h>
 
 /**

@@ -56,14 +56,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include "canvas2d.h"
 #include <es/exception.h>
 #include <es/naming/IContext.h>
-#include <es/synchronized.h>
 #include <es/usage.h>
 #include <algorithm>
 #include <math.h>
-#include <string>
-#include "canvas2d.h"
 
 namespace
 {

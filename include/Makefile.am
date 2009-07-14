@@ -1,15 +1,11 @@
 SUFFIXES = .h .idl
 
-es/ent.h : $(srcdir)/../esidl/es/ent.h
-	mkdir -p es
-	cp $? es
-
 if ES
 
 %.h : %.idl
 	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
-es/object.h es/object.ent : es/object.idl
+es/object.h : es/object.idl
 	esidl -isystem $(srcdir) $<
 
 else !ES
@@ -17,7 +13,7 @@ else !ES
 %.h : %.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 
-es/object.h es/object.ent : es/object.idl
+es/object.h : es/object.idl
 	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) $<
 
 endif !ES
@@ -33,7 +29,6 @@ nobase_include_HEADERS = \
 	es/dateTime.h \
 	es/elf.h \
 	es/endian.h \
-	es/ent.h \
 	es/exception.h \
 	es/formatter.h \
 	es/handle.h \

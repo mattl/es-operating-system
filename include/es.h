@@ -23,6 +23,9 @@
 #include <es/types.h>
 
 #ifdef __cplusplus
+
+#include <es/object.h>
+
 extern "C" {
 #endif // __cplusplus
 

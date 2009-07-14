@@ -60,6 +60,7 @@
 #define GOOGLE_ES_LIBCANVAS_CANVAS2D_H_INCLUDED
 
 #include <string.h>
+#include <string>
 #include <es.h>
 #include <es/any.h>
 #include <es/color.h>
@@ -67,6 +68,7 @@
 #include <es/interlocked.h>
 #include <es/list.h>
 #include <es/ref.h>
+#include <es/synchronized.h>
 #include <es/base/IFile.h>
 #include <es/base/IInterfaceStore.h>
 #include <es/base/IProcess.h>
