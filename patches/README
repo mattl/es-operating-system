@@ -65,6 +65,11 @@ original software.
     usage: $ tar -zxf jpegsrc.v7.tar.gz
            $ patch -p0 -d . < jpegsrc.v7.patch
 
+- ICU 4.2.1 (icu-4.2.1.patch)
+    http://site.icu-project.org/
+    usage: $ tar -zxf icu4c-4_2_1-src.tgz
+           $ patch -p0 -d . < icu-4.2.1.patch
+
 See http://code.google.com/p/es-operating-system/ for how to report bugs
 usefully.
 
