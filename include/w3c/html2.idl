@@ -15,7 +15,7 @@
 #ifndef _HTML2_IDL_
 #define _HTML2_IDL_
 
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 #pragma prefix "dom.w3c.org"
 module html2

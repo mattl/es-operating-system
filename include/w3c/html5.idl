@@ -9,10 +9,10 @@
 #ifndef _HTML5_IDL_
 #define _HTML5_IDL_
 
-#include "dom.idl"
-#include "events.idl"
-#include "css.idl"
-#include "ranges.idl"
+#include "w3c/dom.idl"
+#include "w3c/events.idl"
+#include "w3c/css.idl"
+#include "w3c/ranges.idl"
 
 module webstorage {
   interface Database;

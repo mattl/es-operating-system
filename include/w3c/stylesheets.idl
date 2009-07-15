@@ -15,7 +15,7 @@
 #ifndef _STYLESHEETS_IDL_
 #define _STYLESHEETS_IDL_
 
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 module stylesheets
 {

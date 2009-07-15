@@ -9,8 +9,8 @@
 #ifndef _CSSOM_IDL_
 #define _CSSOM_IDL_
 
-#include "dom.idl"
-#include "ranges.idl"
+#include "w3c/dom.idl"
+#include "w3c/ranges.idl"
 
 module html5
 {

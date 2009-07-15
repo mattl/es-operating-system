@@ -15,7 +15,7 @@
 #ifndef _RANGES_IDL_
 #define _RANGES_IDL_
 
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 module ranges
 {

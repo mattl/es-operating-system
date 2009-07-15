@@ -10,7 +10,7 @@
 #ifndef _EVENTSOURCE_IDL_
 #define _EVENTSOURCE_IDL_
 
-#include "html5.idl"
+#include "w3c/html5.idl"
 
 module eventsource {
 

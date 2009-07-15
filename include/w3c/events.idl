@@ -15,8 +15,8 @@
 #ifndef _EVENTS_IDL_
 #define _EVENTS_IDL_
 
-#include "dom.idl"
-#include "views.idl"
+#include "w3c/dom.idl"
+#include "w3c/views.idl"
 
 module events
 {

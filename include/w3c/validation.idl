@@ -15,7 +15,7 @@
 #ifndef _VALIDATION_IDL_
 #define _VALIDATION_IDL_
 
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 module validation
 {

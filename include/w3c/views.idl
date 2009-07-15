@@ -1,5 +1,5 @@
 // The CSSOM View Module also supercedes DOM Level 2 Views
-#include "cssomview.idl"
+#include "w3c/cssomview.idl"
 
 #if 0
 /*
@@ -19,7 +19,7 @@
 #ifndef _VIEWS_IDL_
 #define _VIEWS_IDL_
 
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 module views
 {

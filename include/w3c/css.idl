@@ -15,9 +15,9 @@
 #ifndef _CSS_IDL_
 #define _CSS_IDL_
 
-#include "dom.idl"
-#include "stylesheets.idl"
-#include "views.idl"
+#include "w3c/dom.idl"
+#include "w3c/stylesheets.idl"
+#include "w3c/views.idl"
 
 module css
 {

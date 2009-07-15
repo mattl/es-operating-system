@@ -2,8 +2,8 @@
 #ifndef _SMIL_IDL_
 #define _SMIL_IDL_
 
-#include "dom.idl"
-#include "events.idl"
+#include "w3c/dom.idl"
+#include "w3c/events.idl"
 
 module smil
 {

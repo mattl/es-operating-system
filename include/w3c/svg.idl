@@ -4,19 +4,19 @@
 
 
 // For access to DOM2 core
-#include "dom.idl"
+#include "w3c/dom.idl"
 
 // For access to DOM2 events
-#include "events.idl"
+#include "w3c/events.idl"
 
 // For access to those parts from DOM2 CSS OM used by SVG DOM.
-#include "css.idl"
+#include "w3c/css.idl"
 
 // For access to those parts from DOM2 Views OM used by SVG DOM.
-#include "views.idl"
+#include "w3c/views.idl"
 
 // For access to the SMIL OM used by SVG DOM.
-#include "smil.idl"
+#include "w3c/smil.idl"
 
 module svg
 {

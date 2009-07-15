@@ -10,7 +10,7 @@
 #ifndef _WEBWORKERS_IDL_
 #define _WEBWORKERS_IDL_
 
-#include "html5.idl"
+#include "w3c/html5.idl"
 
 module webworkers {
 
