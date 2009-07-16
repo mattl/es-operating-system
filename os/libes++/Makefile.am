@@ -77,8 +77,8 @@ libesrpc_a_SOURCES = $(rpc_source_files)  src/rpc.cpp
 libesrpc_a_CPPFLAGS = \
 	$(AM_CPPFLAGS) \
 	-fPIC -fno-rtti \
-	-Wall -Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
-	-pedantic -fno-strict-aliasing -fshort-wchar -pthread -pipe
+	-Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
+	-fno-strict-aliasing -fshort-wchar -pthread -pipe
 
 endif POSIX
 

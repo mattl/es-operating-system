@@ -333,8 +333,8 @@ libes___a_SOURCES = $(libessup___a_SOURCES) src/interfaceStore.cpp \
 @POSIX_TRUE@libesrpc_a_CPPFLAGS = \
 @POSIX_TRUE@	$(AM_CPPFLAGS) \
 @POSIX_TRUE@	-fPIC -fno-rtti \
-@POSIX_TRUE@	-Wall -Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
-@POSIX_TRUE@	-pedantic -fno-strict-aliasing -fshort-wchar -pthread -pipe
+@POSIX_TRUE@	-Wconversion -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-long-long \
+@POSIX_TRUE@	-fno-strict-aliasing -fshort-wchar -pthread -pipe
 
 EXTRA_DIST = interfaceList.awk
 all: all-recursive

@@ -104,20 +104,13 @@ generated_headers = \
 	w3c/cssomview.h \
 	w3c/dom.h \
 	w3c/events.h \
-	w3c/eventsource.h \
 	w3c/html5.h \
 	w3c/ls.h \
 	w3c/ranges.h \
 	w3c/smil.h \
 	w3c/stylesheets.h \
-	w3c/svg.h \
 	w3c/traversal.h \
-	w3c/validation.h \
-	w3c/webstorage.h \
-	w3c/websockets.h \
-	w3c/webworkers.h \
-	w3c/views.h \
-	w3c/xhr.h
+	w3c/views.h
 
 # Specify nobase_ first when used in conjunction with either dist_ or nodist_.
 nobase_nodist_include_HEADERS = \
@@ -165,21 +158,14 @@ nobase_include_HEADERS += \
 	w3c/cssomview.idl \
 	w3c/dom.idl \
 	w3c/events.idl \
-	w3c/eventsource.idl \
 	w3c/html5.idl \
 	w3c/ls.idl \
 	w3c/ranges.idl \
 	w3c/smil.idl \
 	w3c/stylesheets.idl \
-	w3c/svg.idl \
 	w3c/traversal.idl \
-	w3c/validation.idl \
-	w3c/websockets.idl \
-	w3c/webstorage.idl \
-	w3c/webworkers.idl \
-	w3c/views.idl \
-	w3c/xhr.idl
-
+	w3c/views.idl
+	
 nobase_nodist_include_HEADERS += interface.list es/includeAllInterfaces.h
 
 interface.list : $(generated_headers)
