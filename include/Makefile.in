@@ -532,6 +532,10 @@ uninstall-am: uninstall-nobase_includeHEADERS \
 	uninstall-nobase_nodist_includeHEADERS
 
 
+es/reflect.h : $(srcdir)/../esidl/include/reflect.h
+	mkdir -p es
+	cp $? es
+
 @ES_TRUE@%.h : %.idl
 @ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
 

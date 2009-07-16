@@ -1,5 +1,9 @@
 SUFFIXES = .h .idl
 
+es/reflect.h : $(srcdir)/../esidl/include/reflect.h
+	mkdir -p es
+	cp $? es
+
 if ES
 
 %.h : %.idl
