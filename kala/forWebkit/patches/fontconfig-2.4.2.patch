@@ -1,0 +1,117 @@
+diff -bcrN fontconfig-2.4.2.org/config.sub fontconfig-2.4.2/config.sub
+*** fontconfig-2.4.2.org/config.sub	2006-10-12 21:52:19.000000000 +0900
+--- fontconfig-2.4.2/config.sub	2007-11-16 15:36:39.000000000 +0900
+***************
+*** 1210,1216 ****
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+--- 1210,1216 ----
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* | -es* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+diff -bcrN fontconfig-2.4.2.org/src/fcatomic.c fontconfig-2.4.2/src/fcatomic.c
+*** fontconfig-2.4.2.org/src/fcatomic.c	2006-09-05 17:56:47.000000000 +0900
+--- fontconfig-2.4.2/src/fcatomic.c	2007-11-15 16:45:43.000000000 +0900
+***************
+*** 177,183 ****
+  FcBool
+  FcAtomicReplaceOrig (FcAtomic *atomic)
+  {
+! #ifdef _WIN32
+      unlink (atomic->file);
+  #endif
+      if (rename ((char *) atomic->new, (char *) atomic->file) < 0)
+--- 177,183 ----
+  FcBool
+  FcAtomicReplaceOrig (FcAtomic *atomic)
+  {
+! #if defined(_WIN32) || defined(__es__)
+      unlink (atomic->file);
+  #endif
+      if (rename ((char *) atomic->new, (char *) atomic->file) < 0)
+diff -bcrN fontconfig-2.4.2.org/src/fccache.c fontconfig-2.4.2/src/fccache.c
+*** fontconfig-2.4.2.org/src/fccache.c	2006-12-03 06:33:41.000000000 +0900
+--- fontconfig-2.4.2/src/fccache.c	2007-11-20 14:15:56.000000000 +0900
+***************
+*** 29,35 ****
+  #include <string.h>
+  #include <sys/types.h>
+  #include <assert.h>
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__)
+  #  include <unistd.h>
+  #  include <sys/mman.h>
+  #elif defined(_WIN32)
+--- 29,35 ----
+  #include <string.h>
+  #include <sys/types.h>
+  #include <assert.h>
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__) || defined(__es__)
+  #  include <unistd.h>
+  #  include <sys/mman.h>
+  #elif defined(_WIN32)
+***************
+*** 382,388 ****
+  	free (cache);
+  	break;
+      case FC_CACHE_MAGIC_MMAP:
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__)
+  	munmap (cache, cache->size);
+  #elif defined(_WIN32)
+  	UnmapViewOfFile (cache);
+--- 382,388 ----
+  	free (cache);
+  	break;
+      case FC_CACHE_MAGIC_MMAP:
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__) || defined(__es__)
+  	munmap (cache, cache->size);
+  #elif defined(_WIN32)
+  	UnmapViewOfFile (cache);
+***************
+*** 443,450 ****
+       */
+      if (fd_stat->st_size >= FC_CACHE_MIN_MMAP)
+      {
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__)
+  	cache = mmap (0, fd_stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
+  #elif defined(_WIN32)
+  	{
+  	    HANDLE hFileMap;
+--- 443,454 ----
+       */
+      if (fd_stat->st_size >= FC_CACHE_MIN_MMAP)
+      {
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__) || defined(__es__)
+  	cache = mmap (0, fd_stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
++     if (cache == (void*) -1)
++     {
++         cache = 0;
++     }
+  #elif defined(_WIN32)
+  	{
+  	    HANDLE hFileMap;
+***************
+*** 483,489 ****
+  	    free (cache);
+  	else
+  	{
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__)
+  	    munmap (cache, fd_stat->st_size);
+  #elif defined(_WIN32)
+  	    UnmapViewOfFile (cache);
+--- 487,493 ----
+  	    free (cache);
+  	else
+  	{
+! #if defined(HAVE_MMAP) || defined(__CYGWIN__) || defined(__es__)
+  	    munmap (cache, fd_stat->st_size);
+  #elif defined(_WIN32)
+  	    UnmapViewOfFile (cache);
