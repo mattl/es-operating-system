@@ -26,8 +26,6 @@ module es
      */
     interface InterfaceStore
     {
-        typedef sequence<octet> Buf;
-
         /**
          * Registers the interface reflection data in this interface store.
          * @param       iid the interface ID.

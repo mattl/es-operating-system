@@ -27,8 +27,6 @@ module es
      */
     interface Socket
     {
-        typedef sequence<octet> Buf;
-
         // socket type
         const long Stream = 1;
         const long Datagram = 2;
@@ -76,7 +74,7 @@ module es
          * @param bufLength the number of bytes of the receive buffer.
          * @return the number of bytes received in the buffer.
          */
-        Buf read();
+        sequence<octet> read();
 
         /** Attempt to read the specified bytes of data from the other end of this socket and stores the internet address and port of the source.
          * @param dst   the receive buffer.
@@ -86,7 +84,7 @@ module es
          * @param port  the port number of the peer.
          * @return the number of bytes received in the buffer.
          */
-        Buf recvFrom(in long flags);
+        sequence<octet> recvFrom(in long flags);
         readonly attribute InternetAddress recvFromAddress;
         readonly attribute long recvFromPort;
 
@@ -98,7 +96,7 @@ module es
          * @param port  the port number of the destination.
          * @return      the number of bytes sent.
          */
-        long sendTo(in Buf src, in long flags, in InternetAddress addr, in long port);
+        long sendTo(in sequence<octet> src, in long flags, in InternetAddress addr, in long port);
 
         /** Disables read-half of this socket connection.
          * Any data sent to the input side of this socket is discarded
@@ -114,7 +112,7 @@ module es
          * @param count the length of the message to be sent in bytes.
          * @return      the number of bytes sent.
          */
-        long write(in Buf src);
+        long write(in sequence<octet> src);
 
         /** Boolean whether this socket is ready to accept a new connection.
          */

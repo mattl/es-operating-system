@@ -24,8 +24,6 @@ module es
      */
     interface Stream
     {
-        typedef sequence<octet> Buf;
-
         /** The current position in this stream.
          */
         attribute long long position;
@@ -40,7 +38,7 @@ module es
          * @param bufLength the maximum number of bytes to be read.
          * @return the number of bytes read.
          */
-        Buf read();
+        sequence<octet> read();
 
         /** Reads a sequence of bytes from <code>offset</code> in this stream
          * to <code>buf</code>.
@@ -49,14 +47,14 @@ module es
          * @param offset    the position in this stream from which the bytes is read.
          * @return the number of bytes read.
          */
-        Buf read(in long long offset);
+        sequence<octet> read(in long long offset);
 
         /** Writes a sequence of bytes from <code>src</code> to this stream.
          * @param src       the buffer from which bytes are copied.
          * @param srcLength the maximum number of bytes to be written.
          * @return the number of bytes written.
          */
-        long write(in Buf src);
+        long write(in sequence<octet> src);
 
         /** Writes a sequence of bytes from <code>src</code> to <code>offset</code>
          * in this stream.
@@ -65,7 +63,7 @@ module es
          * @param offset    the position in this stream from which the bytes is written.
          * @return the number of bytes written.
          */
-        long write(in Buf src, in long long offset);
+        long write(in sequence<octet> src, in long long offset);
 
         /** Forces any buffered output data for this stream to be written out.
          */
