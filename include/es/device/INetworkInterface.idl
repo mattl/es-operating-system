@@ -20,6 +20,8 @@
 
 module es
 {
+    typedef octet Mac[6];
+
     interface NetworkInterface
     {
         // Interface type [http://www.iana.org/assignments/smi-numbers]
@@ -28,8 +30,6 @@ module es
         const long FDDI = 15;      // FDDI
         const long PPP = 23;       // RFC 1331
         const long Loopback = 24;  // loopback
-
-        typedef octet Mac[6];
 
         /** Allows this network interface to receive frames sent to the specified
          * multicast MAC address.

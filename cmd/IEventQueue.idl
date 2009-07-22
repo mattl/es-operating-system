@@ -24,8 +24,6 @@ module es
      */
     interface EventQueue
     {
-        typedef sequence<octet> Buf;
-
         /* User input recording II:
            The following functions and definition can be used on
            platform supporting events directly.
@@ -56,8 +54,8 @@ module es
         long peekKeystroke();
         readonly attribute unsigned long buttonState;
         readonly attribute unsigned long mousePoint;
-        boolean keyEvent(in Buf data);
-        boolean mouseEvent(in Buf data);
+        boolean keyEvent(in sequence<octet> data);
+        boolean mouseEvent(in sequence<octet> data);
         boolean wait(in long long timeout);
         void notify();
     };

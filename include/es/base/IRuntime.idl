@@ -20,13 +20,13 @@
 
 module es
 {
+    native void_pointer;
+
     /** This interface provides methods for run-time setup.
      * @since 0.0.2
      */
     interface Runtime
     {
-        native void_pointer;
-
         /**
          * Sets the startup routine of threads.
          * @param startup the function to start up a thread.
