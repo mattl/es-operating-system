@@ -37,7 +37,7 @@ interface WorkerGlobalScope {
 };
 
 [NoInterfaceObject, XXX] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
-  void postMessage(in any message, [Optional] in MessagePortArray ports);
+  void postMessage(in any message, in optional MessagePortArray ports);
            attribute EventListener onmessage;
 };
 
@@ -64,7 +64,7 @@ interface AbstractWorker {
 interface Worker : AbstractWorker {
   void terminate();
 
-  void postMessage(in any message, [Optional] in MessagePortArray ports);
+  void postMessage(in any message, in optional MessagePortArray ports);
            attribute EventListener onmessage;
 };
 
