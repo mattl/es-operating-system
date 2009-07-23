@@ -15,6 +15,7 @@ cpp_source_files = \
 	src/datagram.cpp \
 	src/dhcp.cpp \
 	src/dix.cpp \
+	src/tIn.cpp \
 	src/icmp4.cpp \
 	src/igmp.cpp \
 	src/inet4address.cpp \
@@ -40,6 +41,7 @@ header_files = \
 	include/conduit.h \
 	include/datagram.h \
 	include/dix.h \
+	include/tIn.h \
 	include/icmp4.h \
 	include/igmp.h \
 	include/inet4address.h \
