@@ -74,7 +74,7 @@ interface SharedWorker : AbstractWorker {
 };
 
 [NoInterfaceObject, ImplementedOn=WorkerGlobalScope, XXX] interface WorkerUtils {
-  void importScripts([Variadic] in DOMString urls);
+  void importScripts(in DOMString... urls);
   readonly attribute Navigator navigator;
   Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
   DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
