@@ -30,10 +30,10 @@ interface SQLTransactionSync;
 
 interface Storage {
   readonly attribute unsigned long length;
-  [IndexGetter] DOMString key(in unsigned long index);
-  [NameGetter] DOMString getItem(in DOMString key);
-  [NameSetter] void setItem(in DOMString key, in DOMString data);
-  [NameDeleter] void removeItem(in DOMString key);
+  getter DOMString key(in unsigned long index);
+  getter DOMString getItem(in DOMString key);
+  setter void setItem(in DOMString key, in DOMString data);
+  deleter void removeItem(in DOMString key);
   void clear();
 };
 
@@ -110,7 +110,7 @@ interface SQLResultSet {
 
 interface SQLResultSetRowList {
   readonly attribute unsigned long length;
-  [IndexGetter] any item(in unsigned long index);
+  getter any item(in unsigned long index);
 };
 
 interface SQLError {
