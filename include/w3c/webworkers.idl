@@ -73,7 +73,8 @@ interface SharedWorker : AbstractWorker {
   readonly attribute MessagePort port;
 };
 
-[NoInterfaceObject, ImplementedOn=WorkerGlobalScope, XXX] interface WorkerUtils {
+WorkerGlobalScope implements WorkerUtils;
+[NoInterfaceObject, XXX] interface WorkerUtils {
   void importScripts(in DOMString... urls);
   readonly attribute Navigator navigator;
   Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);

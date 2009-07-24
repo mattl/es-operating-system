@@ -31,6 +31,7 @@ module events
   // Introduced in DOM Level 2:
   exception EventException {
     unsigned short   code;
+
     // EventExceptionCode
     const unsigned short      UNSPECIFIED_EVENT_TYPE_ERR     = 0;
     // Introduced in DOM Level 3:
@@ -73,7 +74,7 @@ module events
   };
 
   // Introduced in DOM Level 2:
-  [ImplementedOn=Node]
+  Node implements EventTarget;
   interface EventTarget {
     void               addEventListener(in DOMString type,
                                         in EventListener listener,
