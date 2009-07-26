@@ -52,8 +52,10 @@ AC_C_VOLATILE
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
 
-UNICODE_CFLAGS=`icu-config --cppflags`
-UNICODE_LIBS=`icu-config --ldflags`
+#UNICODE_CFLAGS=`icu-config --cppflags`
+#UNICODE_CFLAGS="-D_REENTRANT  -I$(ES_SDK)/include -I$(ES_SDK)/include/unicode"
+#UNICODE_LIBS=`icu-config --ldflags`
+#UNICODE_LIBS="-L$(ES_SDK)/lib -licui18n -licuuc -licudaita"
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 

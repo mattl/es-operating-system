@@ -28,56 +28,85 @@
  */
 
 #include <cairo.h>
-#include <cairo-xlib.h>
-#include <X11/Xlib.h>
+#include <string>
+#include <math.h>
+#include <es.h>
+#include <es/handle.h>
+#include <es/exception.h>
+#include <es/formatter.h>
+#include <es/interlocked.h>
+#include <es/list.h>
+#include <es/ref.h>
+#include <es/ring.h>
+#include <es/synchronized.h>
+#include <es/types.h>
+#include <es/usage.h>
+#include <es/utf.h>
+#include <es/base/IProcess.h>
+#include <es/base/IStream.h>
+#include <es/base/IService.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+namespace
+{
+    Interlocked registered = 0;
+
+    struct CanvasInfo
+    {
+        int x; // top-left
+        int y; // top-left
+        cairo_format_t format;
+        int width;
+        int height;
+    };
+};
 
 #define SIZEX 1024
 #define SIZEY 768
+   
+es::CurrentProcess* System();
 
 void testCanvas2d(cairo_t* cairo);
 
 int main(int argc, char* argv[])
 {
-    Display* display = XOpenDisplay(NULL);
-    if (!display)
-    {
-        return EXIT_FAILURE;
-    }
+    Handle<es::Context> nameSpace = System()->getRoot();
 
-    int screen = DefaultScreen(display);
-    Window root = RootWindow(display, screen);
+    Handle<es::Stream> framebuffer(nameSpace->lookup("device/framebuffer"));
+    void* mapping = System()->map(0, framebuffer->getSize(),
+                                  es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+                                  es::CurrentProcess::MAP_SHARED,
+                                  Handle<es::Pageable>(framebuffer), 0);
 
-    Window window = XCreateSimpleWindow(display, root, 1, 1, SIZEX, SIZEY, 0,
-                              BlackPixel(display, screen), BlackPixel(display, screen));
+    // Register canvas
+    cairo_surface_t* surface;
+    CanvasInfo canvasInfo;
+    canvasInfo.x = 0;
+    canvasInfo.y = 0;
+    canvasInfo.width = 1024;
+    canvasInfo.height = 768;
+    canvasInfo.format = CAIRO_FORMAT_ARGB32;    // or CAIRO_FORMAT_RGB24
 
-    XStoreName(display, window, "WebKit test");
-    XSelectInput(display, window, ExposureMask|ButtonPressMask);
-    XMapWindow(display, window);
+    // surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
+    /*surface = cairo_image_surface_create_for_data(
+        static_cast<u8*>(mapping), canvasInfo.format , canvasInfo.width, canvasInfo.height,
+        sizeof(u32) * canvasInfo.width);
+    CanvasRenderingContext2D_Impl* canvas = new CanvasRenderingContext2D_Impl(surface, canvasInfo.width, canvasInfo.height);
+    ASSERT(canvas);
+    Handle<es::Context> device = nameSpace->lookup("device");
+    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
+    ASSERT(nameSpace->lookup("device/canvas"));*/
 
-    cairo_surface_t* cs = cairo_xlib_surface_create(display, window, DefaultVisual(display, 0), SIZEX, SIZEY);
-    for (;;)
-    {
-        XEvent event;
-        XNextEvent(display, &event);
-        if (event.type == Expose && event.xexpose.count < 1)
-        {
-            cairo_t* cairo = cairo_create(cs);
-            cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
-            cairo_set_source_rgb(cairo, 0.0, 0.0, 1.0);
-            cairo_fill(cairo);
-            testCanvas2d(cairo);
-            cairo_show_page(cairo);
-            cairo_destroy(cairo);
-        }
-        else if (event.type == ButtonPress)
-        {
-            break;
-        }
-    }
+    cairo_t* cairo = cairo_create(surface);
+    cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
+    cairo_set_source_rgb(cairo, 0.0, 0.0, 1.0);
+    cairo_fill(cairo);
+    testCanvas2d(cairo);
+    cairo_show_page(cairo);
+    cairo_destroy(cairo);
 
-    cairo_surface_destroy(cs);
-    XCloseDisplay(display);
+    cairo_surface_destroy(surface);
+
+    System()->unmap(mapping, framebuffer->getSize());
+
+    esReport("quit canvas.\n");
 }
