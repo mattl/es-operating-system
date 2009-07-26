@@ -29,7 +29,6 @@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-
 CAIRO_LIBS = -Lcairo -Lpixman-1
 JPEG_LIBS = -Ljpeg
 FREETYPE_LIBS = -Lfreetype
@@ -287,10 +286,10 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/FastMalloc.cpp \
 	trunk/JavaScriptCore/wtf/FastMalloc.h \
 	trunk/JavaScriptCore/wtf/MallocZoneSupport.h \
-#	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
-#	trunk/JavaScriptCore/wtf/TCSystemAlloc.h \
 	trunk/JavaScriptCore/wtf/dtoa.cpp \
 	trunk/JavaScriptCore/wtf/dtoa.h	
+#	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
+#	trunk/JavaScriptCore/wtf/TCSystemAlloc.h 
 
 # ES
 javascriptcore_sources += \

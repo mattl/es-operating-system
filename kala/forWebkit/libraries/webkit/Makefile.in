@@ -133,6 +133,8 @@ am__objects_1 =  \
 	trunk/JavaScriptCore/wtf/unicode/libWebCore_a-CollatorDefault.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/unicode/libWebCore_a-UTF8.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.$(OBJEXT) \
+	trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.$(OBJEXT) \
+	trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.$(OBJEXT) \
 	es/JavaScriptCore/wtf/es/libWebCore_a-MainThreadES.$(OBJEXT)
 am__objects_2 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT) \
 	trunk/WebCore/accessibility/libWebCore_a-AccessibilityARIAGrid.$(OBJEXT) \
@@ -979,9 +981,7 @@ javascriptcore_cppflags := -I$(srcdir)/es/JavaScriptCore/wtf/es \
 
 # Debug build	
 #	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
-#	trunk/JavaScriptCore/wtf/TCSystemAlloc.h \
-#	trunk/JavaScriptCore/wtf/dtoa.cpp \
-#	trunk/JavaScriptCore/wtf/dtoa.h	
+#	trunk/JavaScriptCore/wtf/TCSystemAlloc.h 
 
 # ES
 javascriptcore_sources := trunk/JavaScriptCore/pcre/pcre.h \
@@ -1058,6 +1058,12 @@ javascriptcore_sources := trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
 	trunk/JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h \
 	trunk/JavaScriptCore/wtf/VMTags.h \
+	trunk/JavaScriptCore/wtf/FastAllocBase.h \
+	trunk/JavaScriptCore/wtf/FastMalloc.cpp \
+	trunk/JavaScriptCore/wtf/FastMalloc.h \
+	trunk/JavaScriptCore/wtf/MallocZoneSupport.h \
+	trunk/JavaScriptCore/wtf/dtoa.cpp \
+	trunk/JavaScriptCore/wtf/dtoa.h \
 	es/JavaScriptCore/wtf/es/MainThreadES.cpp
 javascriptcore_built_sources := 
 javascriptcore_built_nosources :=  \
@@ -2772,6 +2778,12 @@ trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR)/$(am__dirstamp):
 trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.$(OBJEXT):  \
 	trunk/JavaScriptCore/wtf/unicode/icu/$(am__dirstamp) \
 	trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR)/$(am__dirstamp)
+trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.$(OBJEXT):  \
+	trunk/JavaScriptCore/wtf/$(am__dirstamp) \
+	trunk/JavaScriptCore/wtf/$(DEPDIR)/$(am__dirstamp)
+trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.$(OBJEXT):  \
+	trunk/JavaScriptCore/wtf/$(am__dirstamp) \
+	trunk/JavaScriptCore/wtf/$(DEPDIR)/$(am__dirstamp)
 es/JavaScriptCore/wtf/es/$(am__dirstamp):
 	@$(MKDIR_P) es/JavaScriptCore/wtf/es
 	@: > es/JavaScriptCore/wtf/es/$(am__dirstamp)
@@ -5066,6 +5078,7 @@ mostlyclean-compile:
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-Assertions.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-ByteArray.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.$(OBJEXT)
+	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-MainThread.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-RandomNumber.$(OBJEXT)
@@ -5073,6 +5086,7 @@ mostlyclean-compile:
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-Threading.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-ThreadingPthreads.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-TypeTraits.$(OBJEXT)
+	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/unicode/libWebCore_a-CollatorDefault.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/unicode/libWebCore_a-UTF8.$(OBJEXT)
@@ -5740,6 +5754,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-Assertions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-ByteArray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-CurrentTime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-HashTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-MainThread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-RandomNumber.Po@am__quote@
@@ -5747,6 +5762,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-Threading.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-ThreadingPthreads.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-TypeTraits.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/unicode/$(DEPDIR)/libWebCore_a-CollatorDefault.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/unicode/$(DEPDIR)/libWebCore_a-UTF8.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR)/libWebCore_a-CollatorICU.Po@am__quote@
@@ -6652,6 +6668,34 @@ trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.obj: trunk/JavaScr
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp' object='trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/unicode/icu/libWebCore_a-CollatorICU.obj `if test -f 'trunk/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp'; fi`
+
+trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.o: trunk/JavaScriptCore/wtf/FastMalloc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.o -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.o `test -f 'trunk/JavaScriptCore/wtf/FastMalloc.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/FastMalloc.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/FastMalloc.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.o `test -f 'trunk/JavaScriptCore/wtf/FastMalloc.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/FastMalloc.cpp
+
+trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.obj: trunk/JavaScriptCore/wtf/FastMalloc.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.obj -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.obj `if test -f 'trunk/JavaScriptCore/wtf/FastMalloc.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/FastMalloc.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/FastMalloc.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/FastMalloc.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.obj `if test -f 'trunk/JavaScriptCore/wtf/FastMalloc.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/FastMalloc.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/FastMalloc.cpp'; fi`
+
+trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.o: trunk/JavaScriptCore/wtf/dtoa.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.o -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.o `test -f 'trunk/JavaScriptCore/wtf/dtoa.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/dtoa.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/dtoa.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.o `test -f 'trunk/JavaScriptCore/wtf/dtoa.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/dtoa.cpp
+
+trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.obj: trunk/JavaScriptCore/wtf/dtoa.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.obj -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.obj `if test -f 'trunk/JavaScriptCore/wtf/dtoa.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/dtoa.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/dtoa.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-dtoa.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/dtoa.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.obj `if test -f 'trunk/JavaScriptCore/wtf/dtoa.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/dtoa.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/dtoa.cpp'; fi`
 
 es/JavaScriptCore/wtf/es/libWebCore_a-MainThreadES.o: es/JavaScriptCore/wtf/es/MainThreadES.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/JavaScriptCore/wtf/es/libWebCore_a-MainThreadES.o -MD -MP -MF es/JavaScriptCore/wtf/es/$(DEPDIR)/libWebCore_a-MainThreadES.Tpo -c -o es/JavaScriptCore/wtf/es/libWebCore_a-MainThreadES.o `test -f 'es/JavaScriptCore/wtf/es/MainThreadES.cpp' || echo '$(srcdir)/'`es/JavaScriptCore/wtf/es/MainThreadES.cpp

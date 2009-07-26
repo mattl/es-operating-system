@@ -251,6 +251,26 @@ diff -bcrN trunk.org/WebCore/platform/DragImage.h trunk/WebCore/platform/DragIma
   #endif
   
   //We need to #define YOffset as it needs to be shared with WebKit
+diff -bcrN trunk.org/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
+*** trunk.org/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp	2009-07-26 17:55:45.944706293 +0800
+--- trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp	2009-07-26 22:57:43.549356004 +0800
+***************
+*** 212,218 ****
+  
+      Vector<char> in;
+      // Only PNG output is supported for now.
+!     cairo_surface_write_to_png_stream(image, writeFunction, &in);
+  
+      Vector<char> out;
+      base64Encode(in, out);
+--- 212,218 ----
+  
+      Vector<char> in;
+      // Only PNG output is supported for now.
+!     //cairo_surface_write_to_png_stream(image, writeFunction, &in);
+  
+      Vector<char> out;
+      base64Encode(in, out);
 diff -bcrN trunk.org/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp trunk/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp
 *** trunk.org/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp	2009-07-26 17:55:43.454706292 +0800
 --- trunk/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp	2009-07-26 18:22:04.524708017 +0800

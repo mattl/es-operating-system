@@ -63,7 +63,7 @@ namespace
 #define SIZEX 1024
 #define SIZEY 768
    
-es::CurrentProcess* System();
+extern es::CurrentProcess* System();
 
 void testCanvas2d(cairo_t* cairo);
 
