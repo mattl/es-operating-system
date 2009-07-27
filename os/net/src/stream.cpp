@@ -238,6 +238,20 @@ write(SocketMessenger* m, Conduit* c)
             m->setErrorCode(EAGAIN);
             return false;
         }
+        if (socket->getTimeout())
+        {
+            monitor->wait(socket->getTimeout());
+
+            if (!isWritable())
+            {
+                m->setErrorCode(ETIMEDOUT);
+                return false;
+            }
+            else
+            {
+                break;
+            }
+        }
         monitor->wait();
     }
 
