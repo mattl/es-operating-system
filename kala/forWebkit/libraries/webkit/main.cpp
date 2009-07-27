@@ -31,6 +31,7 @@
 #include <string>
 #include <math.h>
 #include <es.h>
+#include <es/object.h>
 #include <es/handle.h>
 #include <es/exception.h>
 #include <es/formatter.h>
@@ -63,7 +64,7 @@ namespace
 #define SIZEX 1024
 #define SIZEY 768
    
-extern es::CurrentProcess* System();
+es::CurrentProcess* System();
 
 void testCanvas2d(cairo_t* cairo);
 
