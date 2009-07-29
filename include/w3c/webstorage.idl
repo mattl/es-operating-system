@@ -17,17 +17,6 @@ module webstorage {
 typedef events::Event Event;
 typedef html5::WindowProxy WindowProxy;
 
-interface SQLError;
-interface SQLVoidCallback;
-interface SQLResultSet;
-interface SQLResultSetRowList;
-interface SQLStatementCallback;
-interface SQLStatementErrorCallback;
-interface SQLTransaction;
-interface SQLTransactionCallback;
-interface SQLTransactionErrorCallback;
-interface SQLTransactionSync;
-
 interface Storage {
   readonly attribute unsigned long length;
   getter DOMString key(in unsigned long index);

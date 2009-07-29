@@ -21,11 +21,6 @@ typedef html5::ApplicationCache ApplicationCache;
 typedef html5::MessagePort MessagePort;
 typedef html5::MessagePortArray MessagePortArray;
 
-interface Database;
-interface DatabaseSync;
-interface Navigator;
-interface WorkerLocation;
-
 interface WorkerGlobalScope {
   readonly attribute WorkerGlobalScope self;
   readonly attribute WorkerLocation location;

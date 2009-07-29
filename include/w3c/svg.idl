@@ -25,32 +25,6 @@ module svg
   typedef dom::Document Document;
   typedef dom::NodeList NodeList;
 
-  // Predeclarations
-  interface SVGElement;
-  interface SVGLangSpace;
-  interface SVGExternalResourcesRequired;
-  interface SVGTests;
-  interface SVGFitToViewBox;
-  interface SVGZoomAndPan;
-  interface SVGViewSpec;
-  interface SVGURIReference;
-  interface SVGPoint;
-  interface SVGMatrix;
-  interface SVGPreserveAspectRatio;
-  interface SVGAnimatedPreserveAspectRatio;
-  interface SVGTransformList;
-  interface SVGAnimatedTransformList;
-  interface SVGTransform;
-  interface SVGICCColor;
-  interface SVGColor;
-  interface SVGPaint;
-  interface SVGTransformable;
-  interface SVGDocument;
-  interface SVGSVGElement;
-  interface SVGElementInstance;
-  interface SVGElementInstanceList;
-
-
   exception SVGException {
     unsigned short   code;
   };
