@@ -1,8 +1,0 @@
-module X
-{
-    const long A = 0;
-    module Y
-    {
-        const long A = 0;
-    };
-};
