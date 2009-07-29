@@ -53,6 +53,8 @@
 
 #include "html5_canvasrenderingcontext2d.h"
 
+#include <es.h>
+
 void figure(es::CanvasRenderingContext2D* canvas)
 {
     // Bar graph
@@ -158,14 +160,24 @@ void testCanvas2d(cairo_t* cr)
 {
     WebCore::ExceptionCode ec = 0;
 
+    esReport("start init.\n");
+
     WTF::initializeThreading();
+
+    esReport("finished init.\n");
 
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
+    esReport("Get Frame. \n");
+
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
+
+    esReport("Dcl element.\n");
 
     // A document have been created already in frame with an HTML element.
     WebCore::HTMLDocument* document = dynamic_cast<WebCore::HTMLDocument*>(frame->document());
+
+    esReport("Create body.\n");
 
     // Create and append the body
     if (WebCore::Node* documentElement = document->documentElement()) {
@@ -173,11 +185,15 @@ void testCanvas2d(cairo_t* cr)
         documentElement->appendChild(new WebCore::HTMLBodyElement(WebCore::HTMLNames::bodyTag, document), ec);
     }
 
+    esReport("Create canvas element.\n");
+
     // Create and append the canvas element
     ec = 0;
     WTF::PassRefPtr<WebCore::HTMLCanvasElement> canvasElement = WTF::static_pointer_cast<WebCore::HTMLCanvasElement>(document->createElement("canvas", ec));
     canvasElement->setWidth(1024);
     canvasElement->setHeight(768);
+
+    esReport("Append Child.\n");
 
     WebCore::HTMLElement* body = document->body();
     body->appendChild(canvasElement.get(), ec);

@@ -130,6 +130,7 @@ int pthread_cond_destroy(pthread_cond_t *__cond)
 int pthread_cond_signal(pthread_cond_t *__cond)
 {
     notImplemented();
+    return 0;
 }
 
 int pthread_cond_broadcast(pthread_cond_t *__cond)

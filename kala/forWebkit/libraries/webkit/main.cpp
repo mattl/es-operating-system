@@ -64,50 +64,56 @@ namespace
 #define SIZEX 1024
 #define SIZEY 768
    
-es::CurrentProcess* System();
+extern es::CurrentProcess* System();
 
 void testCanvas2d(cairo_t* cairo);
 
 int main(int argc, char* argv[])
 {
     Handle<es::Context> nameSpace = System()->getRoot();
+    esReport("1.\n");
 
     Handle<es::Stream> framebuffer(nameSpace->lookup("device/framebuffer"));
+    esReport("2.\n");
     void* mapping = System()->map(0, framebuffer->getSize(),
                                   es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
                                   es::CurrentProcess::MAP_SHARED,
                                   Handle<es::Pageable>(framebuffer), 0);
+    esReport("3.\n");
 
     // Register canvas
     cairo_surface_t* surface;
+    esReport("4.\n");
+    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 1024, 768);
+    /*
     CanvasInfo canvasInfo;
     canvasInfo.x = 0;
     canvasInfo.y = 0;
     canvasInfo.width = 1024;
     canvasInfo.height = 768;
     canvasInfo.format = CAIRO_FORMAT_ARGB32;    // or CAIRO_FORMAT_RGB24
-
+    
     // surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
-    /*surface = cairo_image_surface_create_for_data(
+    surface = cairo_image_surface_create_for_data(
         static_cast<u8*>(mapping), canvasInfo.format , canvasInfo.width, canvasInfo.height,
-        sizeof(u32) * canvasInfo.width);
-    CanvasRenderingContext2D_Impl* canvas = new CanvasRenderingContext2D_Impl(surface, canvasInfo.width, canvasInfo.height);
-    ASSERT(canvas);
-    Handle<es::Context> device = nameSpace->lookup("device");
-    device->bind("canvas", static_cast<es::CanvasRenderingContext2D*>(canvas));
-    ASSERT(nameSpace->lookup("device/canvas"));*/
-
-    cairo_t* cairo = cairo_create(surface);
-    cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
-    cairo_set_source_rgb(cairo, 0.0, 0.0, 1.0);
-    cairo_fill(cairo);
+        sizeof(u32) * canvasInfo.width);*/
+    
+    cairo_t* cairo;
+    esReport("create.\n");
+    cairo = cairo_create(surface);
+    //esReport("5.\n");
+    //cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
+    //cairo_set_source_rgb(cairo, 0.0, 0.0, 0.0);
+    //cairo_fill(cairo);
+    esReport("6.\n");
     testCanvas2d(cairo);
+    esReport("7.\n");
     cairo_show_page(cairo);
     cairo_destroy(cairo);
 
     cairo_surface_destroy(surface);
-
     System()->unmap(mapping, framebuffer->getSize());
+    esReport("8.\n");
 
     esReport("quit canvas.\n");
 }
