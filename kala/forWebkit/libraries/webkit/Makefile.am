@@ -1675,10 +1675,8 @@ webcorees_sources += \
 	trunk/WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferData.h \
 	trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PathCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
@@ -1702,7 +1700,10 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
+	es/WebCore/platform/es/ImageBufferCairo.cpp \
+	es/WebCore/platform/es/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
+#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 

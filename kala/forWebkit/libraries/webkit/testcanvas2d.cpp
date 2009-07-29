@@ -168,8 +168,6 @@ void testCanvas2d(cairo_t* cr)
 
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
-    esReport("Get Frame. \n");
-
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
 
     esReport("Dcl element.\n");
@@ -201,13 +199,20 @@ void testCanvas2d(cairo_t* cr)
     WebCore::CanvasRenderingContext2D* canvasRenderingContext = canvasElement->getContext(WebCore::String::fromUTF8("2d"));
 
     CanvasRenderingContext2D_Impl canvasImpl(canvasRenderingContext);
+    
+    esReport("Start Figure.\n");
+
     figure(&canvasImpl);
 
     if (frame->contentRenderer() && frame->view())
     {
+	esReport("Paint view.\n");
+
         WebCore::GraphicsContext ctx(cr);
         WebCore::IntRect rect(0, 0, 1024, 768);
         frame->view()->layoutIfNeededRecursive();
         frame->view()->paint(&ctx, rect);
     }
+
+    esReport("Finish testcanvas2d.\n");
 }

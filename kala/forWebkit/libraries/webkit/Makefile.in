@@ -709,9 +709,7 @@ am__objects_2 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 am__objects_3 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-GradientCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.$(OBJEXT) \
-	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.$(OBJEXT) \
-	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-PatternCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-TransformationMatrixCairo.$(OBJEXT) \
@@ -726,6 +724,8 @@ am__objects_3 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	trunk/WebCore/platform/image-decoders/ico/libWebCore_a-ICOImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/jpeg/libWebCore_a-JPEGImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT) \
+	es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
+	es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT) \
 	trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.$(OBJEXT) \
 	es/WebCore/bindings/es/libWebCore_a-ScheduledAction.$(OBJEXT) \
 	es/WebCore/bindings/es/libWebCore_a-ScriptCachedFrameData.$(OBJEXT) \
@@ -2384,6 +2384,7 @@ webcore_built_nosources := DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp DerivedSources/ColorData.c
 webcore_dist := 
 webcorees_cppflags := $(am__append_5) $(am__append_6)
+#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
@@ -2394,10 +2395,8 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferData.h \
 	trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PathCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
@@ -2421,6 +2420,8 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
+	es/WebCore/platform/es/ImageBufferCairo.cpp \
+	es/WebCore/platform/es/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	es/WebCore/bindings/es/ScheduledAction.cpp \
 	es/WebCore/bindings/es/ScheduledAction.h \
@@ -4656,13 +4657,7 @@ trunk/WebCore/platform/graphics/cairo/libWebCore_a-GradientCairo.$(OBJEXT):  \
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.$(OBJEXT):  \
 	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
 	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
-	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
-	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.$(OBJEXT):  \
-	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
-	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT):  \
 	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
 	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.$(OBJEXT):  \
@@ -4743,6 +4738,18 @@ trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp):
 trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT):  \
 	trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp) \
 	trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es
+	@: > es/WebCore/platform/es/$(am__dirstamp)
+es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
+	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
+	es/WebCore/platform/es/$(am__dirstamp) \
+	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT):  \
+	es/WebCore/platform/es/$(am__dirstamp) \
+	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/posix/$(am__dirstamp):
 	@$(MKDIR_P) trunk/WebCore/platform/posix
 	@: > trunk/WebCore/platform/posix/$(am__dirstamp)
@@ -4812,12 +4819,6 @@ es/WebCore/page/es/libWebCore_a-EventHandlerES.$(OBJEXT):  \
 es/WebCore/page/es/libWebCore_a-FrameES.$(OBJEXT):  \
 	es/WebCore/page/es/$(am__dirstamp) \
 	es/WebCore/page/es/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es
-	@: > es/WebCore/platform/es/$(am__dirstamp)
-es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
-	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 es/WebCore/platform/es/libWebCore_a-ClipboardES.$(OBJEXT):  \
 	es/WebCore/platform/es/$(am__dirstamp) \
 	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
@@ -5051,6 +5052,8 @@ mostlyclean-compile:
 	-rm -f es/WebCore/platform/es/libWebCore_a-CursorES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT)
+	-rm -f es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT)
+	-rm -f es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-LocalizedStringsES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-MIMETypeRegistryES.$(OBJEXT)
@@ -5481,9 +5484,7 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-GradientCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-PatternCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-TransformationMatrixCairo.$(OBJEXT)
@@ -5727,6 +5728,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-CursorES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragDataES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragImageES.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-Language.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-LocalizedStringsES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-MIMETypeRegistryES.Po@am__quote@
@@ -6209,9 +6212,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-FontCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-GradientCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-GraphicsContextCairo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageCairo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-PathCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-PatternCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-TransformationMatrixCairo.Po@am__quote@
@@ -14728,20 +14729,6 @@ trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.obj: tru
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp'; fi`
 
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o: trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
-
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj: trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; fi`
-
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.o: trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageCairo.Po
@@ -14755,20 +14742,6 @@ trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.obj: trunk/WebCore
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp'; fi`
-
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o: trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj: trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
 
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.o: trunk/WebCore/platform/graphics/cairo/PathCairo.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-PathCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/PathCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/PathCairo.cpp
@@ -14965,6 +14938,34 @@ trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj: trun
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp' object='trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj `if test -f 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; fi`
+
+es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o: es/WebCore/platform/es/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageBufferCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageBufferCairo.cpp
+
+es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj: es/WebCore/platform/es/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageBufferCairo.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageBufferCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageBufferCairo.cpp'; fi`
+
+es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o: es/WebCore/platform/es/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageSourceCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageSourceCairo.cpp
+
+es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj: es/WebCore/platform/es/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageSourceCairo.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageSourceCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageSourceCairo.cpp'; fi`
 
 trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o: trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o -MD -MP -MF trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Tpo -c -o trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o `test -f 'trunk/WebCore/platform/posix/FileSystemPOSIX.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
