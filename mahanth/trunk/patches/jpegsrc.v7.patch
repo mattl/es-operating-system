@@ -1,0 +1,20 @@
+diff -bcrN jpeg-7.org/config.sub jpeg-7/config.sub
+*** jpeg-7.org/config.sub	2009-06-29 11:38:21.780858122 +0800
+--- jpeg-7/config.sub	2009-06-29 11:39:16.484855222 +0800
+***************
+*** 1274,1280 ****
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* | -cegcc* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+--- 1274,1280 ----
+  	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+  	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+  	      | -chorusos* | -chorusrdb* | -cegcc* \
+! 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* | -es* \
+  	      | -mingw32* | -linux-gnu* | -linux-newlib* | -linux-uclibc* \
+  	      | -uxpv* | -beos* | -mpeix* | -udk* \
+  	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
