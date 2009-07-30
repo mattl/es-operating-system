@@ -15,7 +15,7 @@ AM_CPPFLAGS = \
 if POSIX
 
 TESTS = inet4 tcp tcp1 tcp2 config anon unreach mcast frag timeout dhcp dns \
-	udpEchoClient udpEchoServer tcpdiscardClient tcpdiscardServer tcpTimeout tcpWriteTimeout\
+	udpEchoClient udpEchoServer tcpdiscardClient tcpdiscardServer tcpTimeout tcpWriteTimeout testUrgSend\
 tcpDaytimeServer tcpDaytimeClient tcpDaytime
 
 noinst_PROGRAMS = $(TESTS)
@@ -90,5 +90,7 @@ tcpDaytimeServer_SOURCES = tcpDaytimeServer.cpp
 tcpDaytimeClient_SOURCES = tcpDaytimeClient.cpp
 
 tcpDaytime_SOURCES = tcpDaytime.cpp
+
+testUrgSend_SOURCES = testUrgSend.cpp
 
 EXTRA_DIST = makeScript testLoader
