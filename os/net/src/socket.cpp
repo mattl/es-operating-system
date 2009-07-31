@@ -503,6 +503,7 @@ sendTo(const void* src, int count, int flags, es::InternetAddress* addr, int por
 
     m.setRemote(dynamic_cast<Inet4Address*>(addr));
     m.setRemotePort(port);
+    m.setFlag(flags);
 
     Visitor v(&m);
     adapter->accept(&v);

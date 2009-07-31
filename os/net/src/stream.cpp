@@ -277,6 +277,7 @@ write(SocketMessenger* m, Conduit* c)
     seg->setLocalPort(m->getLocalPort());
     seg->setRemotePort(m->getRemotePort());
     seg->setType(IPPROTO_TCP);
+    seg->setFlag(m->getFlag());
     Visitor v(seg);
     conduit->accept(&v, conduit->getB());
 
