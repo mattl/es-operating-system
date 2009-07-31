@@ -32,8 +32,8 @@ module es
         const long Datagram = 2;
         const long Raw = 3;
 	
-	/* flags to sendTo and recvFrom methods */
-	const long MSG_OOB = 1;
+	// flags to sendTo and recvFrom methods
+	const long MsgOob = 1;
 
         /** Extracts the first connection on the queue of pending connections,
          * creates a new socket with the same socket type,

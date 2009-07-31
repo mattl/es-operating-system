@@ -67,8 +67,8 @@ int main()
     urgSend.connect(server, 9);
     
     // send an urgent byte
-    esReport("%d",es::Socket::MSG_OOB);
-    urgSend.sendTo("c",1,es::Socket::MSG_OOB,server,9);
+    esReport("%d",es::Socket::MsgOob);
+    urgSend.sendTo("c", 1, es::Socket::MsgOob, server, 9);
     
     // close the connection
     urgSend.close();
