@@ -30,43 +30,22 @@
 #include <cairo.h>
 #include <string>
 #include <math.h>
+
 #include <es.h>
-#include <es/object.h>
 #include <es/handle.h>
-#include <es/exception.h>
-#include <es/formatter.h>
-#include <es/interlocked.h>
-#include <es/list.h>
-#include <es/ref.h>
-#include <es/ring.h>
-#include <es/synchronized.h>
-#include <es/types.h>
-#include <es/usage.h>
-#include <es/utf.h>
 #include <es/base/IProcess.h>
 #include <es/base/IStream.h>
-#include <es/base/IService.h>
 
-namespace
-{
-    Interlocked registered = 0;
-
-    struct CanvasInfo
-    {
-        int x; // top-left
-        int y; // top-left
-        cairo_format_t format;
-        int width;
-        int height;
-    };
-};
+#include "html5_canvasrenderingcontext2d.h"
 
 #define SIZEX 1024
 #define SIZEY 768
    
 extern es::CurrentProcess* System();
+u8* framebufferPtr;
 
 void testCanvas2d(cairo_t* cairo);
+void figure(es::CanvasRenderingContext2D* canvas);
 
 int main(int argc, char* argv[])
 {
@@ -75,44 +54,91 @@ int main(int argc, char* argv[])
 
     Handle<es::Stream> framebuffer(nameSpace->lookup("device/framebuffer"));
     esReport("2.\n");
-    void* mapping = System()->map(0, framebuffer->getSize(),
+//    void* mapping = System()->map(0, framebuffer->getSize(),
+//                                  es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
+//                                  es::CurrentProcess::MAP_SHARED,
+//                                  Handle<es::Pageable>(framebuffer), 0);
+    framebufferPtr = (u8*) System()->map(0, framebuffer->getSize(),
                                   es::CurrentProcess::PROT_READ | es::CurrentProcess::PROT_WRITE,
                                   es::CurrentProcess::MAP_SHARED,
                                   Handle<es::Pageable>(framebuffer), 0);
+
+
     esReport("3.\n");
 
     // Register canvas
     cairo_surface_t* surface;
     esReport("4.\n");
     surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 1024, 768);
-    /*
-    CanvasInfo canvasInfo;
-    canvasInfo.x = 0;
-    canvasInfo.y = 0;
-    canvasInfo.width = 1024;
-    canvasInfo.height = 768;
-    canvasInfo.format = CAIRO_FORMAT_ARGB32;    // or CAIRO_FORMAT_RGB24
     
-    // surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
-    surface = cairo_image_surface_create_for_data(
-        static_cast<u8*>(mapping), canvasInfo.format , canvasInfo.width, canvasInfo.height,
-        sizeof(u32) * canvasInfo.width);*/
+    //int stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, 1024);
+    //unsigned char *data = malloc (stride * canvasInfo.height);
+
+    //surface = cairo_image_surface_create(canvasInfo.format, canvasInfo.width, canvasInfo.height);
+    //surface = cairo_image_surface_create_for_data(
+    //    static_cast<u8*>(mapping), CAIRO_FORMAT_ARGB32, 1024, 768, stride);
+
+    //surface = cairo_image_surface_create_for_data(
+    //      static_cast<u8*>(mapping), CAIRO_FORMAT_ARGB32, 1024, 768,
+    //      sizeof(u32) * 1024);
+
     
     cairo_t* cairo;
     esReport("create.\n");
     cairo = cairo_create(surface);
-    //esReport("5.\n");
-    //cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
+    ASSERT(cairo);
+
+    esReport("Finished create canvas.\n");
+
+    esReport("5.\n");
+    //cairo_rectangle(cairo, 0.0, 0.0, 50, 50);
     //cairo_set_source_rgb(cairo, 0.0, 0.0, 0.0);
     //cairo_fill(cairo);
+
+    //cairo_translate (cairo, 10, 10);
+    cairo_scale (cairo, 1, 1);
+
+    cairo_set_source_rgb (cairo, 0, 0, 0);
+    cairo_move_to (cairo, 0, 0);
+    cairo_line_to (cairo, 1, 1);
+    cairo_move_to (cairo, 1, 0);
+    cairo_line_to (cairo, 0, 1);
+    cairo_set_line_width (cairo, 0.2);
+    cairo_stroke (cairo);
+ 
+    cairo_rectangle (cairo, 0, 0, 0.5, 0.5);
+    cairo_set_source_rgba (cairo, 1, 0, 0, 0.80);
+    cairo_fill (cairo);
+
+    u8* data = cairo_image_surface_get_data (surface);
+    for (int y = 0; y < 120; ++y)
+    {
+        //framebuffer->write(data + 4 * 120 * y, 4 * 120, 4 * 1024 * y);
+        memmove(framebufferPtr + 4 * 1024 * y,
+                data + 4 * 120 * y,
+                4 * 120);
+    }
+
     esReport("6.\n");
+
     testCanvas2d(cairo);
+
+    //u8* data = cairo_image_surface_get_data (surface);
+    for (int y = 0; y < 120; ++y)
+    {
+        //framebuffer->write(data + 4 * 120 * y, 4 * 120, 4 * 1024 * y);
+        memmove(framebufferPtr + 4 * 1024 * y,
+                data + 4 * 120 * y,
+                4 * 120);
+    }
+
     esReport("7.\n");
     cairo_show_page(cairo);
-    cairo_destroy(cairo);
+    //cairo_destroy(cairo);
 
-    cairo_surface_destroy(surface);
-    System()->unmap(mapping, framebuffer->getSize());
+    //cairo_surface_destroy(surface);
+    //System()->unmap(mapping, framebuffer->getSize());
+    //System()->unmap(framebufferPtr, framebuffer->getSize());
     esReport("8.\n");
 
     esReport("quit canvas.\n");

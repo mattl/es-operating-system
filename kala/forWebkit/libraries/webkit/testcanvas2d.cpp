@@ -66,6 +66,8 @@ void figure(es::CanvasRenderingContext2D* canvas)
     float x;
     float y;
 
+    esReport("Start figure.\n");
+
     canvas->setStrokeStyle("rgb(0, 0, 0)");
     canvas->setLineWidth(3);
 
@@ -154,6 +156,8 @@ void figure(es::CanvasRenderingContext2D* canvas)
     canvas->setFillStyle("blue");
     canvas->setFont("48pt Liberation Mono");
     canvas->fillText("Hello, world.", 512, 300);
+
+    esReport("End figure.\n");
 }
 
 void testCanvas2d(cairo_t* cr)
