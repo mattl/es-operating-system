@@ -93,6 +93,6 @@ tcpDaytime_SOURCES = tcpDaytime.cpp
 
 testUrgSend_SOURCES = testUrgSend.cpp
 
-testListenBKlogs__SOURCES = testListenBKlogs.cpp
+testListenBKlogs_SOURCES = testListenBKlogs.cpp
 
 EXTRA_DIST = makeScript testLoader
