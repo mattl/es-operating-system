@@ -1,0 +1,252 @@
+Index: JavaScriptCore/wtf/Platform.h
+===================================================================
+--- JavaScriptCore/wtf/Platform.h	(revision 44489)
++++ JavaScriptCore/wtf/Platform.h	(working copy)
+@@ -341,8 +341,12 @@
+ #endif
+ #endif
+ 
++#if PLATFORM(ES)
++#define WTF_USE_PTHREADS 1
++#endif
++
+ #if !defined(HAVE_ACCESSIBILITY)
+-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
++#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM) || PLATFORM(ES)
+ #define HAVE_ACCESSIBILITY 1
+ #endif
+ #endif /* !defined(HAVE_ACCESSIBILITY) */
+Index: WebCore/config.h
+===================================================================
+--- WebCore/config.h	(revision 44489)
++++ WebCore/config.h	(working copy)
+@@ -162,6 +162,10 @@
+ /* Using V8 implies not using JSC and vice versa */
+ #define WTF_USE_JSC !WTF_USE_V8
+ 
++#if PLATFORM(ES)
++#undef WTF_USE_JSC
++#endif
++
+ #if PLATFORM(CG)
+ #ifndef CGFLOAT_DEFINED
+ #ifdef __LP64__
+Index: WebCore/dom/XMLTokenizerLibxml2.cpp
+===================================================================
+--- WebCore/dom/XMLTokenizerLibxml2.cpp	(revision 44489)
++++ WebCore/dom/XMLTokenizerLibxml2.cpp	(working copy)
+@@ -49,6 +49,7 @@
+ #include "ScriptElement.h"
+ #include "ScriptSourceCode.h"
+ #include "ScriptValue.h"
++#include "SecurityOrigin.h"
+ #include "TextResourceDecoder.h"
+ #include "XMLTokenizerScope.h"
+ #include <libxml/parser.h>
+Index: WebCore/page/Page.cpp
+===================================================================
+--- WebCore/page/Page.cpp	(revision 44489)
++++ WebCore/page/Page.cpp	(working copy)
+@@ -117,7 +117,9 @@
+     , m_didLoadUserStyleSheet(false)
+     , m_userStyleSheetModificationTime(0)
+     , m_group(0)
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+     , m_debugger(0)
++#endif
+     , m_customHTMLTokenizerTimeDelay(-1)
+     , m_customHTMLTokenizerChunkSize(-1)
+ {
+@@ -527,6 +529,7 @@
+     }
+ }
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+ void Page::setDebuggerForAllPages(JSC::Debugger* debugger)
+ {
+     ASSERT(allPages);
+@@ -546,6 +549,7 @@
+     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+         frame->script()->attachDebugger(m_debugger);
+ }
++#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+ 
+ #if ENABLE(DOM_STORAGE)
+ SessionStorage* Page::sessionStorage(bool optionalCreate)
+Index: WebCore/page/DragController.cpp
+===================================================================
+--- WebCore/page/DragController.cpp	(revision 44489)
++++ WebCore/page/DragController.cpp	(working copy)
+@@ -55,6 +55,7 @@
+ #include "RenderImage.h"
+ #include "ReplaceSelectionCommand.h"
+ #include "ResourceRequest.h"
++#include "SecurityOrigin.h"
+ #include "SelectionController.h"
+ #include "Settings.h"
+ #include "Text.h"
+Index: WebCore/page/Page.h
+===================================================================
+--- WebCore/page/Page.h	(revision 44489)
++++ WebCore/page/Page.h	(working copy)
+@@ -160,9 +160,11 @@
+         void userStyleSheetLocationChanged();
+         const String& userStyleSheet() const;
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+         static void setDebuggerForAllPages(JSC::Debugger*);
+         void setDebugger(JSC::Debugger*);
+         JSC::Debugger* debugger() const { return m_debugger; }
++#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+ 
+ #if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
+         // The global DLL or application instance used for all windows.
+@@ -242,7 +244,9 @@
+         OwnPtr<PageGroup> m_singlePageGroup;
+         PageGroup* m_group;
+ 
++#if ENABLE(JAVASCRIPT_DEBUGGER)
+         JSC::Debugger* m_debugger;
++#endif
+ 
+         double m_customHTMLTokenizerTimeDelay;
+         int m_customHTMLTokenizerChunkSize;
+Index: WebCore/platform/Cursor.h
+===================================================================
+--- WebCore/platform/Cursor.h	(revision 44489)
++++ WebCore/platform/Cursor.h	(working copy)
+@@ -40,6 +40,8 @@
+ #include <QCursor>
+ #elif PLATFORM(CHROMIUM)
+ #include "PlatformCursor.h"
++#elif PLATFORM(ES)
++#include "PlatformCursor.h"
+ #endif
+ 
+ #if PLATFORM(MAC)
+@@ -86,6 +88,9 @@
+ #elif PLATFORM(CHROMIUM)
+     // See PlatformCursor.h
+     typedef void* PlatformCursorHandle;
++#elif PLATFORM(ES)
++    // See PlatformCursor.h
++    typedef void* PlatformCursorHandle;
+ #else
+     typedef void* PlatformCursor;
+     typedef void* PlatformCursorHandle;
+Index: WebCore/platform/DragData.h
+===================================================================
+--- WebCore/platform/DragData.h	(revision 44489)
++++ WebCore/platform/DragData.h	(working copy)
+@@ -56,6 +56,8 @@
+ typedef void* DragDataRef;
+ #elif PLATFORM(CHROMIUM)
+ #include "DragDataRef.h"
++#elif PLATFORM(ES)
++#include "DragDataRef.h"
+ #endif
+ 
+ 
+Index: WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp
+===================================================================
+--- WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp	(revision 44489)
++++ WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp	(working copy)
+@@ -32,7 +32,9 @@
+ #include <cairo-ft.h>
+ #include <cairo.h>
+ #include <fontconfig/fcfreetype.h>
++#if !PLATFORM(ES)
+ #include <gtk/gtk.h>
++#endif
+ 
+ namespace WebCore {
+ 
+@@ -109,8 +111,10 @@
+     cairo_matrix_init_scale(&fontMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
+     cairo_matrix_init_identity(&ctm);
+ 
++#if !PLATFORM(ES)
+     if (GdkScreen* screen = gdk_screen_get_default())
+         options = gdk_screen_get_font_options(screen);
++#endif
+ 
+     // gdk_screen_get_font_options() returns NULL if no default options are
+     // set, so we always have to check.
+@@ -149,8 +153,10 @@
+     static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
+     const cairo_font_options_t* options = NULL;
+ 
++#if !PLATFORM(ES)
+     if (GdkScreen* screen = gdk_screen_get_default())
+         options = gdk_screen_get_font_options(screen);
++#endif
+ 
+     // gdk_screen_get_font_options() returns NULL if no default options are
+     // set, so we always have to check.
+Index: WebCore/platform/network/ResourceResponseBase.cpp
+===================================================================
+--- WebCore/platform/network/ResourceResponseBase.cpp	(revision 44489)
++++ WebCore/platform/network/ResourceResponseBase.cpp	(working copy)
+@@ -324,6 +324,7 @@
+ 
+ static double parseDateValueInHeader(const HTTPHeaderMap& headers, const AtomicString& headerName)
+ {
++#if USE(JSC)
+     String headerValue = headers.get(headerName);
+     if (headerValue.isEmpty())
+         return std::numeric_limits<double>::quiet_NaN(); 
+@@ -331,10 +332,13 @@
+     // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+     // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+     // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+-    double dateInMilliseconds = JSC::parseDate(headerValue);
++    double dateInMilliseconds = JSC::parseDate(JSC::UString(headerValue.characters(), headerValue.length()));
+     if (!isfinite(dateInMilliseconds))
+         return std::numeric_limits<double>::quiet_NaN();
+     return dateInMilliseconds / 1000;
++#else
++    return std::numeric_limits<double>::quiet_NaN();
++#endif
+ }
+ 
+ double ResourceResponseBase::date() const
+Index: WebCore/platform/DragImage.h
+===================================================================
+--- WebCore/platform/DragImage.h	(revision 44489)
++++ WebCore/platform/DragImage.h	(working copy)
+@@ -46,6 +46,8 @@
+ class wxDragImage;
+ #elif PLATFORM(CHROMIUM)
+ #include "DragImageRef.h"
++#elif PLATFORM(ES)
++#include "DragImageRef.h"
+ #endif
+ 
+ //We need to #define YOffset as it needs to be shared with WebKit
+Index: WebCore/platform/Widget.h
+===================================================================
+--- WebCore/platform/Widget.h	(revision 44489)
++++ WebCore/platform/Widget.h	(working copy)
+@@ -69,6 +69,10 @@
+ #include "PlatformWidget.h"
+ #endif
+ 
++#if PLATFORM(ES)
++#include "PlatformWidget.h"
++#endif
++
+ #include "IntPoint.h"
+ #include "IntRect.h"
+ #include "IntSize.h"
+Index: WebCore/loader/CachedResource.cpp
+===================================================================
+--- WebCore/loader/CachedResource.cpp	(revision 44489)
++++ WebCore/loader/CachedResource.cpp	(working copy)
+@@ -35,6 +35,7 @@
+ #include <wtf/CurrentTime.h>
+ #include <wtf/MathExtras.h>
+ #include <wtf/RefCountedLeakCounter.h>
++#include <wtf/StdLibExtras.h>
+ #include <wtf/Vector.h>
+ 
+ using namespace WTF;
