@@ -714,6 +714,32 @@ public:
         return 0;
     }
 
+    // dump listen queue
+    void dumpAccepted()
+    {
+        int i =0;
+        
+        esReport("Accepted queue dump:------\n");
+        if (!accepted.isEmpty())
+        {
+             StreamReceiver* s;
+             List<StreamReceiver, &StreamReceiver::link>::Iterator iter = accepted.begin();
+             while (s = iter.next())
+             {
+                  i++;
+                  if (s->socket)
+                  {
+                       int localPort = s->socket->getLocalPort();
+                       int remotePort = s->socket->getRemotePort();
+        
+                       esReport("connection-%d:\nState(%s)", i, s->getState()->getName());
+                       esReport("localPort(%d),remotePort(%d)\n", localPort, remotePort);
+                  }
+             }
+                            
+        }
+    }
+    
     static class StateClosed        stateClosed;
     static class StateListen        stateListen;
     static class StateSynSent       stateSynSent;
