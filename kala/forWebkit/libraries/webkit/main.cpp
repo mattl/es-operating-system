@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     }
     */
 
-    for (int y = 0; y < framebuffer->getSize(); ++y)
+    for (int y = 0; y < 1024*768; ++y)
     {
         *framebufferPtr++ = *data++;
         *framebufferPtr++ = *data++;
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
     }
 
     esReport("7.\n");
-    cairo_show_page(cairo);
+    //cairo_show_page(cairo);
     //cairo_destroy(cairo);
 
     //cairo_surface_destroy(surface);
