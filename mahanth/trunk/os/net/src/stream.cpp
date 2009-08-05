@@ -198,7 +198,20 @@ read(SocketMessenger* m, Conduit* c)
         monitor->wait();
     }
 
-    long len = recvRing.getUsed();
+    long len;
+    if (recvRing.getUsed() + recvUp - recvNext == 0)
+    {
+       len = 1;
+       hadUrg = true;
+    }
+    else if (!hadUrg)
+    {
+        len = std::min(recvRing.getUsed(), recvRing.getUsed() + recvUp - recvNext);
+    }
+    else
+    {
+        len = recvRing.getUsed();
+    }
     if (len < 0)
     {
         // XXX m->setErrorCode(XXX);

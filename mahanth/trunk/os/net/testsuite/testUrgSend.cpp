@@ -66,9 +66,11 @@ int main()
     // connect to a tcp server 
     urgSend.connect(server, 9);
     
-    // send an urgent byte
+    // send an urgent byte in the midst of normal octets
     esReport("%d", es::Socket::MsgOob);
+    urgSend.write("hello",5);
     urgSend.sendTo("c", 1, es::Socket::MsgOob, server, 9);
+    urgSend.write("ab",3);
     
     // close the connection
     urgSend.close();
