@@ -31,6 +31,34 @@ extern void esRegisterInternetProtocol(es::Context* context);
 
 Handle<es::Resolver> resolver;
 
+void dumpAccepted(StreamReceiver* s)
+{
+    int i =0;
+    List<StreamReceiver, &StreamReceiver::link> accepted = s->getAccepted();
+
+    esReport("Accepted queue dump:------\n");
+    if (!accepted.isEmpty())
+    {
+        StreamReceiver* s;
+        
+        List<StreamReceiver, &StreamReceiver::link>::Iterator iter = accepted.begin();
+        while (s = iter.next())
+        {
+            i++;
+            Socket* socket = s->getSocket();
+            if (socket)
+            {
+                int localPort = socket->getLocalPort();
+                int remotePort = socket->getRemotePort();
+        
+                esReport("connection-%d:\nState(%s),", i, s->getState()->getName());
+                esReport("localPort(%d),remotePort(%d)\n", localPort, remotePort);
+            }
+        }
+                            
+    }
+}
+
 int main()
 {
     Object* root = NULL;
@@ -78,18 +106,18 @@ int main()
     StreamReceiver* s = dynamic_cast<StreamReceiver*>(p->getReceiver());
 
     // dump initial listen queue.
-    s->dumpAccepted();
+    dumpAccepted(s);
 
     esSleep(300000000); // period1
     // dump connection requests coming in period1
-    s->dumpAccepted();
+    dumpAccepted(s);
     
     esSleep(300000000); // period2
     /*
       Dump queue to see whether there are connections which came in period1
       aborted(eg. Reset by client)in period2,before this server call listenSocket->accept()
      */
-    s->dumpAccepted();
+    dumpAccepted(s);
    
     config->removeAddress(host);
     nic->stop();
