@@ -96,6 +96,8 @@ int main(int argc, char* argv[])
     //cairo_fill(cairo);
 
     //cairo_translate (cairo, 10, 10);
+
+/*
     cairo_scale (cairo, 1, 1);
 
     cairo_set_source_rgb (cairo, 0, 0, 0);
@@ -109,27 +111,46 @@ int main(int argc, char* argv[])
     cairo_rectangle (cairo, 0, 0, 0.5, 0.5);
     cairo_set_source_rgba (cairo, 1, 0, 0, 0.80);
     cairo_fill (cairo);
-
+*/
     u8* data = cairo_image_surface_get_data (surface);
-    for (int y = 0; y < 120; ++y)
+/*
+    for (int y = 0; y < 1024; ++y)
     {
         //framebuffer->write(data + 4 * 120 * y, 4 * 120, 4 * 1024 * y);
         memmove(framebufferPtr + 4 * 1024 * y,
-                data + 4 * 120 * y,
-                4 * 120);
+                data + 4 * 1024 * y,
+                4 * 768);
     }
-
+*/
+/*
+    for (int y = 0; y < framebuffer->getSize(); ++y)
+    {
+        *framebufferPtr++ = *data++;
+        *framebufferPtr++ = *data++;
+        *framebufferPtr++ = *data++;
+    }
+*/
     esReport("6.\n");
 
     testCanvas2d(cairo);
 
     //u8* data = cairo_image_surface_get_data (surface);
-    for (int y = 0; y < 120; ++y)
+    /*
+    for (int y = 0; y < 1024; ++y)
     {
         //framebuffer->write(data + 4 * 120 * y, 4 * 120, 4 * 1024 * y);
         memmove(framebufferPtr + 4 * 1024 * y,
-                data + 4 * 120 * y,
-                4 * 120);
+                data + 4 * 1024 * y,
+                4 * 768);
+    }
+    */
+
+    for (int y = 0; y < framebuffer->getSize(); ++y)
+    {
+        *framebufferPtr++ = *data++;
+        *framebufferPtr++ = *data++;
+        *framebufferPtr++ = *data++;
+        data++;
     }
 
     esReport("7.\n");
