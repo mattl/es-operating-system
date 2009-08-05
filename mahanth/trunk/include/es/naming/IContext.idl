@@ -1,0 +1,78 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
+#define NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
+
+#include "es/util/IIterator.idl"
+#include "es/naming/IBinding.idl"
+
+module es
+{
+    /** This interface represents a naming context, which consists of a set
+     * of name-to-object bindings. It contains methods for examining and
+     * updating these bindings.
+     */
+    interface Context
+    {
+        /** Binds a name to an object.
+         * @param name      The name to bind.
+         * @param obj       The object to bind.
+         */
+        Binding bind(in string name, in Object element);
+
+        /** Creates a new context.
+         * @param name      The name of the context to create.
+         */
+        Context createSubcontext(in string name);
+
+        /** Removes the named context.
+         * @param name      The name of the context to be destroyed.
+         */
+        long destroySubcontext(in string name);
+
+        /** Retrieves the named object.
+         * @param name      The name of the object to look up.
+         * @return          The object bound to <code>name</code>.
+         */
+        Object lookup(in string name);
+
+        /** Binds a new name to the object bound to an old name, and unbinds
+         * the old name.
+         * @param oldName   The name of the existing binding.
+         * @param newName   The name of the new binding.
+         */
+        long rename(in string oldName, in string newName);
+
+        /** Unbinds the named object.
+         * @param name      The name to unbind; may not be empty.
+         */
+        long unbind(in string name);
+
+        /** Enumerates the names bound in the named context, along with the
+         * objects bound to them.
+         * @param name      The name of the context to list.
+         * @return          An iterator of the name-to-object bindings in this
+         *                  context. Each element of the iterator is of type
+         *                  <code>IBinding</code>.
+         */
+        Iterator list(in string name);
+    };
+};
+
+#endif // NINTENDO_ES_NAMING_ICONTEXT_IDL_INCLUDED
+
