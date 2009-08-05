@@ -25,18 +25,15 @@ module events
   typedef dom::DOMObject DOMObject;
   typedef dom::Node Node;
 
-  interface EventTarget;
-  interface EventListener;
-
   // Introduced in DOM Level 2:
   exception EventException {
     unsigned short   code;
-  };
-  // EventExceptionCode
-  const unsigned short      UNSPECIFIED_EVENT_TYPE_ERR     = 0;
-  // Introduced in DOM Level 3:
-  const unsigned short      DISPATCH_REQUEST_ERR           = 1;
 
+    // EventExceptionCode
+    const unsigned short      UNSPECIFIED_EVENT_TYPE_ERR     = 0;
+    // Introduced in DOM Level 3:
+    const unsigned short      DISPATCH_REQUEST_ERR           = 1;
+  };
 
   // Introduced in DOM Level 2:
   interface Event {
@@ -74,7 +71,7 @@ module events
   };
 
   // Introduced in DOM Level 2:
-  [ImplementedOn=Node]
+  Node implements EventTarget;
   interface EventTarget {
     void               addEventListener(in DOMString type,
                                         in EventListener listener,

@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
     bool isystem = false;
     bool useExceptions = true;
     const char* stringTypeName = "char*";   // C++ string type name to be used
+    const char* indent = "es";
 
     for (int i = 1; i < argc; ++i)
     {
@@ -120,6 +121,11 @@ int main(int argc, char* argv[])
                 argCpp[optCpp++] = argv[i];
                 ++i;
                 argCpp[optCpp++] = argv[i];
+            }
+            else if (strcmp(argv[i], "-indent") == 0)
+            {
+                ++i;
+                indent = argv[i];
             }
             else if (strcmp(argv[i], "-isystem") == 0)
             {
@@ -198,6 +204,7 @@ int main(int argc, char* argv[])
                 {
                     if (strcmp(argv[i], "-I") == 0 ||
                         strcmp(argv[i], "-include") == 0 ||
+                        strcmp(argv[i], "-indent") == 0 ||
                         strcmp(argv[i], "-isystem") == 0 ||
                         strcmp(argv[i], "-namespace") == 0 ||
                         strcmp(argv[i], "-object") == 0 ||
@@ -289,6 +296,7 @@ int main(int argc, char* argv[])
         {
             if (strcmp(argv[i], "-I") == 0 ||
                 strcmp(argv[i], "-include") == 0 ||
+                strcmp(argv[i], "-indent") == 0 ||
                 strcmp(argv[i], "-isystem") == 0 ||
                 strcmp(argv[i], "-namespace") == 0 ||
                 strcmp(argv[i], "-object") == 0 ||
@@ -298,7 +306,7 @@ int main(int argc, char* argv[])
             }
             continue;
         }
-        result = output(argv[i], isystem, useExceptions, stringTypeName,
+        result = output(argv[i], isystem, useExceptions, stringTypeName, indent,
                         skeleton, generic);
     }
 

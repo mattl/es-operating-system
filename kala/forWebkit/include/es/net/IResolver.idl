@@ -27,8 +27,6 @@ module es
      */
     interface Resolver
     {
-        typedef sequence<octet> Buf;
-
         /** Gets an internet address about the host for the specified DNS host name.
          * @param hostName the host name.
          * @param addressFamily the address family of the internet address to be requested.
@@ -44,7 +42,7 @@ module es
          * @param scopeID the scope identifier of the network interface.
          * @return the new internet address.
          */
-        InternetAddress getHostByAddress(in Buf address, in unsigned long scopeID);
+        InternetAddress getHostByAddress(in sequence<octet> address, in unsigned long scopeID);
 
         /** Gets the host name of the specified internet address.
          * @param address  the internet address.

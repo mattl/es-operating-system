@@ -16,6 +16,7 @@
 
 #include "esnpapi.h"
 #include "reflect.h"
+#include "proxyImpl.h"
 
 #include <algorithm>
 #include <map>
@@ -237,11 +238,6 @@ void addStubConstructor(const std::string interfaceName, NPObject* (*createStub)
     stubConstructorMap[interfaceName] = createStub;
 }
 
-void addInterfaceData(const char* iid, const char* info)
-{
-    metaDataMap[std::string(iid)] = Reflect::Interface(info, iid);
-}
-
 Reflect::Interface* getInterfaceData(const std::string className)
 {
     std::map<std::string, Reflect::Interface>::iterator i;
@@ -253,6 +249,45 @@ Reflect::Interface* getInterfaceData(const std::string className)
         return 0;
     }
     return &((*i).second);
+}
+
+Reflect::Interface* getInterfaceData(const char* iid)
+{
+    std::map<std::string, Reflect::Interface>::iterator i;
+
+    i = metaDataMap.find(iid);
+    if (i == metaDataMap.end())
+    {
+        return 0;
+    }
+    return &((*i).second);
+}
+
+void addInterfaceData(const char* iid, const char* info)
+{
+    metaDataMap[std::string(iid)] = Reflect::Interface(info, iid);
+
+    unsigned inheritedMethodCount = 0;
+    Reflect::Interface* interface = getInterfaceData(iid);
+    Reflect::Interface* super = interface;
+    while (super)
+    {
+        std::string superName = super->getQualifiedSuperName();
+        if (superName == "")
+        {
+            break;
+        }
+        super = getInterfaceData(superName.c_str());
+        if (super)
+        {
+            inheritedMethodCount += super->getMethodCount();
+        }
+    }
+    if (interface)
+    {
+        interface->setInheritedMethodCount(inheritedMethodCount);
+    }
+    printf("%s %d\n", iid, inheritedMethodCount);
 }
 
 NPObject* createStub(NPP npp, const char* interfaceName, Object* object)
@@ -369,7 +404,7 @@ double convertToDouble(const NPVariant* variant)
     return static_cast<double>(toNumber(variant));
 }
 
-std::string converttoString(NPP npp, const NPVariant* variant, unsigned attribute)
+std::string convertToString(NPP npp, const NPVariant* variant, unsigned attribute)
 {
   return toString(npp, variant, attribute);
 }
@@ -547,7 +582,6 @@ void convertToVariant(NPP npp, const std::string& value, NPVariant* variant)
     STRINGN_TO_NPVARIANT(value.c_str(), value.length(), *variant);
 }
 
-// Creates a stub NPObject from 'any' and set it to 'variant'.
 void convertToVariant(NPP npp, Object* value, NPVariant* variant)
 {
     if (!value)
@@ -555,9 +589,16 @@ void convertToVariant(NPP npp, Object* value, NPVariant* variant)
         NULL_TO_NPVARIANT(*variant);
         return;
     }
-    std::string interfaceName = value->getInterfaceName();
-    NPObject* object = createStub(npp, interfaceName.c_str(), value);
-    OBJECT_TO_NPVARIANT(object, *variant);
+    if (Proxy_Base<ProxyObject>* proxy = dynamic_cast<Proxy_Base<ProxyObject>*>(value))
+    {
+        OBJECT_TO_NPVARIANT(proxy->getObject()->getNPObject(), *variant);
+    }
+    else
+    {
+        std::string interfaceName = value->getInterfaceName();
+        NPObject* object = createStub(npp, interfaceName.c_str(), value);
+        OBJECT_TO_NPVARIANT(object, *variant);
+    }
 }
 
 void convertToVariant(NPP npp, const Any& any, NPVariant* variant)

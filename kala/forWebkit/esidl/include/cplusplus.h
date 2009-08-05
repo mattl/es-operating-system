@@ -31,7 +31,6 @@ class CPlusPlus : public Visitor, public Formatter
 protected:
     const char* source;
 
-    std::string prefix;
     std::string stringTypeName;
     bool useExceptions;
 
@@ -55,7 +54,7 @@ protected:
         return variadicParam;
     }
 
-    void printChildren(const Node* node)
+    void printChildren(const Node* node, const char* separater = 0)
     {
         if (node->isLeaf())
         {
@@ -63,9 +62,6 @@ protected:
         }
 
         const Node* saved = currentNode;
-        std::string separator;
-        bool br;
-        int count = 0;
         for (NodeList::iterator i = node->begin(); i != node->end(); ++i)
         {
             if (!(*i)->isDefinedIn(source))
@@ -76,27 +72,12 @@ protected:
             {
                 continue;
             }
-            if (0 < count)
+            if (separater && i != node->begin())
             {
-                write("%s", separator.c_str());
-            }
-            separator = (*i)->getSeparator();
-            br = (separator[separator.size() - 1] == '\n') ? true : false;
-            if (br)
-            {
-                writetab();
-            }
-            if (0 < prefix.size())
-            {
-                write("%s", prefix.c_str());
+                write("%s", separater);
             }
             currentNode = (*i);
             (*i)->accept(this);
-            ++count;
-        }
-        if (br && 0 < count)
-        {
-            write("%s", separator.c_str());
         }
         currentNode = saved;
     }
@@ -119,8 +100,8 @@ protected:
     }
 
 public:
-    CPlusPlus(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true) :
-        Formatter(file),
+    CPlusPlus(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true, const char* indent = "es") :
+        Formatter(file, indent),
         source(source),
         stringTypeName(stringTypeName),
         useExceptions(useExceptions),
@@ -160,16 +141,12 @@ public:
                 write("%s\n", node->getJavadoc().c_str());
                 writetab();
             }
-            write("namespace %s\n", node->getName().c_str());
-            writeln("{");
-            indent();
+            write("namespace %s {\n", node->getName().c_str());
                 moduleName += "::";
                 moduleName += node->getName();
                 printChildren(node);
                 moduleName.erase(moduleName.size() - node->getName().size() - 2);
-            unindent();
-            writetab();
-            write("}");
+            writeln("}");
         }
         else
         {
@@ -272,31 +249,6 @@ public:
         {
             if (spec->isInterface(node->getParent()))
             {
-#ifdef USE_FUNCTION_ATTRIBUTE
-                Interface* callback = dynamic_cast<Interface*>(dynamic_cast<ScopedName*>(spec)->search(node->getParent()));
-                uint32_t attr;
-                if (callback && (attr = callback->isCallback()) != 0)
-                {
-                    if (attr == Interface::CallbackIsFunctionOnly)
-                    {
-                        std::string getterName = "get";
-                        getterName += cap + "()";
-
-                        OpDcl* op = 0;
-                        paramMode(getterName);
-                        for (NodeList::iterator i = callback->begin(); i != callback->end(); ++i)
-                        {
-                            if (op = dynamic_cast<OpDcl*>(*i))
-                            {
-                                CPlusPlus::at(op);
-                                break;
-                            }
-                        }
-                        paramMode();
-                        return;
-                    }
-                }
-#endif // USE_FUNCTION_ATTRIBUTE
                 spec->accept(this);
                 write("*");
             }
@@ -313,7 +265,7 @@ public:
         if (useExceptions && node->getGetRaises())
         {
             write(" throw(");
-            node->getGetRaises()->accept(this);
+            printChildren(node->getGetRaises(), ", ");
             write(")");
         }
     }
@@ -369,29 +321,6 @@ public:
             write("void set%s(", cap.c_str());
             if (spec->isInterface(node->getParent()))
             {
-#ifdef USE_FUNCTION_ATTRIBUTE
-                Interface* callback = dynamic_cast<Interface*>(dynamic_cast<ScopedName*>(spec)->search(node->getParent()));
-                uint32_t attr;
-                if (callback && (attr = callback->isCallback()) != 0)
-                {
-                    if (attr == Interface::CallbackIsFunctionOnly)
-                    {
-                        OpDcl* op = 0;
-                        paramMode(name.c_str());
-                        for (NodeList::iterator i = callback->begin(); i != callback->end(); ++i)
-                        {
-                            if (op = dynamic_cast<OpDcl*>(*i))
-                            {
-                                CPlusPlus::at(op);
-                                break;
-                            }
-                        }
-                        paramMode();
-                        write(")");
-                        return true;
-                    }
-                }
-#endif  // USE_FUNCTION_ATTRIBUTE
                 spec->accept(this);
                 write("*");
             }
@@ -408,7 +337,7 @@ public:
         if (useExceptions && node->getSetRaises())
         {
             write(" throw(");
-            node->getSetRaises()->accept(this);
+            printChildren(node->getSetRaises(), ", ");
             write(")");
         }
         return true;
@@ -508,7 +437,7 @@ public:
         if (useExceptions && node->getRaises())
         {
             write(" throw(");
-            node->getRaises()->accept(this);
+            printChildren(node->getRaises(), ", ");
             write(")");
         }
     }
@@ -571,6 +500,18 @@ public:
     {
     }
 
+    virtual void at(const NativeType* node)
+    {
+        if (node->getName() == "void_pointer")
+        {
+            write("void*");
+        }
+        else
+        {
+            write("%s", node->getName().c_str());
+        }
+    }
+
     static std::string getInterfaceName(std::string qualifiedName)
     {
         if (qualifiedName == "::Object")
@@ -587,16 +528,33 @@ public:
         return qualifiedName;
     }
 
-    virtual void at(const NativeType* node)
+    static std::string getIncludedName(const std::string headerFilename, const char* indent = "es")
     {
-        if (node->getName() == "void_pointer")
+        std::string included(headerFilename);
+        bool capitalize = true;
+
+        if (strcmp(indent, "google") == 0)
         {
-            write("void*");
+            included += "_";
+        }
+        else if (strcmp(indent, "es") == 0)
+        {
+            included += "_INCLUDED";
         }
         else
         {
-            write("%s", node->getName().c_str());
+            capitalize = false;
         }
+        if (isdigit(included[0]))
+        {
+            included = "No" + included;
+        }
+        for (int i = 0; i < included.size(); ++i)
+        {
+            char c = included[i];
+            included[i] = isalnum(c) ? (capitalize ? toupper(c) : c) : '_';
+        }
+        return included;
     }
 };
 

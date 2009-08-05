@@ -35,71 +35,36 @@ module html5 {
   typedef webstorage::Database Database;
   typedef webstorage::Storage Storage;
 
-  interface ApplicationCache;
-  interface BarProp;
-  interface CanvasGradient;
-  interface CanvasPattern;
-  interface CanvasPixelArray;
-  interface CueRangeCallback;
-  interface DataGridDataProvider;
-  interface DataGridSelection;
-  interface DataTransfer;
-  interface History;
-  interface ImageData;
-  interface Function;
-  interface HTMLElement;
-  interface HTMLFormElement;
-  interface HTMLMediaElement;
-  interface HTMLMenuElement;
-  interface HTMLTableCaptionElement;
-  interface HTMLTableSectionElement;
-  interface HTMLOptionElement;
-  interface Location;
-  interface MediaError;
-  interface MessagePort;
-  interface Navigator;
-  interface RowSpecification;
-  interface Selection;
-  interface TextMetrics;
-  interface TimeoutHandler;
-  interface TimeRanges;
-  interface UndoManager;
-  interface ValidityState;
-  interface Window;
-
   typedef sequence<MessagePort> MessagePortArray;
 
   // XXX
   typedef any Date;
-  typedef Window WindowProxy;
 
-  [Callable=namedItem]
   interface HTMLCollection {
     readonly attribute unsigned long length;
-    [IndexGetter] Element item(in unsigned long index);
-    [NameGetter] Element namedItem(in DOMString name);
+    getter Element item(in unsigned long index);
+    caller getter Element namedItem(in DOMString name);
   };
 
-  [Callable=namedItem]
   interface HTMLFormControlsCollection {
     readonly attribute unsigned long length;
-    [IndexGetter] HTMLElement item(in unsigned long index);
-    [NameGetter] Object namedItem(in DOMString name);
+    getter HTMLElement item(in unsigned long index);
+    caller getter Object namedItem(in DOMString name);
   };
 
-  [Callable=namedItem]
   interface HTMLOptionsCollection {
              attribute unsigned long length;
-    [IndexGetter] HTMLOptionElement item(in unsigned long index);
-    [NameGetter] Object namedItem(in DOMString name);
-    void add(in HTMLElement element, [Optional] in HTMLElement before);
+    getter HTMLOptionElement item(in unsigned long index);
+    caller getter Object namedItem(in DOMString name);
+    void add(in HTMLElement element, in optional HTMLElement before);
     void add(in HTMLElement element, in long before);
     void remove(in long index);
   };
 
-  [Stringifies] interface DOMTokenList {
+  interface DOMTokenList {
+    stringifier;
     readonly attribute unsigned long length;
-    [IndexGetter] DOMString item(in unsigned long index);
+    getter DOMString item(in unsigned long index);
     boolean has(in DOMString token);
     void add(in DOMString token);
     void remove(in DOMString token);
@@ -109,7 +74,8 @@ module html5 {
   [NameCreator, NameDeleter, NameGetter, NameSetter]
   interface DOMStringMap {};
 
-  [NameGetter=OverrideBuiltins, ImplementedOn=Document]
+  Document implements HTMLDocument;
+  [NameGetter=OverrideBuiltins]
   interface HTMLDocument {
     // resource metadata management
     [PutForwards=href] readonly attribute Location location;
@@ -140,11 +106,11 @@ module html5 {
 
     // dynamic markup insertion
              attribute DOMString innerHTML;
-    HTMLDocument open([Optional] in DOMString type, [Optional] in DOMString replace);
-    WindowProxy open(in DOMString url, in DOMString name, in DOMString features, [Optional] in boolean replace);
+    HTMLDocument open(in optional DOMString type, in optional DOMString replace);
+    WindowProxy open(in DOMString url, in DOMString name, in DOMString features, in optional boolean replace);
     void close();
-    void write([Variadic] in DOMString text);
-    void writeln([Variadic] in DOMString text);
+    void write(in DOMString... text);
+    void writeln(in DOMString... text);
 
     // user interaction
     Selection getSelection();
@@ -293,8 +259,8 @@ module html5 {
              attribute long value;
   };
 
-  [Stringifies=href] interface HTMLAnchorElement : HTMLElement {
-             attribute DOMString href;
+  interface HTMLAnchorElement : HTMLElement {
+             stringifier attribute DOMString href;
              attribute DOMString target;
              attribute DOMString ping;
              attribute DOMString rel;
@@ -471,7 +437,7 @@ module html5 {
              attribute unsigned long width;
              attribute unsigned long height;
 
-    DOMString toDataURL([Optional] in DOMString type, [Variadic] in any args);
+    DOMString toDataURL(in optional DOMString type, in any... args);
 
     Object getContext(in DOMString contextId);
   };
@@ -540,22 +506,22 @@ module html5 {
              attribute DOMString font; // (default 10px sans-serif)
              attribute DOMString textAlign; // "start", "end", "left", "right", "center" (default: "start")
              attribute DOMString textBaseline; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" (default: "alphabetic")
-    void fillText(in DOMString text, in float x, in float y, [Optional] in float maxWidth);
-    void strokeText(in DOMString text, in float x, in float y, [Optional] in float maxWidth);
+    void fillText(in DOMString text, in float x, in float y, in optional float maxWidth);
+    void strokeText(in DOMString text, in float x, in float y, in optional float maxWidth);
     TextMetrics measureText(in DOMString text);
 
     // drawing images
-    void drawImage(in HTMLImageElement image, in float dx, in float dy, [Optional] in float dw, in float dh);
+    void drawImage(in HTMLImageElement image, in float dx, in float dy, in optional float dw, in float dh);
     void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh);
-    void drawImage(in HTMLCanvasElement image, in float dx, in float dy, [Optional] in float dw, in float dh);
+    void drawImage(in HTMLCanvasElement image, in float dx, in float dy, in optional float dw, in float dh);
     void drawImage(in HTMLCanvasElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh);
-    void drawImage(in HTMLVideoElement image, in float dx, in float dy, [Optional] in float dw, in float dh);
+    void drawImage(in HTMLVideoElement image, in float dx, in float dy, in optional float dw, in float dh);
     void drawImage(in HTMLVideoElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh);
 
     // pixel manipulation
     ImageData createImageData(in float sw, in float sh);
     ImageData getImageData(in float sx, in float sy, in float sw, in float sh);
-    void putImageData(in ImageData imagedata, in float dx, in float dy, [Optional] in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight);
+    void putImageData(in ImageData imagedata, in float dx, in float dy, in optional float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight);
   };
 
   interface CanvasGradient {
@@ -615,7 +581,7 @@ module html5 {
     readonly attribute HTMLCollection tBodies;
     HTMLElement createTBody();
     readonly attribute HTMLCollection rows;
-    HTMLElement insertRow([Optional] in long index);
+    HTMLElement insertRow(in optional long index);
     void deleteRow(in long index);
   };
 
@@ -629,7 +595,7 @@ module html5 {
 
   interface HTMLTableSectionElement : HTMLElement {
     readonly attribute HTMLCollection rows;
-    HTMLElement insertRow([Optional] in long index);
+    HTMLElement insertRow(in optional long index);
     void deleteRow(in long index);
   };
 
@@ -637,7 +603,7 @@ module html5 {
     readonly attribute long rowIndex;
     readonly attribute long sectionRowIndex;
     readonly attribute HTMLCollection cells;
-    HTMLElement insertCell([Optional] in long index);
+    HTMLElement insertCell(in optional long index);
     void deleteCell(in long index);
   };
 
@@ -654,7 +620,6 @@ module html5 {
              attribute DOMString scope;
   };
 
-  [Callable=namedItem]
   interface HTMLFormElement : HTMLElement {
              attribute DOMString acceptCharset;
              attribute DOMString action;
@@ -667,8 +632,8 @@ module html5 {
 
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute long length;
-    [IndexGetter] any item(in unsigned long index);
-    [NameGetter=OverrideBuiltins] any namedItem(in DOMString name);
+    getter any item(in unsigned long index);
+    [OverrideBuiltins] caller getter any namedItem(in DOMString name);
 
     void submit();
     void reset();
@@ -776,7 +741,6 @@ module html5 {
     readonly attribute NodeList labels;
   };
 
-  [Callable=namedItem]
   interface HTMLSelectElement : HTMLElement {
              attribute boolean autofocus;
              attribute boolean disabled;
@@ -789,9 +753,9 @@ module html5 {
 
     readonly attribute HTMLOptionsCollection options;
              attribute unsigned long length;
-    [IndexGetter] any item(in unsigned long index);
-    [NameGetter] any namedItem(in DOMString name);
-    void add(in HTMLElement element, [Optional] in HTMLElement before);
+    getter any item(in unsigned long index);
+    caller getter any namedItem(in DOMString name);
+    void add(in HTMLElement element, in optional HTMLElement before);
     void add(in HTMLElement element, in long before);
     void remove(in long index);
 
@@ -936,7 +900,7 @@ module html5 {
 
   interface DataGridSelection {
     readonly attribute unsigned long length;
-    [IndexGetter] RowSpecification item(in unsigned long index);
+    getter RowSpecification item(in unsigned long index);
     boolean isSelected(in RowSpecification row);
     void setSelected(in RowSpecification row, in boolean selected);
 
@@ -983,6 +947,7 @@ module html5 {
     readonly attribute HTMLFormElement form;
   };
 
+  typedef Window WindowProxy;
   [IndexGetter, NameGetter=OverrideBuiltins]
   interface Window {
     // the current browsing context
@@ -1010,7 +975,7 @@ module html5 {
     [Replaceable] readonly attribute WindowProxy opener;
     readonly attribute WindowProxy parent;
     readonly attribute Element frameElement;
-    WindowProxy open([Optional] in DOMString url, [Optional] in DOMString target, [Optional] in DOMString features, [Optional] in DOMString replace);
+    WindowProxy open(in optional DOMString url, in optional DOMString target, in optional DOMString features, in optional DOMString replace);
 
     // the user agent
     readonly attribute Navigator navigator;
@@ -1022,9 +987,9 @@ module html5 {
     // user prompts
     void alert(in DOMString message);
     boolean confirm(in DOMString message);
-    DOMString prompt(in DOMString message, [Optional] in DOMString defaultValue);
+    DOMString prompt(in DOMString message, in optional DOMString defaultValue);
     void print();
-    any showModalDialog(in DOMString url, [Optional] in any argument);
+    any showModalDialog(in DOMString url, in optional any argument);
 
     // cross-document messaging
     void postMessage(in any message, in DOMString targetOrigin);
@@ -1076,10 +1041,11 @@ module html5 {
 
   [Callback=FunctionOnly, NoInterfaceObject]
   interface Function {
-    any call([Variadic] in any arguments);
+    any call(in any... arguments);
   };
 
-  [NoInterfaceObject, ImplementedOn=Window, XXX] interface WindowModal {
+  Window implements WindowModal;
+  [NoInterfaceObject,  XXX] interface WindowModal {
     readonly attribute any dialogArguments;
              attribute DOMString returnValue;
   };
@@ -1088,18 +1054,21 @@ module html5 {
     // objects implementing this interface also implement the interfaces given below
   };
 
-  [NoInterfaceObject, ImplementedOn=Navigator] interface NavigatorID {
+  Navigator implements NavigatorID;
+  [NoInterfaceObject] interface NavigatorID {
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;
     readonly attribute DOMString platform;
     readonly attribute DOMString userAgent;
   };
 
-  [NoInterfaceObject, ImplementedOn=Navigator] interface NavigatorOnLine {
+  Navigator implements NavigatorOnLine;
+  [NoInterfaceObject] interface NavigatorOnLine {
     readonly attribute boolean onLine;
   };
 
-  [NoInterfaceObject, ImplementedOn=Navigator] interface NavigatorAbilities {
+  Navigator implements NavigatorAbilities;
+  [NoInterfaceObject] interface NavigatorAbilities {
     // content handler registration
     void registerProtocolHandler(in DOMString protocol, in DOMString url, in DOMString title);
     void registerContentHandler(in DOMString mimeType, in DOMString url, in DOMString title);
@@ -1135,10 +1104,10 @@ module html5 {
 
   interface History {
     readonly attribute long length;
-    void go([Optional] in long delta);
+    void go(in optional long delta);
     void back();
     void forward();
-    void pushState(in any data, in DOMString title, [Optional] in DOMString url);
+    void pushState(in any data, in DOMString title, in optional DOMString url);
     void clearState();
   };
 
@@ -1171,7 +1140,8 @@ module html5 {
              attribute DOMString returnValue;
   };
 
-  [Stringifies] interface Selection {
+  interface Selection {
+    stringifier;
     readonly attribute Node anchorNode;
     readonly attribute long anchorOffset;
     readonly attribute Node focusNode;
@@ -1200,7 +1170,7 @@ module html5 {
              attribute DOMString dropEffect;
              attribute DOMString effectAllowed;
     readonly attribute DOMStringList types;
-    void clearData([Optional] in DOMString format);
+    void clearData(in optional DOMString format);
     void setData(in DOMString format, in DOMString data);
     DOMString getData(in DOMString format);
     void setDragImage(in Element image, in long x, in long y);
@@ -1209,7 +1179,7 @@ module html5 {
 
   interface UndoManager {
     readonly attribute unsigned long length;
-    [IndexGetter] any item(in unsigned long index);
+    getter any item(in unsigned long index);
     readonly attribute unsigned long position;
     unsigned long add(in any data, in DOMString title);
     void remove(in unsigned long index);
@@ -1241,7 +1211,7 @@ module html5 {
 
   interface MessagePort {
     readonly attribute boolean active;
-    void postMessage(in any message, [Optional] in MessagePortArray ports);
+    void postMessage(in any message, in optional MessagePortArray ports);
     void start();
     void close();
 
@@ -1249,13 +1219,14 @@ module html5 {
              attribute Function onmessage;
   };
 
-  [NoInterfaceObject, ImplementedOn=Window] interface WindowTimers {
+  Window implements WindowTimers;
+  [NoInterfaceObject] interface WindowTimers {
     // timers
-    long setTimeout(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
+    long setTimeout(in TimeoutHandler handler, in long timeout, in any... arguments);
     long setTimeout(in DOMString code, in long timeout);
     long setTimeout(in DOMString code, in long timeout, in DOMString language);
     void clearTimeout(in long handle);
-    long setInterval(in TimeoutHandler handler, in long timeout, [Variadic] in any arguments);
+    long setInterval(in TimeoutHandler handler, in long timeout, in any... arguments);
     long setInterval(in DOMString code, in long timeout);
     long setInterval(in DOMString code, in long timeout, in DOMString language);
     void clearInterval(in long handle);
@@ -1263,12 +1234,15 @@ module html5 {
 
   [Callback=FunctionOnly, NoInterfaceObject]
   interface TimeoutHandler {
-    void handleEvent([Variadic] in any args);
+    void handleEvent(in any... args);
   };
 
-  [NoInterfaceObject, ImplementedOn=AbstractView] interface MediaModeAbstractView {
+  AbstractView implements MediaModeAbstractView;
+  [NoInterfaceObject] interface MediaModeAbstractView {
     readonly attribute DOMString mediaMode;
   };
+
+  interface HTMLDivElement : HTMLElement {};
 
 };
 

@@ -9,6 +9,7 @@ esidl_SOURCES = \
 	include/esidl.h \
 	include/expr.h \
 	include/formatter.h \
+	include/forward.h \
 	include/info.h \
 	include/reflect.h \
 	include/utf.h \
@@ -28,6 +29,9 @@ AM_YFLAGS = -d -v -t
 AM_CPPFLAGS = \
 	-iquote $(srcdir)/include \
 	-iquote $(srcdir)/src
+
+EXTRA_DIST = \
+	LICENSE
 
 clean-local:
 	-rm -f $(BUILT_SOURCES) parser.output $(nobase_nodist_include_HEADERS)

@@ -30,12 +30,6 @@ module views
   typedef events::MouseEvent MouseEvent;
   typedef html5::HTMLElement HTMLElement;
 
-  interface ClientRect;
-  interface ClientRectList;
-  interface DocumentView;
-  interface Media;
-  interface Screen;
-
   interface AbstractView {
     readonly attribute DocumentView document;
     readonly attribute Media media;
@@ -75,14 +69,14 @@ module views
     readonly attribute unsigned long pixelDepth;
   };
 
-  [ImplementedOn=Document]
+  Document implements DocumentView;
   interface DocumentView {
     readonly attribute AbstractView defaultView;
     Element elementFromPoint(in float x, in float y);
     Range caretRangeFromPoint(in float x, in float y);
   };
 
-  [ImplementedOn=Element]
+  Element implements ElementView;
   interface ElementView {
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
@@ -99,7 +93,7 @@ module views
 
   };
 
-  [ImplementedOn=HTMLElement]
+  HTMLElement implements HTMLElementView;
   interface HTMLElementView {
     readonly attribute Element offsetParent;
     readonly attribute long offsetTop;
@@ -108,13 +102,13 @@ module views
     readonly attribute long offsetHeight;
   };
 
-  [ImplementedOn=Range]
+  Range implements RangeView ;
   interface RangeView {
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
   };
 
-  [ImplementedOn=MouseEvent]
+  MouseEvent implements MouseEventView;
   interface MouseEventView {
     // readonly attribute long screenX;  // XXX defined in MouseEvent
     // readonly attribute long screenY;  // XXX defined in MouseEvent

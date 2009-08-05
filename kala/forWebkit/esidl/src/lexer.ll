@@ -88,11 +88,7 @@ UnicodeEscapeSequence   u{HexDigit}{4}
 CharacterEscapeSequence {SingleEscapeCharacter}|{NonEscapeCharacter}
 EscapeSequence          {CharacterEscapeSequence}|0|{HexEscapeSequence}|{UnicodeEscapeSequence}
 DoubleStringCharacter   ([^\"\\\n\r]|\\{EscapeSequence})
-IdentifierStart         ([A-Za-z$_]|{Lu}|{Ll}|{Unicode})
-IdentifierPart          ([0-9]|{IdentifierStart}|(\\{UnicodeEscapeSequence}))
-Identifier              {IdentifierStart}{IdentifierPart}*
-
-FixedPointLiteral       (({DecimalIntegerLiteral}\.[0-9]*)|(\.[0-9]+)|({DecimalIntegerLiteral}))[dD]
+Identifier              [A-Z_a-z][0-9A-Z_a-z]*
 
 MultiLineComment        \/\*(([^*])|(\*[^/]))*\*\/
 SingleLineComment       \/\/
@@ -129,9 +125,21 @@ boolean             {
                         stepLocation();
                         return BOOLEAN;
                     }
+caller              {
+                        stepLocation();
+                        return CALLER;
+                    }
 const               {
                         stepLocation();
                         return CONST;
+                    }
+creator             {
+                        stepLocation();
+                        return CREATOR;
+                    }
+deleter             {
+                        stepLocation();
+                        return DELETER;
                     }
 double              {
                         stepLocation();
@@ -145,13 +153,9 @@ exception           {
                         stepLocation();
                         return EXCEPTION;
                     }
-FALSE               {
+false               {
                         stepLocation();
                         return FALSE;
-                    }
-fixed               {
-                        stepLocation();
-                        return FIXED;
                     }
 float               {
                         stepLocation();
@@ -160,6 +164,14 @@ float               {
 getraises           {
                         stepLocation();
                         return GETRAISES;
+                    }
+getter              {
+                        stepLocation();
+                        return GETTER;
+                    }
+implements          {
+                        stepLocation();
+                        return IMPLEMENTS;
                     }
 in                  {
                         stepLocation();
@@ -190,9 +202,13 @@ octet               {
                         stepLocation();
                         return OCTET;
                     }
-oneway              {
+omittable           {
                         stepLocation();
-                        return ONEWAY;
+                        return OMITTABLE;
+                    }
+optional            {
+                        stepLocation();
+                        return OPTIONAL;
                     }
 raises              {
                         stepLocation();
@@ -202,13 +218,17 @@ readonly            {
                         stepLocation();
                         return READONLY;
                     }
+sequence            {
+                        stepLocation();
+                        return SEQUENCE;
+                    }
 setraises           {
                         stepLocation();
                         return SETRAISES;
                     }
-sequence            {
+setter              {
                         stepLocation();
-                        return SEQUENCE;
+                        return SETTER;
                     }
 short               {
                         stepLocation();
@@ -218,7 +238,11 @@ string              {
                         stepLocation();
                         return STRING;
                     }
-TRUE                {
+stringifier         {
+                        stepLocation();
+                        return STRINGIFIER;
+                    }
+true                {
                         stepLocation();
                         return TRUE;
                     }
@@ -229,10 +253,6 @@ typedef             {
 unsigned            {
                         stepLocation();
                         return UNSIGNED;
-                    }
-valuetype           {
-                        stepLocation();
-                        return VALUETYPE;
                     }
 void                {
                         stepLocation();
@@ -250,6 +270,10 @@ void                {
 ">>"                {
                         stepLocation();
                         return OP_SHR;
+                    }
+"..."               {
+                        stepLocation();
+                        return ELLIPSIS;
                     }
 
 {Identifier}        {
@@ -286,12 +310,6 @@ void                {
                         stepLocation();
                         yylval.name = strdup(yytext);
                         return STRING_LITERAL;
-                    }
-
-{FixedPointLiteral} {
-                        stepLocation();
-                        yylval.name = strdup(yytext);
-                        return FIXED_PT_LITERAL;
                     }
 
 {MultiLineComment}  {

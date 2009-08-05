@@ -25,8 +25,6 @@ module es
      */
     interface Dmac
     {
-        typedef sequence<octet> Buf;
-
         /**
          * DMA transfer mode.
          */
@@ -40,7 +38,7 @@ module es
          * @param addrLength the DMA transfer counter.
          * @param mode <code>READ</code>, <code>WRITE</code> or <code>AUTO_INITIALIZE</code>.
          */
-        void setup(in Buf addr, in octet mode);
+        void setup(in sequence<octet> addr, in octet mode);
         /**
          * Starts the DMA transfer.
          */

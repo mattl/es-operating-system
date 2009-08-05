@@ -381,6 +381,10 @@ send(InetMessenger* m, s32 sendable, u16 flag)
     ASSERT(tcphdr->dst != 0);
     TCPSeq seq = (0 < len) ? sendNext : sendMax;
     tcphdr->seq = htonl(seq);
+    if(m->getFlag() == es::Socket::MsgOob)
+    {
+        sendUp = seq + len;
+    }
     if (seq < sendUp)
     {
         // Set urgent offset

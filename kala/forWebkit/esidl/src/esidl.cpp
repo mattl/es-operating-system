@@ -17,6 +17,7 @@
 
 #include "esidl.h"
 #include "parser.h"
+#include "forward.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -286,6 +287,14 @@ void OpDcl::adjustMethodCount()
     interface->addMethodCount(methodCount - 1);
 }
 
+void Implements::resolve()
+{
+    Interface* interface = dynamic_cast<Interface*>(getFirst()->search(getParent()));
+    Interface* mixin = dynamic_cast<Interface*>(getSecond()->search(getParent()));
+    assert(interface && mixin);
+    interface->implements(mixin);
+}
+
 void Interface::processExtendedAttributes()
 {
     NodeList* list = getExtendedAttributes();
@@ -299,11 +308,7 @@ void Interface::processExtendedAttributes()
     {
         ExtendedAttribute* ext = dynamic_cast<ExtendedAttribute*>(*i);
         assert(ext);
-        if (ext->getName() == "NoIndexingOperations")
-        {
-            attr |= NoIndexingOperations;
-        }
-        else if (ext->getName() == "Callback")
+        if (ext->getName() == "Callback")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
@@ -359,38 +364,6 @@ void Interface::processExtendedAttributes()
             }
             constructor->add(op);
         }
-        else if (ext->getName() == "ImplementedOn")
-        {
-            attr |= ImplementedOn;
-            if (ScopedName* scopedName = dynamic_cast<ScopedName*>(ext->getDetails()))
-            {
-                Node* on = scopedName->search(getParent());
-                if (Interface* interface = dynamic_cast<Interface*>(on))
-                {
-                    interface->mixins.push_back(this);
-                }
-            }
-        }
-        else if (ext->getName() == "Callable")
-        {
-            if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
-            {
-                assert(callable == "");
-                callable = name->getName();
-            }
-        }
-        else if (ext->getName() == "Stringifies")
-        {
-            if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
-            {
-                assert(stringifies == "");
-                stringifies = name->getName();
-            }
-            else
-            {
-                // TODO: Add custom toString() attribute
-            }
-        }
     }
 }
 
@@ -401,6 +374,7 @@ void Attribute::processExtendedAttributes()
     {
         return;
     }
+    uint32_t attr = getAttr();
     for (NodeList::iterator i = list->begin(); i != list->end(); ++i)
     {
         ExtendedAttribute* ext = dynamic_cast<ExtendedAttribute*>(*i);
@@ -409,25 +383,21 @@ void Attribute::processExtendedAttributes()
         {
             attr |= Replaceable;
         }
-        else if (ext->getName() == "Null")
+        else if (ext->getName() == "TreatNullAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= NullIsEmpty;
                 }
-                else if (name->getName() == "Null")
-                {
-                    attr |= NullIsNull;
-                }
             }
         }
-        else if (ext->getName() == "Undefined")
+        else if (ext->getName() == "TreatUndefinedAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= UndefinedIsEmpty;
                 }
@@ -445,6 +415,7 @@ void Attribute::processExtendedAttributes()
             }
         }
     }
+    setAttr(attr);
 }
 
 void OpDcl::processExtendedAttributes()
@@ -454,65 +425,26 @@ void OpDcl::processExtendedAttributes()
     {
         return;
     }
+    uint32_t attr = getAttr();
     for (NodeList::iterator i = list->begin(); i != list->end(); ++i)
     {
         ExtendedAttribute* ext = dynamic_cast<ExtendedAttribute*>(*i);
         assert(ext);
-        if (ext->getName() == "IndexCreator")
-        {
-            attr |= IndexCreator;
-        }
-        else if (ext->getName() == "IndexDeleter")
-        {
-            attr |= IndexDeleter;
-        }
-        else if (ext->getName() == "IndexGetter")
-        {
-            attr |= IndexGetter;
-            check(getParamCount() == 1,
-                  "[IndexGetter] MUST take a single argument.");
-            check(dynamic_cast<ParamDcl*>(*(begin()))->getSpec()->getName() == "unsigned long",
-                  "[IndexGetter] MUST take a single argument of type unsigned long.");
-        }
-        else if (ext->getName() == "IndexSetter")
-        {
-            attr |= IndexSetter;
-        }
-        else if (ext->getName() == "NameCreator")
-        {
-            attr |= NameCreator;
-        }
-        else if (ext->getName() == "NameDeleter")
-        {
-            attr |= NameDeleter;
-        }
-        else if (ext->getName() == "NameGetter")
-        {
-            attr |= NameGetter;
-        }
-        else if (ext->getName() == "NameSetter")
-        {
-            attr |= NameSetter;
-        }
-        else if (ext->getName() == "Null")
+        if (ext->getName() == "TreatNullAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= NullIsEmpty;
                 }
-                else if (name->getName() == "Null")
-                {
-                    attr |= NullIsNull;
-                }
             }
         }
-        else if (ext->getName() == "Undefined")
+        else if (ext->getName() == "TreatUndefinedAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= UndefinedIsEmpty;
                 }
@@ -527,6 +459,7 @@ void OpDcl::processExtendedAttributes()
             // ignore
         }
     }
+    setAttr(attr);
 }
 
 void ParamDcl::processExtendedAttributes()
@@ -536,37 +469,26 @@ void ParamDcl::processExtendedAttributes()
     {
         return;
     }
+    uint32_t attr = getAttr();
     for (NodeList::iterator i = list->begin(); i != list->end(); ++i)
     {
         ExtendedAttribute* ext = dynamic_cast<ExtendedAttribute*>(*i);
         assert(ext);
-        if (ext->getName() == "Optional")
-        {
-            attr |= Optional;
-        }
-        else if (ext->getName() == "Variadic")
-        {
-            attr |= Variadic;
-        }
-        else if (ext->getName() == "Null")
+        if (ext->getName() == "TreatNullAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= NullIsEmpty;
                 }
-                else if (name->getName() == "Null")
-                {
-                    attr |= NullIsNull;
-                }
             }
         }
-        else if (ext->getName() == "Undefined")
+        else if (ext->getName() == "TreatUndefinedAs")
         {
             if (ScopedName* name = dynamic_cast<ScopedName*>(ext->getDetails()))
             {
-                if (name->getName() == "Empty")
+                if (name->getName() == "EmptyString")
                 {
                     attr |= UndefinedIsEmpty;
                 }
@@ -577,6 +499,7 @@ void ParamDcl::processExtendedAttributes()
             }
         }
     }
+    setAttr(attr);
 }
 
 Node* Node::search(const std::string& elem, size_t pos) const
@@ -679,35 +602,10 @@ std::string getScopedName(std::string moduleName, std::string absoluteName)
     return absoluteName.substr(2);
 }
 
-std::string getIncludedName(const std::string& header)
-{
-    std::string included(header);
-
-    for (int i = 0; i < included.size(); ++i)
-    {
-        char c = included[i];
-        included[i] = toupper(c);
-        if (c == '.' || c == '/' || c == '\\')
-        {
-            included[i] = '_';
-        }
-    }
-    included += "_INCLUDED";
-    if (isdigit(included[0]))
-    {
-        included = "NO" + included;
-    }
-    return included;
-}
-
 void Interface::processExtendedAttributes(OpDcl* op)
 {
-    attr |= (op->getAttr() & (IndexMask | NameMask));
+    attr |= (op->getAttr() & IndexMask);
     ++methodCount;
-    if (callable == op->getName())
-    {
-        op->setCallable();
-    }
 }
 
 void Interface::processExtendedAttributes(Attribute* attr)
@@ -720,10 +618,6 @@ void Interface::processExtendedAttributes(Attribute* attr)
     {
         methodCount += 2;
     }
-    if (stringifies == attr->getName())
-    {
-        attr->setStringifies();
-    }
 }
 
 void yyerror(const char* message, ...)
@@ -731,7 +625,8 @@ void yyerror(const char* message, ...)
     va_list ap;
 
     va_start(ap, message);
-    fprintf(stderr, "%d.%d-%d.%d: ",
+    fprintf(stderr, "%s %d.%d-%d.%d: ",
+            getFilename().c_str(),
             yylloc.first_line, yylloc.first_column,
             yylloc.last_line, yylloc.last_column);
     vfprintf(stderr, message, ap);
@@ -766,17 +661,22 @@ int output(const char* filename,
            bool isystem,
            bool useExceptions,
            const char* stringTypeName,
+           const char* indent,
            bool skeleton,
            bool generic)
 {
-    printCxx(filename, stringTypeName, useExceptions);
+    Forward forward(filename);
+    getSpecification()->accept(&forward);
+    forward.generateForwardDeclarations();
+
+    printCxx(filename, stringTypeName, useExceptions, indent);
     if (skeleton)
     {
-        printSkeleton(filename, isystem);
+        printSkeleton(filename, isystem, indent);
     }
     if (generic)
     {
-        printTemplate(filename, stringTypeName, useExceptions, isystem);
+        printTemplate(filename, stringTypeName, useExceptions, isystem, indent);
     }
     return EXIT_SUCCESS;
 }

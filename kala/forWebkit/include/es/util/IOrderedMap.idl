@@ -22,10 +22,10 @@ module es
     interface OrderedMap
     {
         readonly attribute long size;
-        [IndexGetter] string getByIndex(in unsigned long index);
-        [IndexSetter] void setByIndex(in unsigned long index, in string value);
-        [NameGetter] string get(in string name);
-        [NameSetter] void set(in string name, in string value);
+        getter string getByIndex(in unsigned long index);
+        setter void setByIndex(in unsigned long index, in string value);
+        getter string get(in string name);
+        setter void set(in string name, in string value);
     };
 };
 

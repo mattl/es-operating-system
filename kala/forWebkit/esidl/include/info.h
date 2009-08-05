@@ -142,6 +142,10 @@ public:
 
     virtual void at(const Type* node)
     {
+        if (node->getAttr() & Node::Nullable)
+        {
+            write("%c", Reflect::kNullable);
+        }
         if (node->getName() == "void")
         {
             write("%c", Reflect::kVoid);
@@ -218,6 +222,10 @@ public:
 
     virtual void at(const SequenceType* node)
     {
+        if (node->getAttr() & Node::Nullable)
+        {
+            write("%c", Reflect::kNullable);
+        }
         write("%c", Reflect::kSequence);
         Node* spec = node->getSpec();
         spec->accept(this);
@@ -234,7 +242,7 @@ public:
         SequenceType* seq = const_cast<SequenceType*>(spec->isSequence(node->getParent()));
 
         write("%c", Reflect::kGetter);
-        if (node->isStringifies())
+        if (node->isStringifier())
         {
             write("%c", Reflect::kSpecialStringifier);
         }
@@ -347,21 +355,44 @@ public:
             write("%c", Reflect::kOperation);
         }
 
-        if (node->getAttr() & (OpDcl::IndexGetter | OpDcl::NameGetter))
+        if (node->getAttr() & OpDcl::Omittable)
+        {
+            write("%c", Reflect::kSpecialOmittable);
+        }
+
+        if (node->getAttr() & OpDcl::IndexGetter)
         {
             write("%c", Reflect::kSpecialGetter);
         }
-        else if (node->getAttr() & (OpDcl::IndexSetter | OpDcl::NameSetter))
+        if (node->getAttr() & OpDcl::IndexSetter)
         {
             write("%c", Reflect::kSpecialSetter);
         }
-        else if (node->getAttr() & (OpDcl::IndexCreator | OpDcl::NameCreator))
+        if (node->getAttr() & OpDcl::IndexCreator)
         {
             write("%c", Reflect::kSpecialCreator);
         }
-        else if (node->getAttr() & (OpDcl::IndexDeleter | OpDcl::NameDeleter))
+        if (node->getAttr() & OpDcl::IndexDeleter)
         {
             write("%c", Reflect::kSpecialDeleter);
+        }
+        if (node->getAttr() & OpDcl::Caller)
+        {
+            write("%c", Reflect::kSpecialCaller);
+        }
+        if (node->getAttr() & OpDcl::Stringifier)
+        {
+            write("%c", Reflect::kSpecialStringifier);
+        }
+
+        NodeList::reverse_iterator last = node->rbegin();
+        if (last != node->rend())
+        {
+            const ParamDcl* param = dynamic_cast<const ParamDcl*>(*last);
+            if (param && param->isVariadic())
+            {
+                write("%c", Reflect::kVariadic);
+            }
         }
 
         write("%u", node->getParamCount(optionalStage));
@@ -406,11 +437,6 @@ public:
         if (seq)
         {
             seq->accept(this);
-        }
-        else if (node->isVariadic())
-        {
-            write("%c", Reflect::kVariadic);
-            spec->accept(this);
         }
         else if (spec->isStruct(node->getParent()))
         {
@@ -609,12 +635,6 @@ public:
             EvalFloat<double> eval(node->getParent());
             node->getExp()->accept(&eval);
             write("%.20g ", eval.getValue());
-        }
-        else if (type->getName() == "string")
-        {
-            EvalString<std::string> eval(node->getParent());
-            node->getExp()->accept(&eval);
-            write("%s ", eval.getValue().c_str());
         }
         else
         {

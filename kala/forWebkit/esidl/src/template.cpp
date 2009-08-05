@@ -56,8 +56,8 @@ class TemplateVisitor : public CPlusPlus
     }
 
 public:
-    TemplateVisitor(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true) :
-        CPlusPlus(source, file, stringTypeName, useExceptions)
+    TemplateVisitor(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true, const char* indent = "es") :
+        CPlusPlus(source, file, stringTypeName, useExceptions, indent)
     {
     }
 
@@ -72,46 +72,11 @@ public:
             return;
         }
 
-        std::list<const Interface*> interfaceList;
-        node->collectMixins(&interfaceList);
-
-        write("template<class O, Any invoke(O&, unsigned, unsigned, Any*)>\n");
+        writeln("template<class O, Any invoke(O&, unsigned, unsigned, Any*)>");
         writetab();
         write("class %s_Proxy : public Proxy_Impl<O", node->getName().c_str());
         write(", %s", node->getName().c_str());
-        write(">\n");
-
-        writeln("{");
-        indent();
-
-        std::set<std::string> idSet;
-        for (std::list<const Interface*>::const_iterator i = interfaceList.begin();
-             i != interfaceList.end();
-             ++i)
-        {
-            for (const Interface* interface = *i;
-                 interface && !interface->isBaseObject();
-                 interface = interface->getSuper())
-            {
-                for (NodeList::iterator i = interface->begin(); i != interface->end(); ++i)
-                {
-                    if (Attribute* attr = dynamic_cast<Attribute*>(*i))
-                    {
-                        idSet.insert(attr->getName());
-                    }
-                    else if (OpDcl* op = dynamic_cast<OpDcl*>(*i))
-                    {
-                        if ((interface->getAttr() & Interface::NoIndexingOperations) &&
-                            (op->getAttr() & (OpDcl::IndexMask | OpDcl::NameMask)))
-                        {
-                            continue;
-                        }
-                        idSet.insert(op->getName());
-                    }
-                }
-            }
-        }
-
+        write("> {\n");
         unindent();
         writeln("public:");
         indent();
@@ -122,58 +87,53 @@ public:
             writetab();
             write("Proxy_Impl<O");
             write(", %s", node->getName().c_str());
-            write(">(object)\n");
+            write(">(object)");
         unindent();
-        writeln("{");
+        write(" {\n");
         writeln("}");
 
         // Destructor
-        writeln("~%s_Proxy()", node->getName().c_str());
-        writeln("{");
+        writeln("~%s_Proxy() {", node->getName().c_str());
         writeln("}");
 
+        std::list<const Interface*> interfaceList;
+        node->collectMixins(&interfaceList);
         methodNumber = 0;
         for (std::list<const Interface*>::const_iterator i = interfaceList.begin();
              i != interfaceList.end();
              ++i)
         {
-            for (const Interface* interface = *i;
-                 interface && !interface->isLeaf();
-                 interface = interface->getSuper())
+            if (!((*i)->getAttr() & Interface::ImplementedOn))
             {
-                currentNode = interface;
-                for (NodeList::iterator i = interface->begin(); i != interface->end(); ++i)
+                currentNode = *i;
+            }
+            writeln("// %s", (*i)->getName().c_str());
+            for (NodeList::iterator j = (*i)->begin(); j != (*i)->end(); ++j)
+            {
+                if (Attribute* attr = dynamic_cast<Attribute*>(*j))
                 {
-                    if (Attribute* attr = dynamic_cast<Attribute*>(*i))
+                    attr->accept(this);
+                }
+                else if (OpDcl* op = dynamic_cast<OpDcl*>(*j))
+                {
+                    optionalStage = 0;
+                    do
                     {
-                        attr->accept(this);
-                    }
-                    else if (OpDcl* op = dynamic_cast<OpDcl*>(*i))
-                    {
-                        optionalStage = 0;
-                        do
-                        {
-                            optionalCount = 0;
-                            op->accept(this);
-                            ++optionalStage;
-                        } while (optionalStage <= optionalCount);
-                    }
+                        optionalCount = 0;
+                        op->accept(this);
+                        ++optionalStage;
+                    } while (optionalStage <= optionalCount);
                 }
             }
         }
         currentNode = node;
 
         // createInstance
-        writeln("static %s* createInstance(O object)", node->getName().c_str());
-        writeln("{");
-        indent();
+        writeln("static %s* createInstance(O object) {", node->getName().c_str());
             writeln("return new %s_Proxy(object);", node->getName().c_str());
-        unindent();
         writeln("}");
 
-        unindent();
-        writetab();
-        write("}");
+        writeln("};");
     }
 
     virtual void at(const Attribute* node)
@@ -190,9 +150,7 @@ public:
         // getter
         writetab();
         CPlusPlus::getter(node);
-        writeln("");
-        writeln("{");
-        indent();
+        write(" {\n");
         {
             unsigned paramCount = 1;  // for 'this'
             bool hasBuffer = false;
@@ -213,7 +171,7 @@ public:
             if (hasBuffer)
             {
                 std::string name = getBufferName(node);
-                writeln("param[%u] = %s;", anyIndex, name.c_str());
+                writeln("param[%u] = reinterpret_cast<intptr_t>(%s);", anyIndex, name.c_str());
                 ++anyIndex;
                 if (!spec->isArray(node))
                 {
@@ -250,7 +208,6 @@ public:
                       methodNumber, paramCount);
             }
         }
-        unindent();
         writeln("}");
         ++methodNumber;
 
@@ -271,9 +228,7 @@ public:
         }
         writetab();
         CPlusPlus::setter(node);
-        writeln("");
-        writeln("{");
-        indent();
+        write(" {\n");
         {
             unsigned paramCount = 2;  // +1 for 'this'
             if (spec->isSequence(node))
@@ -283,11 +238,16 @@ public:
             writeln("Any param[%u];", paramCount);
             unsigned anyIndex = 1;
             std::string name = getBufferName(node);
-            writeln("param[%u] = %s;", anyIndex, name.c_str());
-            ++anyIndex;
             if (spec->isSequence(node))
             {
+                writeln("param[%u] = reinterpret_cast<intptr_t>(%s);", anyIndex, name.c_str());
+                ++anyIndex;
                 writeln("param[%u] = %sLength;", anyIndex, name.c_str());
+                ++anyIndex;
+            }
+            else
+            {
+                writeln("param[%u] = %s;", anyIndex, name.c_str());
                 ++anyIndex;
             }
 
@@ -303,7 +263,6 @@ public:
                         methodNumber, paramCount);
             }
         }
-        unindent();
         writeln("}");
         ++methodNumber;
     }
@@ -315,9 +274,7 @@ public:
 
         writetab();
         CPlusPlus::at(node);
-        writeln("");
-        writeln("{");
-        indent();
+        write(" {\n");
             bool hasBuffer = false;
             Node* spec = node->getSpec();
             unsigned paramIndex;
@@ -355,7 +312,7 @@ public:
             if (hasBuffer)
             {
                 std::string name = getBufferName(spec);
-                writeln("param[%u] = %s;", anyIndex, name.c_str());
+                writeln("param[%u] = reinterpret_cast<intptr_t>(%s);", anyIndex, name.c_str());
                 ++anyIndex;
                 if (!spec->isArray(node))
                 {
@@ -371,11 +328,16 @@ public:
                 ParamDcl* param = dynamic_cast<ParamDcl*>(*i);
                 assert(param);
                 Node* paramSpec = param->getSpec();
-                writeln("param[%u] = %s;", anyIndex, param->getName().c_str());
-                ++anyIndex;
                 if (param->isVariadic() || paramSpec->isSequence(node))
                 {
+                    writeln("param[%u] = reinterpret_cast<intptr_t>(%s);", anyIndex, param->getName().c_str());
+                    ++anyIndex;
                     writeln("param[%u] = %sLength;", anyIndex, param->getName().c_str());
+                    ++anyIndex;
+                }
+                else
+                {
+                    writeln("param[%u] = %s;", anyIndex, param->getName().c_str());
                     ++anyIndex;
                 }
             }
@@ -408,7 +370,6 @@ public:
                 write(">(invoke(this->object, %u, %u, param));\n",
                       methodNumber, paramCount);
             }
-        unindent();
         writeln("}");
         ++methodNumber;
     }
@@ -424,7 +385,7 @@ public:
     }
 };
 
-void printTemplate(const char* source, const char* stringTypeName, bool useExceptions, bool isystem)
+void printTemplate(const char* source, const char* stringTypeName, bool useExceptions, bool isystem, const char* indent)
 {
     std::string filename = getOutputFilename(source, "template.h");
     printf("# %s\n", filename.c_str());
@@ -435,7 +396,7 @@ void printTemplate(const char* source, const char* stringTypeName, bool useExcep
         return;
     }
 
-    std::string included = getIncludedName(filename);
+    std::string included = CPlusPlus::getIncludedName(filename, indent);
     fprintf(file, "// Generated by esidl %s.\n\n", VERSION);
     fprintf(file, "#ifndef %s\n", included.c_str());
     fprintf(file, "#define %s\n\n", included.c_str());
@@ -451,7 +412,7 @@ void printTemplate(const char* source, const char* stringTypeName, bool useExcep
         fprintf(file, "#include \"%s\"\n\n", header.c_str());
     }
 
-    TemplateVisitor visitor(source, file, stringTypeName, useExceptions);
+    TemplateVisitor visitor(source, file, stringTypeName, useExceptions, indent);
     getSpecification()->accept(&visitor);
 
     fprintf(file, "#endif  // %s\n", included.c_str());

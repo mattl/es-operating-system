@@ -24,13 +24,11 @@ module es
      */
     interface InternetAddress
     {
-        typedef sequence<octet> Buf;
-
         /** Gets the raw internet address of this internet address.
          * @param buf the raw internet address.
          * @param bufLength the length of the buffer to contain the internet address.
          */
-        Buf getAddress();
+        sequence<octet> getAddress();
 
         /** Sends an ICMP echo request message to this internet address, and waits for the ICMP echo reply message.
          * @param timeout the time before the call aborts.

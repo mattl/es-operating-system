@@ -22,62 +22,32 @@ class Cxx : public CPlusPlus
 {
     void visitInterfaceElement(const Interface* interface, Node* element)
     {
-        if (element->isSequence(interface) || element->isNative(interface))
-        {
-            return;
-        }
         optionalStage = 0;
         do
         {
             optionalCount = 0;
-            writetab();
             element->accept(this);
-            write(";\n");
             ++optionalStage;
         } while (optionalStage <= optionalCount);
     }
 
 public:
-    Cxx(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true) :
-        CPlusPlus(source, file, stringTypeName, useExceptions)
+    Cxx(const char* source, FILE* file, const char* stringTypeName = "char*", bool useExceptions = true, const char* indent = "es") :
+        CPlusPlus(source, file, stringTypeName, useExceptions, indent)
     {
-    }
-
-    virtual void at(const StructType* node)
-    {
-        if (node->getJavadoc().size())
-        {
-            write("%s\n", node->getJavadoc().c_str());
-            writetab();
-        }
-        write("struct %s", node->getName().c_str());
-        if (!node->isLeaf())
-        {
-            writeln("");
-            writeln("{");
-            indent();
-            printChildren(node);
-            unindent();
-            writetab();
-            write("}");
-        }
     }
 
     virtual void at(const ExceptDcl* node)
     {
+        writetab();
         if (node->getJavadoc().size())
         {
             write("%s\n", node->getJavadoc().c_str());
             writetab();
         }
-        write("struct %s", node->getName().c_str());
-        writeln("");
-        writeln("{");
-        indent();
-        printChildren(node);
-        unindent();
-        writetab();
-        write("}");
+        write("struct %s {\n", node->getName().c_str());
+            printChildren(node);
+        writeln("};");
     }
 
     virtual void at(const Interface* node)
@@ -86,24 +56,36 @@ public:
         {
             return;
         }
+        writetab();
         if (node->getJavadoc().size())
         {
             write("%s\n", node->getJavadoc().c_str());
             writetab();
         }
-        write("class %s", node->getName().c_str());
-        if (!node->isLeaf())
+        if (node->isLeaf())
         {
+            write("class %s;\n", node->getName().c_str());
+        }
+        else
+        {
+            write("class %s", node->getName().c_str());
             if (node->getExtends())
             {
                 write(" : ");
-                prefix = "public ";
-                node->getExtends()->accept(this);
-                prefix = "";
+                for (NodeList::iterator i = node->getExtends()->begin();
+                     i != node->getExtends()->end();
+                     ++i)
+                {
+                    if (i != node->getExtends()->begin())
+                    {
+                        write(", ");
+                    }
+                    write("public ");
+                    (*i)->accept(this);
+                }
             }
-
-            writeln("");
-            writeln("{");
+            write(" {\n");
+            unindent();
             writeln("public:");
             indent();
 
@@ -124,27 +106,23 @@ public:
                 }
             }
 
-            writeln("static const char* iid()");
-            writeln("{");
-            indent();
+            writeln("static const char* iid() {");
                 writeln("static const char* const name = \"%s\";",
                         node->getQualifiedName().c_str());
                 writeln("return name;");
-            unindent();
             writeln("}");
 
-            writeln("static const char* info()");
-            writeln("{");
-            indent();
+            writeln("static const char* info() {");
                 writetab();
-                write("static const char* const info = ");
+                write("static const char* const info =");
+                flush();
                 indent();
                 Info info(this, moduleName);
                 const_cast<Interface*>(node)->accept(&info);
+                info.flush();
                 write(";\n");
                 unindent();
                 writeln("return info;");
-            unindent();
             writeln("}");
 
             if (Interface* constructor = node->getConstructor())
@@ -155,21 +133,14 @@ public:
                      i != constructor->end();
                      ++i)
                 {
-                    writetab();
                     (*i)->accept(this);
                 }
                 constructorMode = false;
-                writeln("static Constructor* getConstructor()");
-                writeln("{");
-                indent();
+                writeln("static Constructor* getConstructor() {");
                     writeln("return constructor;");
-                unindent();
                 writeln("}");
-                writeln("static void setConstructor(Constructor* ctor)");
-                writeln("{");
-                indent();
+                writeln("static void setConstructor(Constructor* ctor) {");
                     writeln("constructor = ctor;");
-                unindent();
                 writeln("}");
                 unindent();
                 writeln("private:");
@@ -177,16 +148,13 @@ public:
                 writeln("static Constructor* constructor;");
             }
 
-            unindent();
-            writetab();
-            write("}");
+            writeln("};");
 
             if (node->getConstructor())
             {
-                write(";\n\n");
-                writetab();
-                write("%s::Constructor* %s::constructor __attribute__((weak))",
-                    node->getName().c_str(), node->getName().c_str());
+                // TODO: Control the use of GCC extensions.
+                writeln("%s::Constructor* %s::constructor __attribute__((weak));",
+                        node->getName().c_str(), node->getName().c_str());
             }
         }
     }
@@ -215,66 +183,60 @@ public:
 
     virtual void at(const Literal* node)
     {
-        if (node->getName() == "TRUE")
-        {
-            write("true");
-        }
-        else if (node->getName() == "FALSE")
-        {
-            write("false");
-        }
-        else
-        {
-            write("%s", node->getName().c_str());
-        }
+        write("%s", node->getName().c_str());
     }
 
     virtual void at(const Member* node)
     {
+        writetab();
         if (node->isTypedef(node->getParent()))
         {
             write("typedef ");
         }
-        if (node->isInterface(node->getParent()))
-        {
-            node->getSpec()->accept(this);
-            write(" %s", node->getName().c_str());
-        }
-        else
-        {
-            node->getSpec()->accept(this);
-            write(" %s", node->getName().c_str());
-        }
+        node->getSpec()->accept(this);
+        write(" %s;\n", node->getName().c_str());
     }
 
     virtual void at(const ArrayDcl* node)
     {
         assert(!node->isLeaf());
-
-        at(static_cast<const Member*>(node));
+        writetab();
+        if (node->isTypedef(node->getParent()))
+        {
+            write("typedef ");
+        }
+        node->getSpec()->accept(this);
+        write(" %s", node->getName().c_str());
         for (NodeList::iterator i = node->begin(); i != node->end(); ++i)
         {
             write("[");
             (*i)->accept(this);
             write("]");
         }
+        if (node->isTypedef(node->getParent()))
+        {
+            write(";\n");
+        }
     }
 
     virtual void at(const ConstDcl* node)
     {
+        writetab();
         if (node->getJavadoc().size())
         {
             write("%s\n", node->getJavadoc().c_str());
             writetab();
         }
         write("static const ");
-        at(static_cast<const Member*>(node));
-        write(" = ");
+        node->getSpec()->accept(this);
+        write(" %s = ", node->getName().c_str());
         node->getExp()->accept(this);
+        write(";\n");
     }
 
     virtual void at(const Attribute* node)
     {
+        writetab();
         if (node->getJavadoc().size())
         {
             write("%s\n", node->getJavadoc().c_str());
@@ -283,20 +245,20 @@ public:
 
         // getter
         CPlusPlus::getter(node);
-        write(" = 0");
+        write(" = 0;\n");
 
         if (!node->isReadonly() || node->isPutForwards() || node->isReplaceable())
         {
             // setter
-            write(";\n");
             writetab();
             CPlusPlus::setter(node);
-            write(" = 0");
+            write(" = 0;\n");
         }
     }
 
     virtual void at(const OpDcl* node)
     {
+        writetab();
         if (node->getJavadoc().size())
         {
             write("%s\n", node->getJavadoc().c_str());
@@ -307,13 +269,12 @@ public:
 
         if (!constructorMode)
         {
-            write(" = 0");
+            write(" = 0;\n");
         }
         else
         {
+            write("{");
             writeln("");
-            writeln("{");
-            indent();
                 writeln("if (constructor)");
                 indent();
                     writetab();
@@ -333,7 +294,6 @@ public:
                 indent();
                     writeln("return 0;");
                 unindent();
-            unindent();
             writeln("}");
         }
     }
@@ -381,15 +341,14 @@ public:
     }
 };
 
-class Predeclaration : public Visitor
+class Predeclaration : public Visitor, public Formatter
 {
     const char* source;
-    FILE* file;
 
 public:
-    Predeclaration(const char* source, FILE* file) :
-        source(source),
-        file(file)
+    Predeclaration(const char* source, FILE* file, const char* indent) :
+        Formatter(file, indent),
+        source(source)
     {
     }
 
@@ -410,10 +369,10 @@ public:
         }
         if (0 < node->getName().size())
         {
-            fprintf(file, "namespace %s\n", node->getName().c_str());
-            fprintf(file, "{\n");
+            write("namespace %s {\n", node->getName().c_str());
                 visitChildren(node);
-            fprintf(file, "}\n\n");
+            writeln("}");
+            writeln("");
         }
         else
         {
@@ -427,11 +386,11 @@ public:
         {
             return;
         }
-        fprintf(file, "    class %s;\n", node->getName().c_str());
+        writeln("class %s;", node->getName().c_str());
     }
 };
 
-void printCxx(const char* source, const char* stringTypeName, bool useExceptions)
+void printCxx(const char* source, const char* stringTypeName, bool useExceptions, const char* indent)
 {
     const std::string filename = getOutputFilename(source, "h");
     printf("# %s\n", filename.c_str());
@@ -442,7 +401,7 @@ void printCxx(const char* source, const char* stringTypeName, bool useExceptions
         return;
     }
 
-    std::string included = getIncludedName(filename);
+    std::string included = CPlusPlus::getIncludedName(filename, indent);
     fprintf(file, "// Generated by esidl %s.\n\n", VERSION);
     fprintf(file, "#ifndef %s\n", included.c_str());
     fprintf(file, "#define %s\n\n", included.c_str());
@@ -456,11 +415,11 @@ void printCxx(const char* source, const char* stringTypeName, bool useExceptions
 
     if (!Node::getFlatNamespace())
     {
-        Predeclaration predeclaration(source, file);
+        Predeclaration predeclaration(source, file, indent);
         getSpecification()->accept(&predeclaration);
     }
 
-    Cxx cxx(source, file, stringTypeName, useExceptions);
+    Cxx cxx(source, file, stringTypeName, useExceptions, indent);
     getSpecification()->accept(&cxx);
 
     fprintf(file, "#endif  // %s\n", included.c_str());

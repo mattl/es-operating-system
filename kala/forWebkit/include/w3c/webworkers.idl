@@ -21,11 +21,6 @@ typedef html5::ApplicationCache ApplicationCache;
 typedef html5::MessagePort MessagePort;
 typedef html5::MessagePortArray MessagePortArray;
 
-interface Database;
-interface DatabaseSync;
-interface Navigator;
-interface WorkerLocation;
-
 interface WorkerGlobalScope {
   readonly attribute WorkerGlobalScope self;
   readonly attribute WorkerLocation location;
@@ -37,7 +32,7 @@ interface WorkerGlobalScope {
 };
 
 [NoInterfaceObject, XXX] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
-  void postMessage(in any message, [Optional] in MessagePortArray ports);
+  void postMessage(in any message, in optional MessagePortArray ports);
            attribute EventListener onmessage;
 };
 
@@ -64,7 +59,7 @@ interface AbstractWorker {
 interface Worker : AbstractWorker {
   void terminate();
 
-  void postMessage(in any message, [Optional] in MessagePortArray ports);
+  void postMessage(in any message, in optional MessagePortArray ports);
            attribute EventListener onmessage;
 };
 
@@ -73,8 +68,9 @@ interface SharedWorker : AbstractWorker {
   readonly attribute MessagePort port;
 };
 
-[NoInterfaceObject, ImplementedOn=WorkerGlobalScope, XXX] interface WorkerUtils {
-  void importScripts([Variadic] in DOMString urls);
+WorkerGlobalScope implements WorkerUtils;
+[NoInterfaceObject, XXX] interface WorkerUtils {
+  void importScripts(in DOMString... urls);
   readonly attribute Navigator navigator;
   Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
   DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);

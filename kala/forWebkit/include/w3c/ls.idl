@@ -35,20 +35,12 @@ module ls
   typedef dom::Document Document;
   typedef dom::Element Element;
 
-  interface LSParser;
-  interface LSSerializer;
-  interface LSInput;
-  interface LSOutput;
-  interface LSParserFilter;
-  interface LSSerializerFilter;
-
   exception LSException {
     unsigned short   code;
+    // LSExceptionCode
+    const unsigned short      PARSE_ERR                      = 81;
+    const unsigned short      SERIALIZE_ERR                  = 82;
   };
-  // LSExceptionCode
-  const unsigned short      PARSE_ERR                      = 81;
-  const unsigned short      SERIALIZE_ERR                  = 82;
-
 
   interface DOMImplementationLS {
 

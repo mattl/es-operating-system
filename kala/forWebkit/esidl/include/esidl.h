@@ -32,20 +32,13 @@ void setBaseFilename(const char* name);
 const std::string getFilename();
 void setFilename(const char* name);
 
-// Turn this on to use a function pointer rather than an interface pointer for
-// attributes of [Callback=FunctionOnly] interface types.
-// #define USE_FUNCTION_ATTRIBUTE
-
-// Turn this on to use a function pointer as well as an interface pointer for
-// parameters of [Callback] interface types.
-// #define USE_FUNCTION_CALLBACK
-
 class Node;
     class Include;
     class ScopedName;
     class Module;
     class StructType;
     class ExceptDcl;
+    class Implements;
     class Interface;
     class Type;
     class NativeType;
@@ -78,11 +71,10 @@ void pushJavadoc();
 class Node
 {
 protected:
+    uint32_t            attr;
     Node*               parent;
     NodeList*           children;
     std::string         name;
-    mutable std::string separator;
-    std::string         id;
     mutable size_t      offset;
     int                 rank;
     std::string         javadoc;
@@ -105,23 +97,17 @@ public:
     static const uint32_t AttrGetter =               0x00000001;
     static const uint32_t AttrSetter =               0x00000002;
     static const uint32_t AttrIn =                   0x00000000;
-    static const uint32_t AttrOut =                  0x00000001;
-    static const uint32_t AttrInOut =                0x00000002;
-    // Extended attribute bits
-    // [IndexCreator], [IndexDeleter], [IndexGetter] and [IndexSetter]
+    // Special attribute bits
     static const uint32_t IndexMask =                0x0000003c;
     static const uint32_t IndexCreator =             0x00000004;
     static const uint32_t IndexDeleter =             0x00000008;
     static const uint32_t IndexGetter =              0x00000010;
     static const uint32_t IndexSetter =              0x00000020;
-    // [NameCreator], [NameDeleter], [NameGetter] and [NameSetter]
-    static const uint32_t NameMask =                 0x000003c0;
-    static const uint32_t NameCreator =              0x00000040;
-    static const uint32_t NameDeleter =              0x00000080;
-    static const uint32_t NameGetter =               0x00000100;
-    static const uint32_t NameSetter =               0x00000200;
-    // [NoIndexingOperations]
-    static const uint32_t NoIndexingOperations =     0x00000400;
+    static const uint32_t Caller =                   0x00000040;
+    static const uint32_t Stringifier =              0x00000080;
+    static const uint32_t Omittable =                0x00000100;
+    static const uint32_t Variadic =                 0x00000200;
+    static const uint32_t Nullable =                 0x00000400;
     // [Callback]
     static const uint32_t CallbackMask =             0x00001800;
     static const uint32_t Callback =                 0x00001800;
@@ -137,16 +123,10 @@ public:
     // [Undefined]
     static const uint32_t UndefinedIsEmpty =         0x00020000;
     static const uint32_t UndefinedIsNull =          0x00040000;
-    // [Stringifies]
-    static const uint32_t Stringifies =              0x00080000;
     // [Replaceable]
     static const uint32_t Replaceable =              0x00100000;
-    // [Callable]
-    static const uint32_t Callable =                 0x00200000;
     // [Optional]
     static const uint32_t Optional =                 0x00400000;
-    // [Variadic]
-    static const uint32_t Variadic =                 0x00800000;
     // [ImplementedOn]
     static const uint32_t ImplementedOn =            0x01000000;
 
@@ -166,9 +146,9 @@ public:
     }
 
     Node() :
+        attr(0),
         parent(0),
         children(0),
-        separator(", "),
         offset(0),
         extendedAttributes(0),
         source(getFilename()),
@@ -177,10 +157,10 @@ public:
     }
 
     Node(std::string name) :
+        attr(0),
         parent(0),
         name(name),
         children(0),
-        separator(", "),
         offset(0),
         extendedAttributes(0),
         source(getFilename()),
@@ -189,8 +169,8 @@ public:
     }
 
     Node(NodeList* children) :
+        attr(0),
         parent(0),
-        separator(", "),
         offset(0),
         extendedAttributes(0),
         source(getFilename()),
@@ -200,9 +180,9 @@ public:
     }
 
     Node(std::string name, NodeList* children) :
+        attr(0),
         parent(0),
         name(name),
-        separator(", "),
         offset(0),
         extendedAttributes(0),
         source(getFilename()),
@@ -242,6 +222,16 @@ public:
         return source;
     }
 
+    uint32_t getAttr() const
+    {
+        return attr;
+    }
+
+    void setAttr(uint32_t attr)
+    {
+        this->attr = attr;
+    }
+
     Node* getParent() const
     {
         return parent;
@@ -274,6 +264,16 @@ public:
             children = new NodeList;
         }
         children->push_back(node);
+        node->setParent(this);
+    }
+
+    virtual void addFront(Node* node)
+    {
+        if (children == 0)
+        {
+            children = new NodeList;
+        }
+        children->push_front(node);
         node->setParent(this);
     }
 
@@ -336,16 +336,6 @@ public:
             name = "::" + node->name + name;
         }
         return name;
-    }
-
-    void setSeparator(const char* s) const
-    {
-        separator = s;
-    }
-
-    const std::string& getSeparator() const
-    {
-        return separator;
     }
 
     // If there is an interface definition as well as interface forward declaration,
@@ -450,16 +440,6 @@ public:
     virtual NativeType* isNative(const Node* scope)
     {
         return 0;
-    }
-
-    std::string& getID()
-    {
-        return id;
-    }
-
-    const std::string& getID() const
-    {
-        return id;
     }
 
     size_t getOffset() const
@@ -579,8 +559,6 @@ public:
         Node(identifier),
         system(system)
     {
-        separator = "\n";
-
         if (name[0] == '"')
         {
             name = name.substr(1, name.size() - 2);
@@ -691,7 +669,6 @@ public:
         constCount(0),
         moduleCount(0)
     {
-        separator = "\n";
         rank = 1;   // 'cause namespace is open.
         javadoc = ::getJavadoc();
     }
@@ -732,7 +709,6 @@ public:
         Node(identifier),
         memberCount(0)
     {
-        separator = ";\n";
         javadoc = ::getJavadoc();
     }
 
@@ -763,6 +739,31 @@ public:
     virtual void accept(Visitor* visitor);
 };
 
+class Implements : public Node
+{
+    ScopedName* first;
+    ScopedName* second;
+public:
+    Implements(ScopedName* first, ScopedName* second) :
+        first(first),
+        second(second)
+    {
+    }
+
+    ScopedName* getFirst()
+    {
+        return first;
+    }
+    ScopedName* getSecond()
+    {
+        return second;
+    }
+
+    void resolve();
+
+    virtual void accept(Visitor* visitor);
+};
+
 class Interface : public Node
 {
     Node* extends;
@@ -770,9 +771,7 @@ class Interface : public Node
     int methodCount;
     Interface* constructor;
     std::list<const Interface*> mixins;
-    uint32_t attr;
-    std::string callable;
-    std::string stringifies;
+    std::list<const Interface*> implementedOn;
 
 public:
     Interface(std::string identifier, Node* extends = 0, bool forward = false) :
@@ -780,10 +779,8 @@ public:
         extends(extends),
         constCount(0),
         methodCount(0),
-        constructor(0),
-        attr(0)
+        constructor(0)
     {
-        separator = ";\n";
         if (!forward)
         {
             children = new NodeList;
@@ -889,39 +886,47 @@ public:
         return &mixins;
     }
 
-    uint32_t getAttr() const
-    {
-        return attr;
-    }
-
     uint32_t isCallback() const
     {
-        return (attr & CallbackMask);
-    }
-
-    std::string getCallable() const
-    {
-        return callable;
+        return (getAttr() & CallbackMask);
     }
 
     virtual void accept(Visitor* visitor);
 
+    void implements(Interface* mixin)
+    {
+        mixin->setAttr(mixin->getAttr() | ImplementedOn);
+        mixins.push_back(mixin);
+        mixin->implementedOn.push_back(this);
+    }
+
+    Interface* getImplementedOn() const
+    {
+        if (implementedOn.size() == 1)
+        {
+            return const_cast<Interface*>(implementedOn.front());
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     void collectMixins(std::list<const Interface*>* interfaceList) const
     {
-        interfaceList->push_back(this);
         for (const Interface* interface = this;
              interface && !interface->isBaseObject();
              interface = interface->getSuper())
         {
-            assert(!interface->isLeaf());
-            for (std::list<const Interface*>::const_iterator i = interface->getMixins()->begin();
-                 i != interface->getMixins()->end();
-                 ++i)
+            for (std::list<const Interface*>::const_reverse_iterator i = interface->getMixins()->rbegin();
+                i != interface->getMixins()->rend();
+                ++i)
             {
                 assert(!(*i)->isLeaf());
-                interfaceList->push_back(*i);
                 assert((*i)->getMixins()->empty());
+                interfaceList->push_front(*i);
             }
+            interfaceList->push_front(interface);
         }
     }
 };
@@ -960,6 +965,7 @@ class SequenceType : public Node
 
 public:
     SequenceType(Node* spec, Node* max = 0) :
+        Node("seqence"),  // Default name
         spec(spec),
         max(max)
     {
@@ -1073,13 +1079,21 @@ class Member : public Node
     bool  type;  // true if this is a typedef
 
 public:
-    Member(std::string identifier, Node* spec = 0) :
+    Member(std::string identifier, Node* spec = 0, uint32_t attr = 0) :
         Node(identifier),
         spec(spec),
         type(false)
     {
-        separator = ";\n";
         javadoc = ::getJavadoc();
+        setAttr(attr);
+    }
+
+    Member(const Member& m) :
+        Node(m.getName()),
+        spec(m.spec),
+        type(m.type)
+    {
+        setAttr(m.attr);
     }
 
     ~Member()
@@ -1189,20 +1203,17 @@ public:
 class Attribute : public Member
 {
     bool readonly;
-    uint32_t attr;
     Node* getraises;
     Node* setraises;
     std::string putForwards;
 
 public:
     Attribute(std::string identifier, Node* spec, bool readonly = false) :
-        Member(identifier, spec),
+        Member(identifier, spec, 0),
         readonly(readonly),
-        attr(0),
         getraises(0),
         setraises(0)
     {
-        separator = ";\n";
     }
 
     bool isReadonly() const
@@ -1248,26 +1259,16 @@ public:
         return setraises->getSize();
     }
 
-    void setStringifies()
+    bool isStringifier() const
     {
-        attr |= Stringifies;
-    }
-
-    bool isStringifies() const
-    {
-        return attr & Stringifies;
+        return getAttr() & Stringifier;
     }
 
     void processExtendedAttributes();
 
-    uint32_t getAttr() const
-    {
-        return attr;
-    }
-
     bool isReplaceable() const
     {
-        return attr & Replaceable;
+        return getAttr() & Replaceable;
     }
 
     bool isPutForwards() const
@@ -1293,7 +1294,6 @@ public:
         Member(identifier, spec),
         exp(exp)
     {
-        separator = ";\n";
     }
 
     ~ConstDcl()
@@ -1339,19 +1339,16 @@ class OpDcl : public Member
 {
     Node* raises;
     int paramCount;
-    uint32_t attr;
     int methodCount;
     std::vector<int> paramCounts;  // for each method
 
 public:
     OpDcl(std::string identifier, Node* spec) :
-        Member(identifier, spec),
+        Member(identifier, spec, 0),
         raises(0),
         paramCount(0),
-        attr(0),
         methodCount(1)
     {
-        separator = ";\n";
         children = new NodeList;
     }
 
@@ -1386,16 +1383,6 @@ public:
         return paramCount;
     }
 
-    uint32_t getAttr() const
-    {
-        return attr;
-    }
-
-    void setCallable()
-    {
-        attr |= Callable;
-    }
-
     int getMethodCount() const
     {
         return methodCount;
@@ -1412,34 +1399,20 @@ public:
 
 class ParamDcl : public Member
 {
-    uint32_t attr;
-
 public:
     ParamDcl(std::string identifier, Node* spec, uint32_t attr) :
-        Member(identifier, spec),
-        attr(attr)
+        Member(identifier, spec, attr)
     {
-        separator = ", ";
-    }
-
-    uint32_t getAttr() const
-    {
-        return attr;
-    }
-
-    bool isInput() const
-    {
-        return (attr & AttrMask) == AttrIn;
     }
 
     bool isOptional() const
     {
-        return attr & Optional;
+        return getAttr() & Optional;
     }
 
     bool isVariadic() const
     {
-        return attr & Variadic;
+        return getAttr() & Variadic;
     }
 
     void processExtendedAttributes();
@@ -1473,7 +1446,7 @@ class Visitor
 protected:
     void visitChildren(const Node* node)
     {
-        if (node->isLeaf())
+        if (!node || node->isLeaf())
         {
             return;
         }
@@ -1522,6 +1495,10 @@ public:
     virtual void at(const ExceptDcl* node)
     {
         at(static_cast<const StructType*>(node));
+    }
+
+    virtual void at(const Implements* node)
+    {
     }
 
     virtual void at(const Interface* node)
@@ -1634,6 +1611,11 @@ inline void ExceptDcl::accept(Visitor* visitor)
     Node* prev = setCurrent(this);
     visitor->at(this);
     setCurrent(prev);
+}
+
+inline void Implements::accept(Visitor* visitor)
+{
+    visitor->at(this);
 }
 
 inline void Interface::accept(Visitor* visitor)
@@ -1769,6 +1751,11 @@ public:
         visitChildren(node);
     }
 
+    virtual void at(const Implements* node)
+    {
+        const_cast<Implements*>(node)->resolve();
+    }
+
     virtual void at(const OpDcl* node)
     {
         const_cast<OpDcl*>(node)->adjustMethodCount();
@@ -1776,9 +1763,9 @@ public:
 };
 
 extern void print();
-extern void printCxx(const char* source, const char* stringTypeName, bool useExceptions);
-extern void printSkeleton(const char* source, bool isystem);
-extern void printTemplate(const char* source, const char* stringTypeName, bool useExceptions, bool isystem);
+extern void printCxx(const char* source, const char* stringTypeName, bool useExceptions, const char* indent);
+extern void printSkeleton(const char* source, bool isystem, const char* indent);
+extern void printTemplate(const char* source, const char* stringTypeName, bool useExceptions, bool isystem, const char* indent);
 
 extern std::string getOutputFilename(std::string, const char* suffix);
 extern std::string getIncludedName(const std::string& header);
@@ -1794,7 +1781,7 @@ extern int input(int fd,
                  bool isystem, bool useExceptions, const char* stringTypeName);
 
 extern int output(const char* filename,
-           bool isystem, bool useExceptions, const char* stringTypeName,
+           bool isystem, bool useExceptions, const char* stringTypeName, const char* indent,
            bool skeleton,
            bool generic);
 

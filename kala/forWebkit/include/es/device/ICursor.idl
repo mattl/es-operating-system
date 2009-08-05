@@ -20,13 +20,13 @@
 
 module es
 {
+    typedef unsigned long Pattern[32];
+
     /**
      * This interface provides methods for managing a cursor.
      */
     interface Cursor
     {
-        typedef unsigned long Pattern[32];
-
         /**
          * Shows this cursor.
          */

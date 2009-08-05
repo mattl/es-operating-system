@@ -51,14 +51,14 @@
  *    f: caller
  *    t: stringifier
  *    o: omittable
+ *    V: variadic
  *
  *  type ->
  *    A: any
  *    D: DOMString
  *    Q type: sequence<type>
  *    O name: Object
- *    B type: Boxed valuetype
- *    V type: [Variadic] in type
+ *    B type: nullable
  *    v: void
  *    b: boolean
  *    h: octet
@@ -96,7 +96,7 @@ public:
     static const char kString = 'D';
     static const char kAny = 'A';
     static const char kObject = 'O';
-    static const char kBoxedValueType = 'B';
+    static const char kNullable = 'B';
     static const char kSequence = 'Q';
     static const char kVariadic = 'V';
     // Misc.
@@ -147,9 +147,8 @@ public:
         case kString:
         case kAny:
         case kObject:
-        case kBoxedValueType:
+        case kNullable:
         case kSequence:
-        case kVariadic:
         case kArray:
         case kPointer:
             return true;
@@ -199,9 +198,8 @@ public:
         case kAny:
         case kPointer:
             return ++info;
-        case kBoxedValueType:
+        case kNullable:
         case kSequence:
-        case kVariadic:
             return skipType(++info);
         case kObject:
             return skipName(++info);
@@ -377,7 +375,8 @@ public:
                     return seq.getType().getSize();
                 }
                 break;
-            case kBoxedValueType:
+            case kNullable:
+                return sizeof(void*);   // TODO: TBD
             default:
                 return 0;
             }
@@ -618,6 +617,11 @@ public:
         bool isSpecialOmittable() const
         {
             return hasSpecial(kSpecialOmittable);
+        }
+
+        bool isVariadic() const
+        {
+            return hasSpecial(kVariadic);
         }
     };
 
