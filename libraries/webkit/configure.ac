@@ -2,6 +2,7 @@ AC_INIT([WebKit],[1.1.7],[http://bugs.webkit.org/])
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_HEADERS([autotoolsconfig.h])
 AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
 WEBKIT_MAJOR_VERSION=1
 WEBKIT_MINOR_VERSION=1
 WEBKIT_MICRO_VERSION=7
@@ -23,6 +24,9 @@ case "$host" in
      *-*-darwin*)
        os_darwin=yes
        ;;
+     *-*-es*)
+       os_es=yes
+       ;;
 esac
 
 case "$host_os" in
@@ -33,6 +37,16 @@ case "$host_os" in
        os_gnu=no
        ;;
 esac
+
+case ${target} in
+  *-*-es)
+    os_type=es
+    ;;
+  *)
+    os_type=posix
+    ;;
+esac
+
 
 # initialize webkit options
 # WEBKIT_INIT
@@ -52,8 +66,10 @@ AC_C_VOLATILE
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
 
+if test "$os_linux" = "yes"; then
 UNICODE_CFLAGS=`icu-config --cppflags`
 UNICODE_LIBS=`icu-config --ldflags`
+fi
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 
@@ -374,6 +390,10 @@ AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
 AM_CONDITIONAL([OS_GNU],[test "$os_gnu" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
+AM_CONDITIONAL([OS_ES],[test "$os_es" = "yes"])
+
+AM_CONDITIONAL(ES, test x$os_type = xes)
+AM_CONDITIONAL(POSIX, test x$os_type = xposix)
 
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])

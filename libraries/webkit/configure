@@ -695,6 +695,12 @@ USE_PANGO_FALSE
 USE_PANGO_TRUE
 USE_FREETYPE_FALSE
 USE_FREETYPE_TRUE
+POSIX_FALSE
+POSIX_TRUE
+ES_FALSE
+ES_TRUE
+OS_ES_FALSE
+OS_ES_TRUE
 OS_FREEBSD_FALSE
 OS_FREEBSD_TRUE
 OS_GNU_FALSE
@@ -765,6 +771,10 @@ INSTALL_PROGRAM
 WEBKIT_MICRO_VERSION
 WEBKIT_MINOR_VERSION
 WEBKIT_MAJOR_VERSION
+target_os
+target_vendor
+target_cpu
+target
 host_os
 host_vendor
 host_cpu
@@ -1478,6 +1488,7 @@ Program names:
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -2128,6 +2139,49 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
+{ $as_echo "$as_me:$LINENO: checking target system type" >&5
+$as_echo_n "checking target system type... " >&6; }
+if test "${ac_cv_target+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
+    { { $as_echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $target_alias failed" >&5
+$as_echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $target_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_target" >&5
+$as_echo "$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) { { $as_echo "$as_me:$LINENO: error: invalid value of canonical target" >&5
+$as_echo "$as_me: error: invalid value of canonical target" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
 WEBKIT_MAJOR_VERSION=1
 WEBKIT_MINOR_VERSION=1
 WEBKIT_MICRO_VERSION=7
@@ -2688,6 +2742,9 @@ case "$host" in
      *-*-darwin*)
        os_darwin=yes
        ;;
+     *-*-es*)
+       os_es=yes
+       ;;
 esac
 
 case "$host_os" in
@@ -2698,6 +2755,16 @@ case "$host_os" in
        os_gnu=no
        ;;
 esac
+
+case ${target} in
+  *-*-es)
+    os_type=es
+    ;;
+  *)
+    os_type=posix
+    ;;
+esac
+
 
 # initialize webkit options
 # WEBKIT_INIT
@@ -3927,8 +3994,9 @@ fi
 # FIXME: we rely on the cache variable name because
 # there is no other way.
 set dummy $CC
-ac_cc=`echo $2 | sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
-if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" != yes"; then
+am_cc=`echo $2 | sed 's/[^a-zA-Z0-9_]/_/g;s/^[0-9]/_/'`
+eval am_t=\$ac_cv_prog_cc_${am_cc}_c_o
+if test "$am_t" != yes; then
    # Losing compiler, so override with the script.
    # FIXME: It is wrong to rewrite CC.
    # But if we don't then we get into trouble of one sort or another.
@@ -6055,8 +6123,10 @@ _ACEOF
 fi
 
 
+if test "$os_linux" = "yes"; then
 UNICODE_CFLAGS=`icu-config --cppflags`
 UNICODE_LIBS=`icu-config --ldflags`
+fi
 
 
 
@@ -6181,10 +6251,11 @@ pkg_failed=no
 { $as_echo "$as_me:$LINENO: checking for LIBXML" >&5
 $as_echo_n "checking for LIBXML... " >&6; }
 
-if test -n "$LIBXML_CFLAGS"; then
-    pkg_cv_LIBXML_CFLAGS="$LIBXML_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$LIBXML_CFLAGS"; then
+        pkg_cv_LIBXML_CFLAGS="$LIBXML_CFLAGS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"libxml-2.0 >= 2.6\"") >&5
   ($PKG_CONFIG --exists --print-errors "libxml-2.0 >= 2.6") 2>&5
   ac_status=$?
@@ -6194,13 +6265,15 @@ if test -n "$LIBXML_CFLAGS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
-if test -n "$LIBXML_LIBS"; then
-    pkg_cv_LIBXML_LIBS="$LIBXML_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$LIBXML_LIBS"; then
+        pkg_cv_LIBXML_LIBS="$LIBXML_LIBS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"libxml-2.0 >= 2.6\"") >&5
   ($PKG_CONFIG --exists --print-errors "libxml-2.0 >= 2.6") 2>&5
   ac_status=$?
@@ -6210,8 +6283,9 @@ if test -n "$LIBXML_LIBS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
 
 
@@ -6224,9 +6298,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        LIBXML_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libxml-2.0 >= 2.6" 2>&1`
+	        LIBXML_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "libxml-2.0 >= 2.6"`
         else
-	        LIBXML_PKG_ERRORS=`$PKG_CONFIG --print-errors "libxml-2.0 >= 2.6" 2>&1`
+	        LIBXML_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "libxml-2.0 >= 2.6"`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$LIBXML_PKG_ERRORS" >&5
@@ -6293,10 +6367,11 @@ pkg_failed=no
 { $as_echo "$as_me:$LINENO: checking for CAIRO" >&5
 $as_echo_n "checking for CAIRO... " >&6; }
 
-if test -n "$CAIRO_CFLAGS"; then
-    pkg_cv_CAIRO_CFLAGS="$CAIRO_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$CAIRO_CFLAGS"; then
+        pkg_cv_CAIRO_CFLAGS="$CAIRO_CFLAGS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"cairo >= 1.2\"") >&5
   ($PKG_CONFIG --exists --print-errors "cairo >= 1.2") 2>&5
   ac_status=$?
@@ -6306,13 +6381,15 @@ if test -n "$CAIRO_CFLAGS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
-if test -n "$CAIRO_LIBS"; then
-    pkg_cv_CAIRO_LIBS="$CAIRO_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$CAIRO_LIBS"; then
+        pkg_cv_CAIRO_LIBS="$CAIRO_LIBS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { ($as_echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"cairo >= 1.2\"") >&5
   ($PKG_CONFIG --exists --print-errors "cairo >= 1.2") 2>&5
   ac_status=$?
@@ -6322,8 +6399,9 @@ if test -n "$CAIRO_LIBS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
 
 
@@ -6336,9 +6414,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "cairo >= 1.2" 2>&1`
+	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "cairo >= 1.2"`
         else
-	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --print-errors "cairo >= 1.2" 2>&1`
+	        CAIRO_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "cairo >= 1.2"`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$CAIRO_PKG_ERRORS" >&5
@@ -6926,6 +7004,31 @@ else
   OS_FREEBSD_FALSE=
 fi
 
+ if test "$os_es" = "yes"; then
+  OS_ES_TRUE=
+  OS_ES_FALSE='#'
+else
+  OS_ES_TRUE='#'
+  OS_ES_FALSE=
+fi
+
+
+ if test x$os_type = xes; then
+  ES_TRUE=
+  ES_FALSE='#'
+else
+  ES_TRUE='#'
+  ES_FALSE=
+fi
+
+ if test x$os_type = xposix; then
+  POSIX_TRUE=
+  POSIX_FALSE='#'
+else
+  POSIX_TRUE='#'
+  POSIX_FALSE=
+fi
+
 
 # Font backend conditionals
  if test "$with_font_backend" = "freetype"; then
@@ -7308,6 +7411,27 @@ if test -z "${OS_FREEBSD_TRUE}" && test -z "${OS_FREEBSD_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"OS_FREEBSD\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 $as_echo "$as_me: error: conditional \"OS_FREEBSD\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${OS_ES_TRUE}" && test -z "${OS_ES_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"OS_ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"OS_ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${ES_TRUE}" && test -z "${ES_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${POSIX_TRUE}" && test -z "${POSIX_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"POSIX\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"POSIX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -8672,18 +8796,28 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
-    "depfiles":C) test x"$AMDEP_TRUE" != x"" || for mf in $CONFIG_FILES; do
-  # Strip MF so we end up with the name of the file.
-  mf=`echo "$mf" | sed -e 's/:.*$//'`
-  # Check whether this is an Automake generated Makefile or not.
-  # We used to match only the files named `Makefile.in', but
-  # some people rename them; so instead we look at the file content.
-  # Grep'ing the first line is not enough: some people post-process
-  # each Makefile.in and add a new line on top of each file to say so.
-  # Grep'ing the whole file is not good either: AIX grep has a line
-  # limit of 2048, but all sed's we know have understand at least 4000.
-  if sed -n 's,^#.*generated by automake.*,X,p' "$mf" | grep X >/dev/null 2>&1; then
-    dirpart=`$as_dirname -- "$mf" ||
+    "depfiles":C) test x"$AMDEP_TRUE" != x"" || {
+  # Autoconf 2.62 quotes --file arguments for eval, but not when files
+  # are listed without --file.  Let's play safe and only enable the eval
+  # if we detect the quoting.
+  case $CONFIG_FILES in
+  *\'*) eval set x "$CONFIG_FILES" ;;
+  *)   set x $CONFIG_FILES ;;
+  esac
+  shift
+  for mf
+  do
+    # Strip MF so we end up with the name of the file.
+    mf=`echo "$mf" | sed -e 's/:.*$//'`
+    # Check whether this is an Automake generated Makefile or not.
+    # We used to match only the files named `Makefile.in', but
+    # some people rename them; so instead we look at the file content.
+    # Grep'ing the first line is not enough: some people post-process
+    # each Makefile.in and add a new line on top of each file to say so.
+    # Grep'ing the whole file is not good either: AIX grep has a line
+    # limit of 2048, but all sed's we know have understand at least 4000.
+    if sed -n 's,^#.*generated by automake.*,X,p' "$mf" | grep X >/dev/null 2>&1; then
+      dirpart=`$as_dirname -- "$mf" ||
 $as_expr X"$mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$mf" : 'X\(//\)[^/]' \| \
 	 X"$mf" : 'X\(//\)$' \| \
@@ -8706,28 +8840,28 @@ $as_echo X"$mf" |
 	    q
 	  }
 	  s/.*/./; q'`
-  else
-    continue
-  fi
-  # Extract the definition of DEPDIR, am__include, and am__quote
-  # from the Makefile without running `make'.
-  DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
-  test -z "$DEPDIR" && continue
-  am__include=`sed -n 's/^am__include = //p' < "$mf"`
-  test -z "am__include" && continue
-  am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
-  # When using ansi2knr, U may be empty or an underscore; expand it
-  U=`sed -n 's/^U = //p' < "$mf"`
-  # Find all dependency output files, they are included files with
-  # $(DEPDIR) in their names.  We invoke sed twice because it is the
-  # simplest approach to changing $(DEPDIR) to its actual value in the
-  # expansion.
-  for file in `sed -n "
-    s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
-       sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
-    # Make sure the directory exists.
-    test -f "$dirpart/$file" && continue
-    fdir=`$as_dirname -- "$file" ||
+    else
+      continue
+    fi
+    # Extract the definition of DEPDIR, am__include, and am__quote
+    # from the Makefile without running `make'.
+    DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
+    test -z "$DEPDIR" && continue
+    am__include=`sed -n 's/^am__include = //p' < "$mf"`
+    test -z "am__include" && continue
+    am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
+    # When using ansi2knr, U may be empty or an underscore; expand it
+    U=`sed -n 's/^U = //p' < "$mf"`
+    # Find all dependency output files, they are included files with
+    # $(DEPDIR) in their names.  We invoke sed twice because it is the
+    # simplest approach to changing $(DEPDIR) to its actual value in the
+    # expansion.
+    for file in `sed -n "
+      s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
+	 sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
+      # Make sure the directory exists.
+      test -f "$dirpart/$file" && continue
+      fdir=`$as_dirname -- "$file" ||
 $as_expr X"$file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
 	 X"$file" : 'X\(//\)[^/]' \| \
 	 X"$file" : 'X\(//\)$' \| \
@@ -8750,7 +8884,7 @@ $as_echo X"$file" |
 	    q
 	  }
 	  s/.*/./; q'`
-    { as_dir=$dirpart/$fdir
+      { as_dir=$dirpart/$fdir
   case $as_dir in #(
   -*) as_dir=./$as_dir;;
   esac
@@ -8791,10 +8925,11 @@ $as_echo X"$as_dir" |
   } || test -d "$as_dir" || { { $as_echo "$as_me:$LINENO: error: cannot create directory $as_dir" >&5
 $as_echo "$as_me: error: cannot create directory $as_dir" >&2;}
    { (exit 1); exit 1; }; }; }
-    # echo "creating $dirpart/$file"
-    echo '# dummy' > "$dirpart/$file"
+      # echo "creating $dirpart/$file"
+      echo '# dummy' > "$dirpart/$file"
+    done
   done
-done
+}
  ;;
 
   esac

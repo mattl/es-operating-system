@@ -53,6 +53,8 @@
 
 #include "html5_canvasrenderingcontext2d.h"
 
+#include <es.h>
+
 void figure(es::CanvasRenderingContext2D* canvas)
 {
     // Bar graph
@@ -185,6 +187,7 @@ void testCanvas2d(cairo_t* cr)
     WebCore::CanvasRenderingContext2D* canvasRenderingContext = canvasElement->getContext(WebCore::String::fromUTF8("2d"));
 
     CanvasRenderingContext2D_Impl canvasImpl(canvasRenderingContext);
+    
     figure(&canvasImpl);
 
     if (frame->contentRenderer() && frame->view())
