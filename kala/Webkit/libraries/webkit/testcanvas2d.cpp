@@ -66,8 +66,6 @@ void figure(es::CanvasRenderingContext2D* canvas)
     float x;
     float y;
 
-    esReport("Start figure.\n");
-
     canvas->setStrokeStyle("rgb(0, 0, 0)");
     canvas->setLineWidth(3);
 
@@ -156,30 +154,20 @@ void figure(es::CanvasRenderingContext2D* canvas)
     canvas->setFillStyle("blue");
     canvas->setFont("48pt Liberation Mono");
     canvas->fillText("Hello, world.", 512, 300);
-
-    esReport("End figure.\n");
 }
 
 void testCanvas2d(cairo_t* cr)
 {
     WebCore::ExceptionCode ec = 0;
 
-    esReport("start init.\n");
-
     WTF::initializeThreading();
-
-    esReport("finished init.\n");
 
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
 
-    esReport("Dcl element.\n");
-
     // A document have been created already in frame with an HTML element.
     WebCore::HTMLDocument* document = dynamic_cast<WebCore::HTMLDocument*>(frame->document());
-
-    esReport("Create body.\n");
 
     // Create and append the body
     if (WebCore::Node* documentElement = document->documentElement()) {
@@ -187,15 +175,11 @@ void testCanvas2d(cairo_t* cr)
         documentElement->appendChild(new WebCore::HTMLBodyElement(WebCore::HTMLNames::bodyTag, document), ec);
     }
 
-    esReport("Create canvas element.\n");
-
     // Create and append the canvas element
     ec = 0;
     WTF::PassRefPtr<WebCore::HTMLCanvasElement> canvasElement = WTF::static_pointer_cast<WebCore::HTMLCanvasElement>(document->createElement("canvas", ec));
     canvasElement->setWidth(1024);
     canvasElement->setHeight(768);
-
-    esReport("Append Child.\n");
 
     WebCore::HTMLElement* body = document->body();
     body->appendChild(canvasElement.get(), ec);
@@ -204,19 +188,13 @@ void testCanvas2d(cairo_t* cr)
 
     CanvasRenderingContext2D_Impl canvasImpl(canvasRenderingContext);
     
-    esReport("Start Figure.\n");
-
     figure(&canvasImpl);
 
     if (frame->contentRenderer() && frame->view())
     {
-	esReport("Paint view.\n");
-
         WebCore::GraphicsContext ctx(cr);
         WebCore::IntRect rect(0, 0, 1024, 768);
         frame->view()->layoutIfNeededRecursive();
         frame->view()->paint(&ctx, rect);
     }
-
-    esReport("Finish testcanvas2d.\n");
 }

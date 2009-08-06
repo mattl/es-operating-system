@@ -63,7 +63,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 bin_PROGRAMS =
-noinst_PROGRAMS = $(am__EXEEXT_1)
+noinst_PROGRAMS = $(am__EXEEXT_3)
 @ENABLE_FAST_MALLOC_FALSE@am__append_1 = \
 @ENABLE_FAST_MALLOC_FALSE@	-DUSE_SYSTEM_MALLOC
 
@@ -86,6 +86,12 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 # ---
 @USE_PANGO_TRUE@am__append_6 = \
 @USE_PANGO_TRUE@	-DUSE_PANGO=1
+
+@OS_ES_TRUE@am__append_7 = \
+@OS_ES_TRUE@	testcanvas2d
+
+@OS_ES_FALSE@am__append_8 = \
+@OS_ES_FALSE@	testcanvas2dLinux
 
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(noinst_HEADERS) \
@@ -531,7 +537,6 @@ am__objects_2 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/platform/libWebCore_a-Scrollbar.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-ScrollbarThemeComposite.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-SharedBuffer.$(OBJEXT) \
-	trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-ThreadTimers.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-Timer.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-Widget.$(OBJEXT) \
@@ -705,6 +710,7 @@ am__objects_2 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/xml/libWebCore_a-XMLHttpRequest.$(OBJEXT) \
 	trunk/WebCore/xml/libWebCore_a-XMLHttpRequestUpload.$(OBJEXT) \
 	trunk/WebCore/xml/libWebCore_a-XMLSerializer.$(OBJEXT) \
+	es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT) \
 	trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.$(OBJEXT)
 am__objects_3 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-GradientCairo.$(OBJEXT) \
@@ -789,7 +795,9 @@ nodist_libWebCore_a_OBJECTS = $(am__objects_4)
 libWebCore_a_OBJECTS = $(am_libWebCore_a_OBJECTS) \
 	$(nodist_libWebCore_a_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-am__EXEEXT_1 = testcanvas2d$(EXEEXT)
+@OS_ES_TRUE@am__EXEEXT_1 = testcanvas2d$(EXEEXT)
+@OS_ES_FALSE@am__EXEEXT_2 = testcanvas2dLinux$(EXEEXT)
+am__EXEEXT_3 = $(am__EXEEXT_1) $(am__EXEEXT_2)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_testcanvas2d_OBJECTS = testcanvas2d-testcanvas2d.$(OBJEXT) \
 	testcanvas2d-main.$(OBJEXT)
@@ -798,6 +806,17 @@ am__DEPENDENCIES_1 = libWebCore.a
 testcanvas2d_DEPENDENCIES = $(am__DEPENDENCIES_1)
 testcanvas2d_LINK = $(CXXLD) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) \
 	$(testcanvas2d_LDFLAGS) $(LDFLAGS) -o $@
+am_testcanvas2dLinux_OBJECTS =  \
+	testcanvas2dLinux-testcanvas2d.$(OBJEXT) \
+	testcanvas2dLinux-main_linux.$(OBJEXT)
+testcanvas2dLinux_OBJECTS = $(am_testcanvas2dLinux_OBJECTS)
+am__DEPENDENCIES_2 =
+am__DEPENDENCIES_3 = libWebCore.a $(am__DEPENDENCIES_2) \
+	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_2) \
+	$(am__DEPENDENCIES_2)
+testcanvas2dLinux_DEPENDENCIES = $(am__DEPENDENCIES_3)
+testcanvas2dLinux_LINK = $(CXXLD) $(testcanvas2dLinux_CXXFLAGS) \
+	$(CXXFLAGS) $(testcanvas2dLinux_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -811,8 +830,10 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(libWebCore_a_SOURCES) $(nodist_libWebCore_a_SOURCES) \
-	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES)
-DIST_SOURCES = $(libWebCore_a_SOURCES) $(testcanvas2d_SOURCES)
+	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES) \
+	$(testcanvas2dLinux_SOURCES)
+DIST_SOURCES = $(libWebCore_a_SOURCES) $(testcanvas2d_SOURCES) \
+	$(testcanvas2dLinux_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -949,7 +970,7 @@ noinst_HEADERS :=
 # Convenience libraries
 lib_LIBRARIES := libWebCore.a
 IDL_BINDINGS := 
-TEST_PROGS := testcanvas2d
+TEST_PROGS := $(am__append_7) $(am__append_8)
 POFILES := 
 MOFILES := 
 javascriptcore_h_api := 
@@ -1963,8 +1984,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/platform/SystemTime.h \
 	trunk/WebCore/platform/ThemeTypes.h \
 	trunk/WebCore/platform/ThreadCheck.h \
-	trunk/WebCore/platform/ThreadGlobalData.cpp \
-	trunk/WebCore/platform/ThreadGlobalData.h \
 	trunk/WebCore/platform/ThreadTimers.cpp \
 	trunk/WebCore/platform/ThreadTimers.h \
 	trunk/WebCore/platform/Timer.cpp \
@@ -2368,6 +2387,8 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
+	es/WebCore/platform/es/ThreadGlobalData.cpp \
+	es/WebCore/platform/es/ThreadGlobalData.h \
 	trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 webcore_libadd := 
 webcore_built_sources := DerivedSources/CSSGrammar.cpp \
@@ -2384,6 +2405,8 @@ webcore_built_nosources := DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp DerivedSources/ColorData.c
 webcore_dist := 
 webcorees_cppflags := $(am__append_5) $(am__append_6)
+#	trunk/WebCore/platform/ThreadGlobalData.cpp \
+#	trunk/WebCore/platform/ThreadGlobalData.h 
 #	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
@@ -2598,6 +2621,14 @@ webkit_tests_ldadd = \
 	-lxml2 \
 	-lsicui18n -lsicuuc -lsicudata 
 
+webkit_linux_ldadd = \
+	libWebCore.a \
+	$(CAIRO_LIBS) \
+	$(JPEG_LIBS) \
+	$(UNICODE_LIBS) \
+	$(LIBXML_LIBS) \
+	-lpthread -lX11
+
 webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 
 # Add additional tests here
@@ -2615,6 +2646,17 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
+
+# Add additional tests here
+testcanvas2dLinux_SOURCES = testcanvas2d.cpp main_linux.cpp
+testcanvas2dLinux_CXXFLAGS = $(webkit_tests_cxxflags)
+testcanvas2dLinux_CFLAGS = $(webkit_tests_cflags)
+testcanvas2dLinux_CPPFLAGS = $(webkit_tests_cppflags) \
+	-I../../include \
+	-I$(srcdir)/../../include 
+
+testcanvas2dLinux_LDADD = $(webkit_linux_ldadd)
+testcanvas2dLinux_LDFLAGS = 
 
 # Autogenerated sources
 BUILT_SOURCES := \
@@ -4063,9 +4105,6 @@ trunk/WebCore/platform/libWebCore_a-ScrollbarThemeComposite.$(OBJEXT):  \
 trunk/WebCore/platform/libWebCore_a-SharedBuffer.$(OBJEXT):  \
 	trunk/WebCore/platform/$(am__dirstamp) \
 	trunk/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
-	trunk/WebCore/platform/$(am__dirstamp) \
-	trunk/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/libWebCore_a-ThreadTimers.$(OBJEXT):  \
 	trunk/WebCore/platform/$(am__dirstamp) \
 	trunk/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
@@ -4639,6 +4678,15 @@ trunk/WebCore/xml/libWebCore_a-XMLHttpRequestUpload.$(OBJEXT):  \
 trunk/WebCore/xml/libWebCore_a-XMLSerializer.$(OBJEXT):  \
 	trunk/WebCore/xml/$(am__dirstamp) \
 	trunk/WebCore/xml/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es
+	@: > es/WebCore/platform/es/$(am__dirstamp)
+es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
+	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
+	es/WebCore/platform/es/$(am__dirstamp) \
+	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.$(OBJEXT):  \
 	trunk/WebCore/loader/icon/$(am__dirstamp) \
 	trunk/WebCore/loader/icon/$(DEPDIR)/$(am__dirstamp)
@@ -4738,12 +4786,6 @@ trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp):
 trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT):  \
 	trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp) \
 	trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es
-	@: > es/WebCore/platform/es/$(am__dirstamp)
-es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
-	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
 	es/WebCore/platform/es/$(am__dirstamp) \
 	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
@@ -5017,6 +5059,9 @@ clean-noinstPROGRAMS:
 testcanvas2d$(EXEEXT): $(testcanvas2d_OBJECTS) $(testcanvas2d_DEPENDENCIES) 
 	@rm -f testcanvas2d$(EXEEXT)
 	$(testcanvas2d_LINK) $(testcanvas2d_OBJECTS) $(testcanvas2d_LDADD) $(LIBS)
+testcanvas2dLinux$(EXEEXT): $(testcanvas2dLinux_OBJECTS) $(testcanvas2dLinux_DEPENDENCIES) 
+	@rm -f testcanvas2dLinux$(EXEEXT)
+	$(testcanvas2dLinux_LINK) $(testcanvas2dLinux_OBJECTS) $(testcanvas2dLinux_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -5067,6 +5112,7 @@ mostlyclean-compile:
 	-rm -f es/WebCore/platform/es/libWebCore_a-SharedTimerES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-SoundES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-TemporaryLinkStubs.$(OBJEXT)
+	-rm -f es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-WidgetES.$(OBJEXT)
 	-rm -f es/WebCore/platform/graphics/es/libWebCore_a-FontES.$(OBJEXT)
 	-rm -f es/WebCore/platform/graphics/es/libWebCore_a-IconES.$(OBJEXT)
@@ -5556,7 +5602,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/libWebCore_a-Scrollbar.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-ScrollbarThemeComposite.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-SharedBuffer.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-ThreadTimers.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-Timer.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-Widget.$(OBJEXT)
@@ -5696,6 +5741,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-testcanvas2d.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2dLinux-main_linux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-CSSGrammar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-ColorData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-DocTypeStrings.Po@am__quote@
@@ -5743,6 +5790,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-SharedTimerES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-SoundES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-TemporaryLinkStubs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-WidgetES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/es/$(DEPDIR)/libWebCore_a-FontES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/es/$(DEPDIR)/libWebCore_a-IconES.Po@am__quote@
@@ -6173,7 +6221,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-Scrollbar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ScrollbarThemeComposite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-SharedBuffer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadTimers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-Timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-Widget.Po@am__quote@
@@ -12237,20 +12284,6 @@ trunk/WebCore/platform/libWebCore_a-SharedBuffer.obj: trunk/WebCore/platform/Sha
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/libWebCore_a-SharedBuffer.obj `if test -f 'trunk/WebCore/platform/SharedBuffer.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/SharedBuffer.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/SharedBuffer.cpp'; fi`
 
-trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.o: trunk/WebCore/platform/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.o -MD -MP -MF trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.o `test -f 'trunk/WebCore/platform/ThreadGlobalData.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/ThreadGlobalData.cpp' object='trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.o `test -f 'trunk/WebCore/platform/ThreadGlobalData.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/ThreadGlobalData.cpp
-
-trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.obj: trunk/WebCore/platform/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.obj -MD -MP -MF trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.obj `if test -f 'trunk/WebCore/platform/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/ThreadGlobalData.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/ThreadGlobalData.cpp' object='trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/libWebCore_a-ThreadGlobalData.obj `if test -f 'trunk/WebCore/platform/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/ThreadGlobalData.cpp'; fi`
-
 trunk/WebCore/platform/libWebCore_a-ThreadTimers.o: trunk/WebCore/platform/ThreadTimers.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/libWebCore_a-ThreadTimers.o -MD -MP -MF trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadTimers.Tpo -c -o trunk/WebCore/platform/libWebCore_a-ThreadTimers.o `test -f 'trunk/WebCore/platform/ThreadTimers.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/ThreadTimers.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadTimers.Tpo trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadTimers.Po
@@ -14673,6 +14706,20 @@ trunk/WebCore/xml/libWebCore_a-XMLSerializer.obj: trunk/WebCore/xml/XMLSerialize
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/xml/libWebCore_a-XMLSerializer.obj `if test -f 'trunk/WebCore/xml/XMLSerializer.cpp'; then $(CYGPATH_W) 'trunk/WebCore/xml/XMLSerializer.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/xml/XMLSerializer.cpp'; fi`
 
+es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o: es/WebCore/platform/es/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ThreadGlobalData.cpp' object='es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ThreadGlobalData.cpp
+
+es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj: es/WebCore/platform/es/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ThreadGlobalData.cpp' object='es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
+
 trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.o: trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.o -MD -MP -MF trunk/WebCore/loader/icon/$(DEPDIR)/libWebCore_a-IconDatabaseNone.Tpo -c -o trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.o `test -f 'trunk/WebCore/loader/icon/IconDatabaseNone.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/icon/$(DEPDIR)/libWebCore_a-IconDatabaseNone.Tpo trunk/WebCore/loader/icon/$(DEPDIR)/libWebCore_a-IconDatabaseNone.Po
@@ -15806,6 +15853,34 @@ testcanvas2d-main.obj: main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='testcanvas2d-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+
+testcanvas2dLinux-testcanvas2d.o: testcanvas2d.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-testcanvas2d.o -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo -c -o testcanvas2dLinux-testcanvas2d.o `test -f 'testcanvas2d.cpp' || echo '$(srcdir)/'`testcanvas2d.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testcanvas2d.cpp' object='testcanvas2dLinux-testcanvas2d.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-testcanvas2d.o `test -f 'testcanvas2d.cpp' || echo '$(srcdir)/'`testcanvas2d.cpp
+
+testcanvas2dLinux-testcanvas2d.obj: testcanvas2d.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-testcanvas2d.obj -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo -c -o testcanvas2dLinux-testcanvas2d.obj `if test -f 'testcanvas2d.cpp'; then $(CYGPATH_W) 'testcanvas2d.cpp'; else $(CYGPATH_W) '$(srcdir)/testcanvas2d.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testcanvas2d.cpp' object='testcanvas2dLinux-testcanvas2d.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-testcanvas2d.obj `if test -f 'testcanvas2d.cpp'; then $(CYGPATH_W) 'testcanvas2d.cpp'; else $(CYGPATH_W) '$(srcdir)/testcanvas2d.cpp'; fi`
+
+testcanvas2dLinux-main_linux.o: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-main_linux.o -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo -c -o testcanvas2dLinux-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo $(DEPDIR)/testcanvas2dLinux-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2dLinux-main_linux.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+
+testcanvas2dLinux-main_linux.obj: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-main_linux.obj -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo -c -o testcanvas2dLinux-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo $(DEPDIR)/testcanvas2dLinux-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2dLinux-main_linux.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

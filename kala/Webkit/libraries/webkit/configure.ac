@@ -24,6 +24,9 @@ case "$host" in
      *-*-darwin*)
        os_darwin=yes
        ;;
+     *-*-es*)
+       os_es=yes
+       ;;
 esac
 
 case "$host_os" in
@@ -34,6 +37,16 @@ case "$host_os" in
        os_gnu=no
        ;;
 esac
+
+case ${target} in
+  *-*-es)
+    os_type=es
+    ;;
+  *)
+    os_type=posix
+    ;;
+esac
+
 
 # initialize webkit options
 # WEBKIT_INIT
@@ -53,10 +66,10 @@ AC_C_VOLATILE
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
 
-#UNICODE_CFLAGS=`icu-config --cppflags`
-#UNICODE_CFLAGS="-D_REENTRANT  -I$(ES_SDK)/include -I$(ES_SDK)/include/unicode"
-#UNICODE_LIBS=`icu-config --ldflags`
-#UNICODE_LIBS="-L$(ES_SDK)/lib -licui18n -licuuc -licudaita"
+if test "$os_linux" = "yes"; then
+UNICODE_CFLAGS=`icu-config --cppflags`
+UNICODE_LIBS=`icu-config --ldflags`
+fi
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 
@@ -377,6 +390,10 @@ AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
 AM_CONDITIONAL([OS_GNU],[test "$os_gnu" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
+AM_CONDITIONAL([OS_ES],[test "$os_es" = "yes"])
+
+AM_CONDITIONAL(ES, test x$os_type = xes)
+AM_CONDITIONAL(POSIX, test x$os_type = xposix)
 
 # Font backend conditionals
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])

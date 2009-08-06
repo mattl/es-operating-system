@@ -695,6 +695,12 @@ USE_PANGO_FALSE
 USE_PANGO_TRUE
 USE_FREETYPE_FALSE
 USE_FREETYPE_TRUE
+POSIX_FALSE
+POSIX_TRUE
+ES_FALSE
+ES_TRUE
+OS_ES_FALSE
+OS_ES_TRUE
 OS_FREEBSD_FALSE
 OS_FREEBSD_TRUE
 OS_GNU_FALSE
@@ -2736,6 +2742,9 @@ case "$host" in
      *-*-darwin*)
        os_darwin=yes
        ;;
+     *-*-es*)
+       os_es=yes
+       ;;
 esac
 
 case "$host_os" in
@@ -2746,6 +2755,16 @@ case "$host_os" in
        os_gnu=no
        ;;
 esac
+
+case ${target} in
+  *-*-es)
+    os_type=es
+    ;;
+  *)
+    os_type=posix
+    ;;
+esac
+
 
 # initialize webkit options
 # WEBKIT_INIT
@@ -6104,10 +6123,10 @@ _ACEOF
 fi
 
 
-#UNICODE_CFLAGS=`icu-config --cppflags`
-#UNICODE_CFLAGS="-D_REENTRANT  -I$(ES_SDK)/include -I$(ES_SDK)/include/unicode"
-#UNICODE_LIBS=`icu-config --ldflags`
-#UNICODE_LIBS="-L$(ES_SDK)/lib -licui18n -licuuc -licudaita"
+if test "$os_linux" = "yes"; then
+UNICODE_CFLAGS=`icu-config --cppflags`
+UNICODE_LIBS=`icu-config --ldflags`
+fi
 
 
 
@@ -6985,6 +7004,31 @@ else
   OS_FREEBSD_FALSE=
 fi
 
+ if test "$os_es" = "yes"; then
+  OS_ES_TRUE=
+  OS_ES_FALSE='#'
+else
+  OS_ES_TRUE='#'
+  OS_ES_FALSE=
+fi
+
+
+ if test x$os_type = xes; then
+  ES_TRUE=
+  ES_FALSE='#'
+else
+  ES_TRUE='#'
+  ES_FALSE=
+fi
+
+ if test x$os_type = xposix; then
+  POSIX_TRUE=
+  POSIX_FALSE='#'
+else
+  POSIX_TRUE='#'
+  POSIX_FALSE=
+fi
+
 
 # Font backend conditionals
  if test "$with_font_backend" = "freetype"; then
@@ -7367,6 +7411,27 @@ if test -z "${OS_FREEBSD_TRUE}" && test -z "${OS_FREEBSD_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"OS_FREEBSD\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 $as_echo "$as_me: error: conditional \"OS_FREEBSD\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${OS_ES_TRUE}" && test -z "${OS_ES_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"OS_ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"OS_ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${ES_TRUE}" && test -z "${ES_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"ES\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${POSIX_TRUE}" && test -z "${POSIX_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"POSIX\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"POSIX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
