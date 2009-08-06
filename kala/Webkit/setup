@@ -323,7 +323,7 @@ then
          ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-debug --enable-static --with-data-packaging=common
         make
         make install
-        rm ../../sdk/bin/icu-config
+        rm $ES_SDK/bin/icu-config
 fi
 cd ../..
 

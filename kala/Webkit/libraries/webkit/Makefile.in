@@ -63,7 +63,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 bin_PROGRAMS =
-noinst_PROGRAMS = $(am__EXEEXT_3)
+noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_FAST_MALLOC_FALSE@am__append_1 = \
 @ENABLE_FAST_MALLOC_FALSE@	-DUSE_SYSTEM_MALLOC
 
@@ -86,12 +86,6 @@ noinst_PROGRAMS = $(am__EXEEXT_3)
 # ---
 @USE_PANGO_TRUE@am__append_6 = \
 @USE_PANGO_TRUE@	-DUSE_PANGO=1
-
-@OS_ES_TRUE@am__append_7 = \
-@OS_ES_TRUE@	testcanvas2d
-
-@OS_ES_FALSE@am__append_8 = \
-@OS_ES_FALSE@	testcanvas2dLinux
 
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(noinst_HEADERS) \
@@ -795,28 +789,26 @@ nodist_libWebCore_a_OBJECTS = $(am__objects_4)
 libWebCore_a_OBJECTS = $(am_libWebCore_a_OBJECTS) \
 	$(nodist_libWebCore_a_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-@OS_ES_TRUE@am__EXEEXT_1 = testcanvas2d$(EXEEXT)
-@OS_ES_FALSE@am__EXEEXT_2 = testcanvas2dLinux$(EXEEXT)
-am__EXEEXT_3 = $(am__EXEEXT_1) $(am__EXEEXT_2)
+am__EXEEXT_1 = testcanvas2d$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am_testcanvas2d_OBJECTS = testcanvas2d-testcanvas2d.$(OBJEXT) \
-	testcanvas2d-main.$(OBJEXT)
+am__testcanvas2d_SOURCES_DIST = testcanvas2d.cpp main_linux.cpp \
+	main.cpp
+@OS_ES_FALSE@am_testcanvas2d_OBJECTS =  \
+@OS_ES_FALSE@	testcanvas2d-testcanvas2d.$(OBJEXT) \
+@OS_ES_FALSE@	testcanvas2d-main_linux.$(OBJEXT)
+@OS_ES_TRUE@am_testcanvas2d_OBJECTS =  \
+@OS_ES_TRUE@	testcanvas2d-testcanvas2d.$(OBJEXT) \
+@OS_ES_TRUE@	testcanvas2d-main.$(OBJEXT)
 testcanvas2d_OBJECTS = $(am_testcanvas2d_OBJECTS)
-am__DEPENDENCIES_1 = libWebCore.a
-testcanvas2d_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = libWebCore.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am__DEPENDENCIES_3 = libWebCore.a
+@OS_ES_FALSE@testcanvas2d_DEPENDENCIES = $(am__DEPENDENCIES_2)
+@OS_ES_TRUE@testcanvas2d_DEPENDENCIES = $(am__DEPENDENCIES_3)
 testcanvas2d_LINK = $(CXXLD) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) \
 	$(testcanvas2d_LDFLAGS) $(LDFLAGS) -o $@
-am_testcanvas2dLinux_OBJECTS =  \
-	testcanvas2dLinux-testcanvas2d.$(OBJEXT) \
-	testcanvas2dLinux-main_linux.$(OBJEXT)
-testcanvas2dLinux_OBJECTS = $(am_testcanvas2dLinux_OBJECTS)
-am__DEPENDENCIES_2 =
-am__DEPENDENCIES_3 = libWebCore.a $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_2)
-testcanvas2dLinux_DEPENDENCIES = $(am__DEPENDENCIES_3)
-testcanvas2dLinux_LINK = $(CXXLD) $(testcanvas2dLinux_CXXFLAGS) \
-	$(CXXFLAGS) $(testcanvas2dLinux_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -830,10 +822,9 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(libWebCore_a_SOURCES) $(nodist_libWebCore_a_SOURCES) \
-	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES) \
-	$(testcanvas2dLinux_SOURCES)
-DIST_SOURCES = $(libWebCore_a_SOURCES) $(testcanvas2d_SOURCES) \
-	$(testcanvas2dLinux_SOURCES)
+	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES)
+DIST_SOURCES = $(libWebCore_a_SOURCES) \
+	$(am__testcanvas2d_SOURCES_DIST)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -970,7 +961,7 @@ noinst_HEADERS :=
 # Convenience libraries
 lib_LIBRARIES := libWebCore.a
 IDL_BINDINGS := 
-TEST_PROGS := $(am__append_7) $(am__append_8)
+TEST_PROGS := testcanvas2d
 POFILES := 
 MOFILES := 
 javascriptcore_h_api := 
@@ -2630,33 +2621,29 @@ webkit_linux_ldadd = \
 	-lpthread -lX11
 
 webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
+@OS_ES_FALSE@testcanvas2d_SOURCES = testcanvas2d.cpp main_linux.cpp
+@OS_ES_TRUE@testcanvas2d_SOURCES = testcanvas2d.cpp main.cpp
+@OS_ES_FALSE@testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
+@OS_ES_TRUE@testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
+@OS_ES_FALSE@testcanvas2d_CFLAGS = $(webkit_tests_cflags)
+@OS_ES_TRUE@testcanvas2d_CFLAGS = $(webkit_tests_cflags)
+@OS_ES_FALSE@testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
+@OS_ES_FALSE@	-I../../include \
+@OS_ES_FALSE@	-I$(srcdir)/../../include 
 
-# Add additional tests here
-testcanvas2d_SOURCES = testcanvas2d.cpp main.cpp
-testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
-testcanvas2d_CFLAGS = $(webkit_tests_cflags)
-testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
-	-I../../include \
-	-I$(srcdir)/../../include \
-        -I$(prefix)/include \
-        -I$(prefix)/include/es \
-        -I$(prefix)/include/freetype2 \
-        -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
+@OS_ES_TRUE@testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
+@OS_ES_TRUE@	-I../../include \
+@OS_ES_TRUE@	-I$(srcdir)/../../include \
+@OS_ES_TRUE@        -I$(prefix)/include \
+@OS_ES_TRUE@        -I$(prefix)/include/es \
+@OS_ES_TRUE@        -I$(prefix)/include/freetype2 \
+@OS_ES_TRUE@        -I$(prefix)/include/cairo \
+@OS_ES_TRUE@        -I$(prefix)/include/pixman-1
 
-testcanvas2d_LDADD = $(webkit_tests_ldadd)
-testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
-
-# Add additional tests here
-testcanvas2dLinux_SOURCES = testcanvas2d.cpp main_linux.cpp
-testcanvas2dLinux_CXXFLAGS = $(webkit_tests_cxxflags)
-testcanvas2dLinux_CFLAGS = $(webkit_tests_cflags)
-testcanvas2dLinux_CPPFLAGS = $(webkit_tests_cppflags) \
-	-I../../include \
-	-I$(srcdir)/../../include 
-
-testcanvas2dLinux_LDADD = $(webkit_linux_ldadd)
-testcanvas2dLinux_LDFLAGS = 
+@OS_ES_FALSE@testcanvas2d_LDADD = $(webkit_linux_ldadd)
+@OS_ES_TRUE@testcanvas2d_LDADD = $(webkit_tests_ldadd)
+@OS_ES_FALSE@testcanvas2d_LDFLAGS = 
+@OS_ES_TRUE@testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 
 # Autogenerated sources
 BUILT_SOURCES := \
@@ -5059,9 +5046,6 @@ clean-noinstPROGRAMS:
 testcanvas2d$(EXEEXT): $(testcanvas2d_OBJECTS) $(testcanvas2d_DEPENDENCIES) 
 	@rm -f testcanvas2d$(EXEEXT)
 	$(testcanvas2d_LINK) $(testcanvas2d_OBJECTS) $(testcanvas2d_LDADD) $(LIBS)
-testcanvas2dLinux$(EXEEXT): $(testcanvas2dLinux_OBJECTS) $(testcanvas2dLinux_DEPENDENCIES) 
-	@rm -f testcanvas2dLinux$(EXEEXT)
-	$(testcanvas2dLinux_LINK) $(testcanvas2dLinux_OBJECTS) $(testcanvas2dLinux_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -5740,9 +5724,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-main_linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-testcanvas2d.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2dLinux-main_linux.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-CSSGrammar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-ColorData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-DocTypeStrings.Po@am__quote@
@@ -15840,6 +15823,20 @@ testcanvas2d-testcanvas2d.obj: testcanvas2d.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-testcanvas2d.obj `if test -f 'testcanvas2d.cpp'; then $(CYGPATH_W) 'testcanvas2d.cpp'; else $(CYGPATH_W) '$(srcdir)/testcanvas2d.cpp'; fi`
 
+testcanvas2d-main_linux.o: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2d-main_linux.o -MD -MP -MF $(DEPDIR)/testcanvas2d-main_linux.Tpo -c -o testcanvas2d-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2d-main_linux.Tpo $(DEPDIR)/testcanvas2d-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2d-main_linux.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+
+testcanvas2d-main_linux.obj: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2d-main_linux.obj -MD -MP -MF $(DEPDIR)/testcanvas2d-main_linux.Tpo -c -o testcanvas2d-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2d-main_linux.Tpo $(DEPDIR)/testcanvas2d-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2d-main_linux.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
+
 testcanvas2d-main.o: main.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2d-main.o -MD -MP -MF $(DEPDIR)/testcanvas2d-main.Tpo -c -o testcanvas2d-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2d-main.Tpo $(DEPDIR)/testcanvas2d-main.Po
@@ -15853,34 +15850,6 @@ testcanvas2d-main.obj: main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='testcanvas2d-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
-
-testcanvas2dLinux-testcanvas2d.o: testcanvas2d.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-testcanvas2d.o -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo -c -o testcanvas2dLinux-testcanvas2d.o `test -f 'testcanvas2d.cpp' || echo '$(srcdir)/'`testcanvas2d.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testcanvas2d.cpp' object='testcanvas2dLinux-testcanvas2d.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-testcanvas2d.o `test -f 'testcanvas2d.cpp' || echo '$(srcdir)/'`testcanvas2d.cpp
-
-testcanvas2dLinux-testcanvas2d.obj: testcanvas2d.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-testcanvas2d.obj -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo -c -o testcanvas2dLinux-testcanvas2d.obj `if test -f 'testcanvas2d.cpp'; then $(CYGPATH_W) 'testcanvas2d.cpp'; else $(CYGPATH_W) '$(srcdir)/testcanvas2d.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Tpo $(DEPDIR)/testcanvas2dLinux-testcanvas2d.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testcanvas2d.cpp' object='testcanvas2dLinux-testcanvas2d.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-testcanvas2d.obj `if test -f 'testcanvas2d.cpp'; then $(CYGPATH_W) 'testcanvas2d.cpp'; else $(CYGPATH_W) '$(srcdir)/testcanvas2d.cpp'; fi`
-
-testcanvas2dLinux-main_linux.o: main_linux.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-main_linux.o -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo -c -o testcanvas2dLinux-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo $(DEPDIR)/testcanvas2dLinux-main_linux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2dLinux-main_linux.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
-
-testcanvas2dLinux-main_linux.obj: main_linux.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -MT testcanvas2dLinux-main_linux.obj -MD -MP -MF $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo -c -o testcanvas2dLinux-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testcanvas2dLinux-main_linux.Tpo $(DEPDIR)/testcanvas2dLinux-main_linux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testcanvas2dLinux-main_linux.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2dLinux_CPPFLAGS) $(CPPFLAGS) $(testcanvas2dLinux_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2dLinux-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
