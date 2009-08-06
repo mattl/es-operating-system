@@ -2,6 +2,7 @@ AC_INIT([WebKit],[1.1.7],[http://bugs.webkit.org/])
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_HEADERS([autotoolsconfig.h])
 AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
 WEBKIT_MAJOR_VERSION=1
 WEBKIT_MINOR_VERSION=1
 WEBKIT_MICRO_VERSION=7
@@ -52,8 +53,10 @@ AC_C_VOLATILE
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
 
-UNICODE_CFLAGS=`icu-config --cppflags`
-UNICODE_LIBS=`icu-config --ldflags`
+#UNICODE_CFLAGS=`icu-config --cppflags`
+#UNICODE_CFLAGS="-D_REENTRANT  -I$(ES_SDK)/include -I$(ES_SDK)/include/unicode"
+#UNICODE_LIBS=`icu-config --ldflags`
+#UNICODE_LIBS="-L$(ES_SDK)/lib -licui18n -licuuc -licudaita"
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 

@@ -148,7 +148,7 @@ javascriptcore_cppflags += \
 	-I$(top_builddir)/DerivedSources
 	
 javascriptcore_built_nosources += \
-	trunk/JavaScriptCore/pcre/chartables.c	
+	trunk/JavaScriptCore/pcre/chartables.c 
 
 trunk/JavaScriptCore/pcre/chartables.c: $(srcdir)/trunk/JavaScriptCore/pcre/dftables
 	perl $^ $@
@@ -280,10 +280,10 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/FastMalloc.cpp \
 	trunk/JavaScriptCore/wtf/FastMalloc.h \
 	trunk/JavaScriptCore/wtf/MallocZoneSupport.h \
-	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
-	trunk/JavaScriptCore/wtf/TCSystemAlloc.h \
 	trunk/JavaScriptCore/wtf/dtoa.cpp \
 	trunk/JavaScriptCore/wtf/dtoa.h	
+#	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
+#	trunk/JavaScriptCore/wtf/TCSystemAlloc.h 
 
 # ES
 javascriptcore_sources += \
@@ -1675,10 +1675,8 @@ webcorees_sources += \
 	trunk/WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferData.h \
 	trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PathCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
@@ -1700,11 +1698,14 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
-	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
-	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
+	es/WebCore/platform/es/ImageBufferCairo.cpp \
+	es/WebCore/platform/es/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
+#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
 # ES
 
@@ -1911,13 +1912,16 @@ webkit_tests_cppflags = \
 
 webkit_tests_ldadd = \
 	libWebCore.a \
-	$(CAIRO_LIBS) \
-	$(JPEG_LIBS) \
-	$(UNICODE_LIBS) \
-	$(LIBXML_LIBS) \
-	-lpthread -lX11
+	-les++ \
+	-lcairo -lpixman-1 \
+	-ljpeg \
+	-lfontconfig \
+	-lfreetype \
+	-lexpat \
+	-lxml2 \
+	-lsicui18n -lsicuuc -lsicudata 
 
-webkit_tests_ldflags = 
+webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 
 TEST_PROGS += \
 	testcanvas2d
@@ -1928,7 +1932,13 @@ testcanvas2d_CXXFLAGS = $(webkit_tests_cxxflags)
 testcanvas2d_CFLAGS = $(webkit_tests_cflags)
 testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 	-I../../include \
-	-I$(srcdir)/../../include 
+	-I$(srcdir)/../../include \
+        -I$(prefix)/include \
+        -I$(prefix)/include/es \
+        -I$(prefix)/include/freetype2 \
+        -I$(prefix)/include/cairo \
+        -I$(prefix)/include/pixman-1
+
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 
