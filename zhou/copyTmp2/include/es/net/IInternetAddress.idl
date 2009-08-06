@@ -1,0 +1,101 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_NET_IINTERNETADDRESS_IDL_INCLUDED
+#define NINTENDO_ES_NET_IINTERNETADDRESS_IDL_INCLUDED
+
+module es
+{
+    /** This interface represents an internet address.
+     */
+    interface InternetAddress
+    {
+        /** Gets the raw internet address of this internet address.
+         * @param buf the raw internet address.
+         * @param bufLength the length of the buffer to contain the internet address.
+         */
+        sequence<octet> getAddress();
+
+        /** Sends an ICMP echo request message to this internet address, and waits for the ICMP echo reply message.
+         * @param timeout the time before the call aborts.
+         * @return true if the reply is received before the timeout. Otherwise, false.
+         */
+        boolean isReachable(in long long timeout);
+
+        /** Creates a socket.
+         * If this is a local address or a multicast address, the created socket
+         * is bound to this address. If this is a remote address, the created
+         * socket is connected to this address by using an ephemeral local port.
+         * Otherwise, the socket is neither bound nor connected to any address.
+         * @param type     the type of this socket.
+         * @param protocol the protocol of this socket.
+         * @param port     the port number.
+         * @return <code>ISocket</code> interface of the new socket.
+         */
+        Object socket(in long type, in long protocol, in long port);
+
+        /** The address family of this internet address (AF_INET or AF_INET6).
+         */
+        readonly attribute long addressFamily;
+
+        /** The canonical host name which is a fully qualified domain name for this internet address.
+         */
+        readonly attribute string canonicalHostName;
+
+        /** The raw internet address of this internet address in a string format.
+         */
+        readonly attribute string hostAddress;
+
+        /** The host name for this internet address.
+         */
+        readonly attribute string hostName;
+        /** Boolean whether this address is a link-local address.
+         */
+        boolean isLinkLocal();
+
+        /** Boolean whether this address is a loopback address.
+         */
+        boolean isLoopback();
+
+        /** Boolean whether this address is a multicast address.
+         */
+        boolean isMulticast();
+
+        /** Boolean whether this address is assigned to one of the interfaces of the host.
+         */
+        boolean isLocalAddress();
+
+        /** The next internet address
+         */
+        readonly attribute InternetAddress next;
+
+        /** The path MTU to this internet address.
+         */
+        readonly attribute long pathMTU;
+
+        /** The scope identifier of this internet address.
+         */
+        readonly attribute long scopeID;
+
+        /** Boolean whether this address is the unspecified address.
+         */
+        boolean isUnspecified();
+    };
+};
+
+#endif // NINTENDO_ES_NET_IINTERNETADDRESS_IDL_INCLUDED
+
