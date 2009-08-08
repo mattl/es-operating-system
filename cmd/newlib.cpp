@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+#include <errno.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <time.h>
 #include <pthread.h>
@@ -24,6 +26,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <es.h>
 #include <es/object.h>
 #include <es/base/IProcess.h>
 #include <es/base/IThread.h>
@@ -33,6 +36,7 @@ extern es::CurrentProcess* System();
 char buf[4096];
 
 pthread_mutex_t mutex;
+pthread_cond_t cond;
 
 void* start(void* param)
 {
@@ -42,11 +46,16 @@ void* start(void* param)
 
     printf("start: sleep for three seconds.\n");
     sleep(3);
+    printf("start: woke up.\n");
+
+    printf("start: wait cond.\n");
+    pthread_cond_wait(&cond, &mutex);
+    printf("start: signaled.\n");
 
     pthread_mutex_unlock(&mutex);
     printf("start: done.\n");
 
-    return 0;
+    return (void*) 6;
 }
 
 int main(int argc, char* argv[])
@@ -54,7 +63,7 @@ int main(int argc, char* argv[])
     int fd;
     struct stat statbuf;
 
-    printf("hello, world\n");
+    printf("hello, world: %llu\n", System()->getNow());  // Use System() to setup the startup routine.
 
     fd = open("/file/cat.js", O_RDWR);
     printf("fd: %d\n", fd);
@@ -106,21 +115,44 @@ int main(int argc, char* argv[])
     // pthread test
 
     pthread_mutex_init(&mutex, 0);
+    pthread_cond_init(&cond, 0);
 
-    es::Thread* thread = System()->createThread((void*) start, 0);
-    thread->start();
+    pthread_t thread;
+    pthread_create(&thread, 0, start, 0);
 
     sleep(1);
     printf("main: try to get lock.\n");
     pthread_mutex_lock(&mutex);
     printf("main: got lock.\n");
+
+    printf("main: signal start.\n");
+    pthread_cond_signal(&cond);
+
+    esReport("main: wait cond for 3 sec.\n");
+    timespec till;
+    till.tv_sec = time(0) + 3;
+    till.tv_nsec = 0;
+    int rc = pthread_cond_timedwait(&cond, &mutex, &till);
+    printf("%d %d\n", rc, errno);
+
     pthread_mutex_unlock(&mutex);
 
-    void* rval = thread->join();
-    thread->release();
-    printf("rval : %p : %p\n", pthread_self(), rval);
+    void* rval;
+    pthread_join(thread, &rval);
+    printf("rval : %p\n", rval);
 
+    pthread_cond_destroy(&cond);
     pthread_mutex_destroy(&mutex);
+
+    sched_yield();
+
+    char buffer[1024];
+    strcpy(buffer, "/usr/lib");
+    printf("%s\n", dirname(buffer));
+    strcpy(buffer, "/usr/");
+    printf("%s\n", dirname(buffer));
+    strcpy(buffer, "/usr");
+    printf("%s\n", dirname(buffer));
 
     printf("done.\n");
 
