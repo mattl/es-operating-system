@@ -438,7 +438,10 @@ private:
     // Listen/Accept
     StreamReceiver*                             listening;  // listening socket
     List<StreamReceiver, &StreamReceiver::link> accepted;
-
+    int                                         qLimit; // max number queued connection
+    int                                         q0Len;  // count partial connection
+    int                                         q1Len;  // count accetped queue len
+    
     TCPSeq isn(InetMessenger* m);
     int getDefaultMSS();
     int getDefaultMSS(int mtu);
@@ -607,6 +610,10 @@ public:
         ackTimer(this),
 
         listening(0)
+
+        qLimit(0),
+        q0Len(0), 
+        q1Len(0) 
     {
         monitor = es::Monitor::createInstance();
 
@@ -724,6 +731,26 @@ public:
     Socket* getSocket()
     {
         return socket;
+    }
+    
+    int getQLimit()
+    {
+         return qLimit; 
+    }
+
+    void setQLimit(int len) 
+    {
+        int l;
+        if (len < 0)
+        {
+            l = 0;
+        }
+        else
+        {
+            l = len; // XXX upper limit may be needed.
+        }
+        
+        qLimit = l;
     }
     
     static class StateClosed        stateClosed;

@@ -721,6 +721,16 @@ StateListen::input(InetMessenger* m, StreamReceiver* s)
 
     accepted->listening = s;
 
+    if (s->q0Len + s->q1Len > 3 * s->qLimit / 2) // refer to 4.4BSD-Lite
+    {
+        accepted->abort();
+        return false; // Ignore SYN when full
+    }
+    else
+    {
+        s->q0Len++; // count partial connection
+    }    
+
     //++interface->tcpStat.passiveOpens;
     accepted->setState(stateSynReceived);
 
@@ -944,6 +954,9 @@ StateSynReceived::input(InetMessenger* m, StreamReceiver* s)
                 StreamReceiver* listening = s->listening;
                 Synchronized<es::Monitor*> method(listening->monitor);
 
+                listening->q0Len--;
+                ASSERT(listening->q0Len >= 0);
+                listening->q1Len++;
                 listening->accepted.addLast(s);
                 listening->notify();
             }

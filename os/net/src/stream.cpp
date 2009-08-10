@@ -469,6 +469,8 @@ StateListen::accept(SocketMessenger* m, StreamReceiver* s)
     }
     if (s->state == &stateListen && !s->accepted.isEmpty())
     {
+        s->q1Len--;
+        ASSERT(s->q1Len >= 0);
         StreamReceiver* accepted = s->accepted.removeFirst();
         ASSERT(accepted);
         ASSERT(accepted->socket);
