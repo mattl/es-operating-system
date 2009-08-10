@@ -417,7 +417,6 @@ listen(int backlog)
     if (s)
     {
         s->setState(StreamReceiver::stateListen);
-        s->setQLimit(backlog);
     }
 }
 
