@@ -8,7 +8,7 @@ then
 	sudo yum install subversion autoconf automake patch bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel libtool
 elif which apt-get
 then
-	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev libxi-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev libtool
+	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev libxi-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev libtool libjpeg-dev libicu-dev 
 else
 	echo 'Your OS is probably not a supported development environment.'
 	exit
