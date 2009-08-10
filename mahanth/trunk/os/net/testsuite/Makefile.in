@@ -48,6 +48,7 @@ target_triplet = @target@
 @ES_FALSE@@POSIX_TRUE@	tcpTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpWriteTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	testUrgSend$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	testUrgReceive$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytime$(EXEEXT)
@@ -77,6 +78,7 @@ CONFIG_CLEAN_FILES =
 @ES_FALSE@@POSIX_TRUE@	tcpTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpWriteTimeout$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	testUrgSend$(EXEEXT) \
+@ES_FALSE@@POSIX_TRUE@	testUrgReceive$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeServer$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytimeClient$(EXEEXT) \
 @ES_FALSE@@POSIX_TRUE@	tcpDaytime$(EXEEXT)
@@ -185,6 +187,12 @@ tcpdiscardServer_LDADD = $(LDADD)
 tcpdiscardServer_DEPENDENCIES = ../libesnet.a \
 	../../kernel/libeskernel.a ../../libes++/libessup++.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_testUrgReceive_OBJECTS = testUrgReceive.$(OBJEXT)
+testUrgReceive_OBJECTS = $(am_testUrgReceive_OBJECTS)
+testUrgReceive_LDADD = $(LDADD)
+testUrgReceive_DEPENDENCIES = ../libesnet.a ../../kernel/libeskernel.a \
+	../../libes++/libessup++.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_testUrgSend_OBJECTS = testUrgSend.$(OBJEXT)
 testUrgSend_OBJECTS = $(am_testUrgSend_OBJECTS)
 testUrgSend_LDADD = $(LDADD)
@@ -231,9 +239,9 @@ SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(tcpDaytimeClient_SOURCES) $(tcpDaytimeServer_SOURCES) \
 	$(tcpTimeout_SOURCES) $(tcpWriteTimeout_SOURCES) \
 	$(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES) \
-	$(testUrgSend_SOURCES) $(timeout_SOURCES) \
-	$(udpEchoClient_SOURCES) $(udpEchoServer_SOURCES) \
-	$(unreach_SOURCES)
+	$(testUrgReceive_SOURCES) $(testUrgSend_SOURCES) \
+	$(timeout_SOURCES) $(udpEchoClient_SOURCES) \
+	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
 DIST_SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(dns_SOURCES) $(frag_SOURCES) $(inet4_SOURCES) \
 	$(mcast_SOURCES) $(tcp_SOURCES) $(tcp1_SOURCES) \
@@ -241,9 +249,9 @@ DIST_SOURCES = $(anon_SOURCES) $(config_SOURCES) $(dhcp_SOURCES) \
 	$(tcpDaytimeClient_SOURCES) $(tcpDaytimeServer_SOURCES) \
 	$(tcpTimeout_SOURCES) $(tcpWriteTimeout_SOURCES) \
 	$(tcpdiscardClient_SOURCES) $(tcpdiscardServer_SOURCES) \
-	$(testUrgSend_SOURCES) $(timeout_SOURCES) \
-	$(udpEchoClient_SOURCES) $(udpEchoServer_SOURCES) \
-	$(unreach_SOURCES)
+	$(testUrgReceive_SOURCES) $(testUrgSend_SOURCES) \
+	$(timeout_SOURCES) $(udpEchoClient_SOURCES) \
+	$(udpEchoServer_SOURCES) $(unreach_SOURCES)
 DATA = $(noinst_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -385,6 +393,7 @@ tcpDaytimeServer_SOURCES = tcpDaytimeServer.cpp
 tcpDaytimeClient_SOURCES = tcpDaytimeClient.cpp
 tcpDaytime_SOURCES = tcpDaytime.cpp
 testUrgSend_SOURCES = testUrgSend.cpp
+testUrgReceive_SOURCES = testUrgReceive.cpp
 EXTRA_DIST = makeScript testLoader
 all: all-am
 
@@ -473,6 +482,9 @@ tcpdiscardClient$(EXEEXT): $(tcpdiscardClient_OBJECTS) $(tcpdiscardClient_DEPEND
 tcpdiscardServer$(EXEEXT): $(tcpdiscardServer_OBJECTS) $(tcpdiscardServer_DEPENDENCIES) 
 	@rm -f tcpdiscardServer$(EXEEXT)
 	$(CXXLINK) $(tcpdiscardServer_OBJECTS) $(tcpdiscardServer_LDADD) $(LIBS)
+testUrgReceive$(EXEEXT): $(testUrgReceive_OBJECTS) $(testUrgReceive_DEPENDENCIES) 
+	@rm -f testUrgReceive$(EXEEXT)
+	$(CXXLINK) $(testUrgReceive_OBJECTS) $(testUrgReceive_LDADD) $(LIBS)
 testUrgSend$(EXEEXT): $(testUrgSend_OBJECTS) $(testUrgSend_DEPENDENCIES) 
 	@rm -f testUrgSend$(EXEEXT)
 	$(CXXLINK) $(testUrgSend_OBJECTS) $(testUrgSend_LDADD) $(LIBS)
@@ -512,6 +524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpWriteTimeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpdiscardServer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testUrgReceive.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testUrgSend.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpEchoClient.Po@am__quote@

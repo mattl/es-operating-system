@@ -700,6 +700,17 @@ public:
         return false;
     }
 
+    bool atMark(SocketMessenger* m, Conduit* c)
+    {
+        if (!hadUrg && haveUrg && (recvRing.getUsed() + recvUp - recvNext == 0))
+        {
+            m->setFlag(true);
+            return false;
+        }
+        m->setFlag(false);
+        return false;
+    }
+
     void expired();
     void abort();
 
