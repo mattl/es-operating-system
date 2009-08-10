@@ -165,6 +165,32 @@ abort()
 
     // XXX process listen and completed, etc.
 
+    StreamReceiver* listening = this->listening;     
+    esReport("%s\n", "abort()");
+
+    // Clean up accepted queue
+    if (listening)
+    {
+        Synchronized<es::Monitor*> method(listening->monitor);
+        if (listening->accepted.contains(this))
+            listening->accepted.remove(this);        
+    }
+
+    // TODO Is it nessary to clean up corresponding part in conduit graph? 
+#if 0
+    // clean up corresponding part in conduit graph
+    Adapter* adapter;
+    if (this->socket)
+    {
+        adapter = this->socket->getAdapter();
+        if (adapter)
+        {
+            SocketUninstaller uninstaller(this->socket);
+            adapter->accept(&uninstaller);
+        }   
+    }
+#endif
+    
     notify();
 }
 

@@ -37,6 +37,9 @@
 class StreamReceiver :
     public SocketReceiver
 {
+public:
+    Link<StreamReceiver>                        link; 
+private:
     static const int IIS_CLOCK = 1000000/4;     // Initial sequence number frequency [Hz]
     static const int DEF_SSTHRESH = 65535;      // Default slow start threshold
     static const int R1 = 3;                    // At least 3 retransmissions [RFC 1122]
@@ -434,7 +437,6 @@ class StreamReceiver :
 
     // Listen/Accept
     StreamReceiver*                             listening;  // listening socket
-    Link<StreamReceiver>                        link;
     List<StreamReceiver, &StreamReceiver::link> accepted;
 
     TCPSeq isn(InetMessenger* m);
@@ -714,6 +716,16 @@ public:
         return 0;
     }
 
+    List<StreamReceiver, &StreamReceiver::link> getAccepted()
+    {
+        return accepted;
+    }
+
+    Socket* getSocket()
+    {
+        return socket;
+    }
+    
     static class StateClosed        stateClosed;
     static class StateListen        stateListen;
     static class StateSynSent       stateSynSent;
