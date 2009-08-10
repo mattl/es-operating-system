@@ -18,6 +18,11 @@ Note once the 'setup' script is started, it tries to install the prerequisites
 like gcc, bison, etc., using 'yum' or 'apt-get' which requires you to execute
 the 'sudo' command.
 
+The 'setup.webkit' script will download the required file of webkit, and 
+build webkit demo file for both Linux and ES operating system.
+Note that you need to build ES operating system environment before invoke 
+this script.
+
 ES operating system is open source software. See the file LICENSE for 
 copying permission. The manuals, and some of the software programs, are
 under different terms; see the individual source files for details.
