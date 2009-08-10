@@ -7,18 +7,18 @@ es/reflect.h : $(srcdir)/../esidl/include/reflect.h
 if ES
 
 %.h : %.idl
-	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
+	esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
 
 es/object.h : es/object.idl
-	esidl -isystem $(srcdir) $<
+	esidl -isystem $(srcdir) -object Object $<
 
 else !ES
 
 %.h : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
 
 es/object.h : es/object.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) $<
+	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -object Object $<
 
 endif !ES
 

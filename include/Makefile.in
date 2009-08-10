@@ -537,16 +537,16 @@ es/reflect.h : $(srcdir)/../esidl/include/reflect.h
 	cp $? es
 
 @ES_TRUE@%.h : %.idl
-@ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
+@ES_TRUE@	esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
 
 @ES_TRUE@es/object.h : es/object.idl
-@ES_TRUE@	esidl -isystem $(srcdir) $<
+@ES_TRUE@	esidl -isystem $(srcdir) -object Object $<
 
 @ES_FALSE@%.h : %.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
 
 @ES_FALSE@es/object.h : es/object.idl
-@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) $<
+@ES_FALSE@	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -object Object $<
 
 interface.list : $(generated_headers)
 	grep 'static const char\* const name' $^ | awk '{ print substr($$8, 2, length($$8) - 3) }' > $@

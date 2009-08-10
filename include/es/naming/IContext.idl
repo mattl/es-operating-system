@@ -33,7 +33,7 @@ module es
          * @param name      The name to bind.
          * @param obj       The object to bind.
          */
-        Binding bind(in string name, in Object element);
+        Binding bind(in string name, in object element);
 
         /** Creates a new context.
          * @param name      The name of the context to create.
@@ -49,7 +49,7 @@ module es
          * @param name      The name of the object to look up.
          * @return          The object bound to <code>name</code>.
          */
-        Object lookup(in string name);
+        object lookup(in string name);
 
         /** Binds a new name to the object bound to an old name, and unbinds
          * the old name.

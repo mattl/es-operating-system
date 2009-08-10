@@ -32,7 +32,7 @@ module es
         /** Returns the next element in the iteration.
          * @return          The next element in the iteration.
          */
-        Object next();
+        object next();
 
         /** Removes the last element returned by the iterator from the collection.
          */

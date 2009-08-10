@@ -3,7 +3,7 @@ SUBDIRS = . testsuite
 SUFFIXES = .h .idl
 
 %.h : %.idl
-	esidl -I$(srcdir)/../include -include es/object.idl $<
+	esidl -I$(srcdir)/../include -include es/object.idl -object Object $<
 
 noinst_PROGRAMS = \
 	main hello cairo expat server client \

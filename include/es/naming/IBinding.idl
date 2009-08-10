@@ -26,7 +26,7 @@ module es
     {
         /** The object bound to this binding.
          */
-        attribute Object object;
+        attribute object _object;  // the underscore is not part of the identifier
 
         /** The string representation of this binding.
          */

@@ -879,7 +879,7 @@ uninstall-am:
 
 
 %.h : %.idl
-	esidl -I$(srcdir)/../include -include es/object.idl $<
+	esidl -I$(srcdir)/../include -include es/object.idl -object Object $<
 
 clean-local:
 	-rm -f  *.map

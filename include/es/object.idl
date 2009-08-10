@@ -20,13 +20,13 @@
 
 /** This interface is the root of the component interface hierarchy.
  */
-interface Object
+interface object
 {
     /** Determines if the specified interface can be used with this object.
      * @param qualifiedName the qualified name of an interface to be queried.
      * @return              a pointer to the object of the specified interface.
      */
-    Object queryInterface(in string qualifiedName);
+    object queryInterface(in string qualifiedName);
 
     /** Increments the reference count of this object.
      */

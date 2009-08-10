@@ -46,7 +46,7 @@ module es
          * @param port     the port number.
          * @return <code>ISocket</code> interface of the new socket.
          */
-        Object socket(in long type, in long protocol, in long port);
+        object socket(in long type, in long protocol, in long port);
 
         /** The address family of this internet address (AF_INET or AF_INET6).
          */
