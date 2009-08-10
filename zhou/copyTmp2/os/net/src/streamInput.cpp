@@ -723,6 +723,7 @@ StateListen::input(InetMessenger* m, StreamReceiver* s)
 
     if (s->q0Len + s->q1Len > 3 * s->qLimit / 2) // refer to 4.4BSD-Lite
     {
+        accepted->abort();
         return false; // Ignore SYN when full
     }
     else
