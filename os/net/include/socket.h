@@ -260,6 +260,7 @@ public:
     void shutdownInput();
     void shutdownOutput();
     int write(const void* src, int count);
+    bool sockAtMark();
 
     void notify();
 
@@ -363,6 +364,11 @@ public:
     }
 
     virtual bool notify(SocketMessenger* m, Conduit* c)
+    {
+        return false;
+    }
+
+    virtual bool atMark(SocketMessenger* m, Conduit* c)
     {
         return false;
     }

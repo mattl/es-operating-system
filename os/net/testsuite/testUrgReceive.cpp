@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-/* Test Program to Send an Urgent Byte */
-
-#include <es.h>
-#include <es/handle.h>
-#include <es/naming/IContext.h>
+#include <string.h>
+#include "arp.h"
+#include "conduit.h"
+#include "dix.h"
 #include "inet.h"
 #include "inet4.h"
 #include "inet4address.h"
+#include "tcp.h"
 
 extern int esInit(Object** nameSpace);
 extern void esRegisterInternetProtocol(es::Context* context);
-Handle<es::Resolver> resolver;
 
+Handle<es::Resolver> resolver;
 
 int main()
 {
-    
     Object* root = NULL;
     esInit(&root);
     Handle<es::Context> context(root);
@@ -46,38 +45,54 @@ int main()
     // Setup DIX interface
     Handle<es::NetworkInterface> nic = context->lookup("device/ethernet");
     nic->start();
-    int dixID = config->addInterface(nic);
+    int dixID = config->addInterface(nic);// add Interface
     esReport("dixID: %d\n", dixID);
 
     ASSERT(config->getScopeID(nic) == dixID);
 
     // 192.168.2.40 Register host address
-    InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 40) };
+    InAddr addr = { htonl(192 << 24 | 168 << 16 | 2 << 8 | 20) };
     Handle<es::InternetAddress> host = resolver->getHostByAddress(&addr.addr, sizeof addr, dixID);
     config->addAddress(host, 16);
-    esSleep(80000000);  // Wait for the host address to be settled.
+    esSleep(90000000);  // Wait for the host address to be settled.
 
-    // 192.168.2.20
-    InAddr addr1 = { htonl(192 << 24 | 168 << 16 | 2 << 8 |20 ) };
-    Handle<es::InternetAddress> server = resolver->getHostByAddress(&addr1.addr, sizeof addr1, dixID);    
-    
-    Socket urgSend(AF_INET, es::Socket::Stream);
+    Handle<es::Socket> serverSocket = host->socket(AF_INET, es::Socket::Stream, 9);
 
-    // connect to a tcp server 
-    urgSend.connect(server, 9);
-    
-    // send an urgent byte in the midst of normal octets
-    esReport("%d", es::Socket::MsgOob);
-    urgSend.write("hello",5);
-    urgSend.sendTo("c", 1, es::Socket::MsgOob, server, 9);
-    urgSend.write("ab",3);
-    
-    // close the connection
-    urgSend.close();
+    serverSocket->listen(5);
+
+    es::Socket* Server;
+    while (true)
+    {
+        while ((Server = serverSocket->accept()) == 0)
+        {
+        }
+
+        esReport("accepted\n");
+
+        char data[9];
+        int length;
+        memset (data, 0, 9);
+        while (true)
+        {
+            if (Server->sockAtMark())
+            {
+                esReport("An urgent byte will be read now\n");
+            }
+            length = Server->read(data,9);
+            esReport("Received data and length.......... ............ %s        %d\n", data, length);
+            memset (data, 0, 9);
+            if (length == 0)
+            {
+                break;
+            }
+        }
+        Server->close();
+        Server->release();
+    }
 
     config->removeAddress(host);
     nic->stop();
-
+    
     esReport("done.\n");
 }
 

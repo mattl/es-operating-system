@@ -173,6 +173,10 @@ module es
          */
         readonly attribute long socketType;
 
+	/** Boolean whether the stream delivers an urgent byte next
+         */        
+	boolean sockAtMark();
+
         /** Boolean whether this socket is ready for writing
          */
         boolean isWritable();
