@@ -202,9 +202,9 @@ read(SocketMessenger* m, Conduit* c)
     if (recvRing.getUsed() + recvUp - recvNext == 0)
     {
        len = 1;
-       hadUrg = true;
+       haveUrg = false;
     }
-    else if (!hadUrg && haveUrg)
+    else if (haveUrg)
     {
         len = std::min(recvRing.getUsed(), recvRing.getUsed() + recvUp - recvNext);
     }
