@@ -721,6 +721,15 @@ StateListen::input(InetMessenger* m, StreamReceiver* s)
 
     accepted->listening = s;
 
+    if (s->parConn + s->pendingConn >= s->backLogCount)
+    {
+        accepted->abort();
+        return false; // Ignore SYN when full
+    }
+    else
+    {
+        s->parConn++; // count partial connection
+    }
     //++interface->tcpStat.passiveOpens;
     accepted->setState(stateSynReceived);
 
@@ -944,6 +953,9 @@ StateSynReceived::input(InetMessenger* m, StreamReceiver* s)
                 StreamReceiver* listening = s->listening;
                 Synchronized<es::Monitor*> method(listening->monitor);
 
+                listening->parConn--; 
+                ASSERT(listening->parConn >= 0);
+                listening->pendingConn++;
                 listening->accepted.addLast(s);
                 listening->notify();
             }

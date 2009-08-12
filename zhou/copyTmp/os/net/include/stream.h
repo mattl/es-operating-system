@@ -38,7 +38,8 @@ class StreamReceiver :
     public SocketReceiver
 {
 public:
-    Link<StreamReceiver>                        link; 
+    Link<StreamReceiver>                        link;
+
 private:
     static const int IIS_CLOCK = 1000000/4;     // Initial sequence number frequency [Hz]
     static const int DEF_SSTHRESH = 65535;      // Default slow start threshold
@@ -58,6 +59,8 @@ private:
     static const TimeSpan PERSIST_MAX;          // Maximum idle time in persist state
     static const TimeSpan DACK_TIMEOUT;         // Delayed ACK timeout
 
+    static const int      MaxConn;              // upper limit of partial and pending connection
+    
     class RxmitTimer : public TimerTask
     {
         StreamReceiver* receiver;
@@ -438,7 +441,10 @@ private:
     // Listen/Accept
     StreamReceiver*                             listening;  // listening socket
     List<StreamReceiver, &StreamReceiver::link> accepted;
-
+    int                                         backLogCount; // sum partial&pending connection
+    int                                         parConn;  // count partial connection
+    int                                         pendingConn;  // count accetped-queue
+    
     TCPSeq isn(InetMessenger* m);
     int getDefaultMSS();
     int getDefaultMSS(int mtu);
@@ -606,7 +612,10 @@ public:
 
         ackTimer(this),
 
-        listening(0)
+        listening(0),
+        backLogCount(0),
+        parConn(0),
+        pendingConn(0)
     {
         monitor = es::Monitor::createInstance();
 
@@ -735,6 +744,26 @@ public:
     Socket* getSocket()
     {
         return socket;
+    }
+
+    int getBackLogCount()
+    {
+         return backLogCount;
+    }
+
+    void setBackLogCount(int len)
+    {
+        int l;
+        if (len <= 0)
+        {
+            l = 1;
+        }
+        else
+        {
+             l = std::min(len, MaxConn);
+        }
+        
+        backLogCount = l;
     }
     
     static class StateClosed        stateClosed;
