@@ -174,6 +174,7 @@ then
 	../../src/freetype-2.3.5/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
 	make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
 	make install
+	mv $ES_SDK/bin/freetype-config $ES_SDK/bin/es-freetype-config
 fi
 cd ../..
 
@@ -211,10 +212,9 @@ mkdir -p fontconfig
 cd fontconfig
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/fontconfig-2.4.2.patch -newer Makefile -print`" ];
 then
-	../../src/fontconfig-2.4.2/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=$ES_SDK/include --with-expat-lib=$ES_SDK/lib --with-freetype-config=$ES_SDK/bin/freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file --program-prefix=es-
+	../../src/fontconfig-2.4.2/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=$ES_SDK/include --with-expat-lib=$ES_SDK/lib --with-freetype-config=$ES_SDK/bin/es-freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file --program-prefix=es-
 	make
 	make install
-        rm $ES_SDK/bin/freetype-config
 fi
 cd ../..
 
