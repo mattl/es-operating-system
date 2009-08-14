@@ -30,6 +30,8 @@ const TimeSpan StreamReceiver::RTT_DEFAULT(30000000);
 const TimeSpan StreamReceiver::PERSIST_MAX(MAX_BACKOFF * RTT_MAX);
 const TimeSpan StreamReceiver::DACK_TIMEOUT(2000000);
 
+const int      StreamReceiver::MaxConn(5);
+
 StreamReceiver::StateClosed      StreamReceiver::stateClosed;
 StreamReceiver::StateListen      StreamReceiver::stateListen;
 StreamReceiver::StateSynSent     StreamReceiver::stateSynSent;
@@ -482,6 +484,8 @@ StateListen::accept(SocketMessenger* m, StreamReceiver* s)
     }
     if (s->state == &stateListen && !s->accepted.isEmpty())
     {
+        s->pendingConn--;
+        ASSERT(s->pendingConn >= 0);
         StreamReceiver* accepted = s->accepted.removeFirst();
         ASSERT(accepted);
         ASSERT(accepted->socket);
