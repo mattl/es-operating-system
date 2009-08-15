@@ -177,6 +177,10 @@ module es
          */        
 	boolean sockAtMark();
 
+	/** Boolean whether the socket has entered urgent mode
+         */        
+	boolean isUrgent();
+
         /** Boolean whether this socket is ready for writing
          */
         boolean isWritable();

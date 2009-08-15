@@ -72,15 +72,30 @@ int main()
         char data[9];
         int length;
         memset (data, 0, 9);
+
+
         while (true)
         {
+            
+	    // server checks whether the socket has entered urgent mode at every read
+            if (Server->isUrgent())
+            {
+                esReport("Urgent Mode\n\n");
+            }
+            else
+            {
+                esReport("Not in urgent Mode\n\n");
+            }
+            
+            // Tells whether the next read delivers an urgent byte            
             if (Server->sockAtMark())
             {
                 esReport("An urgent byte will be read now\n");
             }
-            length = Server->read(data,9);
+
+            length = Server->read(data,3);
             esReport("Received data and length.......... ............ %s        %d\n", data, length);
-            memset (data, 0, 9);
+            memset (data, 0, 3);
             if (length == 0)
             {
                 break;
