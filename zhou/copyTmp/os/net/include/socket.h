@@ -525,6 +525,7 @@ public:
         c->setA(0);
         p->setB(0);
         c->release();
+        socket->setAdapter(NULL);
         return true;
     }
 

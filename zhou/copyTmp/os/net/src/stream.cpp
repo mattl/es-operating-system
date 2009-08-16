@@ -161,6 +161,9 @@ error(InetMessenger* m, Conduit* c)
 void StreamReceiver::
 abort()
 {
+    State* s;
+    s = this->state;
+    
     setState(stateClosed);
     stopRxmitTimer();
     stopAckTimer();
@@ -175,11 +178,13 @@ abort()
     {
         Synchronized<es::Monitor*> method(listening->monitor);
         if (listening->accepted.contains(this))
-            listening->accepted.remove(this);        
+        {
+            listening->pendingConn--;
+            listening->accepted.remove(this);
+            this->sendReset();
+        }
     }
-
-    // TODO Is it nessary to clean up corresponding part in conduit graph? 
-#if 0
+    
     // clean up corresponding part in conduit graph
     Adapter* adapter;
     if (this->socket)
@@ -191,7 +196,9 @@ abort()
             adapter->accept(&uninstaller);
         }   
     }
-#endif
+ 
+    if (s == &stateClosed)
+        return;
     
     notify();
 }
