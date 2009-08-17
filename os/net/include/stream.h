@@ -722,6 +722,12 @@ public:
         return false;
     }
 
+    bool isUrgent(SocketMessenger* m, Conduit* c)
+    {
+        m->setFlag(haveUrg);
+        return false;
+    }
+
     void expired();
     void abort();
 

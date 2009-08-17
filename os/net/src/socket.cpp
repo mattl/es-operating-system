@@ -220,6 +220,31 @@ sockAtMark()
 }
 
 bool Socket::
+isUrgent()
+{
+    if (!adapter)
+    {
+        errorCode = ENOTCONN;
+        return -errorCode;
+    }
+
+    SocketMessenger m(this, &SocketReceiver::isUrgent);
+
+    Visitor v(&m);
+    adapter->accept(&v);
+    int code = m.getErrorCode();
+    if (code)
+    {
+        if (code != EAGAIN)
+        {
+            errorCode = code;
+        }
+        return -errorCode;
+    }
+    return m.getFlag();    
+}
+
+bool Socket::
 isConnected()
 {
     return getRemotePort();

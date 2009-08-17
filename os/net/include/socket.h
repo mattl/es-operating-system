@@ -261,6 +261,7 @@ public:
     void shutdownOutput();
     int write(const void* src, int count);
     bool sockAtMark();
+    bool isUrgent();
 
     void notify();
 
@@ -369,6 +370,11 @@ public:
     }
 
     virtual bool atMark(SocketMessenger* m, Conduit* c)
+    {
+        return false;
+    }
+
+    virtual bool isUrgent(SocketMessenger* m, Conduit* c)
     {
         return false;
     }
