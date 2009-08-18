@@ -84,7 +84,6 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_SVG_TRUE@am__append_7 = $(srcdir)/trunk/WebCore/css/SVGCSSPropertyNames.in
 @ENABLE_SVG_TRUE@am__append_8 = $(srcdir)/trunk/WebCore/css/SVGCSSValueKeywords.in
 @ENABLE_SVG_TRUE@am__append_9 = \
-@ENABLE_SVG_TRUE@	DerivedSources/JSSVGElementWrapperFactory.cpp \
 @ENABLE_SVG_TRUE@	DerivedSources/SVGElementFactory.cpp \
 @ENABLE_SVG_TRUE@	DerivedSources/SVGNames.cpp \
 @ENABLE_SVG_TRUE@	DerivedSources/XLinkNames.cpp
@@ -98,14 +97,6 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
 @ENABLE_SVG_TRUE@am__append_10 = \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGPODTypeWrapper.h \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/css/SVGCSSParser.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
@@ -1885,14 +1876,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/es/ThreadGlobalData.cpp \
 	es/WebCore/platform/es/ThreadGlobalData.h \
-	trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPODTypeWrapper.h \
-	trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp \
 	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	trunk/WebCore/css/SVGCSSParser.cpp \
 	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
@@ -2416,14 +2399,7 @@ am__objects_1 =  \
 	trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-dtoa.$(OBJEXT) \
 	es/JavaScriptCore/wtf/es/libWebCore_a-MainThreadES.$(OBJEXT)
-@ENABLE_SVG_TRUE@am__objects_2 = trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.$(OBJEXT) \
+@ENABLE_SVG_TRUE@am__objects_2 = trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/css/libWebCore_a-SVGCSSParser.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/css/libWebCore_a-SVGCSSStyleSelector.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/rendering/libWebCore_a-PointerEventsHitRules.$(OBJEXT) \
@@ -3254,8 +3230,7 @@ am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	es/WebKit/es/WebCoreSupport/libWebCore_a-InspectorClientES.$(OBJEXT)
 am_libWebCore_a_OBJECTS = $(am__objects_1) $(am__objects_3) \
 	$(am__objects_4)
-@ENABLE_SVG_TRUE@am__objects_5 = DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	DerivedSources/libWebCore_a-SVGElementFactory.$(OBJEXT) \
+@ENABLE_SVG_TRUE@am__objects_5 = DerivedSources/libWebCore_a-SVGElementFactory.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	DerivedSources/libWebCore_a-SVGNames.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	DerivedSources/libWebCore_a-XLinkNames.$(OBJEXT)
 am__objects_6 = DerivedSources/libWebCore_a-CSSGrammar.$(OBJEXT) \
@@ -7163,33 +7138,6 @@ es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
 es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
 	es/WebCore/platform/es/$(am__dirstamp) \
 	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/$(am__dirstamp):
-	@$(MKDIR_P) trunk/WebCore/bindings/js
-	@: > trunk/WebCore/bindings/js/$(am__dirstamp)
-trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) trunk/WebCore/bindings/js/$(DEPDIR)
-	@: > trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.$(OBJEXT):  \
-	trunk/WebCore/bindings/js/$(am__dirstamp) \
-	trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.$(OBJEXT):  \
 	trunk/WebCore/css/$(am__dirstamp) \
 	trunk/WebCore/css/$(DEPDIR)/$(am__dirstamp)
@@ -8108,9 +8056,6 @@ DerivedSources/libWebCore_a-UserAgentStyleSheetsData.$(OBJEXT):  \
 DerivedSources/libWebCore_a-XMLNames.$(OBJEXT):  \
 	DerivedSources/$(am__dirstamp) \
 	DerivedSources/$(DEPDIR)/$(am__dirstamp)
-DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.$(OBJEXT):  \
-	DerivedSources/$(am__dirstamp) \
-	DerivedSources/$(DEPDIR)/$(am__dirstamp)
 DerivedSources/libWebCore_a-SVGElementFactory.$(OBJEXT):  \
 	DerivedSources/$(am__dirstamp) \
 	DerivedSources/$(DEPDIR)/$(am__dirstamp)
@@ -8171,7 +8116,6 @@ mostlyclean-compile:
 	-rm -f DerivedSources/libWebCore_a-HTMLElementFactory.$(OBJEXT)
 	-rm -f DerivedSources/libWebCore_a-HTMLEntityNames.$(OBJEXT)
 	-rm -f DerivedSources/libWebCore_a-HTMLNames.$(OBJEXT)
-	-rm -f DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.$(OBJEXT)
 	-rm -f DerivedSources/libWebCore_a-SVGElementFactory.$(OBJEXT)
 	-rm -f DerivedSources/libWebCore_a-SVGNames.$(OBJEXT)
 	-rm -f DerivedSources/libWebCore_a-UserAgentStyleSheetsData.$(OBJEXT)
@@ -8267,13 +8211,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/accessibility/libWebCore_a-AccessibilityTableColumn.$(OBJEXT)
 	-rm -f trunk/WebCore/accessibility/libWebCore_a-AccessibilityTableHeaderContainer.$(OBJEXT)
 	-rm -f trunk/WebCore/accessibility/libWebCore_a-AccessibilityTableRow.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.$(OBJEXT)
-	-rm -f trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.$(OBJEXT)
 	-rm -f trunk/WebCore/css/libWebCore_a-CSSBorderImageValue.$(OBJEXT)
 	-rm -f trunk/WebCore/css/libWebCore_a-CSSCanvasValue.$(OBJEXT)
 	-rm -f trunk/WebCore/css/libWebCore_a-CSSCharsetRule.$(OBJEXT)
@@ -9047,7 +8984,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-HTMLElementFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-HTMLEntityNames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-HTMLNames.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-SVGElementFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-SVGNames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-UserAgentStyleSheetsData.Po@am__quote@
@@ -9143,13 +9079,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/accessibility/$(DEPDIR)/libWebCore_a-AccessibilityTableColumn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/accessibility/$(DEPDIR)/libWebCore_a-AccessibilityTableHeaderContainer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/accessibility/$(DEPDIR)/libWebCore_a-AccessibilityTableRow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/css/$(DEPDIR)/libWebCore_a-CSSBorderImageValue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/css/$(DEPDIR)/libWebCore_a-CSSCanvasValue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/css/$(DEPDIR)/libWebCore_a-CSSCharsetRule.Po@am__quote@
@@ -18217,104 +18146,6 @@ es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj: es/WebCore/platform/es
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
 
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.o: trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.obj: trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGElementInstanceCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGElementInstanceCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.o: trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.obj: trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGLengthCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGLengthCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.o: trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.obj: trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGMatrixCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGMatrixCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.o: trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.obj: trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.o: trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.obj: trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPathSegListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPathSegListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.o: trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.obj: trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGPointListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGPointListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp'; fi`
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.o: trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.o -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.o `test -f 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp' || echo '$(srcdir)/'`trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp
-
-trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.obj: trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.obj -MD -MP -MF trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Tpo -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Tpo trunk/WebCore/bindings/js/$(DEPDIR)/libWebCore_a-JSSVGTransformListCustom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp' object='trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/bindings/js/libWebCore_a-JSSVGTransformListCustom.obj `if test -f 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; then $(CYGPATH_W) 'trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp'; fi`
-
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o: trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o -MD -MP -MF trunk/WebCore/css/$(DEPDIR)/libWebCore_a-SVGCSSComputedStyleDeclaration.Tpo -c -o trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o `test -f 'trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp' || echo '$(srcdir)/'`trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/css/$(DEPDIR)/libWebCore_a-SVGCSSComputedStyleDeclaration.Tpo trunk/WebCore/css/$(DEPDIR)/libWebCore_a-SVGCSSComputedStyleDeclaration.Po
@@ -22025,20 +21856,6 @@ DerivedSources/libWebCore_a-XMLNames.obj: DerivedSources/XMLNames.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o DerivedSources/libWebCore_a-XMLNames.obj `if test -f 'DerivedSources/XMLNames.cpp'; then $(CYGPATH_W) 'DerivedSources/XMLNames.cpp'; else $(CYGPATH_W) '$(srcdir)/DerivedSources/XMLNames.cpp'; fi`
 
-DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.o: DerivedSources/JSSVGElementWrapperFactory.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.o -MD -MP -MF DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Tpo -c -o DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.o `test -f 'DerivedSources/JSSVGElementWrapperFactory.cpp' || echo '$(srcdir)/'`DerivedSources/JSSVGElementWrapperFactory.cpp
-@am__fastdepCXX_TRUE@	mv -f DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Tpo DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='DerivedSources/JSSVGElementWrapperFactory.cpp' object='DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.o `test -f 'DerivedSources/JSSVGElementWrapperFactory.cpp' || echo '$(srcdir)/'`DerivedSources/JSSVGElementWrapperFactory.cpp
-
-DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.obj: DerivedSources/JSSVGElementWrapperFactory.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.obj -MD -MP -MF DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Tpo -c -o DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.obj `if test -f 'DerivedSources/JSSVGElementWrapperFactory.cpp'; then $(CYGPATH_W) 'DerivedSources/JSSVGElementWrapperFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/DerivedSources/JSSVGElementWrapperFactory.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Tpo DerivedSources/$(DEPDIR)/libWebCore_a-JSSVGElementWrapperFactory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='DerivedSources/JSSVGElementWrapperFactory.cpp' object='DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o DerivedSources/libWebCore_a-JSSVGElementWrapperFactory.obj `if test -f 'DerivedSources/JSSVGElementWrapperFactory.cpp'; then $(CYGPATH_W) 'DerivedSources/JSSVGElementWrapperFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/DerivedSources/JSSVGElementWrapperFactory.cpp'; fi`
-
 DerivedSources/libWebCore_a-SVGElementFactory.o: DerivedSources/SVGElementFactory.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT DerivedSources/libWebCore_a-SVGElementFactory.o -MD -MP -MF DerivedSources/$(DEPDIR)/libWebCore_a-SVGElementFactory.Tpo -c -o DerivedSources/libWebCore_a-SVGElementFactory.o `test -f 'DerivedSources/SVGElementFactory.cpp' || echo '$(srcdir)/'`DerivedSources/SVGElementFactory.cpp
 @am__fastdepCXX_TRUE@	mv -f DerivedSources/$(DEPDIR)/libWebCore_a-SVGElementFactory.Tpo DerivedSources/$(DEPDIR)/libWebCore_a-SVGElementFactory.Po
@@ -22388,8 +22205,6 @@ distclean-generic:
 	-rm -f trunk/JavaScriptCore/wtf/unicode/icu/$(am__dirstamp)
 	-rm -f trunk/WebCore/accessibility/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/accessibility/$(am__dirstamp)
-	-rm -f trunk/WebCore/bindings/js/$(DEPDIR)/$(am__dirstamp)
-	-rm -f trunk/WebCore/bindings/js/$(am__dirstamp)
 	-rm -f trunk/WebCore/css/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/css/$(am__dirstamp)
 	-rm -f trunk/WebCore/dom/$(DEPDIR)/$(am__dirstamp)
@@ -22468,7 +22283,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/js/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -22504,7 +22319,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/js/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

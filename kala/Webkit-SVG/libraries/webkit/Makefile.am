@@ -386,7 +386,6 @@ WEBCORE_CSS_PROPERTY_NAMES += $(srcdir)/trunk/WebCore/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(srcdir)/trunk/WebCore/css/SVGCSSValueKeywords.in
 
 webcore_built_sources += \
-	DerivedSources/JSSVGElementWrapperFactory.cpp \
 	DerivedSources/SVGElementFactory.cpp \
 	DerivedSources/SVGNames.cpp \
 	DerivedSources/XLinkNames.cpp
@@ -1702,14 +1701,6 @@ webcore_sources += \
 if ENABLE_SVG
 
 webcore_sources += \
-	trunk/WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGLengthCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGMatrixCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPODTypeWrapper.h \
-	trunk/WebCore/bindings/js/JSSVGPathSegCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPathSegListCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGPointListCustom.cpp \
-	trunk/WebCore/bindings/js/JSSVGTransformListCustom.cpp \
 	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	trunk/WebCore/css/SVGCSSParser.cpp \
 	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
