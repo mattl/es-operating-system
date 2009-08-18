@@ -1077,7 +1077,6 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.cpp \
 	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
@@ -1688,7 +1687,9 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/es/ThreadGlobalData.cpp \
-	es/WebCore/platform/es/ThreadGlobalData.h 
+	es/WebCore/platform/es/ThreadGlobalData.h \
+	es/WebCore/platform/es/FrameLoader.cpp 
+#	trunk/WebCore/loader/FrameLoader.cpp \
 #	trunk/WebCore/platform/ThreadGlobalData.cpp \
 #	trunk/WebCore/platform/ThreadGlobalData.h 
 

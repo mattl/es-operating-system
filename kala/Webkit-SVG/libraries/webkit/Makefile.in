@@ -88,6 +88,7 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_SVG_TRUE@	DerivedSources/SVGNames.cpp \
 @ENABLE_SVG_TRUE@	DerivedSources/XLinkNames.cpp
 
+#	trunk/WebCore/loader/FrameLoader.cpp \
 #	trunk/WebCore/platform/ThreadGlobalData.cpp \
 #	trunk/WebCore/platform/ThreadGlobalData.h 
 
@@ -1278,7 +1279,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.cpp \
 	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
@@ -1876,6 +1876,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/es/ThreadGlobalData.cpp \
 	es/WebCore/platform/es/ThreadGlobalData.h \
+	es/WebCore/platform/es/FrameLoader.cpp \
 	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	trunk/WebCore/css/SVGCSSParser.cpp \
 	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
@@ -2908,7 +2909,6 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/loader/libWebCore_a-FTPDirectoryDocument.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-FTPDirectoryParser.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-FormState.$(OBJEXT) \
-	trunk/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-ImageDocument.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-ImageLoader.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-MainResourceLoader.$(OBJEXT) \
@@ -3155,6 +3155,7 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/xml/libWebCore_a-XMLHttpRequestUpload.$(OBJEXT) \
 	trunk/WebCore/xml/libWebCore_a-XMLSerializer.$(OBJEXT) \
 	es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT) \
+	es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT) \
 	$(am__objects_2) \
 	trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.$(OBJEXT)
 am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(OBJEXT) \
@@ -4238,7 +4239,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.cpp \
 	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
@@ -4835,7 +4835,8 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/es/ThreadGlobalData.cpp \
-	es/WebCore/platform/es/ThreadGlobalData.h $(am__append_10) \
+	es/WebCore/platform/es/ThreadGlobalData.h \
+	es/WebCore/platform/es/FrameLoader.cpp $(am__append_10) \
 	trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 webcore_libadd := 
 webcore_built_sources := DerivedSources/CSSGrammar.cpp \
@@ -6307,9 +6308,6 @@ trunk/WebCore/loader/libWebCore_a-FTPDirectoryParser.$(OBJEXT):  \
 trunk/WebCore/loader/libWebCore_a-FormState.$(OBJEXT):  \
 	trunk/WebCore/loader/$(am__dirstamp) \
 	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT):  \
-	trunk/WebCore/loader/$(am__dirstamp) \
-	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/loader/libWebCore_a-ImageDocument.$(OBJEXT):  \
 	trunk/WebCore/loader/$(am__dirstamp) \
 	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
@@ -7136,6 +7134,9 @@ es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
 	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
+	es/WebCore/platform/es/$(am__dirstamp) \
+	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT):  \
 	es/WebCore/platform/es/$(am__dirstamp) \
 	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.$(OBJEXT):  \
@@ -8145,6 +8146,7 @@ mostlyclean-compile:
 	-rm -f es/WebCore/platform/es/libWebCore_a-CursorES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT)
+	-rm -f es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT)
@@ -8525,7 +8527,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/loader/libWebCore_a-FTPDirectoryDocument.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-FTPDirectoryParser.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-FormState.$(OBJEXT)
-	-rm -f trunk/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-ImageDocument.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-ImageLoader.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-MainResourceLoader.$(OBJEXT)
@@ -9013,6 +9014,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-CursorES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragDataES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragImageES.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-Language.Po@am__quote@
@@ -9388,7 +9390,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FTPDirectoryDocument.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FTPDirectoryParser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FormState.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ImageDocument.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ImageLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-MainResourceLoader.Po@am__quote@
@@ -14688,20 +14689,6 @@ trunk/WebCore/loader/libWebCore_a-FormState.obj: trunk/WebCore/loader/FormState.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-FormState.obj `if test -f 'trunk/WebCore/loader/FormState.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/FormState.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/FormState.cpp'; fi`
 
-trunk/WebCore/loader/libWebCore_a-FrameLoader.o: trunk/WebCore/loader/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-FrameLoader.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o trunk/WebCore/loader/libWebCore_a-FrameLoader.o `test -f 'trunk/WebCore/loader/FrameLoader.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/FrameLoader.cpp' object='trunk/WebCore/loader/libWebCore_a-FrameLoader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-FrameLoader.o `test -f 'trunk/WebCore/loader/FrameLoader.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/FrameLoader.cpp
-
-trunk/WebCore/loader/libWebCore_a-FrameLoader.obj: trunk/WebCore/loader/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-FrameLoader.obj -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o trunk/WebCore/loader/libWebCore_a-FrameLoader.obj `if test -f 'trunk/WebCore/loader/FrameLoader.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/FrameLoader.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/FrameLoader.cpp' object='trunk/WebCore/loader/libWebCore_a-FrameLoader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-FrameLoader.obj `if test -f 'trunk/WebCore/loader/FrameLoader.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/FrameLoader.cpp'; fi`
-
 trunk/WebCore/loader/libWebCore_a-ImageDocument.o: trunk/WebCore/loader/ImageDocument.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-ImageDocument.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ImageDocument.Tpo -c -o trunk/WebCore/loader/libWebCore_a-ImageDocument.o `test -f 'trunk/WebCore/loader/ImageDocument.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/ImageDocument.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ImageDocument.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ImageDocument.Po
@@ -18145,6 +18132,20 @@ es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj: es/WebCore/platform/es
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ThreadGlobalData.cpp' object='es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
+
+es/WebCore/platform/es/libWebCore_a-FrameLoader.o: es/WebCore/platform/es/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-FrameLoader.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/platform/es/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/FrameLoader.cpp' object='es/WebCore/platform/es/libWebCore_a-FrameLoader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/platform/es/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/FrameLoader.cpp
+
+es/WebCore/platform/es/libWebCore_a-FrameLoader.obj: es/WebCore/platform/es/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-FrameLoader.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/platform/es/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/FrameLoader.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/FrameLoader.cpp' object='es/WebCore/platform/es/libWebCore_a-FrameLoader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/platform/es/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/FrameLoader.cpp'; fi`
 
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o: trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o -MD -MP -MF trunk/WebCore/css/$(DEPDIR)/libWebCore_a-SVGCSSComputedStyleDeclaration.Tpo -c -o trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o `test -f 'trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp' || echo '$(srcdir)/'`trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
