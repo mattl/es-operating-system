@@ -77,7 +77,7 @@ int main()
         while (true)
         {
             
-	    // server checks whether the socket has entered urgent mode at every read
+            // server checks whether the socket has entered urgent mode at every read
             if (Server->isUrgent())
             {
                 esReport("Urgent Mode\n\n");
@@ -95,7 +95,7 @@ int main()
 
             length = Server->read(data, 3);
             esReport("Received data and length.......... ............ %s        %d\n", data, length);
-            memset (data, 0, 3);
+            memset(data, 0, 3);
             if (length == 0)
             {
                 break;
