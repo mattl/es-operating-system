@@ -93,9 +93,9 @@ int main()
                 esReport("An urgent byte will be read now\n");
             }
 
-            length = Server->read(data,3);
+            length = Server->read(data, 3);
             esReport("Received data and length.......... ............ %s        %d\n", data, length);
-            memset (data, 0 ,3);
+            memset (data, 0, 3);
             if (length == 0)
             {
                 break;
