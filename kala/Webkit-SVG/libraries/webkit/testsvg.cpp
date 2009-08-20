@@ -45,6 +45,10 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGRectElement.h"
+#include "SVGLineElement.h"
+#include "SVGTextElement.h"
+#include "SVGTextContentElement.h"
+#include "Text.h"
 
 #include "ChromeClientES.h"
 #include "ContextMenuClientES.h"
@@ -86,13 +90,97 @@ void testCanvas2d(cairo_t* cr)
 
     // Create and append a rect element
     ec = 0;
-    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
-    rectElement->setAttributeNS(WebCore::nullAtom, "x", "10", ec);
-    rectElement->setAttributeNS(WebCore::nullAtom, "y", "10", ec);
-    rectElement->setAttributeNS(WebCore::nullAtom, "width", "200", ec);
-    rectElement->setAttributeNS(WebCore::nullAtom, "height", "200", ec);
 
-    rootElement->appendChild(rectElement.get(), ec);
+    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement_red = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
+    rectElement_red->setAttribute("x", "90", ec);
+    rectElement_red->setAttribute("y", "75", ec);
+    rectElement_red->setAttribute("width", "20", ec);
+    rectElement_red->setAttribute("height", "85", ec);
+    rectElement_red->setAttribute("fill", "#ff0000", ec);
+    rootElement->appendChild(rectElement_red.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement_green = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
+    rectElement_green->setAttribute("x", "125", ec);
+    rectElement_green->setAttribute("y", "35", ec);
+    rectElement_green->setAttribute("width", "20", ec);
+    rectElement_green->setAttribute("height", "125", ec);
+    rectElement_green->setAttribute("fill", "#00ff00", ec);
+    rootElement->appendChild(rectElement_green.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement_blue = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
+    rectElement_blue->setAttribute("x", "160", ec);
+    rectElement_blue->setAttribute("y", "90", ec);
+    rectElement_blue->setAttribute("width", "20", ec);
+    rectElement_blue->setAttribute("height", "70", ec);
+    rectElement_blue->setAttribute("fill", "#0000ff", ec);
+    rootElement->appendChild(rectElement_blue.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement_yellow = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
+    rectElement_yellow->setAttribute("x", "195", ec);
+    rectElement_yellow->setAttribute("y", "110", ec);
+    rectElement_yellow->setAttribute("width", "20", ec);
+    rectElement_yellow->setAttribute("height", "50", ec);
+    rectElement_yellow->setAttribute("fill", "#ffff00", ec);
+    rootElement->appendChild(rectElement_yellow.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGRectElement> rectElement_blue2 = WTF::static_pointer_cast<WebCore::SVGRectElement>(document->createElementNS("http://www.w3.org/2000/svg", "rect", ec));
+    rectElement_blue2->setAttribute("x", "235", ec);
+    rectElement_blue2->setAttribute("y", "120", ec);
+    rectElement_blue2->setAttribute("width", "20", ec);
+    rectElement_blue2->setAttribute("height", "40", ec);
+    rectElement_blue2->setAttribute("fill", "#00ffff", ec);
+    rootElement->appendChild(rectElement_blue2.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGLineElement> lineElement_1 = WTF::static_pointer_cast<WebCore::SVGLineElement>(document->createElementNS("http://www.w3.org/2000/svg", "line", ec));
+    lineElement_1->setAttribute("x1", "75", ec);
+    lineElement_1->setAttribute("y1", "160", ec);
+    lineElement_1->setAttribute("x2", "281", ec);
+    lineElement_1->setAttribute("y2", "160", ec);
+    lineElement_1->setAttribute("stroke-width", "3", ec);
+    lineElement_1->setAttribute("stroke", "black", ec);
+    rootElement->appendChild(lineElement_1.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGLineElement> lineElement_2 = WTF::static_pointer_cast<WebCore::SVGLineElement>(document->createElementNS("http://www.w3.org/2000/svg", "line", ec));
+    lineElement_2->setAttribute("x1", "75", ec);
+    lineElement_2->setAttribute("y1", "160", ec);
+    lineElement_2->setAttribute("x2", "77", ec);
+    lineElement_2->setAttribute("y2", "30", ec);
+    lineElement_2->setAttribute("stroke-width", "3", ec);
+    lineElement_2->setAttribute("stroke", "black", ec);
+    rootElement->appendChild(lineElement_2.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGTextElement> textElement_1 = WTF::static_pointer_cast<WebCore::SVGTextElement>(document->createElementNS("http://www.w3.org/2000/svg", "text", ec));
+    textElement_1->setAttribute("x", "512", ec);
+    textElement_1->setAttribute("y", "200", ec);
+    textElement_1->setAttribute("font-size", "36", ec);
+    textElement_1->setAttribute("font-style", "italic", ec);
+    textElement_1->setAttribute("font-family", "Liberation Serif", ec);
+    textElement_1->setAttribute("fill", "#ff0000", ec);
+    WTF::PassRefPtr<WebCore::Text> textNode_1 = WTF::static_pointer_cast<WebCore::Text>(document->createTextNode("Hello World"));
+    textElement_1->appendChild(textNode_1.get(), ec);
+    rootElement->appendChild(textElement_1.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGTextElement> textElement_2 = WTF::static_pointer_cast<WebCore::SVGTextElement>(document->createElementNS("http://www.w3.org/2000/svg", "text", ec));
+    textElement_2->setAttribute("x", "512", ec);
+    textElement_2->setAttribute("y", "250", ec);
+    textElement_2->setAttribute("font-size", "40", ec);
+    textElement_2->setAttribute("font-weight", "bold", ec);
+    textElement_2->setAttribute("font-family", "Liberation Sans", ec);
+    textElement_2->setAttribute("fill", "#00ff00", ec);
+    WTF::PassRefPtr<WebCore::Text> textNode_2 = WTF::static_pointer_cast<WebCore::Text>(document->createTextNode("Hello World"));
+    textElement_2->appendChild(textNode_2.get(), ec);
+    rootElement->appendChild(textElement_2.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGTextElement> textElement_3 = WTF::static_pointer_cast<WebCore::SVGTextElement>(document->createElementNS("http://www.w3.org/2000/svg", "text", ec));
+    textElement_3->setAttribute("x", "512", ec);
+    textElement_3->setAttribute("y", "300", ec);
+    textElement_3->setAttribute("font-size", "48", ec);
+    textElement_3->setAttribute("font-family", "Liberation Mono", ec);
+    textElement_3->setAttribute("fill", "#0000ff", ec);
+    WTF::PassRefPtr<WebCore::Text> textNode_3 = WTF::static_pointer_cast<WebCore::Text>(document->createTextNode("Hello World"));
+    textElement_3->appendChild(textNode_3.get(), ec);
+    rootElement->appendChild(textElement_3.get(), ec);
+
 
     if (frame->contentRenderer() && frame->view())
     {
