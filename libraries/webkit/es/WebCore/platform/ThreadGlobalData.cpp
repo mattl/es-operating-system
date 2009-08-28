@@ -72,9 +72,7 @@ ThreadGlobalData::ThreadGlobalData()
     , m_atomicStringTable(new HashSet<StringImpl*>)
     , m_eventNames(new EventNames)
     , m_threadTimers(new ThreadTimers)
-#ifndef NDEBUG
     , m_isMainThread(isMainThread())
-#endif
 #if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     , m_cachedConverterICU(new ICUConverterWrapper)
 #endif
