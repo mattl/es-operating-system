@@ -188,17 +188,6 @@ void testCanvas2d(cairo_t* cr)
     textElement_3->appendChild(textNode_3.get(), ec);
     rootElement->appendChild(textElement_3.get(), ec);
 
-    WTF::PassRefPtr<WebCore::SVGPathElement> pathElement = WTF::static_pointer_cast<WebCore::SVGPathElement>(document->createElementNS("http://www.w3.org/2000/svg", "path", ec));
-    pathElement->createSVGPathSegMovetoAbs(494,296);
-    pathElement->createSVGPathSegCurvetoCubicAbs(500,295,506,294,512,294);
-    pathElement->createSVGPathSegCurvetoCubicAbs(511,328,512,361,511,394);
-    pathElement->createSVGPathSegCurvetoCubicAbs(511,393,510,392,510,392);
-    pathElement->createSVGPathSegLinetoAbs(511,393);
-    pathElement->createSVGPathSegCurvetoCubicAbs(506,360,499,328,494,296);
-    pathElement->createSVGPathSegClosePath();
-    pathElement->setAttribute("fill", "#edfa16", ec);
-    rootElement->appendChild(pathElement.get(), ec);
-
     if (frame->contentRenderer() && frame->view())
     {
         WebCore::GraphicsContext ctx(cr);
