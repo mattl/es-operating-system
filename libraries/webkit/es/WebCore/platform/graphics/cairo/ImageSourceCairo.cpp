@@ -57,7 +57,7 @@ ImageDecoder* createDecoder(const Vector<char>& data)
     if (strncmp(contents, "GIF8", 4) == 0)
         return new GIFImageDecoder();
 
-    // Test for PNG.
+    // Test for PNG. Turn-off PNG for tmp pass.
     /*
     if (uContents[0]==0x89 &&
         uContents[1]==0x50 &&
