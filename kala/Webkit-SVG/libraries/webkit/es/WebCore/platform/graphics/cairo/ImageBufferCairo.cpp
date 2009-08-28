@@ -212,6 +212,8 @@ String ImageBuffer::toDataURL(const String& mimeType) const
 
     Vector<char> in;
     // Only PNG output is supported for now.
+
+    // disable png support temporarily
     //cairo_surface_write_to_png_stream(image, writeFunction, &in);
 
     Vector<char> out;

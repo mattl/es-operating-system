@@ -302,9 +302,12 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(srcdir)/trunk/WebCore/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-I$(srcdir)/es/WebCore \
 	-I$(srcdir)/es/WebCore/bindings/es \
+	-I$(srcdir)/es/WebCore/loader \
 	-I$(srcdir)/es/WebCore/page/es \
+	-I$(srcdir)/es/WebCore/platform \
 	-I$(srcdir)/es/WebCore/platform/es \
 	-I$(srcdir)/es/WebCore/platform/graphics/es \
+	-I$(srcdir)/es/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/es/WebCore/platform/network/es \
 	-I$(srcdir)/es/WebCore/platform/text/es \
@@ -1686,12 +1689,9 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
-	es/WebCore/platform/es/ThreadGlobalData.cpp \
-	es/WebCore/platform/es/ThreadGlobalData.h \
-	es/WebCore/platform/es/FrameLoader.cpp 
-#	trunk/WebCore/loader/FrameLoader.cpp \
-#	trunk/WebCore/platform/ThreadGlobalData.cpp \
-#	trunk/WebCore/platform/ThreadGlobalData.h 
+	es/WebCore/platform/ThreadGlobalData.cpp \
+	es/WebCore/platform/ThreadGlobalData.h \
+	es/WebCore/loader/FrameLoader.cpp 
 
 # ----
 # SVG Support
@@ -2128,10 +2128,9 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	es/WebCore/platform/es/ImageBufferCairo.cpp \
-	es/WebCore/platform/es/ImageSourceCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
-#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
@@ -2418,7 +2417,8 @@ webkit_linux_ldadd = \
 webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 
 TEST_PROGS += \
-	testcanvas2d
+	testcanvas2d \
+	testsvg
 
 if OS_ES
 
@@ -2437,6 +2437,21 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 
+testsvg_SOURCES = testsvg.cpp main.cpp
+testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
+testsvg_CFLAGS = $(webkit_tests_cflags)
+testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
+	-I../../include \
+	-I$(srcdir)/../../include \
+        -I$(prefix)/include \
+        -I$(prefix)/include/es \
+        -I$(prefix)/include/freetype2 \
+        -I$(prefix)/include/cairo \
+        -I$(prefix)/include/pixman-1
+
+testsvg_LDADD = $(webkit_tests_ldadd)
+testsvg_LDFLAGS = $(webkit_tests_ldflags)
+
 else
 
 testcanvas2d_SOURCES = testcanvas2d.cpp main_linux.cpp
@@ -2447,6 +2462,15 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 	-I$(srcdir)/../../include 
 testcanvas2d_LDADD = $(webkit_linux_ldadd)
 testcanvas2d_LDFLAGS = 
+
+testsvg_SOURCES = testsvg.cpp main_linux.cpp
+testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
+testsvg_CFLAGS = $(webkit_tests_cflags)
+testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
+	-I../../include \
+	-I$(srcdir)/../../include 
+testsvg_LDADD = $(webkit_linux_ldadd)
+testsvg_LDFLAGS = 
 
 endif
 

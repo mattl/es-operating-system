@@ -88,9 +88,6 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_SVG_TRUE@	DerivedSources/SVGNames.cpp \
 @ENABLE_SVG_TRUE@	DerivedSources/XLinkNames.cpp
 
-#	trunk/WebCore/loader/FrameLoader.cpp \
-#	trunk/WebCore/platform/ThreadGlobalData.cpp \
-#	trunk/WebCore/platform/ThreadGlobalData.h 
 
 # ----
 # SVG Support
@@ -1874,9 +1871,9 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
-	es/WebCore/platform/es/ThreadGlobalData.cpp \
-	es/WebCore/platform/es/ThreadGlobalData.h \
-	es/WebCore/platform/es/FrameLoader.cpp \
+	es/WebCore/platform/ThreadGlobalData.cpp \
+	es/WebCore/platform/ThreadGlobalData.h \
+	es/WebCore/loader/FrameLoader.cpp \
 	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	trunk/WebCore/css/SVGCSSParser.cpp \
 	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
@@ -2293,8 +2290,8 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	es/WebCore/platform/es/ImageBufferCairo.cpp \
-	es/WebCore/platform/es/ImageSourceCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	es/WebCore/bindings/es/ScheduledAction.cpp \
 	es/WebCore/bindings/es/ScheduledAction.h \
@@ -3154,8 +3151,8 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/xml/libWebCore_a-XMLHttpRequest.$(OBJEXT) \
 	trunk/WebCore/xml/libWebCore_a-XMLHttpRequestUpload.$(OBJEXT) \
 	trunk/WebCore/xml/libWebCore_a-XMLSerializer.$(OBJEXT) \
-	es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT) \
-	es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT) \
+	es/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT) \
+	es/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT) \
 	$(am__objects_2) \
 	trunk/WebCore/loader/icon/libWebCore_a-IconDatabaseNone.$(OBJEXT)
 am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(OBJEXT) \
@@ -3176,8 +3173,8 @@ am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	trunk/WebCore/platform/image-decoders/ico/libWebCore_a-ICOImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/jpeg/libWebCore_a-JPEGImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT) \
-	es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
-	es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT) \
+	es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
+	es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT) \
 	trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.$(OBJEXT) \
 	es/WebCore/bindings/es/libWebCore_a-ScheduledAction.$(OBJEXT) \
 	es/WebCore/bindings/es/libWebCore_a-ScriptCachedFrameData.$(OBJEXT) \
@@ -3245,7 +3242,7 @@ nodist_libWebCore_a_OBJECTS = $(am__objects_6)
 libWebCore_a_OBJECTS = $(am_libWebCore_a_OBJECTS) \
 	$(nodist_libWebCore_a_OBJECTS)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-am__EXEEXT_1 = testcanvas2d$(EXEEXT)
+am__EXEEXT_1 = testcanvas2d$(EXEEXT) testsvg$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am__testcanvas2d_SOURCES_DIST = testcanvas2d.cpp main_linux.cpp \
 	main.cpp
@@ -3265,6 +3262,16 @@ am__DEPENDENCIES_3 = libWebCore.a
 @OS_ES_TRUE@testcanvas2d_DEPENDENCIES = $(am__DEPENDENCIES_3)
 testcanvas2d_LINK = $(CXXLD) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) \
 	$(testcanvas2d_LDFLAGS) $(LDFLAGS) -o $@
+am__testsvg_SOURCES_DIST = testsvg.cpp main_linux.cpp main.cpp
+@OS_ES_FALSE@am_testsvg_OBJECTS = testsvg-testsvg.$(OBJEXT) \
+@OS_ES_FALSE@	testsvg-main_linux.$(OBJEXT)
+@OS_ES_TRUE@am_testsvg_OBJECTS = testsvg-testsvg.$(OBJEXT) \
+@OS_ES_TRUE@	testsvg-main.$(OBJEXT)
+testsvg_OBJECTS = $(am_testsvg_OBJECTS)
+@OS_ES_FALSE@testsvg_DEPENDENCIES = $(am__DEPENDENCIES_2)
+@OS_ES_TRUE@testsvg_DEPENDENCIES = $(am__DEPENDENCIES_3)
+testsvg_LINK = $(CXXLD) $(testsvg_CXXFLAGS) $(CXXFLAGS) \
+	$(testsvg_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -3278,9 +3285,10 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(libWebCore_a_SOURCES) $(nodist_libWebCore_a_SOURCES) \
-	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES)
+	$(nodist_EXTRA_libWebCore_a_SOURCES) $(testcanvas2d_SOURCES) \
+	$(testsvg_SOURCES)
 DIST_SOURCES = $(am__libWebCore_a_SOURCES_DIST) \
-	$(am__testcanvas2d_SOURCES_DIST)
+	$(am__testcanvas2d_SOURCES_DIST) $(am__testsvg_SOURCES_DIST)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -3417,7 +3425,7 @@ noinst_HEADERS :=
 # Convenience libraries
 lib_LIBRARIES := libWebCore.a
 IDL_BINDINGS := 
-TEST_PROGS := testcanvas2d
+TEST_PROGS := testcanvas2d testsvg
 POFILES := 
 MOFILES := 
 javascriptcore_h_api := 
@@ -3542,9 +3550,11 @@ javascriptcore_dist :=
 # ES
 webcore_cppflags := -I$(srcdir)/es/WebCore \
 	-I$(srcdir)/es/WebCore/bindings/es \
-	-I$(srcdir)/es/WebCore/page/es \
+	-I$(srcdir)/es/WebCore/loader -I$(srcdir)/es/WebCore/page/es \
+	-I$(srcdir)/es/WebCore/platform \
 	-I$(srcdir)/es/WebCore/platform/es \
 	-I$(srcdir)/es/WebCore/platform/graphics/es \
+	-I$(srcdir)/es/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/es/WebCore/platform/network/es \
 	-I$(srcdir)/es/WebCore/platform/text/es \
@@ -4834,9 +4844,9 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
-	es/WebCore/platform/es/ThreadGlobalData.cpp \
-	es/WebCore/platform/es/ThreadGlobalData.h \
-	es/WebCore/platform/es/FrameLoader.cpp $(am__append_10) \
+	es/WebCore/platform/ThreadGlobalData.cpp \
+	es/WebCore/platform/ThreadGlobalData.h \
+	es/WebCore/loader/FrameLoader.cpp $(am__append_10) \
 	trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 webcore_libadd := 
 webcore_built_sources := DerivedSources/CSSGrammar.cpp \
@@ -4856,7 +4866,6 @@ webcore_dist :=
 webcorees_cppflags := $(am__append_26) $(am__append_27)
 
 # Build TestNetscapePlugin only for X11
-#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
@@ -4892,8 +4901,8 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	es/WebCore/platform/es/ImageBufferCairo.cpp \
-	es/WebCore/platform/es/ImageSourceCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	es/WebCore/bindings/es/ScheduledAction.cpp \
 	es/WebCore/bindings/es/ScheduledAction.h \
@@ -5109,6 +5118,29 @@ webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)
 @OS_ES_TRUE@testcanvas2d_LDADD = $(webkit_tests_ldadd)
 @OS_ES_FALSE@testcanvas2d_LDFLAGS = 
 @OS_ES_TRUE@testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
+@OS_ES_FALSE@testsvg_SOURCES = testsvg.cpp main_linux.cpp
+@OS_ES_TRUE@testsvg_SOURCES = testsvg.cpp main.cpp
+@OS_ES_FALSE@testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
+@OS_ES_TRUE@testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
+@OS_ES_FALSE@testsvg_CFLAGS = $(webkit_tests_cflags)
+@OS_ES_TRUE@testsvg_CFLAGS = $(webkit_tests_cflags)
+@OS_ES_FALSE@testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
+@OS_ES_FALSE@	-I../../include \
+@OS_ES_FALSE@	-I$(srcdir)/../../include 
+
+@OS_ES_TRUE@testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
+@OS_ES_TRUE@	-I../../include \
+@OS_ES_TRUE@	-I$(srcdir)/../../include \
+@OS_ES_TRUE@        -I$(prefix)/include \
+@OS_ES_TRUE@        -I$(prefix)/include/es \
+@OS_ES_TRUE@        -I$(prefix)/include/freetype2 \
+@OS_ES_TRUE@        -I$(prefix)/include/cairo \
+@OS_ES_TRUE@        -I$(prefix)/include/pixman-1
+
+@OS_ES_FALSE@testsvg_LDADD = $(webkit_linux_ldadd)
+@OS_ES_TRUE@testsvg_LDADD = $(webkit_tests_ldadd)
+@OS_ES_FALSE@testsvg_LDFLAGS = 
+@OS_ES_TRUE@testsvg_LDFLAGS = $(webkit_tests_ldflags)
 
 # Autogenerated sources
 BUILT_SOURCES := \
@@ -7127,18 +7159,24 @@ trunk/WebCore/xml/libWebCore_a-XMLHttpRequestUpload.$(OBJEXT):  \
 trunk/WebCore/xml/libWebCore_a-XMLSerializer.$(OBJEXT):  \
 	trunk/WebCore/xml/$(am__dirstamp) \
 	trunk/WebCore/xml/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es
-	@: > es/WebCore/platform/es/$(am__dirstamp)
-es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
-	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
-	es/WebCore/platform/es/$(am__dirstamp) \
-	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT):  \
-	es/WebCore/platform/es/$(am__dirstamp) \
-	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform
+	@: > es/WebCore/platform/$(am__dirstamp)
+es/WebCore/platform/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/$(DEPDIR)
+	@: > es/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT):  \
+	es/WebCore/platform/$(am__dirstamp) \
+	es/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/loader/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/loader
+	@: > es/WebCore/loader/$(am__dirstamp)
+es/WebCore/loader/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/loader/$(DEPDIR)
+	@: > es/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT):  \
+	es/WebCore/loader/$(am__dirstamp) \
+	es/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.$(OBJEXT):  \
 	trunk/WebCore/css/$(am__dirstamp) \
 	trunk/WebCore/css/$(DEPDIR)/$(am__dirstamp)
@@ -7826,12 +7864,18 @@ trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp):
 trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT):  \
 	trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp) \
 	trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
-	es/WebCore/platform/es/$(am__dirstamp) \
-	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
-es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT):  \
-	es/WebCore/platform/es/$(am__dirstamp) \
-	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/graphics/cairo/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/graphics/cairo
+	@: > es/WebCore/platform/graphics/cairo/$(am__dirstamp)
+es/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/graphics/cairo/$(DEPDIR)
+	@: > es/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
+	es/WebCore/platform/graphics/cairo/$(am__dirstamp) \
+	es/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT):  \
+	es/WebCore/platform/graphics/cairo/$(am__dirstamp) \
+	es/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/posix/$(am__dirstamp):
 	@$(MKDIR_P) trunk/WebCore/platform/posix
 	@: > trunk/WebCore/platform/posix/$(am__dirstamp)
@@ -7901,6 +7945,12 @@ es/WebCore/page/es/libWebCore_a-EventHandlerES.$(OBJEXT):  \
 es/WebCore/page/es/libWebCore_a-FrameES.$(OBJEXT):  \
 	es/WebCore/page/es/$(am__dirstamp) \
 	es/WebCore/page/es/$(DEPDIR)/$(am__dirstamp)
+es/WebCore/platform/es/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es
+	@: > es/WebCore/platform/es/$(am__dirstamp)
+es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) es/WebCore/platform/es/$(DEPDIR)
+	@: > es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 es/WebCore/platform/es/libWebCore_a-ClipboardES.$(OBJEXT):  \
 	es/WebCore/platform/es/$(am__dirstamp) \
 	es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
@@ -8108,6 +8158,9 @@ clean-noinstPROGRAMS:
 testcanvas2d$(EXEEXT): $(testcanvas2d_OBJECTS) $(testcanvas2d_DEPENDENCIES) 
 	@rm -f testcanvas2d$(EXEEXT)
 	$(testcanvas2d_LINK) $(testcanvas2d_OBJECTS) $(testcanvas2d_LDADD) $(LIBS)
+testsvg$(EXEEXT): $(testsvg_OBJECTS) $(testsvg_DEPENDENCIES) 
+	@rm -f testsvg$(EXEEXT)
+	$(testsvg_LINK) $(testsvg_OBJECTS) $(testsvg_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -8137,6 +8190,7 @@ mostlyclean-compile:
 	-rm -f es/WebCore/bindings/es/libWebCore_a-ScriptSourceCode.$(OBJEXT)
 	-rm -f es/WebCore/bindings/es/libWebCore_a-ScriptState.$(OBJEXT)
 	-rm -f es/WebCore/bindings/es/libWebCore_a-ScriptValue.$(OBJEXT)
+	-rm -f es/WebCore/loader/libWebCore_a-FrameLoader.$(OBJEXT)
 	-rm -f es/WebCore/page/es/libWebCore_a-DragControllerES.$(OBJEXT)
 	-rm -f es/WebCore/page/es/libWebCore_a-EventHandlerES.$(OBJEXT)
 	-rm -f es/WebCore/page/es/libWebCore_a-FrameES.$(OBJEXT)
@@ -8146,9 +8200,6 @@ mostlyclean-compile:
 	-rm -f es/WebCore/platform/es/libWebCore_a-CursorES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT)
-	-rm -f es/WebCore/platform/es/libWebCore_a-FrameLoader.$(OBJEXT)
-	-rm -f es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.$(OBJEXT)
-	-rm -f es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-LocalizedStringsES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-MIMETypeRegistryES.$(OBJEXT)
@@ -8162,11 +8213,13 @@ mostlyclean-compile:
 	-rm -f es/WebCore/platform/es/libWebCore_a-SharedTimerES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-SoundES.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-TemporaryLinkStubs.$(OBJEXT)
-	-rm -f es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.$(OBJEXT)
 	-rm -f es/WebCore/platform/es/libWebCore_a-WidgetES.$(OBJEXT)
+	-rm -f es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT)
+	-rm -f es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f es/WebCore/platform/graphics/es/libWebCore_a-FontES.$(OBJEXT)
 	-rm -f es/WebCore/platform/graphics/es/libWebCore_a-IconES.$(OBJEXT)
 	-rm -f es/WebCore/platform/graphics/es/libWebCore_a-ImageES.$(OBJEXT)
+	-rm -f es/WebCore/platform/libWebCore_a-ThreadGlobalData.$(OBJEXT)
 	-rm -f es/WebCore/platform/network/es/libWebCore_a-CookieJarES.$(OBJEXT)
 	-rm -f es/WebCore/platform/network/es/libWebCore_a-ResourceHandleES.$(OBJEXT)
 	-rm -f es/WebCore/platform/text/es/libWebCore_a-TextBreakIteratorInternalICUES.$(OBJEXT)
@@ -8979,6 +9032,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-main_linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testcanvas2d-testcanvas2d.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testsvg-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testsvg-main_linux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testsvg-testsvg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-CSSGrammar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-ColorData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@DerivedSources/$(DEPDIR)/libWebCore_a-DocTypeStrings.Po@am__quote@
@@ -9005,18 +9061,17 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/bindings/es/$(DEPDIR)/libWebCore_a-ScriptSourceCode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/bindings/es/$(DEPDIR)/libWebCore_a-ScriptState.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/bindings/es/$(DEPDIR)/libWebCore_a-ScriptValue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/page/es/$(DEPDIR)/libWebCore_a-DragControllerES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/page/es/$(DEPDIR)/libWebCore_a-EventHandlerES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/page/es/$(DEPDIR)/libWebCore_a-FrameES.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ClipboardES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ContextMenuES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ContextMenuItemES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-CursorES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragDataES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragImageES.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-Language.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-LocalizedStringsES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-MIMETypeRegistryES.Po@am__quote@
@@ -9030,8 +9085,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-SharedTimerES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-SoundES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-TemporaryLinkStubs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-WidgetES.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/es/$(DEPDIR)/libWebCore_a-FontES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/es/$(DEPDIR)/libWebCore_a-IconES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@es/WebCore/platform/graphics/es/$(DEPDIR)/libWebCore_a-ImageES.Po@am__quote@
@@ -18119,33 +18175,33 @@ trunk/WebCore/xml/libWebCore_a-XMLSerializer.obj: trunk/WebCore/xml/XMLSerialize
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/xml/libWebCore_a-XMLSerializer.obj `if test -f 'trunk/WebCore/xml/XMLSerializer.cpp'; then $(CYGPATH_W) 'trunk/WebCore/xml/XMLSerializer.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/xml/XMLSerializer.cpp'; fi`
 
-es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o: es/WebCore/platform/es/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ThreadGlobalData.cpp' object='es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/libWebCore_a-ThreadGlobalData.o: es/WebCore/platform/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/libWebCore_a-ThreadGlobalData.o -MD -MP -MF es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/ThreadGlobalData.cpp' object='es/WebCore/platform/libWebCore_a-ThreadGlobalData.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ThreadGlobalData.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/libWebCore_a-ThreadGlobalData.o `test -f 'es/WebCore/platform/ThreadGlobalData.cpp' || echo '$(srcdir)/'`es/WebCore/platform/ThreadGlobalData.cpp
 
-es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj: es/WebCore/platform/es/ThreadGlobalData.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ThreadGlobalData.cpp' object='es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/libWebCore_a-ThreadGlobalData.obj: es/WebCore/platform/ThreadGlobalData.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/libWebCore_a-ThreadGlobalData.obj -MD -MP -MF es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo -c -o es/WebCore/platform/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/ThreadGlobalData.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Tpo es/WebCore/platform/$(DEPDIR)/libWebCore_a-ThreadGlobalData.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/ThreadGlobalData.cpp' object='es/WebCore/platform/libWebCore_a-ThreadGlobalData.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/es/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ThreadGlobalData.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/libWebCore_a-ThreadGlobalData.obj `if test -f 'es/WebCore/platform/ThreadGlobalData.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/ThreadGlobalData.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/ThreadGlobalData.cpp'; fi`
 
-es/WebCore/platform/es/libWebCore_a-FrameLoader.o: es/WebCore/platform/es/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-FrameLoader.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/platform/es/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/FrameLoader.cpp' object='es/WebCore/platform/es/libWebCore_a-FrameLoader.o' libtool=no @AMDEPBACKSLASH@
+es/WebCore/loader/libWebCore_a-FrameLoader.o: es/WebCore/loader/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/loader/libWebCore_a-FrameLoader.o -MD -MP -MF es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/loader/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/loader/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/loader/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/loader/FrameLoader.cpp' object='es/WebCore/loader/libWebCore_a-FrameLoader.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/platform/es/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/FrameLoader.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/loader/libWebCore_a-FrameLoader.o `test -f 'es/WebCore/loader/FrameLoader.cpp' || echo '$(srcdir)/'`es/WebCore/loader/FrameLoader.cpp
 
-es/WebCore/platform/es/libWebCore_a-FrameLoader.obj: es/WebCore/platform/es/FrameLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-FrameLoader.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/platform/es/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/FrameLoader.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-FrameLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/FrameLoader.cpp' object='es/WebCore/platform/es/libWebCore_a-FrameLoader.obj' libtool=no @AMDEPBACKSLASH@
+es/WebCore/loader/libWebCore_a-FrameLoader.obj: es/WebCore/loader/FrameLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/loader/libWebCore_a-FrameLoader.obj -MD -MP -MF es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo -c -o es/WebCore/loader/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/loader/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/loader/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/loader/FrameLoader.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Tpo es/WebCore/loader/$(DEPDIR)/libWebCore_a-FrameLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/loader/FrameLoader.cpp' object='es/WebCore/loader/libWebCore_a-FrameLoader.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/platform/es/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/FrameLoader.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/loader/libWebCore_a-FrameLoader.obj `if test -f 'es/WebCore/loader/FrameLoader.cpp'; then $(CYGPATH_W) 'es/WebCore/loader/FrameLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/loader/FrameLoader.cpp'; fi`
 
 trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o: trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o -MD -MP -MF trunk/WebCore/css/$(DEPDIR)/libWebCore_a-SVGCSSComputedStyleDeclaration.Tpo -c -o trunk/WebCore/css/libWebCore_a-SVGCSSComputedStyleDeclaration.o `test -f 'trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp' || echo '$(srcdir)/'`trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp
@@ -21045,33 +21101,33 @@ trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj: trun
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj `if test -f 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; fi`
 
-es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o: es/WebCore/platform/es/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageBufferCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o: es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o -MD -MP -MF es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' object='es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageBufferCairo.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o `test -f 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
 
-es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj: es/WebCore/platform/es/ImageBufferCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageBufferCairo.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageBufferCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj: es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj -MD -MP -MF es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' object='es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/es/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageBufferCairo.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj `if test -f 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; fi`
 
-es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o: es/WebCore/platform/es/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageSourceCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o: es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o -MD -MP -MF es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/es/ImageSourceCairo.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
 
-es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj: es/WebCore/platform/es/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj -MD -MP -MF es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageSourceCairo.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/es/ImageSourceCairo.cpp' object='es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj' libtool=no @AMDEPBACKSLASH@
+es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj: es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj -MD -MP -MF es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo es/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/es/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/es/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/es/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/es/ImageSourceCairo.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o es/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
 
 trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o: trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o -MD -MP -MF trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Tpo -c -o trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o `test -f 'trunk/WebCore/platform/posix/FileSystemPOSIX.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
@@ -21969,6 +22025,48 @@ testcanvas2d-main.obj: main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testcanvas2d_CPPFLAGS) $(CPPFLAGS) $(testcanvas2d_CXXFLAGS) $(CXXFLAGS) -c -o testcanvas2d-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
 
+testsvg-testsvg.o: testsvg.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-testsvg.o -MD -MP -MF $(DEPDIR)/testsvg-testsvg.Tpo -c -o testsvg-testsvg.o `test -f 'testsvg.cpp' || echo '$(srcdir)/'`testsvg.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-testsvg.Tpo $(DEPDIR)/testsvg-testsvg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testsvg.cpp' object='testsvg-testsvg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-testsvg.o `test -f 'testsvg.cpp' || echo '$(srcdir)/'`testsvg.cpp
+
+testsvg-testsvg.obj: testsvg.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-testsvg.obj -MD -MP -MF $(DEPDIR)/testsvg-testsvg.Tpo -c -o testsvg-testsvg.obj `if test -f 'testsvg.cpp'; then $(CYGPATH_W) 'testsvg.cpp'; else $(CYGPATH_W) '$(srcdir)/testsvg.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-testsvg.Tpo $(DEPDIR)/testsvg-testsvg.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='testsvg.cpp' object='testsvg-testsvg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-testsvg.obj `if test -f 'testsvg.cpp'; then $(CYGPATH_W) 'testsvg.cpp'; else $(CYGPATH_W) '$(srcdir)/testsvg.cpp'; fi`
+
+testsvg-main_linux.o: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-main_linux.o -MD -MP -MF $(DEPDIR)/testsvg-main_linux.Tpo -c -o testsvg-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-main_linux.Tpo $(DEPDIR)/testsvg-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testsvg-main_linux.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-main_linux.o `test -f 'main_linux.cpp' || echo '$(srcdir)/'`main_linux.cpp
+
+testsvg-main_linux.obj: main_linux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-main_linux.obj -MD -MP -MF $(DEPDIR)/testsvg-main_linux.Tpo -c -o testsvg-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-main_linux.Tpo $(DEPDIR)/testsvg-main_linux.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main_linux.cpp' object='testsvg-main_linux.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-main_linux.obj `if test -f 'main_linux.cpp'; then $(CYGPATH_W) 'main_linux.cpp'; else $(CYGPATH_W) '$(srcdir)/main_linux.cpp'; fi`
+
+testsvg-main.o: main.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-main.o -MD -MP -MF $(DEPDIR)/testsvg-main.Tpo -c -o testsvg-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-main.Tpo $(DEPDIR)/testsvg-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='testsvg-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+
+testsvg-main.obj: main.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -MT testsvg-main.obj -MD -MP -MF $(DEPDIR)/testsvg-main.Tpo -c -o testsvg-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/testsvg-main.Tpo $(DEPDIR)/testsvg-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='testsvg-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(testsvg_CPPFLAGS) $(CPPFLAGS) $(testsvg_CXXFLAGS) $(CXXFLAGS) -c -o testsvg-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -22182,10 +22280,16 @@ distclean-generic:
 	-rm -f es/JavaScriptCore/wtf/es/$(am__dirstamp)
 	-rm -f es/WebCore/bindings/es/$(DEPDIR)/$(am__dirstamp)
 	-rm -f es/WebCore/bindings/es/$(am__dirstamp)
+	-rm -f es/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
+	-rm -f es/WebCore/loader/$(am__dirstamp)
 	-rm -f es/WebCore/page/es/$(DEPDIR)/$(am__dirstamp)
 	-rm -f es/WebCore/page/es/$(am__dirstamp)
+	-rm -f es/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
+	-rm -f es/WebCore/platform/$(am__dirstamp)
 	-rm -f es/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 	-rm -f es/WebCore/platform/es/$(am__dirstamp)
+	-rm -f es/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
+	-rm -f es/WebCore/platform/graphics/cairo/$(am__dirstamp)
 	-rm -f es/WebCore/platform/graphics/es/$(DEPDIR)/$(am__dirstamp)
 	-rm -f es/WebCore/platform/graphics/es/$(am__dirstamp)
 	-rm -f es/WebCore/platform/network/es/$(DEPDIR)/$(am__dirstamp)
@@ -22284,7 +22388,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/loader/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/cairo/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -22320,7 +22424,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) es/JavaScriptCore/wtf/es/$(DEPDIR) es/WebCore/bindings/es/$(DEPDIR) es/WebCore/loader/$(DEPDIR) es/WebCore/page/es/$(DEPDIR) es/WebCore/platform/$(DEPDIR) es/WebCore/platform/es/$(DEPDIR) es/WebCore/platform/graphics/cairo/$(DEPDIR) es/WebCore/platform/graphics/es/$(DEPDIR) es/WebCore/platform/network/es/$(DEPDIR) es/WebCore/platform/text/es/$(DEPDIR) es/WebKit/es/$(DEPDIR) es/WebKit/es/WebCoreSupport/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
