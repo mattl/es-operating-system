@@ -302,12 +302,9 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(srcdir)/trunk/WebCore/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-I$(srcdir)/es/WebCore \
 	-I$(srcdir)/es/WebCore/bindings/es \
-	-I$(srcdir)/es/WebCore/loader \
 	-I$(srcdir)/es/WebCore/page/es \
-	-I$(srcdir)/es/WebCore/platform \
 	-I$(srcdir)/es/WebCore/platform/es \
 	-I$(srcdir)/es/WebCore/platform/graphics/es \
-	-I$(srcdir)/es/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/es/WebCore/platform/network/es \
 	-I$(srcdir)/es/WebCore/platform/text/es \
@@ -353,15 +350,6 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/cairo \
 	-DDATA_DIR=\"${datadir}\"
 
-if ENABLE_SVG
-webcore_cppflags += \
-	-DENABLE_SVG=1 \
-	-I$(srcdir)/trunk/WebCore/svg \
-	-I$(srcdir)/trunk/WebCore/svg/animation \
-	-I$(srcdir)/trunk/WebCore/svg/graphics \
-	-I$(srcdir)/trunk/WebCore/svg/graphics/filters
-endif
-
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \
@@ -381,18 +369,6 @@ webcore_built_sources += \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
 	DerivedSources/XMLNames.cpp \
 	DerivedSources/XMLNames.h
-
-if ENABLE_SVG
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
-
-WEBCORE_CSS_PROPERTY_NAMES += $(srcdir)/trunk/WebCore/css/SVGCSSPropertyNames.in
-WEBCORE_CSS_VALUE_KEYWORDS += $(srcdir)/trunk/WebCore/css/SVGCSSValueKeywords.in
-
-webcore_built_sources += \
-	DerivedSources/SVGElementFactory.cpp \
-	DerivedSources/SVGNames.cpp \
-	DerivedSources/XLinkNames.cpp
-endif
 
 webcore_sources += \
 	trunk/WebCore/WebCorePrefix.h \
@@ -1080,6 +1056,7 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
+	trunk/WebCore/loader/FrameLoader.cpp \
 	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
@@ -1689,413 +1666,10 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
-	es/WebCore/platform/ThreadGlobalData.cpp \
-	es/WebCore/platform/ThreadGlobalData.h \
-	es/WebCore/loader/FrameLoader.cpp 
-
-# ----
-# SVG Support
-#
-# FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
-# ----
-
-if ENABLE_SVG
-
-webcore_sources += \
-	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
-	trunk/WebCore/css/SVGCSSParser.cpp \
-	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
-	trunk/WebCore/rendering/PointerEventsHitRules.cpp \
-	trunk/WebCore/rendering/PointerEventsHitRules.h \
-	trunk/WebCore/rendering/RenderForeignObject.cpp \
-	trunk/WebCore/rendering/RenderForeignObject.h \
-	trunk/WebCore/rendering/RenderPath.cpp \
-	trunk/WebCore/rendering/RenderPath.h \
-	trunk/WebCore/rendering/RenderSVGBlock.cpp \
-	trunk/WebCore/rendering/RenderSVGBlock.h \
-	trunk/WebCore/rendering/RenderSVGContainer.cpp \
-	trunk/WebCore/rendering/RenderSVGContainer.h \
-	trunk/WebCore/rendering/RenderSVGGradientStop.cpp \
-	trunk/WebCore/rendering/RenderSVGGradientStop.h \
-	trunk/WebCore/rendering/RenderSVGHiddenContainer.cpp \
-	trunk/WebCore/rendering/RenderSVGHiddenContainer.h \
-	trunk/WebCore/rendering/RenderSVGImage.cpp \
-	trunk/WebCore/rendering/RenderSVGImage.h \
-	trunk/WebCore/rendering/RenderSVGInline.cpp \
-	trunk/WebCore/rendering/RenderSVGInline.h \
-	trunk/WebCore/rendering/RenderSVGInlineText.cpp \
-	trunk/WebCore/rendering/RenderSVGInlineText.h \
-	trunk/WebCore/rendering/RenderSVGRoot.cpp \
-	trunk/WebCore/rendering/RenderSVGRoot.h \
-	trunk/WebCore/rendering/RenderSVGTSpan.cpp \
-	trunk/WebCore/rendering/RenderSVGTSpan.h \
-	trunk/WebCore/rendering/RenderSVGText.cpp \
-	trunk/WebCore/rendering/RenderSVGText.h \
-	trunk/WebCore/rendering/RenderSVGTextPath.cpp \
-	trunk/WebCore/rendering/RenderSVGTextPath.h \
-	trunk/WebCore/rendering/RenderSVGTransformableContainer.cpp \
-	trunk/WebCore/rendering/RenderSVGTransformableContainer.h \
-	trunk/WebCore/rendering/RenderSVGViewportContainer.cpp \
-	trunk/WebCore/rendering/RenderSVGViewportContainer.h \
-	trunk/WebCore/rendering/SVGCharacterLayoutInfo.cpp \
-	trunk/WebCore/rendering/SVGCharacterLayoutInfo.h \
-	trunk/WebCore/rendering/SVGInlineFlowBox.cpp \
-	trunk/WebCore/rendering/SVGInlineFlowBox.h \
-	trunk/WebCore/rendering/SVGInlineTextBox.cpp \
-	trunk/WebCore/rendering/SVGInlineTextBox.h \
-	trunk/WebCore/rendering/SVGRenderSupport.cpp \
-	trunk/WebCore/rendering/SVGRenderSupport.h \
-	trunk/WebCore/rendering/SVGRenderTreeAsText.cpp \
-	trunk/WebCore/rendering/SVGRenderTreeAsText.h \
-	trunk/WebCore/rendering/SVGRootInlineBox.cpp \
-	trunk/WebCore/rendering/SVGRootInlineBox.h \
-	trunk/WebCore/rendering/style/SVGRenderStyle.cpp \
-	trunk/WebCore/rendering/style/SVGRenderStyle.h \
-	trunk/WebCore/rendering/style/SVGRenderStyleDefs.cpp \
-	trunk/WebCore/rendering/style/SVGRenderStyleDefs.h \
-	trunk/WebCore/svg/ColorDistance.cpp \
-	trunk/WebCore/svg/ColorDistance.h \
-	trunk/WebCore/svg/ElementTimeControl.h \
-	trunk/WebCore/svg/GradientAttributes.h \
-	trunk/WebCore/svg/LinearGradientAttributes.h \
-	trunk/WebCore/svg/PatternAttributes.h \
-	trunk/WebCore/svg/RadialGradientAttributes.h \
-	trunk/WebCore/svg/SVGAElement.cpp \
-	trunk/WebCore/svg/SVGAElement.h \
-	trunk/WebCore/svg/SVGAltGlyphElement.cpp \
-	trunk/WebCore/svg/SVGAltGlyphElement.h \
-	trunk/WebCore/svg/SVGAngle.cpp \
-	trunk/WebCore/svg/SVGAngle.h \
-	trunk/WebCore/svg/SVGAnimateColorElement.cpp \
-	trunk/WebCore/svg/SVGAnimateColorElement.h \
-	trunk/WebCore/svg/SVGAnimateElement.cpp \
-	trunk/WebCore/svg/SVGAnimateElement.h \
-	trunk/WebCore/svg/SVGAnimateMotionElement.cpp \
-	trunk/WebCore/svg/SVGAnimateMotionElement.h \
-	trunk/WebCore/svg/SVGAnimateTransformElement.cpp \
-	trunk/WebCore/svg/SVGAnimateTransformElement.h \
-	trunk/WebCore/svg/SVGAnimatedPathData.cpp \
-	trunk/WebCore/svg/SVGAnimatedPathData.h \
-	trunk/WebCore/svg/SVGAnimatedPoints.cpp \
-	trunk/WebCore/svg/SVGAnimatedPoints.h \
-	trunk/WebCore/svg/SVGAnimatedProperty.h \
-	trunk/WebCore/svg/SVGAnimatedTemplate.h \
-	trunk/WebCore/svg/SVGAnimationElement.cpp \
-	trunk/WebCore/svg/SVGAnimationElement.h \
-	trunk/WebCore/svg/SVGCircleElement.cpp \
-	trunk/WebCore/svg/SVGCircleElement.h \
-	trunk/WebCore/svg/SVGClipPathElement.cpp \
-	trunk/WebCore/svg/SVGClipPathElement.h \
-	trunk/WebCore/svg/SVGColor.cpp \
-	trunk/WebCore/svg/SVGColor.h \
-	trunk/WebCore/svg/SVGComponentTransferFunctionElement.cpp \
-	trunk/WebCore/svg/SVGComponentTransferFunctionElement.h \
-	trunk/WebCore/svg/SVGCursorElement.cpp \
-	trunk/WebCore/svg/SVGCursorElement.h \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.cpp \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.h \
-	trunk/WebCore/svg/SVGDefsElement.cpp \
-	trunk/WebCore/svg/SVGDefsElement.h \
-	trunk/WebCore/svg/SVGDescElement.cpp \
-	trunk/WebCore/svg/SVGDescElement.h \
-	trunk/WebCore/svg/SVGDocument.cpp \
-	trunk/WebCore/svg/SVGDocument.h \
-	trunk/WebCore/svg/SVGDocumentExtensions.cpp \
-	trunk/WebCore/svg/SVGDocumentExtensions.h \
-	trunk/WebCore/svg/SVGElement.cpp \
-	trunk/WebCore/svg/SVGElement.h \
-	trunk/WebCore/svg/SVGElementInstance.cpp \
-	trunk/WebCore/svg/SVGElementInstance.h \
-	trunk/WebCore/svg/SVGElementInstanceList.cpp \
-	trunk/WebCore/svg/SVGElementInstanceList.h \
-	trunk/WebCore/svg/SVGEllipseElement.cpp \
-	trunk/WebCore/svg/SVGEllipseElement.h \
-	trunk/WebCore/svg/SVGException.h \
-	trunk/WebCore/svg/SVGExternalResourcesRequired.cpp \
-	trunk/WebCore/svg/SVGExternalResourcesRequired.h \
-	trunk/WebCore/svg/SVGFEBlendElement.cpp \
-	trunk/WebCore/svg/SVGFEBlendElement.h \
-	trunk/WebCore/svg/SVGFEColorMatrixElement.cpp \
-	trunk/WebCore/svg/SVGFEColorMatrixElement.h \
-	trunk/WebCore/svg/SVGFEComponentTransferElement.cpp \
-	trunk/WebCore/svg/SVGFEComponentTransferElement.h \
-	trunk/WebCore/svg/SVGFECompositeElement.cpp \
-	trunk/WebCore/svg/SVGFECompositeElement.h \
-	trunk/WebCore/svg/SVGFEDiffuseLightingElement.cpp \
-	trunk/WebCore/svg/SVGFEDiffuseLightingElement.h \
-	trunk/WebCore/svg/SVGFEDisplacementMapElement.cpp \
-	trunk/WebCore/svg/SVGFEDisplacementMapElement.h \
-	trunk/WebCore/svg/SVGFEDistantLightElement.cpp \
-	trunk/WebCore/svg/SVGFEDistantLightElement.h \
-	trunk/WebCore/svg/SVGFEFloodElement.cpp \
-	trunk/WebCore/svg/SVGFEFloodElement.h \
-	trunk/WebCore/svg/SVGFEFuncAElement.cpp \
-	trunk/WebCore/svg/SVGFEFuncAElement.h \
-	trunk/WebCore/svg/SVGFEFuncBElement.cpp \
-	trunk/WebCore/svg/SVGFEFuncBElement.h \
-	trunk/WebCore/svg/SVGFEFuncGElement.cpp \
-	trunk/WebCore/svg/SVGFEFuncGElement.h \
-	trunk/WebCore/svg/SVGFEFuncRElement.cpp \
-	trunk/WebCore/svg/SVGFEFuncRElement.h \
-	trunk/WebCore/svg/SVGFEGaussianBlurElement.cpp \
-	trunk/WebCore/svg/SVGFEGaussianBlurElement.h \
-	trunk/WebCore/svg/SVGFEImageElement.cpp \
-	trunk/WebCore/svg/SVGFEImageElement.h \
-	trunk/WebCore/svg/SVGFELightElement.cpp \
-	trunk/WebCore/svg/SVGFELightElement.h \
-	trunk/WebCore/svg/SVGFEMergeElement.cpp \
-	trunk/WebCore/svg/SVGFEMergeElement.h \
-	trunk/WebCore/svg/SVGFEMergeNodeElement.cpp \
-	trunk/WebCore/svg/SVGFEMergeNodeElement.h \
-	trunk/WebCore/svg/SVGFEOffsetElement.cpp \
-	trunk/WebCore/svg/SVGFEOffsetElement.h \
-	trunk/WebCore/svg/SVGFEPointLightElement.cpp \
-	trunk/WebCore/svg/SVGFEPointLightElement.h \
-	trunk/WebCore/svg/SVGFESpecularLightingElement.cpp \
-	trunk/WebCore/svg/SVGFESpecularLightingElement.h \
-	trunk/WebCore/svg/SVGFESpotLightElement.cpp \
-	trunk/WebCore/svg/SVGFESpotLightElement.h \
-	trunk/WebCore/svg/SVGFETileElement.cpp \
-	trunk/WebCore/svg/SVGFETileElement.h \
-	trunk/WebCore/svg/SVGFETurbulenceElement.cpp \
-	trunk/WebCore/svg/SVGFETurbulenceElement.h \
-	trunk/WebCore/svg/SVGFilterElement.cpp \
-	trunk/WebCore/svg/SVGFilterElement.h \
-	trunk/WebCore/svg/SVGFilterPrimitiveStandardAttributes.cpp \
-	trunk/WebCore/svg/SVGFilterPrimitiveStandardAttributes.h \
-	trunk/WebCore/svg/SVGFitToViewBox.cpp \
-	trunk/WebCore/svg/SVGFitToViewBox.h \
-	trunk/WebCore/svg/SVGFont.cpp \
-	trunk/WebCore/svg/SVGFontData.cpp \
-	trunk/WebCore/svg/SVGFontData.h \
-	trunk/WebCore/svg/SVGFontElement.cpp \
-	trunk/WebCore/svg/SVGFontElement.h \
-	trunk/WebCore/svg/SVGFontFaceElement.cpp \
-	trunk/WebCore/svg/SVGFontFaceElement.h \
-	trunk/WebCore/svg/SVGFontFaceFormatElement.cpp \
-	trunk/WebCore/svg/SVGFontFaceFormatElement.h \
-	trunk/WebCore/svg/SVGFontFaceNameElement.cpp \
-	trunk/WebCore/svg/SVGFontFaceNameElement.h \
-	trunk/WebCore/svg/SVGFontFaceSrcElement.cpp \
-	trunk/WebCore/svg/SVGFontFaceSrcElement.h \
-	trunk/WebCore/svg/SVGFontFaceUriElement.cpp \
-	trunk/WebCore/svg/SVGFontFaceUriElement.h \
-	trunk/WebCore/svg/SVGForeignObjectElement.cpp \
-	trunk/WebCore/svg/SVGForeignObjectElement.h \
-	trunk/WebCore/svg/SVGGElement.cpp \
-	trunk/WebCore/svg/SVGGElement.h \
-	trunk/WebCore/svg/SVGGlyphElement.cpp \
-	trunk/WebCore/svg/SVGGlyphElement.h \
-	trunk/WebCore/svg/SVGGlyphMap.h \
-	trunk/WebCore/svg/SVGGradientElement.cpp \
-	trunk/WebCore/svg/SVGGradientElement.h \
-	trunk/WebCore/svg/SVGHKernElement.cpp \
-	trunk/WebCore/svg/SVGHKernElement.h \
-	trunk/WebCore/svg/SVGImageElement.cpp \
-	trunk/WebCore/svg/SVGImageElement.h \
-	trunk/WebCore/svg/SVGImageLoader.cpp \
-	trunk/WebCore/svg/SVGImageLoader.h \
-	trunk/WebCore/svg/SVGLangSpace.cpp \
-	trunk/WebCore/svg/SVGLangSpace.h \
-	trunk/WebCore/svg/SVGLength.cpp \
-	trunk/WebCore/svg/SVGLength.h \
-	trunk/WebCore/svg/SVGLengthList.cpp \
-	trunk/WebCore/svg/SVGLengthList.h \
-	trunk/WebCore/svg/SVGLineElement.cpp \
-	trunk/WebCore/svg/SVGLineElement.h \
-	trunk/WebCore/svg/SVGLinearGradientElement.cpp \
-	trunk/WebCore/svg/SVGLinearGradientElement.h \
-	trunk/WebCore/svg/SVGList.h \
-	trunk/WebCore/svg/SVGListTraits.h \
-	trunk/WebCore/svg/SVGLocatable.cpp \
-	trunk/WebCore/svg/SVGLocatable.h \
-	trunk/WebCore/svg/SVGMPathElement.cpp \
-	trunk/WebCore/svg/SVGMPathElement.h \
-	trunk/WebCore/svg/SVGMarkerElement.cpp \
-	trunk/WebCore/svg/SVGMarkerElement.h \
-	trunk/WebCore/svg/SVGMaskElement.cpp \
-	trunk/WebCore/svg/SVGMaskElement.h \
-	trunk/WebCore/svg/SVGMetadataElement.cpp \
-	trunk/WebCore/svg/SVGMetadataElement.h \
-	trunk/WebCore/svg/SVGMissingGlyphElement.cpp \
-	trunk/WebCore/svg/SVGMissingGlyphElement.h \
-	trunk/WebCore/svg/SVGNumberList.cpp \
-	trunk/WebCore/svg/SVGNumberList.h \
-	trunk/WebCore/svg/SVGPaint.cpp \
-	trunk/WebCore/svg/SVGPaint.h \
-	trunk/WebCore/svg/SVGParserUtilities.cpp \
-	trunk/WebCore/svg/SVGParserUtilities.h \
-	trunk/WebCore/svg/SVGPathElement.cpp \
-	trunk/WebCore/svg/SVGPathElement.h \
-	trunk/WebCore/svg/SVGPathSeg.h \
-	trunk/WebCore/svg/SVGPathSegArc.cpp \
-	trunk/WebCore/svg/SVGPathSegArc.h \
-	trunk/WebCore/svg/SVGPathSegClosePath.cpp \
-	trunk/WebCore/svg/SVGPathSegClosePath.h \
-	trunk/WebCore/svg/SVGPathSegCurvetoCubic.cpp \
-	trunk/WebCore/svg/SVGPathSegCurvetoCubic.h \
-	trunk/WebCore/svg/SVGPathSegCurvetoCubicSmooth.cpp \
-	trunk/WebCore/svg/SVGPathSegCurvetoCubicSmooth.h \
-	trunk/WebCore/svg/SVGPathSegCurvetoQuadratic.cpp \
-	trunk/WebCore/svg/SVGPathSegCurvetoQuadratic.h \
-	trunk/WebCore/svg/SVGPathSegCurvetoQuadraticSmooth.cpp \
-	trunk/WebCore/svg/SVGPathSegCurvetoQuadraticSmooth.h \
-	trunk/WebCore/svg/SVGPathSegLineto.cpp \
-	trunk/WebCore/svg/SVGPathSegLineto.h \
-	trunk/WebCore/svg/SVGPathSegLinetoHorizontal.cpp \
-	trunk/WebCore/svg/SVGPathSegLinetoHorizontal.h \
-	trunk/WebCore/svg/SVGPathSegLinetoVertical.cpp \
-	trunk/WebCore/svg/SVGPathSegLinetoVertical.h \
-	trunk/WebCore/svg/SVGPathSegList.cpp \
-	trunk/WebCore/svg/SVGPathSegList.h \
-	trunk/WebCore/svg/SVGPathSegMoveto.cpp \
-	trunk/WebCore/svg/SVGPathSegMoveto.h \
-	trunk/WebCore/svg/SVGPatternElement.cpp \
-	trunk/WebCore/svg/SVGPatternElement.h \
-	trunk/WebCore/svg/SVGPointList.cpp \
-	trunk/WebCore/svg/SVGPointList.h \
-	trunk/WebCore/svg/SVGPolyElement.cpp \
-	trunk/WebCore/svg/SVGPolyElement.h \
-	trunk/WebCore/svg/SVGPolygonElement.cpp \
-	trunk/WebCore/svg/SVGPolygonElement.h \
-	trunk/WebCore/svg/SVGPolylineElement.cpp \
-	trunk/WebCore/svg/SVGPolylineElement.h \
-	trunk/WebCore/svg/SVGPreserveAspectRatio.cpp \
-	trunk/WebCore/svg/SVGPreserveAspectRatio.h \
-	trunk/WebCore/svg/SVGRadialGradientElement.cpp \
-	trunk/WebCore/svg/SVGRadialGradientElement.h \
-	trunk/WebCore/svg/SVGRectElement.cpp \
-	trunk/WebCore/svg/SVGRectElement.h \
-	trunk/WebCore/svg/SVGRenderingIntent.h \
-	trunk/WebCore/svg/SVGSVGElement.cpp \
-	trunk/WebCore/svg/SVGSVGElement.h \
-	trunk/WebCore/svg/SVGScriptElement.cpp \
-	trunk/WebCore/svg/SVGScriptElement.h \
-	trunk/WebCore/svg/SVGSetElement.cpp \
-	trunk/WebCore/svg/SVGSetElement.h \
-	trunk/WebCore/svg/SVGStopElement.cpp \
-	trunk/WebCore/svg/SVGStopElement.h \
-	trunk/WebCore/svg/SVGStringList.cpp \
-	trunk/WebCore/svg/SVGStringList.h \
-	trunk/WebCore/svg/SVGStylable.cpp \
-	trunk/WebCore/svg/SVGStylable.h \
-	trunk/WebCore/svg/SVGStyleElement.cpp \
-	trunk/WebCore/svg/SVGStyleElement.h \
-	trunk/WebCore/svg/SVGStyledElement.cpp \
-	trunk/WebCore/svg/SVGStyledElement.h \
-	trunk/WebCore/svg/SVGStyledLocatableElement.cpp \
-	trunk/WebCore/svg/SVGStyledLocatableElement.h \
-	trunk/WebCore/svg/SVGStyledTransformableElement.cpp \
-	trunk/WebCore/svg/SVGStyledTransformableElement.h \
-	trunk/WebCore/svg/SVGSwitchElement.cpp \
-	trunk/WebCore/svg/SVGSwitchElement.h \
-	trunk/WebCore/svg/SVGSymbolElement.cpp \
-	trunk/WebCore/svg/SVGSymbolElement.h \
-	trunk/WebCore/svg/SVGTRefElement.cpp \
-	trunk/WebCore/svg/SVGTRefElement.h \
-	trunk/WebCore/svg/SVGTSpanElement.cpp \
-	trunk/WebCore/svg/SVGTSpanElement.h \
-	trunk/WebCore/svg/SVGTests.cpp \
-	trunk/WebCore/svg/SVGTests.h \
-	trunk/WebCore/svg/SVGTextContentElement.cpp \
-	trunk/WebCore/svg/SVGTextContentElement.h \
-	trunk/WebCore/svg/SVGTextElement.cpp \
-	trunk/WebCore/svg/SVGTextElement.h \
-	trunk/WebCore/svg/SVGTextPathElement.cpp \
-	trunk/WebCore/svg/SVGTextPathElement.h \
-	trunk/WebCore/svg/SVGTextPositioningElement.cpp \
-	trunk/WebCore/svg/SVGTextPositioningElement.h \
-	trunk/WebCore/svg/SVGTitleElement.cpp \
-	trunk/WebCore/svg/SVGTitleElement.h \
-	trunk/WebCore/svg/SVGTransform.cpp \
-	trunk/WebCore/svg/SVGTransform.h \
-	trunk/WebCore/svg/SVGTransformDistance.cpp \
-	trunk/WebCore/svg/SVGTransformDistance.h \
-	trunk/WebCore/svg/SVGTransformList.cpp \
-	trunk/WebCore/svg/SVGTransformList.h \
-	trunk/WebCore/svg/SVGTransformable.cpp \
-	trunk/WebCore/svg/SVGTransformable.h \
-	trunk/WebCore/svg/SVGURIReference.cpp \
-	trunk/WebCore/svg/SVGURIReference.h \
-	trunk/WebCore/svg/SVGUnitTypes.h \
-	trunk/WebCore/svg/SVGUseElement.cpp \
-	trunk/WebCore/svg/SVGUseElement.h \
-	trunk/WebCore/svg/SVGViewElement.cpp \
-	trunk/WebCore/svg/SVGViewElement.h \
-	trunk/WebCore/svg/SVGViewSpec.cpp \
-	trunk/WebCore/svg/SVGViewSpec.h \
-	trunk/WebCore/svg/SVGZoomAndPan.cpp \
-	trunk/WebCore/svg/SVGZoomAndPan.h \
-	trunk/WebCore/svg/SVGZoomEvent.cpp \
-	trunk/WebCore/svg/SVGZoomEvent.h \
-	trunk/WebCore/svg/SynchronizableTypeWrapper.h \
-	trunk/WebCore/svg/animation/SMILTime.cpp \
-	trunk/WebCore/svg/animation/SMILTime.h \
-	trunk/WebCore/svg/animation/SMILTimeContainer.cpp \
-	trunk/WebCore/svg/animation/SMILTimeContainer.h \
-	trunk/WebCore/svg/animation/SVGSMILElement.cpp \
-	trunk/WebCore/svg/animation/SVGSMILElement.h \
-	trunk/WebCore/svg/graphics/SVGImage.cpp \
-	trunk/WebCore/svg/graphics/SVGImage.h \
-	trunk/WebCore/svg/graphics/SVGPaintServer.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServer.h \
-	trunk/WebCore/svg/graphics/SVGPaintServerGradient.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServerGradient.h \
-	trunk/WebCore/svg/graphics/SVGPaintServerLinearGradient.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServerLinearGradient.h \
-	trunk/WebCore/svg/graphics/SVGPaintServerPattern.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServerPattern.h \
-	trunk/WebCore/svg/graphics/SVGPaintServerRadialGradient.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServerRadialGradient.h \
-	trunk/WebCore/svg/graphics/SVGPaintServerSolid.cpp \
-	trunk/WebCore/svg/graphics/SVGPaintServerSolid.h \
-	trunk/WebCore/svg/graphics/SVGResource.cpp \
-	trunk/WebCore/svg/graphics/SVGResource.h \
-	trunk/WebCore/svg/graphics/SVGResourceClipper.cpp \
-	trunk/WebCore/svg/graphics/SVGResourceClipper.h \
-	trunk/WebCore/svg/graphics/SVGResourceFilter.cpp \
-	trunk/WebCore/svg/graphics/SVGResourceFilter.h \
-	trunk/WebCore/svg/graphics/SVGResourceListener.h \
-	trunk/WebCore/svg/graphics/SVGResourceMarker.cpp \
-	trunk/WebCore/svg/graphics/SVGResourceMarker.h \
-	trunk/WebCore/svg/graphics/SVGResourceMasker.cpp \
-	trunk/WebCore/svg/graphics/SVGResourceMasker.h \
-	trunk/WebCore/svg/graphics/filters/SVGDistantLightSource.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEConvolveMatrix.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEDiffuseLighting.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEDiffuseLighting.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEDisplacementMap.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEDisplacementMap.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEFlood.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEFlood.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEGaussianBlur.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEGaussianBlur.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEImage.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEImage.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEMerge.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEMerge.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEMorphology.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEMorphology.h \
-	trunk/WebCore/svg/graphics/filters/SVGFEOffset.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFEOffset.h \
-	trunk/WebCore/svg/graphics/filters/SVGFESpecularLighting.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFESpecularLighting.h \
-	trunk/WebCore/svg/graphics/filters/SVGFETile.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFETile.h \
-	trunk/WebCore/svg/graphics/filters/SVGFETurbulence.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFETurbulence.h \
-	trunk/WebCore/svg/graphics/filters/SVGFilter.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGFilter.h \
-	trunk/WebCore/svg/graphics/filters/SVGFilterBuilder.h \
-	trunk/WebCore/svg/graphics/filters/SVGFilterBuilder.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGLightSource.cpp \
-	trunk/WebCore/svg/graphics/filters/SVGLightSource.h \
-	trunk/WebCore/svg/graphics/filters/SVGPointLightSource.h \
-	trunk/WebCore/svg/graphics/filters/SVGSpotLightSource.h
-endif
-
-# Build TestNetscapePlugin only for X11
+	es/WebCore/platform/es/ThreadGlobalData.cpp \
+	es/WebCore/platform/es/ThreadGlobalData.h 
+#	trunk/WebCore/platform/ThreadGlobalData.cpp \
+#	trunk/WebCore/platform/ThreadGlobalData.h 
 	
 webcorees_sources += \
 	trunk/WebCore/platform/graphics/cairo/CairoPath.h \
@@ -2128,9 +1702,10 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
+	es/WebCore/platform/es/ImageBufferCairo.cpp \
+	es/WebCore/platform/es/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
+#	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 #	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
@@ -2220,64 +1795,6 @@ webcorees_sources += \
 	es/WebKit/es/WebCoreSupport/FrameLoaderClientES.h \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.cpp \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.h
-
-
-if ENABLE_SVG
-
-# SVG Features
-if ENABLE_SVG_USE
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_USE=1
-SVG_FEATURES += ENABLE_SVG_USE=1
-webcore_cppflags += -DENABLE_SVG_USE=1
-endif
-
-if ENABLE_SVG_FOREIGN_OBJECT
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FOREIGN_OBJECT=1
-SVG_FEATURES += ENABLE_SVG_FOREIGN_OBJECT=1
-webcore_cppflags += -DENABLE_SVG_FOREIGN_OBJECT=1
-endif
-
-if ENABLE_SVG_FONTS
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FONTS=1
-SVG_FEATURES += ENABLE_SVG_FONTS=1
-webcore_cppflags += -DENABLE_SVG_FONTS=1
-endif
-
-if ENABLE_SVG_AS_IMAGE
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_AS_IMAGE=1
-SVG_FEATURES += ENABLE_SVG_AS_IMAGE=1
-webcore_cppflags += -DENABLE_SVG_AS_IMAGE=1
-endif
-
-if ENABLE_SVG_ANIMATION
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_ANIMATION=1
-SVG_FEATURES += ENABLE_SVG_ANIMATION=1
-webcore_cppflags += -DENABLE_SVG_ANIMATION=1
-endif
-
-# SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
-DerivedSources/SVGNames.cpp: DerivedSources/SVGElementFactory.cpp;
-DerivedSources/JSSVGElementWrapperFactory.cpp: DerivedSources/SVGElementFactory.cpp;
-
-if SVG_FLAGS
-DerivedSources/SVGElementFactory.cpp: $(srcdir)/trunk/WebCore/dom/make_names.pl $(srcdir)/trunk/WebCore/svg/svgtags.in $(srcdir)/trunk/WebCore/svg/svgattrs.in
-	perl -I$(srcdir)/trunk/WebCore/bindings/scripts $< --tags $(srcdir)/trunk/WebCore/svg/svgtags.in --attrs $(srcdir)/trunk/WebCore/svg/svgattrs.in --extraDefines "$(SVG_FEATURES)" --factory --wrapperFactory --outputDir "$(GENSOURCES)"
-else
-DerivedSources/SVGElementFactory.cpp: $(srcdir)/trunk/WebCore/dom/make_names.pl $(srcdir)/trunk/WebCore/svg/svgtags.in $(srcdir)/trunk/WebCore/svg/svgattrs.in
-	perl -I$(srcdir)/trunk/WebCore/bindings/scripts $< --tags $(srcdir)/trunk/WebCore/svg/svgtags.in --attrs $(srcdir)/trunk/WebCore/svg/svgattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
-
-endif # SVG_FLAGS
-
-# end SVG Features
-
-DerivedSources/XLinkNames.h: DerivedSources/XLinkNames.cpp;
-
-DerivedSources/XLinkNames.cpp : $(srcdir)/trunk/WebCore/dom/make_names.pl $(srcdir)/trunk/WebCore/svg/xlinkattrs.in
-	perl -I$(srcdir)/trunk/WebCore/bindings/scripts $< --attrs $(srcdir)/trunk/WebCore/svg/xlinkattrs.in --outputDir "$(GENSOURCES)"
-
-endif # END ENABLE_SVG
-
-
 
 # ---
 # Freetype font backend
@@ -2417,8 +1934,7 @@ webkit_linux_ldadd = \
 webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)/lib
 
 TEST_PROGS += \
-	testcanvas2d \
-	testsvg
+	testcanvas2d
 
 if OS_ES
 
@@ -2437,21 +1953,6 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
 
-testsvg_SOURCES = testsvg.cpp main.cpp
-testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
-testsvg_CFLAGS = $(webkit_tests_cflags)
-testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
-	-I../../include \
-	-I$(srcdir)/../../include \
-        -I$(prefix)/include \
-        -I$(prefix)/include/es \
-        -I$(prefix)/include/freetype2 \
-        -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
-
-testsvg_LDADD = $(webkit_tests_ldadd)
-testsvg_LDFLAGS = $(webkit_tests_ldflags)
-
 else
 
 testcanvas2d_SOURCES = testcanvas2d.cpp main_linux.cpp
@@ -2462,15 +1963,6 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
 	-I$(srcdir)/../../include 
 testcanvas2d_LDADD = $(webkit_linux_ldadd)
 testcanvas2d_LDFLAGS = 
-
-testsvg_SOURCES = testsvg.cpp main_linux.cpp
-testsvg_CXXFLAGS = $(webkit_tests_cxxflags)
-testsvg_CFLAGS = $(webkit_tests_cflags)
-testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
-	-I../../include \
-	-I$(srcdir)/../../include 
-testsvg_LDADD = $(webkit_linux_ldadd)
-testsvg_LDFLAGS = 
 
 endif
 
