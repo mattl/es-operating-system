@@ -1056,8 +1056,6 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.cpp \
-	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1666,10 +1664,10 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
+	es/WebCore/loader/FrameLoader.cpp \
+	es/WebCore/loader/FrameLoader.h \
 	es/WebCore/platform/es/ThreadGlobalData.cpp \
 	es/WebCore/platform/es/ThreadGlobalData.h 
-#	trunk/WebCore/platform/ThreadGlobalData.cpp \
-#	trunk/WebCore/platform/ThreadGlobalData.h 
 	
 webcorees_sources += \
 	trunk/WebCore/platform/graphics/cairo/CairoPath.h \
