@@ -57,14 +57,12 @@ ImageDecoder* createDecoder(const Vector<char>& data)
     if (strncmp(contents, "GIF8", 4) == 0)
         return new GIFImageDecoder();
 
-    // Test for PNG. Disable PNG Decoder temporarily
-    /*
+    // Test for PNG.
     if (uContents[0]==0x89 &&
         uContents[1]==0x50 &&
         uContents[2]==0x4E &&
         uContents[3]==0x47)
         return new PNGImageDecoder();
-    */
 
     // JPEG
     if (uContents[0]==0xFF &&
