@@ -156,7 +156,7 @@ void figure(es::CanvasRenderingContext2D* canvas)
     canvas->fillText("Hello, world.", 512, 300);
 }
 
-void testCanvas2d(cairo_t* cr)
+void test(cairo_t* cr)
 {
     WebCore::ExceptionCode ec = 0;
 
