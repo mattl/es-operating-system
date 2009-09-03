@@ -1080,7 +1080,8 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.h \
+	es/WebCore/loader/FrameLoader.cpp \
+	es/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1690,8 +1691,7 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/ThreadGlobalData.cpp \
-	es/WebCore/platform/ThreadGlobalData.h \
-	es/WebCore/loader/FrameLoader.cpp 
+	es/WebCore/platform/ThreadGlobalData.h 
 
 # ----
 # SVG Support
@@ -2131,8 +2131,6 @@ webcorees_sources += \
 	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
-#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
-#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
 # ES
 
@@ -2220,7 +2218,6 @@ webcorees_sources += \
 	es/WebKit/es/WebCoreSupport/FrameLoaderClientES.h \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.cpp \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.h
-
 
 if ENABLE_SVG
 

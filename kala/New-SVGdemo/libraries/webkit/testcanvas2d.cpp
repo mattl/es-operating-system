@@ -50,6 +50,7 @@
 
 #include "WebFrameES.h"
 #include "WebViewES.h"
+#include "FrameLoader.h"
 
 #include "html5_canvasrenderingcontext2d.h"
 
@@ -161,6 +162,9 @@ void test(cairo_t* cr)
     WebCore::ExceptionCode ec = 0;
 
     WTF::initializeThreading();
+    
+    WebCore::FrameLoader::setDocumentType("text/html");
+    //FrameLoader::setDocumentType("text/html");
 
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 

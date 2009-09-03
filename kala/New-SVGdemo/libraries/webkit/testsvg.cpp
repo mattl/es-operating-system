@@ -66,6 +66,7 @@
 
 #include "WebFrameES.h"
 #include "WebViewES.h"
+#include "FrameLoader.h"
 
 #include "html5_canvasrenderingcontext2d.h"
 
@@ -80,6 +81,8 @@ void test(cairo_t* cr)
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
+
+    WebCore::FrameLoader::setDocumentType("image/svg+xml");
 
     // A document have been created already in frame.
     WebCore::SVGDocument* document = dynamic_cast<WebCore::SVGDocument*>(frame->document());

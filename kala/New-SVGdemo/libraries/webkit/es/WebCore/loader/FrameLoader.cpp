@@ -112,7 +112,7 @@
 namespace WebCore {
 
 // For ES tmp usage
-String DocumentType = "image/svg+xml";
+//String DocumentType = "image/svg+xml";
 //String DocumentType = "text/html";
 
 #if ENABLE(SVG)
@@ -331,7 +331,7 @@ void FrameLoader::init()
     setState(FrameStateProvisional);
 
     //m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
-    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), DocumentType, 0, String(), String()));
+    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), documentType, 0, String(), String()));
 
     m_provisionalDocumentLoader->finishedLoading();
     begin(KURL(), false);
@@ -339,6 +339,11 @@ void FrameLoader::init()
     m_frame->document()->cancelParsing();
     m_creatingInitialEmptyDocument = false;
     m_didCallImplicitClose = true;
+}
+
+void FrameLoader::setDocumentType(char* type)
+{
+    documentType = type;
 }
 
 void FrameLoader::setDefersLoading(bool defers)
