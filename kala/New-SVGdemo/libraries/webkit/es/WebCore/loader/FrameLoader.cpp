@@ -111,7 +111,7 @@
 
 namespace WebCore {
 
-extern char* FrameLoader::documentType;
+char* FrameLoader::documentType;
 
 // For ES tmp usage
 //String DocumentType = "image/svg+xml";
