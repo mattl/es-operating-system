@@ -78,11 +78,11 @@ void test(cairo_t* cr)
 
     WTF::initializeThreading();
 
+    WebCore::FrameLoader::setDocumentType("image/svg+xml");
+
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
-
-    WebCore::FrameLoader::setDocumentType("image/svg+xml");
 
     // A document have been created already in frame.
     WebCore::SVGDocument* document = dynamic_cast<WebCore::SVGDocument*>(frame->document());
