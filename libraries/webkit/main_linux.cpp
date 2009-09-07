@@ -37,7 +37,7 @@
 #define SIZEX 1024
 #define SIZEY 768
 
-void testCanvas2d(cairo_t* cairo);
+void test(cairo_t* cairo);
 
 int main(int argc, char* argv[])
 {
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
             cairo_rectangle(cairo, 0.0, 0.0, SIZEX, SIZEY);
             cairo_set_source_rgb(cairo, 0.0, 0.0, 1.0);
             cairo_fill(cairo);
-            testCanvas2d(cairo);
+            test(cairo);
             cairo_show_page(cairo);
             cairo_destroy(cairo);
         }

@@ -50,6 +50,7 @@
 
 #include "WebFrameES.h"
 #include "WebViewES.h"
+#include "FrameLoader.h"
 
 #include "html5_canvasrenderingcontext2d.h"
 
@@ -156,11 +157,14 @@ void figure(es::CanvasRenderingContext2D* canvas)
     canvas->fillText("Hello, world.", 512, 300);
 }
 
-void testCanvas2d(cairo_t* cr)
+void test(cairo_t* cr)
 {
     WebCore::ExceptionCode ec = 0;
 
     WTF::initializeThreading();
+    
+    WebCore::FrameLoader::setDocumentType("text/html");
+    //FrameLoader::setDocumentType("text/html");
 
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 

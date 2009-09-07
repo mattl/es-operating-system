@@ -385,6 +385,8 @@ namespace WebCore {
 
         bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
 
+	static void setDocumentType(char*);
+
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
         PassRefPtr<HistoryItem> createHistoryItemTree(Frame* targetFrame, bool clipAtTarget);
@@ -636,6 +638,7 @@ namespace WebCore {
 #if ENABLE(WML)
         bool m_forceReloadWmlDeck;
 #endif
+	static char* documentType;
     };
 
 } // namespace WebCore

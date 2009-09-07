@@ -108,7 +108,14 @@
 #include "SVGViewSpec.h"
 #endif
 
+
 namespace WebCore {
+
+char* FrameLoader::documentType;
+
+// For ES tmp usage
+//String DocumentType = "image/svg+xml";
+//String DocumentType = "text/html";
 
 #if ENABLE(SVG)
 using namespace SVGNames;
@@ -324,13 +331,21 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL("")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
-    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
+
+    //m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
+    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), documentType, 0, String(), String()));
+
     m_provisionalDocumentLoader->finishedLoading();
     begin(KURL(), false);
     end();
     m_frame->document()->cancelParsing();
     m_creatingInitialEmptyDocument = false;
     m_didCallImplicitClose = true;
+}
+
+void FrameLoader::setDocumentType(char* type)
+{
+    documentType = type;
 }
 
 void FrameLoader::setDefersLoading(bool defers)

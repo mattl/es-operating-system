@@ -28,7 +28,7 @@ fi
 cd libraries/webkit
 if [ ! -f Makefile ] || [ -n "`find ../../../trunk/libraries/webkit/webkit.$REV.patch -newer Makefile -print`" ];
 then
-	../../../trunk/libraries/webkit/configure 
+	../../../trunk/libraries/webkit/configure --enable-svg --enable-svg-filters
 	make
 fi
 cd ../../..
@@ -39,7 +39,7 @@ mkdir -p webkit
 cd webkit
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/libraries/webkit/webkit.$REV.patch -newer Makefile -print`" ];
 then
-	../../trunk/libraries/webkit/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es LIBXML_CFLAGS="-I$ES_SDK/include/libxml2 -I$ES_SDK/include" LIBXML_LIBS="-L$ES_SDK/lib -lxml2" CAIRO_CFLAGS="-D_REENTRANT -I$ES_SDK/include/cairo -I$ES_SDK/include/pixman-1 -I$ES_SDK/include/freetype2 -I$ES_SDK/include" CAIRO_LIBS="-L$ES_SDK/lib -lcairo" UNICODE_CFLAGS="-D_REENTRANT  -I$ES_SDK/include -I$ES_SDK/include/unicode" UNICODE_LIBS="-L$ES_SDK/lib -licui18n -licuuc -licudata"
+	../../trunk/libraries/webkit/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-svg --enable-svg-filters LIBXML_CFLAGS="-I$ES_SDK/include/libxml2 -I$ES_SDK/include" LIBXML_LIBS="-L$ES_SDK/lib -lxml2" CAIRO_CFLAGS="-D_REENTRANT -I$ES_SDK/include/cairo -I$ES_SDK/include/pixman-1 -I$ES_SDK/include/freetype2 -I$ES_SDK/include" CAIRO_LIBS="-L$ES_SDK/lib -lcairo" UNICODE_CFLAGS="-D_REENTRANT  -I$ES_SDK/include -I$ES_SDK/include/unicode" UNICODE_LIBS="-L$ES_SDK/lib -licui18n -licuuc -licudata"
 	make 
 	make install
 fi
