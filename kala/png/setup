@@ -292,7 +292,7 @@ mkdir -p cairo
 cd cairo
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.8.6.patch -newer Makefile -print`" ];
 then
-	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1"
+	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1" png_CFLAGS="-I$ES_SDK/include/libpng12 -I$ES_SDK/include" png_LIBS="-L$ES_SDK/lib -lz -lpng -lpng12"
 	make
 	make install
 fi

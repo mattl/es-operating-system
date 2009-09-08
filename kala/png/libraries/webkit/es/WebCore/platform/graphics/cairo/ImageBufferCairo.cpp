@@ -214,7 +214,7 @@ String ImageBuffer::toDataURL(const String& mimeType) const
     // Only PNG output is supported for now.
 
     // disable png support temporarily
-    //cairo_surface_write_to_png_stream(image, writeFunction, &in);
+    cairo_surface_write_to_png_stream(image, writeFunction, &in);
 
     Vector<char> out;
     base64Encode(in, out);

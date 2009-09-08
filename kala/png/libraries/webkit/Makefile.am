@@ -1080,8 +1080,7 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	es/WebCore/loader/FrameLoader.cpp \
-	es/WebCore/loader/FrameLoader.h \
+	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1691,7 +1690,8 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/ThreadGlobalData.cpp \
-	es/WebCore/platform/ThreadGlobalData.h 
+	es/WebCore/platform/ThreadGlobalData.h \
+	es/WebCore/loader/FrameLoader.cpp 
 
 # ----
 # SVG Support
@@ -2128,9 +2128,13 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
+	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
 # ES
 
@@ -2218,6 +2222,7 @@ webcorees_sources += \
 	es/WebKit/es/WebCoreSupport/FrameLoaderClientES.h \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.cpp \
 	es/WebKit/es/WebCoreSupport/InspectorClientES.h
+
 
 if ENABLE_SVG
 
@@ -2395,6 +2400,8 @@ webkit_tests_cppflags = \
 webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
+	-lz -lm \
+	-lpng -lpng12 \
 	-lcairo -lpixman-1 \
 	-ljpeg \
 	-lfontconfig \
@@ -2429,7 +2436,8 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
         -I$(prefix)/include/es \
         -I$(prefix)/include/freetype2 \
         -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
+        -I$(prefix)/include/pixman-1 \
+	-I$(prefix)/include/libpng12
 
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
@@ -2444,7 +2452,8 @@ testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
         -I$(prefix)/include/es \
         -I$(prefix)/include/freetype2 \
         -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
+        -I$(prefix)/include/pixman-1 \
+	-I$(prefix)/include/libpng12
 
 testsvg_LDADD = $(webkit_tests_ldadd)
 testsvg_LDFLAGS = $(webkit_tests_ldflags)
