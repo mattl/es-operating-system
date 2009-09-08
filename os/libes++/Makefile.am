@@ -3,10 +3,9 @@ SUBDIRS = . testsuite
 lib_LIBRARIES = libessup++.a libes++.a
 
 AM_CPPFLAGS = \
-	-I $(srcdir)/include \
-	-I- \
-	-I../../include \
-	-I$(srcdir)/../../include
+	-iquote $(srcdir)/include \
+	-isystem ../../include \
+	-isystem $(srcdir)/../../include
 
 c_source_files = \
 	src/md5.c \
@@ -65,7 +64,7 @@ if POSIX
 # libesrpc is built for shared libraries
 lib_LIBRARIES += libesrpc.a
 
-AM_CPPFLAGS += -I/usr/include/GL
+AM_CPPFLAGS += -isystem /usr/include/GL
 
 libes___a_SOURCES += src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 

@@ -22,9 +22,10 @@
 #define _ISOC99_SOURCE
 #endif
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <vector>
 #include <string>
+#include <vector>
 #include <es.h>
 #include <es/exception.h>
 #include <es/list.h>
