@@ -191,6 +191,26 @@ void test(cairo_t* cr)
     textElement_3->appendChild(textNode_3.get(), ec);
     rootElement->appendChild(textElement_3.get(), ec);
 
+    WTF::PassRefPtr<WebCore::SVGPathElement> pathElement_1 = WTF::static_pointer_cast<WebCore::SVGPathElement>(document->createElementNS("http://www.w3.org/2000/svg", "path", ec));
+    pathElement_1->setAttribute("d","M250,400 v-150 a 150,150 0 1,1 -75,280 z", ec);
+    pathElement_1->setAttribute("fill", "#ff0000", ec);
+    rootElement->appendChild(pathElement_1.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGPathElement> pathElement_2 = WTF::static_pointer_cast<WebCore::SVGPathElement>(document->createElementNS("http://www.w3.org/2000/svg", "path", ec));
+    pathElement_2->setAttribute("d","M250,400 h-150 a 150,150 0 0,0 75,130 z", ec);
+    pathElement_2->setAttribute("fill", "#00ff00", ec);
+    rootElement->appendChild(pathElement_2.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGPathElement> pathElement_3 = WTF::static_pointer_cast<WebCore::SVGPathElement>(document->createElementNS("http://www.w3.org/2000/svg", "path", ec));
+    pathElement_3->setAttribute("d","M250,400 h-150 a 150,150 0 0,1 75,-130 z", ec);
+    pathElement_3->setAttribute("fill", "#0000ff", ec);
+    rootElement->appendChild(pathElement_3.get(), ec);
+
+    WTF::PassRefPtr<WebCore::SVGPathElement> pathElement_4 = WTF::static_pointer_cast<WebCore::SVGPathElement>(document->createElementNS("http://www.w3.org/2000/svg", "path", ec));
+    pathElement_4->setAttribute("d","M250,400 v-150 a 150,150 0 0,0 -75,20 z", ec);
+    pathElement_4->setAttribute("fill", "#ffff00", ec);
+    rootElement->appendChild(pathElement_4.get(), ec);
+
     if (frame->contentRenderer() && frame->view())
     {
         WebCore::GraphicsContext ctx(cr);
