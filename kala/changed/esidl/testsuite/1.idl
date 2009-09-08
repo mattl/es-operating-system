@@ -1,6 +1,0 @@
-module X
-{
-    interface Y
-    {
-    };
-};
