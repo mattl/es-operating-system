@@ -49,6 +49,7 @@
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
 #include "XMLTokenizerScope.h"
 #include <libxml/parser.h>

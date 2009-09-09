@@ -341,8 +341,12 @@
 #endif
 #endif
 
+#if PLATFORM(ES)
+#define WTF_USE_PTHREADS 1
+#endif
+
 #if !defined(HAVE_ACCESSIBILITY)
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM) || PLATFORM(ES)
 #define HAVE_ACCESSIBILITY 1
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
@@ -395,7 +399,7 @@
 #define HAVE_LANGINFO_H 1
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
-#define HAVE_STRINGS_H 1
+#define HAVE_STRINGS_H 0
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
 

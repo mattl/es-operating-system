@@ -162,6 +162,10 @@
 /* Using V8 implies not using JSC and vice versa */
 #define WTF_USE_JSC !WTF_USE_V8
 
+#if PLATFORM(ES)
+#undef WTF_USE_JSC
+#endif
+
 #if PLATFORM(CG)
 #ifndef CGFLOAT_DEFINED
 #ifdef __LP64__

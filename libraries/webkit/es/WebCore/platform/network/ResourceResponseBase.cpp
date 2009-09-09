@@ -324,6 +324,7 @@ double ResourceResponseBase::cacheControlMaxAge() const
 
 static double parseDateValueInHeader(const HTTPHeaderMap& headers, const AtomicString& headerName)
 {
+#if USE(JSC)
     String headerValue = headers.get(headerName);
     if (headerValue.isEmpty())
         return std::numeric_limits<double>::quiet_NaN(); 
@@ -331,10 +332,13 @@ static double parseDateValueInHeader(const HTTPHeaderMap& headers, const AtomicS
     // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
     // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
     // Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
-    double dateInMilliseconds = JSC::parseDate(headerValue);
+    double dateInMilliseconds = JSC::parseDate(JSC::UString(headerValue.characters(), headerValue.length()));
     if (!isfinite(dateInMilliseconds))
         return std::numeric_limits<double>::quiet_NaN();
     return dateInMilliseconds / 1000;
+#else
+    return std::numeric_limits<double>::quiet_NaN();
+#endif
 }
 
 double ResourceResponseBase::date() const

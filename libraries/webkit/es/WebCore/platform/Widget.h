@@ -69,6 +69,10 @@ typedef wxWindow* PlatformWidget;
 #include "PlatformWidget.h"
 #endif
 
+#if PLATFORM(ES)
+#include "PlatformWidget.h"
+#endif
+
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"

@@ -46,6 +46,8 @@ typedef struct HBITMAP__* HBITMAP;
 class wxDragImage;
 #elif PLATFORM(CHROMIUM)
 #include "DragImageRef.h"
+#elif PLATFORM(ES)
+#include "DragImageRef.h"
 #endif
 
 //We need to #define YOffset as it needs to be shared with WebKit

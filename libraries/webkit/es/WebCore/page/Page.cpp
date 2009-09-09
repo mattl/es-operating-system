@@ -117,7 +117,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
     , m_group(0)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debugger(0)
+#endif
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
 {
@@ -527,6 +529,7 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash visitedLinkHash)
     }
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 void Page::setDebuggerForAllPages(JSC::Debugger* debugger)
 {
     ASSERT(allPages);
@@ -546,6 +549,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
         frame->script()->attachDebugger(m_debugger);
 }
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #if ENABLE(DOM_STORAGE)
 SessionStorage* Page::sessionStorage(bool optionalCreate)

@@ -160,9 +160,11 @@ namespace WebCore {
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         static void setDebuggerForAllPages(JSC::Debugger*);
         void setDebugger(JSC::Debugger*);
         JSC::Debugger* debugger() const { return m_debugger; }
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
         // The global DLL or application instance used for all windows.
@@ -242,7 +244,9 @@ namespace WebCore {
         OwnPtr<PageGroup> m_singlePageGroup;
         PageGroup* m_group;
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         JSC::Debugger* m_debugger;
+#endif
 
         double m_customHTMLTokenizerTimeDelay;
         int m_customHTMLTokenizerChunkSize;
