@@ -28,7 +28,7 @@ mkdir -p WebCore/platform/network/es
 mkdir -p WebCore/platform/text/es
 mkdir -p WebKit/es/WebCoreSupport
 cd ../es
-svn list -R | grep -v /$ |  awk '{ print "cp -u " $1 " ../trunk/" $1 }' | sed -e "s|/[^/]*$||" > esport
+svn list -R | grep -v /$ |  awk '{ print "cp " $1 " ../trunk/" $1 }' | sed -e "s|/[^/]*$||" > esport
 bash esport
 cd ../../../..
 
