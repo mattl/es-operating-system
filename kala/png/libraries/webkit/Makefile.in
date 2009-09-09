@@ -1276,7 +1276,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1874,6 +1873,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	es/WebCore/platform/ThreadGlobalData.cpp \
 	es/WebCore/platform/ThreadGlobalData.h \
 	es/WebCore/loader/FrameLoader.cpp \
+	es/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	trunk/WebCore/css/SVGCSSParser.cpp \
 	trunk/WebCore/css/SVGCSSStyleSelector.cpp \
@@ -4252,7 +4252,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -4849,7 +4848,8 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/ThreadGlobalData.cpp \
 	es/WebCore/platform/ThreadGlobalData.h \
-	es/WebCore/loader/FrameLoader.cpp $(am__append_10) \
+	es/WebCore/loader/FrameLoader.cpp \
+	es/WebCore/loader/FrameLoader.h $(am__append_10) \
 	trunk/WebCore/loader/icon/IconDatabaseNone.cpp
 webcore_libadd := 
 webcore_built_sources := DerivedSources/CSSGrammar.cpp \
@@ -5083,14 +5083,14 @@ webkit_tests_cppflags = \
 webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
-	-lz -lm \
-	-lpng -lpng12 \
 	-lcairo -lpixman-1 \
+	-lpng -lpng12 \
 	-ljpeg \
+	-lz -lm \
+	-lxml2 \
 	-lfontconfig \
 	-lfreetype \
 	-lexpat \
-	-lxml2 \
 	-lsicui18n -lsicuuc -lsicudata 
 
 webkit_linux_ldadd = \

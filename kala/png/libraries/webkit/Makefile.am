@@ -2400,14 +2400,14 @@ webkit_tests_cppflags = \
 webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
-	-lz -lm \
-	-lpng -lpng12 \
 	-lcairo -lpixman-1 \
+	-lpng -lpng12 \
 	-ljpeg \
+	-lz -lm \
+	-lxml2 \
 	-lfontconfig \
 	-lfreetype \
 	-lexpat \
-	-lxml2 \
 	-lsicui18n -lsicuuc -lsicudata 
 
 webkit_linux_ldadd = \
