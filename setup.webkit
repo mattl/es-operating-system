@@ -7,17 +7,30 @@ fi
 
 export PATH=$ES_SDK/bin:$PATH
 
-
 # WebKit
 REV=44489
 cd trunk/libraries/webkit
 if [ ! -d trunk ];
 then
 	svn checkout http://svn.webkit.org/repository/webkit/trunk@$REV
-	patch -p0 -d . < webkit.$REV.patch
 	aclocal;autoconf;autoheader;automake -a --foreign
 fi
 cd ../../..
+
+# Merge ES specific modifications
+cd trunk/libraries/webkit/trunk
+mkdir -p JavaScriptCore/wtf/es
+mkdir -p WebCore/bindings/es
+mkdir -p WebCore/page/es
+mkdir -p WebCore/platform/es
+mkdir -p WebCore/platform/graphics/es
+mkdir -p WebCore/platform/network/es
+mkdir -p WebCore/platform/text/es
+mkdir -p WebKit/es/WebCoreSupport
+cd ../es
+svn list -R | grep -v /$ |  awk '{ print "cp -u " $1 " ../trunk/" $1 }' | sed -e "s|/[^/]*$||" > esport
+bash esport
+cd ../../../..
 
 # Linux Build of WebCore
 cd local

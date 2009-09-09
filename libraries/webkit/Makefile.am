@@ -120,7 +120,7 @@ lib_LIBRARIES += \
 
 # ES
 javascriptcore_cppflags += \
-	-I$(srcdir)/es/JavaScriptCore/wtf/es
+	-I$(srcdir)/trunk/JavaScriptCore/wtf/es
 	
 javascriptcore_cppflags += \
 	-I$(srcdir)/trunk/JavaScriptCore \
@@ -287,7 +287,7 @@ javascriptcore_sources += \
 
 # ES
 javascriptcore_sources += \
-	es/JavaScriptCore/wtf/es/MainThreadES.cpp
+	trunk/JavaScriptCore/wtf/es/MainThreadES.cpp
 
 # WebCore
 
@@ -300,19 +300,15 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(srcdir)/trunk/WebCore/css/CSSValueKeywords.in
 
 # ES
 webcore_cppflags += \
-	-I$(srcdir)/es/WebCore \
-	-I$(srcdir)/es/WebCore/bindings/es \
-	-I$(srcdir)/es/WebCore/loader \
-	-I$(srcdir)/es/WebCore/page/es \
-	-I$(srcdir)/es/WebCore/platform \
-	-I$(srcdir)/es/WebCore/platform/es \
-	-I$(srcdir)/es/WebCore/platform/graphics/es \
-	-I$(srcdir)/es/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
-	-I$(srcdir)/es/WebCore/platform/network/es \
-	-I$(srcdir)/es/WebCore/platform/text/es \
-	-I$(srcdir)/es/WebKit/es \
-	-I$(srcdir)/es/WebKit/es/WebCoreSupport
+	-I$(srcdir)/trunk/WebCore/bindings/es \
+	-I$(srcdir)/trunk/WebCore/page/es \
+	-I$(srcdir)/trunk/WebCore/platform/es \
+	-I$(srcdir)/trunk/WebCore/platform/graphics/es \
+	-I$(srcdir)/trunk/WebCore/platform/network/es \
+	-I$(srcdir)/trunk/WebCore/platform/text/es \
+	-I$(srcdir)/trunk/WebKit/es \
+	-I$(srcdir)/trunk/WebKit/es/WebCoreSupport
 
 webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore \
@@ -1080,8 +1076,8 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
-	es/WebCore/loader/FrameLoader.cpp \
-	es/WebCore/loader/FrameLoader.h \
+	trunk/WebCore/loader/FrameLoader.cpp \
+	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1690,8 +1686,8 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLHttpRequestUpload.h \
 	trunk/WebCore/xml/XMLSerializer.cpp \
 	trunk/WebCore/xml/XMLSerializer.h \
-	es/WebCore/platform/ThreadGlobalData.cpp \
-	es/WebCore/platform/ThreadGlobalData.h 
+	trunk/WebCore/platform/ThreadGlobalData.cpp \
+	trunk/WebCore/platform/ThreadGlobalData.h 
 
 # ----
 # SVG Support
@@ -2128,96 +2124,96 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
+	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 
 # ES
 
 webcorees_sources += \
-	es/WebCore/bindings/es/ScheduledAction.cpp \
-	es/WebCore/bindings/es/ScheduledAction.h \
-	es/WebCore/bindings/es/ScriptCachedFrameData.cpp \
-	es/WebCore/bindings/es/ScriptCachedFrameData.h \
-	es/WebCore/bindings/es/ScriptCallFrame.cpp \
-	es/WebCore/bindings/es/ScriptCallFrame.h \
-	es/WebCore/bindings/es/ScriptCallStack.cpp \
-	es/WebCore/bindings/es/ScriptCallStack.h \
-	es/WebCore/bindings/es/ScriptController.cpp \
-	es/WebCore/bindings/es/ScriptController.h \
-	es/WebCore/bindings/es/ScriptEventListener.cpp \
-	es/WebCore/bindings/es/ScriptEventListener.h \
-	es/WebCore/bindings/es/ScriptFunctionCall.cpp \
-	es/WebCore/bindings/es/ScriptFunctionCall.h \
-	es/WebCore/bindings/es/ScriptInstance.cpp \
-	es/WebCore/bindings/es/ScriptInstance.h \
-	es/WebCore/bindings/es/ScriptObject.cpp \
-	es/WebCore/bindings/es/ScriptObject.h \
-	es/WebCore/bindings/es/ScriptObjectQuarantine.cpp \
-	es/WebCore/bindings/es/ScriptObjectQuarantine.h \
-	es/WebCore/bindings/es/ScriptSourceCode.h \
-	es/WebCore/bindings/es/ScriptSourceCode.cpp \
-	es/WebCore/bindings/es/ScriptState.cpp \
-	es/WebCore/bindings/es/ScriptState.h \
-	es/WebCore/bindings/es/ScriptString.h \
-	es/WebCore/bindings/es/ScriptValue.cpp \
-	es/WebCore/bindings/es/ScriptValue.h \
-	es/WebCore/page/es/DragControllerES.cpp \
-	es/WebCore/page/es/EventHandlerES.cpp \
-	es/WebCore/page/es/FrameES.cpp \
-	es/WebCore/platform/es/ClipboardES.cpp \
-	es/WebCore/platform/es/ClipboardES.h \
-	es/WebCore/platform/es/ContextMenuES.cpp \
-	es/WebCore/platform/es/ContextMenuItemES.cpp \
-	es/WebCore/platform/es/CursorES.cpp \
-	es/WebCore/platform/es/DragDataES.cpp \
-	es/WebCore/platform/es/DragDataRef.h \
-	es/WebCore/platform/es/DragImageES.cpp \
-	es/WebCore/platform/es/DragImageRef.h \
-	es/WebCore/platform/es/Language.cpp \
-	es/WebCore/platform/es/LocalizedStringsES.cpp \
-	es/WebCore/platform/es/MIMETypeRegistryES.cpp \
-	es/WebCore/platform/es/PasteboardES.cpp \
-	es/WebCore/platform/es/PlatformCursor.h \
-	es/WebCore/platform/es/PlatformKeyEventES.cpp \
-	es/WebCore/platform/es/PlatformScreenES.cpp \
-	es/WebCore/platform/es/PlatformWidget.h \
-	es/WebCore/platform/es/PopupMenuES.cpp \
-	es/WebCore/platform/es/RenderThemeES.cpp \
-	es/WebCore/platform/es/RenderThemeES.h \
-	es/WebCore/platform/es/ScrollbarThemeES.cpp \
-	es/WebCore/platform/es/ScrollbarThemeES.h \
-	es/WebCore/platform/es/SearchPopupMenuES.cpp \
-	es/WebCore/platform/es/SharedTimerES.cpp \
-	es/WebCore/platform/es/SoundES.cpp \
-	es/WebCore/platform/es/TemporaryLinkStubs.cpp \
-	es/WebCore/platform/es/WidgetES.cpp \
-	es/WebCore/platform/graphics/es/IconES.cpp \
-	es/WebCore/platform/graphics/es/ImageES.cpp \
-	es/WebCore/platform/graphics/es/FontES.cpp \
-	es/WebCore/platform/network/es/CookieJarES.cpp \
-	es/WebCore/platform/network/es/AuthenticationChallenge.h \
-	es/WebCore/platform/network/es/ResourceError.h \
-	es/WebCore/platform/network/es/ResourceHandleES.cpp \
-	es/WebCore/platform/network/es/ResourceRequest.h \
-	es/WebCore/platform/network/es/ResourceResponse.h \
-	es/WebCore/platform/text/es/TextBreakIteratorInternalICUES.cpp \
-	es/WebKit/es/WebFrameES.cpp \
-	es/WebKit/es/WebFrameES.h \
-	es/WebKit/es/WebViewES.cpp \
-	es/WebKit/es/WebViewES.h \
-	es/WebKit/es/WebCoreSupport/ChromeClientES.cpp \
-	es/WebKit/es/WebCoreSupport/ChromeClientES.h \
-	es/WebKit/es/WebCoreSupport/ContextMenuClientES.cpp \
-	es/WebKit/es/WebCoreSupport/ContextMenuClientES.h \
-	es/WebKit/es/WebCoreSupport/DragClientES.cpp \
-	es/WebKit/es/WebCoreSupport/DragClientES.h \
-	es/WebKit/es/WebCoreSupport/EditorClientES.cpp \
-	es/WebKit/es/WebCoreSupport/EditorClientES.h \
-	es/WebKit/es/WebCoreSupport/FrameLoaderClientES.cpp \
-	es/WebKit/es/WebCoreSupport/FrameLoaderClientES.h \
-	es/WebKit/es/WebCoreSupport/InspectorClientES.cpp \
-	es/WebKit/es/WebCoreSupport/InspectorClientES.h
+	trunk/WebCore/bindings/es/ScheduledAction.cpp \
+	trunk/WebCore/bindings/es/ScheduledAction.h \
+	trunk/WebCore/bindings/es/ScriptCachedFrameData.cpp \
+	trunk/WebCore/bindings/es/ScriptCachedFrameData.h \
+	trunk/WebCore/bindings/es/ScriptCallFrame.cpp \
+	trunk/WebCore/bindings/es/ScriptCallFrame.h \
+	trunk/WebCore/bindings/es/ScriptCallStack.cpp \
+	trunk/WebCore/bindings/es/ScriptCallStack.h \
+	trunk/WebCore/bindings/es/ScriptController.cpp \
+	trunk/WebCore/bindings/es/ScriptController.h \
+	trunk/WebCore/bindings/es/ScriptEventListener.cpp \
+	trunk/WebCore/bindings/es/ScriptEventListener.h \
+	trunk/WebCore/bindings/es/ScriptFunctionCall.cpp \
+	trunk/WebCore/bindings/es/ScriptFunctionCall.h \
+	trunk/WebCore/bindings/es/ScriptInstance.cpp \
+	trunk/WebCore/bindings/es/ScriptInstance.h \
+	trunk/WebCore/bindings/es/ScriptObject.cpp \
+	trunk/WebCore/bindings/es/ScriptObject.h \
+	trunk/WebCore/bindings/es/ScriptObjectQuarantine.cpp \
+	trunk/WebCore/bindings/es/ScriptObjectQuarantine.h \
+	trunk/WebCore/bindings/es/ScriptSourceCode.h \
+	trunk/WebCore/bindings/es/ScriptSourceCode.cpp \
+	trunk/WebCore/bindings/es/ScriptState.cpp \
+	trunk/WebCore/bindings/es/ScriptState.h \
+	trunk/WebCore/bindings/es/ScriptString.h \
+	trunk/WebCore/bindings/es/ScriptValue.cpp \
+	trunk/WebCore/bindings/es/ScriptValue.h \
+	trunk/WebCore/page/es/DragControllerES.cpp \
+	trunk/WebCore/page/es/EventHandlerES.cpp \
+	trunk/WebCore/page/es/FrameES.cpp \
+	trunk/WebCore/platform/es/ClipboardES.cpp \
+	trunk/WebCore/platform/es/ClipboardES.h \
+	trunk/WebCore/platform/es/ContextMenuES.cpp \
+	trunk/WebCore/platform/es/ContextMenuItemES.cpp \
+	trunk/WebCore/platform/es/CursorES.cpp \
+	trunk/WebCore/platform/es/DragDataES.cpp \
+	trunk/WebCore/platform/es/DragDataRef.h \
+	trunk/WebCore/platform/es/DragImageES.cpp \
+	trunk/WebCore/platform/es/DragImageRef.h \
+	trunk/WebCore/platform/es/Language.cpp \
+	trunk/WebCore/platform/es/LocalizedStringsES.cpp \
+	trunk/WebCore/platform/es/MIMETypeRegistryES.cpp \
+	trunk/WebCore/platform/es/PasteboardES.cpp \
+	trunk/WebCore/platform/es/PlatformCursor.h \
+	trunk/WebCore/platform/es/PlatformKeyEventES.cpp \
+	trunk/WebCore/platform/es/PlatformScreenES.cpp \
+	trunk/WebCore/platform/es/PlatformWidget.h \
+	trunk/WebCore/platform/es/PopupMenuES.cpp \
+	trunk/WebCore/platform/es/RenderThemeES.cpp \
+	trunk/WebCore/platform/es/RenderThemeES.h \
+	trunk/WebCore/platform/es/ScrollbarThemeES.cpp \
+	trunk/WebCore/platform/es/ScrollbarThemeES.h \
+	trunk/WebCore/platform/es/SearchPopupMenuES.cpp \
+	trunk/WebCore/platform/es/SharedTimerES.cpp \
+	trunk/WebCore/platform/es/SoundES.cpp \
+	trunk/WebCore/platform/es/TemporaryLinkStubs.cpp \
+	trunk/WebCore/platform/es/WidgetES.cpp \
+	trunk/WebCore/platform/graphics/es/IconES.cpp \
+	trunk/WebCore/platform/graphics/es/ImageES.cpp \
+	trunk/WebCore/platform/graphics/es/FontES.cpp \
+	trunk/WebCore/platform/network/es/CookieJarES.cpp \
+	trunk/WebCore/platform/network/es/AuthenticationChallenge.h \
+	trunk/WebCore/platform/network/es/ResourceError.h \
+	trunk/WebCore/platform/network/es/ResourceHandleES.cpp \
+	trunk/WebCore/platform/network/es/ResourceRequest.h \
+	trunk/WebCore/platform/network/es/ResourceResponse.h \
+	trunk/WebCore/platform/text/es/TextBreakIteratorInternalICUES.cpp \
+	trunk/WebKit/es/WebFrameES.cpp \
+	trunk/WebKit/es/WebFrameES.h \
+	trunk/WebKit/es/WebViewES.cpp \
+	trunk/WebKit/es/WebViewES.h \
+	trunk/WebKit/es/WebCoreSupport/ChromeClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/ChromeClientES.h \
+	trunk/WebKit/es/WebCoreSupport/ContextMenuClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/ContextMenuClientES.h \
+	trunk/WebKit/es/WebCoreSupport/DragClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/DragClientES.h \
+	trunk/WebKit/es/WebCoreSupport/EditorClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/EditorClientES.h \
+	trunk/WebKit/es/WebCoreSupport/FrameLoaderClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/FrameLoaderClientES.h \
+	trunk/WebKit/es/WebCoreSupport/InspectorClientES.cpp \
+	trunk/WebKit/es/WebCoreSupport/InspectorClientES.h
 
 if ENABLE_SVG
 
