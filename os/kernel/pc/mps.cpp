@@ -164,6 +164,15 @@ Mps() :
              (1 < processorCount) ? "s" : "");
 #endif
 
+    // TODO: The following block is a workaround for qemu/Fedora 11
+    //       so as not to use APIC. This should be removed in future.
+    if (static_cast<int>(processorCount) == 1)
+    {
+        fps = 0;
+        cth = 0;
+        return;
+    }
+
     fps = reinterpret_cast<FloatingPointerStructure*>(0x80000000 |reinterpret_cast<unsigned long>(fps));
     if (cth)
     {
