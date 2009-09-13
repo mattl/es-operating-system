@@ -228,6 +228,9 @@ rm -rf zlib-1.2.3
 tar -zxf zlib-1.2.3.tar.gz
 cd zlib-1.2.3
 ./configure --prefix=$ES_SDK
+cd .. 
+patch -p0 -d . < ../trunk/patches/zlib-1.2.3.patch
+cd zlib-1.2.3
 make 
 make install
 cd ../..
