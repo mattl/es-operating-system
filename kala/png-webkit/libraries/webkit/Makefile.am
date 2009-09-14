@@ -2392,6 +2392,8 @@ webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
 	-lcairo -lpixman-1 \
+	-lpng -lpng12 \
+	-lz -lm \
 	-ljpeg \
 	-lfontconfig \
 	-lfreetype \
@@ -2425,7 +2427,8 @@ testcanvas2d_CPPFLAGS = $(webkit_tests_cppflags) \
         -I$(prefix)/include/es \
         -I$(prefix)/include/freetype2 \
         -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
+        -I$(prefix)/include/pixman-1 \
+	-I$(prefix)/include/libpng12
 
 testcanvas2d_LDADD = $(webkit_tests_ldadd)
 testcanvas2d_LDFLAGS = $(webkit_tests_ldflags)
@@ -2440,7 +2443,8 @@ testsvg_CPPFLAGS = $(webkit_tests_cppflags) \
         -I$(prefix)/include/es \
         -I$(prefix)/include/freetype2 \
         -I$(prefix)/include/cairo \
-        -I$(prefix)/include/pixman-1
+        -I$(prefix)/include/pixman-1 \
+	-I$(prefix)/include/libpng12
 
 testsvg_LDADD = $(webkit_tests_ldadd)
 testsvg_LDFLAGS = $(webkit_tests_ldflags)
