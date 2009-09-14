@@ -227,10 +227,7 @@ fi
 rm -rf zlib-1.2.3
 tar -zxf zlib-1.2.3.tar.gz
 cd zlib-1.2.3
-./configure --prefix=$ES_SDK
-cd .. 
-patch -p0 -d . < ../trunk/patches/zlib-1.2.3.patch
-cd zlib-1.2.3
+CC=i386-pc-es-gcc LDSHARED=i386-pc-es-gcc CPP="i386-pc-es-gcc -E" AR="i386-pc-es-ar rc" RANLIB=i386-pc-es-ranlib ./configure --prefix=$ES_SDK
 make 
 make install
 cd ../..
