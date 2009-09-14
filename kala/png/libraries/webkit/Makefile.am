@@ -1080,6 +1080,7 @@ webcore_sources += \
 	trunk/WebCore/loader/FTPDirectoryParser.h \
 	trunk/WebCore/loader/FormState.cpp \
 	trunk/WebCore/loader/FormState.h \
+	trunk/WebCore/loader/FrameLoader.h \
 	trunk/WebCore/loader/FrameLoaderClient.h \
 	trunk/WebCore/loader/FrameLoaderTypes.h \
 	trunk/WebCore/loader/ImageDocument.cpp \
@@ -1690,8 +1691,7 @@ webcore_sources += \
 	trunk/WebCore/xml/XMLSerializer.h \
 	es/WebCore/platform/ThreadGlobalData.cpp \
 	es/WebCore/platform/ThreadGlobalData.h \
-	es/WebCore/loader/FrameLoader.cpp \
-	es/WebCore/loader/FrameLoader.h 
+	es/WebCore/loader/FrameLoader.cpp 
 
 # ----
 # SVG Support
@@ -2105,8 +2105,6 @@ webcorees_sources += \
 	trunk/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferData.h \
 	trunk/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PathCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	trunk/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
@@ -2132,7 +2130,11 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+#	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h 
 
 # ES
 
@@ -2398,14 +2400,14 @@ webkit_tests_cppflags = \
 webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
-	-lcairo -lpixman-1 \
-	-lpng -lpng12 \
-	-ljpeg \
 	-lz -lm \
-	-lxml2 \
+	-lpng -lpng12 \
+	-lcairo -lpixman-1 \
+	-ljpeg \
 	-lfontconfig \
 	-lfreetype \
 	-lexpat \
+	-lxml2 \
 	-lsicui18n -lsicuuc -lsicudata 
 
 webkit_linux_ldadd = \
