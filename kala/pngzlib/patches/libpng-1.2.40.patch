@@ -1,6 +1,6 @@
-diff -bcrN libpng-1.2.39.org/config.sub libpng-1.2.39/config.sub
-*** libpng-1.2.39.org/config.sub	2009-09-08 22:22:50.573778009 +0800
---- libpng-1.2.39/config.sub	2009-09-08 23:10:38.063776516 +0800
+diff -bcrN libpng-1.2.40.org/config.sub libpng-1.2.40/config.sub
+*** libpng-1.2.40.org/config.sub	2009-09-08 22:22:50.573778009 +0800
+--- libpng-1.2.40/config.sub	2009-09-08 23:10:38.063776516 +0800
 ***************
 *** 1274,1280 ****
   	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
