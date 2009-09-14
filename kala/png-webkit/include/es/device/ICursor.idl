@@ -1,0 +1,65 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
+#define NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
+
+module es
+{
+    typedef unsigned long Pattern[32];
+
+    /**
+     * This interface provides methods for managing a cursor.
+     */
+    interface Cursor
+    {
+        /**
+         * Shows this cursor.
+         */
+        long show();
+        /**
+         * Hides this cursor.
+         */
+        long hide();
+        /**
+         * Moves this cursor a specified distance.
+         * @param dx the amount to move in x-direction from the current position.
+         * @param dy the amount to move in y-direction from the current position.
+         */
+        void move(in long dx, in long dy);
+        /**
+         * Gets the position of this cursor.
+         * @param dx the x-coordinate of this cursor.
+         * @param dy the y-coordinate of this cursor.
+         */
+        void setPosition(in long x, in long y);
+        /**
+         * Sets the pattern of this cursor.
+         * @param data 32x32 dots pattern of this cursor.
+         * @param mask 32x32 mask pattern.
+         * @param xHotSpot the positive offset of this cursor hotspot in x-direction.
+         * The offset is measured from the left of this cursor.
+         * @param yHotSpot the positive offset of this cursor hotspot in y-direction.
+         * The offset is measured from the top of this cursor.
+         */
+        void setPattern(in Pattern data, in Pattern mask,
+                        in unsigned short xHotSpot, in unsigned short yHotSpot);
+    };
+};
+
+#endif // NINTENDO_ES_DEVICE_ICURSOR_IDL_INCLUDED
+
