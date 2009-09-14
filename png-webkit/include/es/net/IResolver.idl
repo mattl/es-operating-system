@@ -1,0 +1,57 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_NET_IRESOLVER_IDL_INCLUDED
+#define NINTENDO_ES_NET_IRESOLVER_IDL_INCLUDED
+
+#include "es/net/IInternetAddress.idl"
+
+module es
+{
+    /**
+     * This interface provides methods for getting internet addresses.
+     */
+    interface Resolver
+    {
+        /** Gets an internet address about the host for the specified DNS host name.
+         * @param hostName the host name.
+         * @param addressFamily the address family of the internet address to be requested.
+         * @return the internet address of the host.
+         */
+        InternetAddress getHostByName(in string hostName, in long addressFamily);
+
+
+        /** Creates an internet address based on the provided IP address.
+         * The scope identifier is set to the specified numeric value.
+         * @param address the IP address.
+         * @param len     the length of the IP address.
+         * @param scopeID the scope identifier of the network interface.
+         * @return the new internet address.
+         */
+        InternetAddress getHostByAddress(in sequence<octet> address, in unsigned long scopeID);
+
+        /** Gets the host name of the specified internet address.
+         * @param address  the internet address.
+         * @param hostName the host name.
+         * @param len      the length of the buffer to contain the host name.
+         */
+        string getHostName(in InternetAddress address);
+    };
+};
+
+#endif // NINTENDO_ES_NET_IRESOLVER_IDL_INCLUDED
+
