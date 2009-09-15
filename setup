@@ -218,6 +218,38 @@ then
 fi
 cd ../..
 
+# zlib
+cd opt
+mkdir -p zlib
+cd zlib
+if [ ! -f Makefile ];
+then
+	../../src/gcc-4.3.1/zlib/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-multilib
+	make 
+	make install
+fi
+cd ../..
+
+# Libpng
+cd src
+if [ ! -f libpng-1.2.40.tar.gz ]; 
+then
+	wget http://download.sourceforge.net/libpng/libpng-1.2.40.tar.gz
+fi
+rm -rf libpng-1.2.40
+tar -zxf libpng-1.2.40.tar.gz
+patch -p0 -d . < ../trunk/patches/libpng-1.2.40.patch
+cd ../opt
+mkdir -p libpng
+cd libpng
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libpng-1.2.40.patch -newer Makefile -print`" ];
+then
+	../../src/libpng-1.2.40/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-static --disable-shared LDFLAGS=-L$ES_SDK/lib CFLAGS=-I$ES_SDK/include
+	make 
+	make install
+fi
+cd ../..
+
 # Libjpeg
 cd src
 if [ ! -f jpegsrc.v7.tar.gz ]; 
@@ -292,7 +324,7 @@ mkdir -p cairo
 cd cairo
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.8.6.patch -newer Makefile -print`" ];
 then
-	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-png --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1"
+	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1" png_CFLAGS="-I$ES_SDK/include/libpng12 -I$ES_SDK/include" png_LIBS="-L$ES_SDK/lib -lz -lpng -lpng12"
 	make
 	make install
 fi
