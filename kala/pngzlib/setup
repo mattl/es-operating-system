@@ -219,17 +219,15 @@ fi
 cd ../..
 
 # zlib
-cd src
-if [ ! -f zlib-1.2.3.tar.gz ]; 
+cd opt
+mkdir -p zlib
+cd zlib
+if [ ! -f Makefile ];
 then
-	wget http://www.zlib.net/zlib-1.2.3.tar.gz
+	../../src/gcc-4.3.1/zlib/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-multilib
+	make 
+	make install
 fi
-rm -rf zlib-1.2.3
-tar -zxf zlib-1.2.3.tar.gz
-cd zlib-1.2.3
-CC=i386-pc-es-gcc LDSHARED=i386-pc-es-gcc CPP="i386-pc-es-gcc -E" AR="i386-pc-es-ar rc" RANLIB=i386-pc-es-ranlib ./configure --prefix=$ES_SDK
-make 
-make install
 cd ../..
 
 # Libpng
