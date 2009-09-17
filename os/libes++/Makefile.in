@@ -41,7 +41,7 @@ target_triplet = @target@
 
 # libesrpc is built for shared libraries
 @POSIX_TRUE@am__append_4 = libesrpc.a
-@POSIX_TRUE@am__append_5 = -I/usr/include/GL
+@POSIX_TRUE@am__append_5 = -isystem /usr/include/GL
 @POSIX_TRUE@am__append_6 = src/posix_system.cpp src/posix_video.cpp src/rpc.cpp
 subdir = libes++
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -291,8 +291,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . testsuite
 lib_LIBRARIES = libessup++.a libes++.a $(am__append_4)
-AM_CPPFLAGS = -I $(srcdir)/include -I- -I../../include \
-	-I$(srcdir)/../../include $(am__append_5)
+AM_CPPFLAGS = -iquote $(srcdir)/include -isystem ../../include \
+	-isystem $(srcdir)/../../include $(am__append_5)
 c_source_files = \
 	src/md5.c \
 	src/rand48.c \

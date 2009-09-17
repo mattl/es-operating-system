@@ -5091,6 +5091,8 @@ webkit_tests_ldadd = \
 	libWebCore.a \
 	-les++ \
 	-lcairo -lpixman-1 \
+	-lpng -lpng12 \
+	-lz -lm \
 	-ljpeg \
 	-lfontconfig \
 	-lfreetype \
@@ -5124,7 +5126,8 @@ webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)
 @OS_ES_TRUE@        -I$(prefix)/include/es \
 @OS_ES_TRUE@        -I$(prefix)/include/freetype2 \
 @OS_ES_TRUE@        -I$(prefix)/include/cairo \
-@OS_ES_TRUE@        -I$(prefix)/include/pixman-1
+@OS_ES_TRUE@        -I$(prefix)/include/pixman-1 \
+@OS_ES_TRUE@	-I$(prefix)/include/libpng12
 
 @OS_ES_FALSE@testcanvas2d_LDADD = $(webkit_linux_ldadd)
 @OS_ES_TRUE@testcanvas2d_LDADD = $(webkit_tests_ldadd)
@@ -5147,7 +5150,8 @@ webkit_tests_ldflags = -v -static -Wl,--no-omagic,-Map,$@.map,--cref -L$(prefix)
 @OS_ES_TRUE@        -I$(prefix)/include/es \
 @OS_ES_TRUE@        -I$(prefix)/include/freetype2 \
 @OS_ES_TRUE@        -I$(prefix)/include/cairo \
-@OS_ES_TRUE@        -I$(prefix)/include/pixman-1
+@OS_ES_TRUE@        -I$(prefix)/include/pixman-1 \
+@OS_ES_TRUE@	-I$(prefix)/include/libpng12
 
 @OS_ES_FALSE@testsvg_LDADD = $(webkit_linux_ldadd)
 @OS_ES_TRUE@testsvg_LDADD = $(webkit_tests_ldadd)
