@@ -73,5 +73,6 @@ EXTRA_DIST = \
 	scripts/ls.js		\
 	scripts/pi.js		\
 	scripts/rm.js		\
-	scripts/shell.js
+	scripts/shell.js	\
+	scripts/transform.js
 
