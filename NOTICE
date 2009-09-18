@@ -57,3 +57,29 @@ to be redistributed and/or modified under the terms of either LGPL 2.1 or
 MPL 1.1. The original software is available from
     http://cairographics.org/
 
+libpng is used for PNG support in Cairo. libpng is the official PNG
+reference library and is available under the libpng license. The original
+software is available from
+    http://www.libpng.org/pub/png/libpng.html
+
+zlib is a compression library used by libpng. The original software is 
+available from
+    http://www.zlib.net/
+
+WebKit is used as an HTML/SVG rendering engine. WebCore and JavaScriptCore
+are available under the Lesser GNU Public License. WebKit is available under
+a BSD-style license. The original software is available from
+    http://webkit.org/
+
+jpegsrc is used for JPEG support in WebKit. The original software is
+available from
+    http://www.ijg.org/
+
+ICU is used for Unicode and globalization support in WebKit. The original
+software is available from
+    http://icu-project.org/ 
+
+Libxml2 is the XML C parser and toolkit and is used in WebKit. The original
+software is available from
+    http://xmlsoft.org/index.html
+
