@@ -1,6 +1,42 @@
 News about ES releases
 ----------------------
 
+Release 0.1.5  September ##, 2009
+---------------------------------
+
+NOTE: This release is tested with Fedora 11 and Ubuntu 9.04.
+
+This release contains a number of contributions made by the students
+participated in Google Summer of Code™ 2009.
+
+ * Patch files for gcc and newlib have been updated in this release.
+   Please rebuild these before building the other parts of ES.
+
+ * libpng, icu, jpegsrc, libxml2, cairo-1.8.6, pixman has been ported to
+   ES to build WebKit. Please use 'setup' script to build them correctly
+   for ES.
+
+ * To build WebKit for ES, please use 'setup.webkit' script. Two test 
+   programs, testcanvas2d.elf and testsvg.elf' built by this script
+   under opt/webkit can be executed on the ES kernel.
+
+ * The esidl Web IDL compiler now catches up with the latest W3C editor's
+   draft specification as of writing. This release also contains the Web
+   IDL based NPAPI runtime for the browser plugin development.
+
+ * Squeak port for ES is dropped in this release. It'll be brought back
+   when the event manager process supports the DOM keyboard and mouse 
+   events in the future release.
+
+ * The ES kernel has some trouble with QEMU on Fedora 11 and in this
+   release the use of APIC is disabled. This issue should be fixed in
+   the future releases.
+
+ * The implementation of the TCP/IP stack has made some progress including
+   the socket read/write timeout support, sending/receiving TCP URG bytes, 
+   etc.
+
+
 Release 0.1.4  February 8, 2009
 -------------------------------
 
