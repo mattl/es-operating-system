@@ -30,7 +30,10 @@ participated in Google Summer of Code™ 2009.
 
  * The ES kernel has some trouble with QEMU on Fedora 11 and in this
    release the use of APIC is disabled. This issue should be fixed in
-   the future releases.
+   the future releases. Please also keep updating your Fedora 11. It
+   looks QEMU on Fedora 11 has several issues, too.
+
+     cf. https://admin.fedoraproject.org/updates/FEDORA-2009-9377
 
  * The implementation of the TCP/IP stack has made some progress including
    the socket read/write timeout support, sending/receiving TCP URG bytes, 
