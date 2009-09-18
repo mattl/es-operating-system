@@ -2122,6 +2122,8 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
+	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
