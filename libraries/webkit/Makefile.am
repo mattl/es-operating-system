@@ -2478,6 +2478,5 @@ BUILT_SOURCES := \
 	$(webcore_built_nosources)
 
 EXTRA_DIST = \
-	setup \
-	webkit.44489.patch
+	setup
 
