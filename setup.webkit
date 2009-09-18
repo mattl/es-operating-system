@@ -7,13 +7,40 @@ fi
 
 export PATH=$ES_SDK/bin:$PATH
 
-# WebKit
+mkdir -p trunk/libraries
+cd trunk/libraries
+
+# Obtain ES specific modifications for WebKit
+if [ ! -d webkit ]; 
+then 
+	# Check out the source code from Google Code
+	if [ -z $GOOGLE_USERNAME ]; 
+	then
+		svn checkout http://es-operating-system.googlecode.com/svn/trunk/libraries/webkit
+	else
+		svn checkout https://es-operating-system.googlecode.com/svn/trunk/libraries/webkit --username $GOOGLE_USERNAME
+	fi
+else
+	cd webkit
+	svn update
+	cd ..
+fi
+
+# Check out the original WebKit at REV
 REV=44489
-cd trunk/libraries/webkit
+cd webkit
 if [ ! -d trunk ];
 then
-	svn checkout http://svn.webkit.org/repository/webkit/trunk@$REV
-	aclocal;autoconf;autoheader;automake -a --foreign
+	svn checkout --depth=empty http://svn.webkit.org/repository/webkit/trunk@$REV
+	cd trunk
+	svn update -r $REV --depth=empty JavaScriptCore
+	svn update -r $REV JavaScriptCore/pcre
+	svn update -r $REV JavaScriptCore/runtime
+	svn update -r $REV JavaScriptCore/wtf
+	svn update -r $REV WebCore
+	svn update -r $REV --depth=empty WebKit
+	cd ..
+	aclocal; autoconf; autoheader; automake -a --foreign
 fi
 cd ../../..
 
@@ -36,7 +63,7 @@ cd ../../../..
 cd local
 if [ ! -d libraries ];
 then 
-	mkdir -p libraries; mkdir -p libraries/webkit
+	mkdir -p libraries/webkit
 fi
 cd libraries/webkit
 if [ ! -f Makefile ];
