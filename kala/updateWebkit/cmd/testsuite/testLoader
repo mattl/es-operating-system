@@ -1,0 +1,61 @@
+#!/bin/sh
+TESTNAME=`basename $1 .elf`
+LOG=$TESTNAME.log
+
+TIMEOUT=30 # 30sec.
+PASS_MESSAGE="done."
+FAIL_MESSAGE1="Failed test"
+FAIL_MESSAGE2="Failed Core"
+FAIL_MESSAGE3="Failed assertion"
+FAIL_MESSAGE4="terminate called after throwing an instance of"
+
+if [ -e "$TESTNAME" ]; then
+    killall vopy &> /dev/null
+    killall vformat &> /dev/null
+    killall qemu &> /dev/null
+    sleep 1
+    (./"$TESTNAME" &> /dev/null) &
+else
+    echo $TESTNAME not found.
+    exit 1
+fi
+
+TIME=0
+# Timeout after $TIMEOUT seconds.
+while [ $TIME -lt $TIMEOUT ]
+do
+    sleep 1
+    if [ -e "$LOG" ]; then
+        PASS=`grep "$PASS_MESSAGE" $LOG`
+        FAIL="`grep "$FAIL_MESSAGE1" $LOG`"
+	FAIL="$FAIL""`grep "$FAIL_MESSAGE2" $LOG`"
+	FAIL="$FAIL""`grep "$FAIL_MESSAGE3" $LOG`"
+	FAIL="$FAIL""`grep "$FAIL_MESSAGE4" $LOG`"
+        if [ -n "$FAIL" -o  -n "$PASS" ]; then
+            break;
+        fi
+    fi
+    TIME=`expr $TIME + 1`
+done
+
+stty sane # reset console.
+
+killall qemu &> /dev/null
+
+#
+# result
+#
+
+# cat $LOG # VERBOSE
+if [ -n "$FAIL" ]; then
+    RET=1
+    echo '*** FAIL : '$TESTNAME' ***'
+elif [ -n "$PASS" ]; then
+    RET=0
+    # echo PASS : $TESTNAME
+else
+    RET=1
+    echo '*** INCOMPLETE : '$TESTNAME' ***'
+fi
+
+exit $RET
