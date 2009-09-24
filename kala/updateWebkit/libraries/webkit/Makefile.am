@@ -317,9 +317,11 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/css \
 	-I$(srcdir)/trunk/WebCore/dom \
+	-I$(srcdir)/trunk/WebCore/dom/default \
 	-I$(srcdir)/trunk/WebCore/editing \
 	-I$(srcdir)/trunk/WebCore/history \
 	-I$(srcdir)/trunk/WebCore/html \
+	-I$(srcdir)/trunk/WebCore/html/canvas \
 	-I$(srcdir)/trunk/WebCore/inspector \
 	-I$(srcdir)/trunk/WebCore/loader \
 	-I$(srcdir)/trunk/WebCore/loader/appcache \
@@ -590,8 +592,6 @@ webcore_sources += \
 	trunk/WebCore/dom/DOMCoreException.h \
 	trunk/WebCore/dom/DOMImplementation.cpp \
 	trunk/WebCore/dom/DOMImplementation.h \
-	trunk/WebCore/dom/DOMStringList.cpp \
-	trunk/WebCore/dom/DOMStringList.h \
 	trunk/WebCore/dom/DocPtr.h \
 	trunk/WebCore/dom/Document.cpp \
 	trunk/WebCore/dom/Document.h \
@@ -696,8 +696,6 @@ webcore_sources += \
 	trunk/WebCore/dom/SelectorNodeList.h \
 	trunk/WebCore/dom/StaticNodeList.cpp \
 	trunk/WebCore/dom/StaticNodeList.h \
-	trunk/WebCore/dom/StaticStringList.cpp \
-	trunk/WebCore/dom/StaticStringList.h \
 	trunk/WebCore/dom/StyleElement.cpp \
 	trunk/WebCore/dom/StyleElement.h \
 	trunk/WebCore/dom/StyledElement.cpp \
@@ -728,6 +726,8 @@ webcore_sources += \
 	trunk/WebCore/dom/XMLTokenizerLibxml2.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.h \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.h  \
 	trunk/WebCore/editing/AppendNodeCommand.cpp \
 	trunk/WebCore/editing/AppendNodeCommand.h \
 	trunk/WebCore/editing/ApplyStyleCommand.cpp \
@@ -836,16 +836,18 @@ webcore_sources += \
 	trunk/WebCore/history/HistoryItem.h \
 	trunk/WebCore/history/PageCache.cpp \
 	trunk/WebCore/history/PageCache.h \
-	trunk/WebCore/html/CanvasGradient.cpp \
-	trunk/WebCore/html/CanvasGradient.h \
-	trunk/WebCore/html/CanvasPattern.cpp \
-	trunk/WebCore/html/CanvasPattern.h \
-	trunk/WebCore/html/CanvasPixelArray.cpp \
-	trunk/WebCore/html/CanvasPixelArray.h \
-	trunk/WebCore/html/CanvasRenderingContext2D.cpp \
-	trunk/WebCore/html/CanvasRenderingContext2D.h \
-	trunk/WebCore/html/CanvasStyle.cpp \
-	trunk/WebCore/html/CanvasStyle.h \
+	trunk/WebCore/html/canvas/CanvasGradient.cpp \
+	trunk/WebCore/html/canvas/CanvasGradient.h \
+	trunk/WebCore/html/canvas/CanvasPattern.cpp \
+	trunk/WebCore/html/canvas/CanvasPattern.h \
+	trunk/WebCore/html/canvas/CanvasPixelArray.cpp \
+	trunk/WebCore/html/canvas/CanvasPixelArray.h \
+	trunk/WebCore/html/canvas/CanvasRenderingContext.cpp \
+	trunk/WebCore/html/canvas/CanvasRenderingContext.h \
+	trunk/WebCore/html/canvas/CanvasRenderingContext2D.cpp \
+	trunk/WebCore/html/canvas/CanvasRenderingContext2D.h \
+	trunk/WebCore/html/canvas/CanvasStyle.cpp \
+	trunk/WebCore/html/canvas/CanvasStyle.h \
 	trunk/WebCore/html/CollectionCache.cpp \
 	trunk/WebCore/html/CollectionCache.h \
 	trunk/WebCore/html/CollectionType.h \
@@ -2344,7 +2346,7 @@ DerivedSources/CSSGrammar.cpp: $(srcdir)/trunk/WebCore/css/CSSGrammar.y
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
-	$(srcdir)/trunk/WebCore/css/html4.css \
+	$(srcdir)/trunk/WebCore/css/html.css \
 	$(srcdir)/trunk/WebCore/css/quirks.css \
 	$(srcdir)/trunk/WebCore/css/view-source.css \
 	$(srcdir)/trunk/WebCore/css/svg.css \

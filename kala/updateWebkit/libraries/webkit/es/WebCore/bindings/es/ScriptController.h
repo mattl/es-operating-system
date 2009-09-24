@@ -41,6 +41,7 @@ namespace WebCore {
     class ScriptState;
     class String;
     class Widget;
+    class XSSAuditor;
 
     class ScriptController {
     public:
@@ -64,8 +65,12 @@ namespace WebCore {
         void clearScriptObjects();
         void updatePlatformScriptObjects();
 
+	XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
+
     private:
         Frame* m_frame;
+
+	OwnPtr<XSSAuditor> m_XSSAuditor;
     };
 
 } // namespace WebCore
