@@ -48,6 +48,12 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     notImplemented();
 }
 
+void ScriptController::evaluateInIsolatedWorld(unsigned /* worldID */, const Vector<ScriptSourceCode>& sourceCode)
+{
+    notImplemented();
+}
+
+
 bool ScriptController::haveWindowShell() const
 {
     notImplemented();

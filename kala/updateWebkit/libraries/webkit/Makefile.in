@@ -185,8 +185,6 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGComponentTransferFunctionElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGCursorElement.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGCursorElement.h \
-@ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGDefinitionSrcElement.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGDefinitionSrcElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGDefsElement.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGDefsElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGDescElement.cpp \
@@ -395,7 +393,7 @@ noinst_PROGRAMS = $(am__EXEEXT_1)
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextElement.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextPathElement.cpp \
-@ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextPathElement.h \
+@ENABLE_SVG_TRUE@	rrunk/WebCore/svg/SVGTextPathElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextPositioningElement.cpp \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTextPositioningElement.h \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/SVGTitleElement.cpp \
@@ -929,6 +927,8 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/dom/XMLTokenizerLibxml2.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.h \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.h \
 	trunk/WebCore/editing/AppendNodeCommand.cpp \
 	trunk/WebCore/editing/AppendNodeCommand.h \
 	trunk/WebCore/editing/ApplyStyleCommand.cpp \
@@ -1237,7 +1237,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/inspector/JavaScriptProfile.h \
 	trunk/WebCore/inspector/JavaScriptProfileNode.cpp \
 	trunk/WebCore/inspector/JavaScriptProfileNode.h \
-	trunk/WebCore/inspector/JSONObject.cpp \
 	trunk/WebCore/loader/Cache.cpp trunk/WebCore/loader/Cache.h \
 	trunk/WebCore/loader/CachePolicy.h \
 	trunk/WebCore/loader/CachedCSSStyleSheet.cpp \
@@ -1333,7 +1332,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/page/ContextMenuController.cpp \
 	trunk/WebCore/page/ContextMenuController.h \
 	trunk/WebCore/page/Coordinates.h \
-	trunk/WebCore/page/Coordinates.cpp \
 	trunk/WebCore/page/DOMSelection.cpp \
 	trunk/WebCore/page/DOMSelection.h \
 	trunk/WebCore/page/DOMTimer.cpp trunk/WebCore/page/DOMTimer.h \
@@ -1357,7 +1355,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/page/FrameView.h \
 	trunk/WebCore/page/Geolocation.cpp \
 	trunk/WebCore/page/Geolocation.h \
-	trunk/WebCore/page/Geoposition.cpp \
 	trunk/WebCore/page/Geoposition.h \
 	trunk/WebCore/page/History.cpp trunk/WebCore/page/History.h \
 	trunk/WebCore/page/Location.cpp trunk/WebCore/page/Location.h \
@@ -1437,6 +1434,8 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/platform/Logging.h \
 	trunk/WebCore/platform/MIMETypeRegistry.cpp \
 	trunk/WebCore/platform/MIMETypeRegistry.h \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.cpp \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.h \
 	trunk/WebCore/platform/NotImplemented.h \
 	trunk/WebCore/platform/Pasteboard.h \
 	trunk/WebCore/platform/PlatformKeyboardEvent.h \
@@ -1804,8 +1803,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/rendering/TextControlInnerElements.h \
 	trunk/WebCore/rendering/TransformState.cpp \
 	trunk/WebCore/rendering/TransformState.h \
-	trunk/WebCore/rendering/bidi.cpp \
-	trunk/WebCore/rendering/bidi.h \
 	trunk/WebCore/rendering/break_lines.cpp \
 	trunk/WebCore/rendering/break_lines.h \
 	trunk/WebCore/rendering/style/BindingURI.cpp \
@@ -1961,8 +1958,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/svg/SVGComponentTransferFunctionElement.h \
 	trunk/WebCore/svg/SVGCursorElement.cpp \
 	trunk/WebCore/svg/SVGCursorElement.h \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.cpp \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.h \
 	trunk/WebCore/svg/SVGDefsElement.cpp \
 	trunk/WebCore/svg/SVGDefsElement.h \
 	trunk/WebCore/svg/SVGDescElement.cpp \
@@ -2167,7 +2162,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/svg/SVGTextElement.cpp \
 	trunk/WebCore/svg/SVGTextElement.h \
 	trunk/WebCore/svg/SVGTextPathElement.cpp \
-	trunk/WebCore/svg/SVGTextPathElement.h \
+	rrunk/WebCore/svg/SVGTextPathElement.h \
 	trunk/WebCore/svg/SVGTextPositioningElement.cpp \
 	trunk/WebCore/svg/SVGTextPositioningElement.h \
 	trunk/WebCore/svg/SVGTitleElement.cpp \
@@ -2292,7 +2287,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.h \
@@ -2441,7 +2435,6 @@ am__objects_1 =  \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGColor.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGComponentTransferFunctionElement.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGCursorElement.$(OBJEXT) \
-@ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGDefsElement.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGDescElement.$(OBJEXT) \
 @ENABLE_SVG_TRUE@	trunk/WebCore/svg/libWebCore_a-SVGDocument.$(OBJEXT) \
@@ -2738,6 +2731,7 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/dom/libWebCore_a-XMLTokenizer.$(OBJEXT) \
 	trunk/WebCore/dom/libWebCore_a-XMLTokenizerLibxml2.$(OBJEXT) \
 	trunk/WebCore/dom/libWebCore_a-XMLTokenizerScope.$(OBJEXT) \
+	trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.$(OBJEXT) \
 	trunk/WebCore/editing/libWebCore_a-AppendNodeCommand.$(OBJEXT) \
 	trunk/WebCore/editing/libWebCore_a-ApplyStyleCommand.$(OBJEXT) \
 	trunk/WebCore/editing/libWebCore_a-BreakBlockquoteCommand.$(OBJEXT) \
@@ -2888,7 +2882,6 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/inspector/libWebCore_a-JavaScriptDebugServer.$(OBJEXT) \
 	trunk/WebCore/inspector/libWebCore_a-JavaScriptProfile.$(OBJEXT) \
 	trunk/WebCore/inspector/libWebCore_a-JavaScriptProfileNode.$(OBJEXT) \
-	trunk/WebCore/inspector/libWebCore_a-JSONObject.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-Cache.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-CachedCSSStyleSheet.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-CachedFont.$(OBJEXT) \
@@ -2931,7 +2924,6 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/page/libWebCore_a-Chrome.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-Console.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-ContextMenuController.$(OBJEXT) \
-	trunk/WebCore/page/libWebCore_a-Coordinates.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-DOMSelection.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-DOMTimer.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-DOMWindow.$(OBJEXT) \
@@ -2942,7 +2934,6 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/page/libWebCore_a-FrameTree.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-FrameView.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-Geolocation.$(OBJEXT) \
-	trunk/WebCore/page/libWebCore_a-Geoposition.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-History.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-Location.$(OBJEXT) \
 	trunk/WebCore/page/libWebCore_a-MouseEventWithHitTestResults.$(OBJEXT) \
@@ -2975,6 +2966,7 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/platform/libWebCore_a-LinkHash.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-Logging.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-MIMETypeRegistry.$(OBJEXT) \
+	trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-ScrollView.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-Scrollbar.$(OBJEXT) \
 	trunk/WebCore/platform/libWebCore_a-ScrollbarThemeComposite.$(OBJEXT) \
@@ -3125,7 +3117,6 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/rendering/libWebCore_a-ScrollBehavior.$(OBJEXT) \
 	trunk/WebCore/rendering/libWebCore_a-TextControlInnerElements.$(OBJEXT) \
 	trunk/WebCore/rendering/libWebCore_a-TransformState.$(OBJEXT) \
-	trunk/WebCore/rendering/libWebCore_a-bidi.$(OBJEXT) \
 	trunk/WebCore/rendering/libWebCore_a-break_lines.$(OBJEXT) \
 	trunk/WebCore/rendering/style/libWebCore_a-BindingURI.$(OBJEXT) \
 	trunk/WebCore/rendering/style/libWebCore_a-ContentData.$(OBJEXT) \
@@ -3175,7 +3166,6 @@ am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	trunk/WebCore/platform/image-decoders/png/libWebCore_a-PNGImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
-	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT) \
 	trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.$(OBJEXT) \
 	trunk/WebCore/bindings/es/libWebCore_a-ScheduledAction.$(OBJEXT) \
 	trunk/WebCore/bindings/es/libWebCore_a-ScriptCachedFrameData.$(OBJEXT) \
@@ -3436,21 +3426,10 @@ javascriptcore_h_api :=
 # ES
 javascriptcore_cppflags := -I$(srcdir)/trunk/JavaScriptCore/wtf/es \
 	-I$(srcdir)/trunk/JavaScriptCore \
-	-I$(srcdir)/trunk/JavaScriptCore/API \
-	-I$(srcdir)/trunk/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/trunk/JavaScriptCore/interpreter \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecode \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecompiler \
-	-I$(srcdir)/trunk/JavaScriptCore/debugger \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
 	-I$(srcdir)/trunk/JavaScriptCore/pcre \
-	-I$(srcdir)/trunk/JavaScriptCore/profiler \
 	-I$(srcdir)/trunk/JavaScriptCore/runtime \
-	-I$(srcdir)/trunk/JavaScriptCore/wrec \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
-	-I$(srcdir)/trunk/JavaScriptCore/assembler \
+	-I$(srcdir)/trunk/JavaScriptCore/wtf \
 	-I$(srcdir)/trunk/JavaScriptCore/wtf/unicode \
-	-I$(srcdir)/trunk/JavaScriptCore/yarr \
 	-I$(top_builddir)/trunk/JavaScriptCore/pcre \
 	-I$(srcdir)/trunk/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/trunk/JavaScriptCore/parser \
@@ -3551,6 +3530,8 @@ javascriptcore_dist :=
 # ES
 webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/bindings/es \
+	-I$(srcdir)/trunk/WebCore/bridge \
+	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/page/es \
 	-I$(srcdir)/trunk/WebCore/platform/es \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/es \
@@ -3563,6 +3544,7 @@ webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/bridge \
 	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/css -I$(srcdir)/trunk/WebCore/dom \
+	-I$(srcdir)/trunk/WebCore/dom/default \
 	-I$(srcdir)/trunk/WebCore/editing \
 	-I$(srcdir)/trunk/WebCore/history \
 	-I$(srcdir)/trunk/WebCore/html \
@@ -3586,6 +3568,7 @@ webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/jpeg \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/xbm \
+	-I$(srcdir)/trunk/WebCore/platform/mock \
 	-I$(srcdir)/trunk/WebCore/platform/network \
 	-I$(srcdir)/trunk/WebCore/platform/text \
 	-I$(srcdir)/trunk/WebCore/plugins \
@@ -3901,6 +3884,8 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/dom/XMLTokenizerLibxml2.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.h \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.h \
 	trunk/WebCore/editing/AppendNodeCommand.cpp \
 	trunk/WebCore/editing/AppendNodeCommand.h \
 	trunk/WebCore/editing/ApplyStyleCommand.cpp \
@@ -4209,7 +4194,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/inspector/JavaScriptProfile.h \
 	trunk/WebCore/inspector/JavaScriptProfileNode.cpp \
 	trunk/WebCore/inspector/JavaScriptProfileNode.h \
-	trunk/WebCore/inspector/JSONObject.cpp \
 	trunk/WebCore/loader/Cache.cpp trunk/WebCore/loader/Cache.h \
 	trunk/WebCore/loader/CachePolicy.h \
 	trunk/WebCore/loader/CachedCSSStyleSheet.cpp \
@@ -4305,7 +4289,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/page/ContextMenuController.cpp \
 	trunk/WebCore/page/ContextMenuController.h \
 	trunk/WebCore/page/Coordinates.h \
-	trunk/WebCore/page/Coordinates.cpp \
 	trunk/WebCore/page/DOMSelection.cpp \
 	trunk/WebCore/page/DOMSelection.h \
 	trunk/WebCore/page/DOMTimer.cpp trunk/WebCore/page/DOMTimer.h \
@@ -4329,7 +4312,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/page/FrameView.h \
 	trunk/WebCore/page/Geolocation.cpp \
 	trunk/WebCore/page/Geolocation.h \
-	trunk/WebCore/page/Geoposition.cpp \
 	trunk/WebCore/page/Geoposition.h \
 	trunk/WebCore/page/History.cpp trunk/WebCore/page/History.h \
 	trunk/WebCore/page/Location.cpp trunk/WebCore/page/Location.h \
@@ -4409,6 +4391,8 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/platform/Logging.h \
 	trunk/WebCore/platform/MIMETypeRegistry.cpp \
 	trunk/WebCore/platform/MIMETypeRegistry.h \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.cpp \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.h \
 	trunk/WebCore/platform/NotImplemented.h \
 	trunk/WebCore/platform/Pasteboard.h \
 	trunk/WebCore/platform/PlatformKeyboardEvent.h \
@@ -4776,8 +4760,6 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/rendering/TextControlInnerElements.h \
 	trunk/WebCore/rendering/TransformState.cpp \
 	trunk/WebCore/rendering/TransformState.h \
-	trunk/WebCore/rendering/bidi.cpp \
-	trunk/WebCore/rendering/bidi.h \
 	trunk/WebCore/rendering/break_lines.cpp \
 	trunk/WebCore/rendering/break_lines.h \
 	trunk/WebCore/rendering/style/BindingURI.cpp \
@@ -4900,7 +4882,6 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.h \
@@ -5804,6 +5785,15 @@ trunk/WebCore/dom/libWebCore_a-XMLTokenizerLibxml2.$(OBJEXT):  \
 trunk/WebCore/dom/libWebCore_a-XMLTokenizerScope.$(OBJEXT):  \
 	trunk/WebCore/dom/$(am__dirstamp) \
 	trunk/WebCore/dom/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/dom/default/$(am__dirstamp):
+	@$(MKDIR_P) trunk/WebCore/dom/default
+	@: > trunk/WebCore/dom/default/$(am__dirstamp)
+trunk/WebCore/dom/default/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) trunk/WebCore/dom/default/$(DEPDIR)
+	@: > trunk/WebCore/dom/default/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.$(OBJEXT):  \
+	trunk/WebCore/dom/default/$(am__dirstamp) \
+	trunk/WebCore/dom/default/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/editing/$(am__dirstamp):
 	@$(MKDIR_P) trunk/WebCore/editing
 	@: > trunk/WebCore/editing/$(am__dirstamp)
@@ -6284,9 +6274,6 @@ trunk/WebCore/inspector/libWebCore_a-JavaScriptProfile.$(OBJEXT):  \
 trunk/WebCore/inspector/libWebCore_a-JavaScriptProfileNode.$(OBJEXT):  \
 	trunk/WebCore/inspector/$(am__dirstamp) \
 	trunk/WebCore/inspector/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/inspector/libWebCore_a-JSONObject.$(OBJEXT):  \
-	trunk/WebCore/inspector/$(am__dirstamp) \
-	trunk/WebCore/inspector/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/loader/$(am__dirstamp):
 	@$(MKDIR_P) trunk/WebCore/loader
 	@: > trunk/WebCore/loader/$(am__dirstamp)
@@ -6437,9 +6424,6 @@ trunk/WebCore/page/libWebCore_a-Console.$(OBJEXT):  \
 trunk/WebCore/page/libWebCore_a-ContextMenuController.$(OBJEXT):  \
 	trunk/WebCore/page/$(am__dirstamp) \
 	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/page/libWebCore_a-Coordinates.$(OBJEXT):  \
-	trunk/WebCore/page/$(am__dirstamp) \
-	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/page/libWebCore_a-DOMSelection.$(OBJEXT):  \
 	trunk/WebCore/page/$(am__dirstamp) \
 	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
@@ -6468,9 +6452,6 @@ trunk/WebCore/page/libWebCore_a-FrameView.$(OBJEXT):  \
 	trunk/WebCore/page/$(am__dirstamp) \
 	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/page/libWebCore_a-Geolocation.$(OBJEXT):  \
-	trunk/WebCore/page/$(am__dirstamp) \
-	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/page/libWebCore_a-Geoposition.$(OBJEXT):  \
 	trunk/WebCore/page/$(am__dirstamp) \
 	trunk/WebCore/page/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/page/libWebCore_a-History.$(OBJEXT):  \
@@ -6581,6 +6562,15 @@ trunk/WebCore/platform/libWebCore_a-Logging.$(OBJEXT):  \
 trunk/WebCore/platform/libWebCore_a-MIMETypeRegistry.$(OBJEXT):  \
 	trunk/WebCore/platform/$(am__dirstamp) \
 	trunk/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/platform/mock/$(am__dirstamp):
+	@$(MKDIR_P) trunk/WebCore/platform/mock
+	@: > trunk/WebCore/platform/mock/$(am__dirstamp)
+trunk/WebCore/platform/mock/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) trunk/WebCore/platform/mock/$(DEPDIR)
+	@: > trunk/WebCore/platform/mock/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.$(OBJEXT):  \
+	trunk/WebCore/platform/mock/$(am__dirstamp) \
+	trunk/WebCore/platform/mock/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/libWebCore_a-ScrollView.$(OBJEXT):  \
 	trunk/WebCore/platform/$(am__dirstamp) \
 	trunk/WebCore/platform/$(DEPDIR)/$(am__dirstamp)
@@ -7073,9 +7063,6 @@ trunk/WebCore/rendering/libWebCore_a-TextControlInnerElements.$(OBJEXT):  \
 trunk/WebCore/rendering/libWebCore_a-TransformState.$(OBJEXT):  \
 	trunk/WebCore/rendering/$(am__dirstamp) \
 	trunk/WebCore/rendering/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/rendering/libWebCore_a-bidi.$(OBJEXT):  \
-	trunk/WebCore/rendering/$(am__dirstamp) \
-	trunk/WebCore/rendering/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/rendering/libWebCore_a-break_lines.$(OBJEXT):  \
 	trunk/WebCore/rendering/$(am__dirstamp) \
 	trunk/WebCore/rendering/$(DEPDIR)/$(am__dirstamp)
@@ -7302,9 +7289,6 @@ trunk/WebCore/svg/libWebCore_a-SVGComponentTransferFunctionElement.$(OBJEXT):  \
 	trunk/WebCore/svg/$(am__dirstamp) \
 	trunk/WebCore/svg/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/svg/libWebCore_a-SVGCursorElement.$(OBJEXT):  \
-	trunk/WebCore/svg/$(am__dirstamp) \
-	trunk/WebCore/svg/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.$(OBJEXT):  \
 	trunk/WebCore/svg/$(am__dirstamp) \
 	trunk/WebCore/svg/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/svg/libWebCore_a-SVGDefsElement.$(OBJEXT):  \
@@ -7868,9 +7852,6 @@ trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT)
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
 	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
 	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT):  \
-	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
-	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/posix/$(am__dirstamp):
 	@$(MKDIR_P) trunk/WebCore/platform/posix
 	@: > trunk/WebCore/platform/posix/$(am__dirstamp)
@@ -8281,6 +8262,7 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/css/libWebCore_a-WebKitCSSKeyframesRule.$(OBJEXT)
 	-rm -f trunk/WebCore/css/libWebCore_a-WebKitCSSMatrix.$(OBJEXT)
 	-rm -f trunk/WebCore/css/libWebCore_a-WebKitCSSTransformValue.$(OBJEXT)
+	-rm -f trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.$(OBJEXT)
 	-rm -f trunk/WebCore/dom/libWebCore_a-ActiveDOMObject.$(OBJEXT)
 	-rm -f trunk/WebCore/dom/libWebCore_a-Attr.$(OBJEXT)
 	-rm -f trunk/WebCore/dom/libWebCore_a-Attribute.$(OBJEXT)
@@ -8506,7 +8488,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/inspector/libWebCore_a-InspectorDatabaseResource.$(OBJEXT)
 	-rm -f trunk/WebCore/inspector/libWebCore_a-InspectorFrontend.$(OBJEXT)
 	-rm -f trunk/WebCore/inspector/libWebCore_a-InspectorResource.$(OBJEXT)
-	-rm -f trunk/WebCore/inspector/libWebCore_a-JSONObject.$(OBJEXT)
 	-rm -f trunk/WebCore/inspector/libWebCore_a-JavaScriptCallFrame.$(OBJEXT)
 	-rm -f trunk/WebCore/inspector/libWebCore_a-JavaScriptDebugServer.$(OBJEXT)
 	-rm -f trunk/WebCore/inspector/libWebCore_a-JavaScriptProfile.$(OBJEXT)
@@ -8562,7 +8543,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/page/libWebCore_a-Chrome.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-Console.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-ContextMenuController.$(OBJEXT)
-	-rm -f trunk/WebCore/page/libWebCore_a-Coordinates.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-DOMSelection.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-DOMTimer.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-DOMWindow.$(OBJEXT)
@@ -8573,7 +8553,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/page/libWebCore_a-FrameTree.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-FrameView.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-Geolocation.$(OBJEXT)
-	-rm -f trunk/WebCore/page/libWebCore_a-Geoposition.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-History.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-Location.$(OBJEXT)
 	-rm -f trunk/WebCore/page/libWebCore_a-MouseEventWithHitTestResults.$(OBJEXT)
@@ -8614,7 +8593,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-GraphicsContextCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageCairo.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-PathCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-PatternCairo.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/graphics/cairo/libWebCore_a-TransformationMatrixCairo.$(OBJEXT)
@@ -8694,6 +8672,7 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/libWebCore_a-ThreadTimers.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-Timer.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/libWebCore_a-Widget.$(OBJEXT)
+	-rm -f trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/network/es/libWebCore_a-CookieJarES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/network/es/libWebCore_a-ResourceHandleES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/network/libWebCore_a-AuthenticationChallengeBase.$(OBJEXT)
@@ -8822,7 +8801,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/rendering/libWebCore_a-ScrollBehavior.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/libWebCore_a-TextControlInnerElements.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/libWebCore_a-TransformState.$(OBJEXT)
-	-rm -f trunk/WebCore/rendering/libWebCore_a-bidi.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/libWebCore_a-break_lines.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/style/libWebCore_a-BindingURI.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/style/libWebCore_a-ContentData.$(OBJEXT)
@@ -8893,7 +8871,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGColor.$(OBJEXT)
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGComponentTransferFunctionElement.$(OBJEXT)
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGCursorElement.$(OBJEXT)
-	-rm -f trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.$(OBJEXT)
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGDefsElement.$(OBJEXT)
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGDescElement.$(OBJEXT)
 	-rm -f trunk/WebCore/svg/libWebCore_a-SVGDocument.$(OBJEXT)
@@ -9231,6 +9208,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/dom/$(DEPDIR)/libWebCore_a-XMLTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/dom/$(DEPDIR)/libWebCore_a-XMLTokenizerLibxml2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/dom/$(DEPDIR)/libWebCore_a-XMLTokenizerScope.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-AppendNodeCommand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-ApplyStyleCommand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-BreakBlockquoteCommand.Po@am__quote@
@@ -9377,7 +9355,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-InspectorDatabaseResource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-InspectorFrontend.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-InspectorResource.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JavaScriptCallFrame.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JavaScriptDebugServer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JavaScriptProfile.Po@am__quote@
@@ -9425,7 +9402,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Chrome.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-ContextMenuController.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMSelection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMTimer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMWindow.Po@am__quote@
@@ -9436,7 +9412,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-FrameTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-FrameView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geolocation.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-History.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Location.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/page/$(DEPDIR)/libWebCore_a-MouseEventWithHitTestResults.Po@am__quote@
@@ -9537,7 +9512,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-GraphicsContextCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageCairo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-PathCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-PatternCairo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-TransformationMatrixCairo.Po@am__quote@
@@ -9565,6 +9539,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR)/libWebCore_a-JPEGImageDecoder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/image-decoders/png/$(DEPDIR)/libWebCore_a-PNGImageDecoder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/libWebCore_a-XBMImageDecoder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/$(DEPDIR)/libWebCore_a-AuthenticationChallengeBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/$(DEPDIR)/libWebCore_a-Credential.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/$(DEPDIR)/libWebCore_a-FormData.Po@am__quote@
@@ -9693,7 +9668,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-ScrollBehavior.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-TextControlInnerElements.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-TransformState.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-break_lines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/style/$(DEPDIR)/libWebCore_a-BindingURI.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/style/$(DEPDIR)/libWebCore_a-ContentData.Po@am__quote@
@@ -9734,7 +9708,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGColor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGComponentTransferFunctionElement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGCursorElement.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefsElement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDescElement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDocument.Po@am__quote@
@@ -12374,6 +12347,20 @@ trunk/WebCore/dom/libWebCore_a-XMLTokenizerScope.obj: trunk/WebCore/dom/XMLToken
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/dom/libWebCore_a-XMLTokenizerScope.obj `if test -f 'trunk/WebCore/dom/XMLTokenizerScope.cpp'; then $(CYGPATH_W) 'trunk/WebCore/dom/XMLTokenizerScope.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/dom/XMLTokenizerScope.cpp'; fi`
 
+trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.o: trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.o -MD -MP -MF trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Tpo -c -o trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.o `test -f 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp' || echo '$(srcdir)/'`trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Tpo trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp' object='trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.o `test -f 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp' || echo '$(srcdir)/'`trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp
+
+trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.obj: trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.obj -MD -MP -MF trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Tpo -c -o trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.obj `if test -f 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; then $(CYGPATH_W) 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Tpo trunk/WebCore/dom/default/$(DEPDIR)/libWebCore_a-PlatformMessagePortChannel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp' object='trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/dom/default/libWebCore_a-PlatformMessagePortChannel.obj `if test -f 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; then $(CYGPATH_W) 'trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp'; fi`
+
 trunk/WebCore/editing/libWebCore_a-AppendNodeCommand.o: trunk/WebCore/editing/AppendNodeCommand.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/editing/libWebCore_a-AppendNodeCommand.o -MD -MP -MF trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-AppendNodeCommand.Tpo -c -o trunk/WebCore/editing/libWebCore_a-AppendNodeCommand.o `test -f 'trunk/WebCore/editing/AppendNodeCommand.cpp' || echo '$(srcdir)/'`trunk/WebCore/editing/AppendNodeCommand.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-AppendNodeCommand.Tpo trunk/WebCore/editing/$(DEPDIR)/libWebCore_a-AppendNodeCommand.Po
@@ -14474,20 +14461,6 @@ trunk/WebCore/inspector/libWebCore_a-JavaScriptProfileNode.obj: trunk/WebCore/in
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/inspector/libWebCore_a-JavaScriptProfileNode.obj `if test -f 'trunk/WebCore/inspector/JavaScriptProfileNode.cpp'; then $(CYGPATH_W) 'trunk/WebCore/inspector/JavaScriptProfileNode.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/inspector/JavaScriptProfileNode.cpp'; fi`
 
-trunk/WebCore/inspector/libWebCore_a-JSONObject.o: trunk/WebCore/inspector/JSONObject.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/inspector/libWebCore_a-JSONObject.o -MD -MP -MF trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Tpo -c -o trunk/WebCore/inspector/libWebCore_a-JSONObject.o `test -f 'trunk/WebCore/inspector/JSONObject.cpp' || echo '$(srcdir)/'`trunk/WebCore/inspector/JSONObject.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Tpo trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/inspector/JSONObject.cpp' object='trunk/WebCore/inspector/libWebCore_a-JSONObject.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/inspector/libWebCore_a-JSONObject.o `test -f 'trunk/WebCore/inspector/JSONObject.cpp' || echo '$(srcdir)/'`trunk/WebCore/inspector/JSONObject.cpp
-
-trunk/WebCore/inspector/libWebCore_a-JSONObject.obj: trunk/WebCore/inspector/JSONObject.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/inspector/libWebCore_a-JSONObject.obj -MD -MP -MF trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Tpo -c -o trunk/WebCore/inspector/libWebCore_a-JSONObject.obj `if test -f 'trunk/WebCore/inspector/JSONObject.cpp'; then $(CYGPATH_W) 'trunk/WebCore/inspector/JSONObject.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/inspector/JSONObject.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Tpo trunk/WebCore/inspector/$(DEPDIR)/libWebCore_a-JSONObject.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/inspector/JSONObject.cpp' object='trunk/WebCore/inspector/libWebCore_a-JSONObject.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/inspector/libWebCore_a-JSONObject.obj `if test -f 'trunk/WebCore/inspector/JSONObject.cpp'; then $(CYGPATH_W) 'trunk/WebCore/inspector/JSONObject.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/inspector/JSONObject.cpp'; fi`
-
 trunk/WebCore/loader/libWebCore_a-Cache.o: trunk/WebCore/loader/Cache.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-Cache.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-Cache.Tpo -c -o trunk/WebCore/loader/libWebCore_a-Cache.o `test -f 'trunk/WebCore/loader/Cache.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/Cache.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-Cache.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-Cache.Po
@@ -15076,20 +15049,6 @@ trunk/WebCore/page/libWebCore_a-ContextMenuController.obj: trunk/WebCore/page/Co
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-ContextMenuController.obj `if test -f 'trunk/WebCore/page/ContextMenuController.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/ContextMenuController.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/ContextMenuController.cpp'; fi`
 
-trunk/WebCore/page/libWebCore_a-Coordinates.o: trunk/WebCore/page/Coordinates.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-Coordinates.o -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Tpo -c -o trunk/WebCore/page/libWebCore_a-Coordinates.o `test -f 'trunk/WebCore/page/Coordinates.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/Coordinates.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Tpo trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/page/Coordinates.cpp' object='trunk/WebCore/page/libWebCore_a-Coordinates.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-Coordinates.o `test -f 'trunk/WebCore/page/Coordinates.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/Coordinates.cpp
-
-trunk/WebCore/page/libWebCore_a-Coordinates.obj: trunk/WebCore/page/Coordinates.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-Coordinates.obj -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Tpo -c -o trunk/WebCore/page/libWebCore_a-Coordinates.obj `if test -f 'trunk/WebCore/page/Coordinates.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/Coordinates.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/Coordinates.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Tpo trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Coordinates.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/page/Coordinates.cpp' object='trunk/WebCore/page/libWebCore_a-Coordinates.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-Coordinates.obj `if test -f 'trunk/WebCore/page/Coordinates.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/Coordinates.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/Coordinates.cpp'; fi`
-
 trunk/WebCore/page/libWebCore_a-DOMSelection.o: trunk/WebCore/page/DOMSelection.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-DOMSelection.o -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMSelection.Tpo -c -o trunk/WebCore/page/libWebCore_a-DOMSelection.o `test -f 'trunk/WebCore/page/DOMSelection.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/DOMSelection.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMSelection.Tpo trunk/WebCore/page/$(DEPDIR)/libWebCore_a-DOMSelection.Po
@@ -15229,20 +15188,6 @@ trunk/WebCore/page/libWebCore_a-Geolocation.obj: trunk/WebCore/page/Geolocation.
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/page/Geolocation.cpp' object='trunk/WebCore/page/libWebCore_a-Geolocation.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-Geolocation.obj `if test -f 'trunk/WebCore/page/Geolocation.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/Geolocation.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/Geolocation.cpp'; fi`
-
-trunk/WebCore/page/libWebCore_a-Geoposition.o: trunk/WebCore/page/Geoposition.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-Geoposition.o -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Tpo -c -o trunk/WebCore/page/libWebCore_a-Geoposition.o `test -f 'trunk/WebCore/page/Geoposition.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/Geoposition.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Tpo trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/page/Geoposition.cpp' object='trunk/WebCore/page/libWebCore_a-Geoposition.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-Geoposition.o `test -f 'trunk/WebCore/page/Geoposition.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/Geoposition.cpp
-
-trunk/WebCore/page/libWebCore_a-Geoposition.obj: trunk/WebCore/page/Geoposition.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-Geoposition.obj -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Tpo -c -o trunk/WebCore/page/libWebCore_a-Geoposition.obj `if test -f 'trunk/WebCore/page/Geoposition.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/Geoposition.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/Geoposition.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Tpo trunk/WebCore/page/$(DEPDIR)/libWebCore_a-Geoposition.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/page/Geoposition.cpp' object='trunk/WebCore/page/libWebCore_a-Geoposition.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/page/libWebCore_a-Geoposition.obj `if test -f 'trunk/WebCore/page/Geoposition.cpp'; then $(CYGPATH_W) 'trunk/WebCore/page/Geoposition.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/page/Geoposition.cpp'; fi`
 
 trunk/WebCore/page/libWebCore_a-History.o: trunk/WebCore/page/History.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/page/libWebCore_a-History.o -MD -MP -MF trunk/WebCore/page/$(DEPDIR)/libWebCore_a-History.Tpo -c -o trunk/WebCore/page/libWebCore_a-History.o `test -f 'trunk/WebCore/page/History.cpp' || echo '$(srcdir)/'`trunk/WebCore/page/History.cpp
@@ -15691,6 +15636,20 @@ trunk/WebCore/platform/libWebCore_a-MIMETypeRegistry.obj: trunk/WebCore/platform
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/MIMETypeRegistry.cpp' object='trunk/WebCore/platform/libWebCore_a-MIMETypeRegistry.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/libWebCore_a-MIMETypeRegistry.obj `if test -f 'trunk/WebCore/platform/MIMETypeRegistry.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/MIMETypeRegistry.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/MIMETypeRegistry.cpp'; fi`
+
+trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.o: trunk/WebCore/platform/mock/GeolocationServiceMock.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.o -MD -MP -MF trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Tpo -c -o trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.o `test -f 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/mock/GeolocationServiceMock.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Tpo trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/mock/GeolocationServiceMock.cpp' object='trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.o `test -f 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/mock/GeolocationServiceMock.cpp
+
+trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.obj: trunk/WebCore/platform/mock/GeolocationServiceMock.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.obj -MD -MP -MF trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Tpo -c -o trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.obj `if test -f 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Tpo trunk/WebCore/platform/mock/$(DEPDIR)/libWebCore_a-GeolocationServiceMock.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/mock/GeolocationServiceMock.cpp' object='trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/mock/libWebCore_a-GeolocationServiceMock.obj `if test -f 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/mock/GeolocationServiceMock.cpp'; fi`
 
 trunk/WebCore/platform/libWebCore_a-ScrollView.o: trunk/WebCore/platform/ScrollView.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/libWebCore_a-ScrollView.o -MD -MP -MF trunk/WebCore/platform/$(DEPDIR)/libWebCore_a-ScrollView.Tpo -c -o trunk/WebCore/platform/libWebCore_a-ScrollView.o `test -f 'trunk/WebCore/platform/ScrollView.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/ScrollView.cpp
@@ -17792,20 +17751,6 @@ trunk/WebCore/rendering/libWebCore_a-TransformState.obj: trunk/WebCore/rendering
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/rendering/libWebCore_a-TransformState.obj `if test -f 'trunk/WebCore/rendering/TransformState.cpp'; then $(CYGPATH_W) 'trunk/WebCore/rendering/TransformState.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/rendering/TransformState.cpp'; fi`
 
-trunk/WebCore/rendering/libWebCore_a-bidi.o: trunk/WebCore/rendering/bidi.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/rendering/libWebCore_a-bidi.o -MD -MP -MF trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Tpo -c -o trunk/WebCore/rendering/libWebCore_a-bidi.o `test -f 'trunk/WebCore/rendering/bidi.cpp' || echo '$(srcdir)/'`trunk/WebCore/rendering/bidi.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Tpo trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/rendering/bidi.cpp' object='trunk/WebCore/rendering/libWebCore_a-bidi.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/rendering/libWebCore_a-bidi.o `test -f 'trunk/WebCore/rendering/bidi.cpp' || echo '$(srcdir)/'`trunk/WebCore/rendering/bidi.cpp
-
-trunk/WebCore/rendering/libWebCore_a-bidi.obj: trunk/WebCore/rendering/bidi.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/rendering/libWebCore_a-bidi.obj -MD -MP -MF trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Tpo -c -o trunk/WebCore/rendering/libWebCore_a-bidi.obj `if test -f 'trunk/WebCore/rendering/bidi.cpp'; then $(CYGPATH_W) 'trunk/WebCore/rendering/bidi.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/rendering/bidi.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Tpo trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-bidi.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/rendering/bidi.cpp' object='trunk/WebCore/rendering/libWebCore_a-bidi.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/rendering/libWebCore_a-bidi.obj `if test -f 'trunk/WebCore/rendering/bidi.cpp'; then $(CYGPATH_W) 'trunk/WebCore/rendering/bidi.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/rendering/bidi.cpp'; fi`
-
 trunk/WebCore/rendering/libWebCore_a-break_lines.o: trunk/WebCore/rendering/break_lines.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/rendering/libWebCore_a-break_lines.o -MD -MP -MF trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-break_lines.Tpo -c -o trunk/WebCore/rendering/libWebCore_a-break_lines.o `test -f 'trunk/WebCore/rendering/break_lines.cpp' || echo '$(srcdir)/'`trunk/WebCore/rendering/break_lines.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-break_lines.Tpo trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-break_lines.Po
@@ -18785,20 +18730,6 @@ trunk/WebCore/svg/libWebCore_a-SVGCursorElement.obj: trunk/WebCore/svg/SVGCursor
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/svg/SVGCursorElement.cpp' object='trunk/WebCore/svg/libWebCore_a-SVGCursorElement.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/svg/libWebCore_a-SVGCursorElement.obj `if test -f 'trunk/WebCore/svg/SVGCursorElement.cpp'; then $(CYGPATH_W) 'trunk/WebCore/svg/SVGCursorElement.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/svg/SVGCursorElement.cpp'; fi`
-
-trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.o: trunk/WebCore/svg/SVGDefinitionSrcElement.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.o -MD -MP -MF trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Tpo -c -o trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.o `test -f 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp' || echo '$(srcdir)/'`trunk/WebCore/svg/SVGDefinitionSrcElement.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Tpo trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/svg/SVGDefinitionSrcElement.cpp' object='trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.o `test -f 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp' || echo '$(srcdir)/'`trunk/WebCore/svg/SVGDefinitionSrcElement.cpp
-
-trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.obj: trunk/WebCore/svg/SVGDefinitionSrcElement.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.obj -MD -MP -MF trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Tpo -c -o trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.obj `if test -f 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; then $(CYGPATH_W) 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Tpo trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefinitionSrcElement.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/svg/SVGDefinitionSrcElement.cpp' object='trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/svg/libWebCore_a-SVGDefinitionSrcElement.obj `if test -f 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; then $(CYGPATH_W) 'trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/svg/SVGDefinitionSrcElement.cpp'; fi`
 
 trunk/WebCore/svg/libWebCore_a-SVGDefsElement.o: trunk/WebCore/svg/SVGDefsElement.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/svg/libWebCore_a-SVGDefsElement.o -MD -MP -MF trunk/WebCore/svg/$(DEPDIR)/libWebCore_a-SVGDefsElement.Tpo -c -o trunk/WebCore/svg/libWebCore_a-SVGDefsElement.o `test -f 'trunk/WebCore/svg/SVGDefsElement.cpp' || echo '$(srcdir)/'`trunk/WebCore/svg/SVGDefsElement.cpp
@@ -21110,20 +21041,6 @@ trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj: trunk/W
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp'; fi`
 
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o: trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-
-trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj: trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageSourceCairo.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp' object='trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageSourceCairo.obj `if test -f 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp'; fi`
-
 trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o: trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o -MD -MP -MF trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Tpo -c -o trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.o `test -f 'trunk/WebCore/platform/posix/FileSystemPOSIX.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Tpo trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Po
@@ -22289,6 +22206,8 @@ distclean-generic:
 	-rm -f trunk/WebCore/css/$(am__dirstamp)
 	-rm -f trunk/WebCore/dom/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/dom/$(am__dirstamp)
+	-rm -f trunk/WebCore/dom/default/$(DEPDIR)/$(am__dirstamp)
+	-rm -f trunk/WebCore/dom/default/$(am__dirstamp)
 	-rm -f trunk/WebCore/editing/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/editing/$(am__dirstamp)
 	-rm -f trunk/WebCore/history/$(DEPDIR)/$(am__dirstamp)
@@ -22339,6 +22258,8 @@ distclean-generic:
 	-rm -f trunk/WebCore/platform/image-decoders/png/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp)
+	-rm -f trunk/WebCore/platform/mock/$(DEPDIR)/$(am__dirstamp)
+	-rm -f trunk/WebCore/platform/mock/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/network/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/network/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/network/es/$(DEPDIR)/$(am__dirstamp)
@@ -22381,7 +22302,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/mock/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -22417,7 +22338,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/inspector/$(DEPDIR) trunk/WebCore/loader/$(DEPDIR) trunk/WebCore/loader/archive/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/$(DEPDIR) trunk/WebCore/page/animation/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/$(DEPDIR) trunk/WebCore/platform/animation/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/graphics/transforms/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/mock/$(DEPDIR) trunk/WebCore/platform/network/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/plugins/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebCore/xml/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

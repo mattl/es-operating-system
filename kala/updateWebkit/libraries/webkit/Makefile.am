@@ -124,21 +124,10 @@ javascriptcore_cppflags += \
 	
 javascriptcore_cppflags += \
 	-I$(srcdir)/trunk/JavaScriptCore \
-	-I$(srcdir)/trunk/JavaScriptCore/API \
-	-I$(srcdir)/trunk/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/trunk/JavaScriptCore/interpreter \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecode \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecompiler \
-	-I$(srcdir)/trunk/JavaScriptCore/debugger \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
 	-I$(srcdir)/trunk/JavaScriptCore/pcre \
-	-I$(srcdir)/trunk/JavaScriptCore/profiler \
 	-I$(srcdir)/trunk/JavaScriptCore/runtime \
-	-I$(srcdir)/trunk/JavaScriptCore/wrec \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
-	-I$(srcdir)/trunk/JavaScriptCore/assembler \
+	-I$(srcdir)/trunk/JavaScriptCore/wtf \
 	-I$(srcdir)/trunk/JavaScriptCore/wtf/unicode \
-	-I$(srcdir)/trunk/JavaScriptCore/yarr \
 	-I$(top_builddir)/trunk/JavaScriptCore/pcre
 	
 javascriptcore_cppflags += \
@@ -302,6 +291,8 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(srcdir)/trunk/WebCore/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/bindings/es \
+	-I$(srcdir)/trunk/WebCore/bridge \
+	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/page/es \
 	-I$(srcdir)/trunk/WebCore/platform/es \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/es \
@@ -341,6 +332,7 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/jpeg \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/xbm \
+	-I$(srcdir)/trunk/WebCore/platform/mock \
 	-I$(srcdir)/trunk/WebCore/platform/network \
 	-I$(srcdir)/trunk/WebCore/platform/text \
 	-I$(srcdir)/trunk/WebCore/plugins \
@@ -1039,7 +1031,6 @@ webcore_sources += \
 	trunk/WebCore/inspector/JavaScriptProfile.h \
 	trunk/WebCore/inspector/JavaScriptProfileNode.cpp \
 	trunk/WebCore/inspector/JavaScriptProfileNode.h \
-	trunk/WebCore/inspector/JSONObject.cpp \
 	trunk/WebCore/loader/Cache.cpp \
 	trunk/WebCore/loader/Cache.h \
 	trunk/WebCore/loader/CachePolicy.h \
@@ -1140,7 +1131,6 @@ webcore_sources += \
 	trunk/WebCore/page/ContextMenuController.cpp \
 	trunk/WebCore/page/ContextMenuController.h \
 	trunk/WebCore/page/Coordinates.h \
-	trunk/WebCore/page/Coordinates.cpp \
 	trunk/WebCore/page/DOMSelection.cpp \
 	trunk/WebCore/page/DOMSelection.h \
 	trunk/WebCore/page/DOMTimer.cpp \
@@ -1166,7 +1156,6 @@ webcore_sources += \
 	trunk/WebCore/page/FrameView.h \
 	trunk/WebCore/page/Geolocation.cpp \
 	trunk/WebCore/page/Geolocation.h \
-	trunk/WebCore/page/Geoposition.cpp \
 	trunk/WebCore/page/Geoposition.h \
 	trunk/WebCore/page/History.cpp \
 	trunk/WebCore/page/History.h \
@@ -1253,6 +1242,8 @@ webcore_sources += \
 	trunk/WebCore/platform/Logging.h \
 	trunk/WebCore/platform/MIMETypeRegistry.cpp \
 	trunk/WebCore/platform/MIMETypeRegistry.h \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.cpp \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.h \
 	trunk/WebCore/platform/NotImplemented.h \
 	trunk/WebCore/platform/Pasteboard.h \
 	trunk/WebCore/platform/PlatformKeyboardEvent.h \
@@ -1620,8 +1611,6 @@ webcore_sources += \
 	trunk/WebCore/rendering/TextControlInnerElements.h \
 	trunk/WebCore/rendering/TransformState.cpp \
 	trunk/WebCore/rendering/TransformState.h \
-	trunk/WebCore/rendering/bidi.cpp \
-	trunk/WebCore/rendering/bidi.h \
 	trunk/WebCore/rendering/break_lines.cpp \
 	trunk/WebCore/rendering/break_lines.h \
 	trunk/WebCore/rendering/style/BindingURI.cpp \
@@ -1790,8 +1779,6 @@ webcore_sources += \
 	trunk/WebCore/svg/SVGComponentTransferFunctionElement.h \
 	trunk/WebCore/svg/SVGCursorElement.cpp \
 	trunk/WebCore/svg/SVGCursorElement.h \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.cpp \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.h \
 	trunk/WebCore/svg/SVGDefsElement.cpp \
 	trunk/WebCore/svg/SVGDefsElement.h \
 	trunk/WebCore/svg/SVGDescElement.cpp \
@@ -2000,7 +1987,7 @@ webcore_sources += \
 	trunk/WebCore/svg/SVGTextElement.cpp \
 	trunk/WebCore/svg/SVGTextElement.h \
 	trunk/WebCore/svg/SVGTextPathElement.cpp \
-	trunk/WebCore/svg/SVGTextPathElement.h \
+	rrunk/WebCore/svg/SVGTextPathElement.h \
 	trunk/WebCore/svg/SVGTextPositioningElement.cpp \
 	trunk/WebCore/svg/SVGTextPositioningElement.h \
 	trunk/WebCore/svg/SVGTitleElement.cpp \
@@ -2129,7 +2116,6 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 
 # ES
