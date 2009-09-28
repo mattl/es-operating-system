@@ -45,6 +45,7 @@ public:
     virtual void downloadURL(const KURL&);
     virtual void searchWithGoogle(const Frame*);
     virtual void lookUpInDictionary(Frame*);
+    virtual bool isSpeaking();
     virtual void speak(const String&);
     virtual void stopSpeaking();
 };

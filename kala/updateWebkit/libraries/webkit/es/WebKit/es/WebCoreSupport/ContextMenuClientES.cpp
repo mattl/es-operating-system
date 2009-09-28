@@ -69,6 +69,11 @@ void ContextMenuClientES::lookUpInDictionary(Frame*)
     notImplemented();
 }
 
+bool ContextMenuClientES::isSpeaking()
+{
+    notImplemented();
+}
+
 void ContextMenuClientES::speak(const String&)
 {
     notImplemented();

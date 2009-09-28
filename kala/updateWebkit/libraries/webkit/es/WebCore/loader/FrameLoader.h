@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,13 @@
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "Timer.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
     class Archive;
     class AuthenticationChallenge;
-    class CachedFrame;
+    class CachedFrameBase;
     class CachedPage;
     class CachedResource;
     class Document;
@@ -111,7 +112,7 @@ namespace WebCore {
         void* m_argument;
     };
 
-    class FrameLoader : Noncopyable {
+    class FrameLoader : public Noncopyable {
     public:
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
@@ -236,15 +237,12 @@ namespace WebCore {
 
         void didFirstVisuallyNonEmptyLayout();
 
-#if ENABLE(WML)
-        void setForceReloadWmlDeck(bool);
-#endif
-
         void loadedResourceFromMemoryCache(const CachedResource*);
         void tellClientAboutPastMemoryCacheLoads();
 
         void checkLoadComplete();
         void detachFromParent();
+        void detachViewsAndDocumentLoader();
 
         void addExtraFieldsToSubresourceRequest(ResourceRequest&);
         void addExtraFieldsToMainResourceRequest(ResourceRequest&);
@@ -261,10 +259,10 @@ namespace WebCore {
 
         void submitForm(const char* action, const String& url,
             PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary,
-            bool lockHistory, bool lockBackForwardList, PassRefPtr<Event>, PassRefPtr<FormState>);
+            bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
 
         void stop();
-        void stopLoading(bool sendUnload, DatabasePolicy = DatabasePolicyStop);
+        void stopLoading(UnloadEventPolicy, DatabasePolicy = DatabasePolicyStop);
         bool closeURL();
 
         void didExplicitOpen();
@@ -305,18 +303,23 @@ namespace WebCore {
         void handledOnloadEvents();
         String userAgent(const KURL&) const;
 
-        Widget* createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
+        PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
         void dispatchWindowObjectAvailable();
         void dispatchDocumentElementAvailable();
         void restoreDocumentState();
+
+        // Mixed content related functions.
+        static bool isMixedContent(SecurityOrigin* context, const KURL&);
+        void checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL&);
+        void checkIfRunInsecureContent(SecurityOrigin* context, const KURL&);
 
         Frame* opener();
         void setOpener(Frame*);
         bool openedByDOM() const;
         void setOpenedByDOM();
 
-        bool userGestureHint();
+        bool isProcessingUserGesture();
 
         void resetMultipleFormSubmissionProtection();
 
@@ -349,6 +352,7 @@ namespace WebCore {
         void setTitle(const String&);
 
         void commitProvisionalLoad(PassRefPtr<CachedPage>);
+        bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
         void goToItem(HistoryItem*, FrameLoadType);
         void saveDocumentAndScrollState();
@@ -365,13 +369,6 @@ namespace WebCore {
         static bool restrictAccessToLocal();
         static bool allowSubstituteDataAccessToLocal();
 
-        static void registerURLSchemeAsLocal(const String&);
-        static bool shouldTreatURLAsLocal(const String&);
-        static bool shouldTreatURLSchemeAsLocal(const String&);
-
-        static void registerURLSchemeAsNoAccess(const String&);
-        static bool shouldTreatURLSchemeAsNoAccess(const String&);
-
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
 
         void iconLoadDecisionAvailable();
@@ -384,6 +381,8 @@ namespace WebCore {
         void applyUserAgent(ResourceRequest& request);
 
         bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
+
+        void open(CachedFrameBase&);
 
 	static void setDocumentType(char*);
 
@@ -415,15 +414,13 @@ namespace WebCore {
         void updateHistoryForAnchorScroll();
     
         void redirectionTimerFired(Timer<FrameLoader>*);
-        void checkCompletedTimerFired(Timer<FrameLoader>*);
-        void checkLoadCompleteTimerFired(Timer<FrameLoader>*);
+        void checkTimerFired(Timer<FrameLoader>*);
         
         void cancelRedirection(bool newLoadInProgress = false);
 
         void started();
 
         void completed();
-        void parentCompleted();
 
         bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
         bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
@@ -431,6 +428,7 @@ namespace WebCore {
         
         bool loadProvisionalItemFromCachedPage();
         void cachePageForHistoryItem(HistoryItem*);
+        void pageHidden();
 
         void receivedFirstData();
 
@@ -480,16 +478,15 @@ namespace WebCore {
 
         void closeOldDataSources();
         void open(CachedPage&);
-        void open(CachedFrame&);
 
         void updateHistoryAfterClientRedirect();
 
-        void clear(bool clearWindowProperties = true, bool clearScriptObjects = true);
+        void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
         bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
         void handleUnimplementablePolicy(const ResourceError&);
 
-        void scheduleRedirection(ScheduledRedirection*);
+        void scheduleRedirection(PassOwnPtr<ScheduledRedirection>);
         void startRedirectionTimer();
         void stopRedirectionTimer();
 
@@ -501,7 +498,7 @@ namespace WebCore {
         void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
 
         static bool isLocationChange(const ScheduledRedirection&);
-        void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, bool lockBackForwardList, PassRefPtr<Event>, PassRefPtr<FormState>);
+        void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
 
         void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>); // Calls continueLoadAfterNavigationPolicy
         void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   
@@ -542,12 +539,16 @@ namespace WebCore {
 
         void scheduleCheckCompleted();
         void scheduleCheckLoadComplete();
+        void startCheckCompleteTimer();
 
         KURL originalRequestURL() const;
 
         bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
         void saveScrollPositionAndViewStateToItem(HistoryItem*);
+
+        bool allAncestorsAreComplete() const; // including this
+        bool allChildrenAreComplete() const; // immediate children, not all descendants
 
         Frame* m_frame;
         FrameLoaderClient* m_client;
@@ -613,8 +614,9 @@ namespace WebCore {
         KURL m_submittedFormURL;
     
         Timer<FrameLoader> m_redirectionTimer;
-        Timer<FrameLoader> m_checkCompletedTimer;
-        Timer<FrameLoader> m_checkLoadCompleteTimer;
+        Timer<FrameLoader> m_checkTimer;
+        bool m_shouldCallCheckCompleted;
+        bool m_shouldCallCheckLoadComplete;
 
         Frame* m_opener;
         HashSet<Frame*> m_openedFrames;
@@ -630,15 +632,14 @@ namespace WebCore {
         RefPtr<HistoryItem> m_provisionalHistoryItem;
         
         bool m_didPerformFirstNavigation;
+        bool m_loadingFromCachedPage;
         
 #ifndef NDEBUG
         bool m_didDispatchDidCommitLoad;
 #endif
 
-#if ENABLE(WML)
-        bool m_forceReloadWmlDeck;
-#endif
 	static char* documentType;
+
     };
 
 } // namespace WebCore

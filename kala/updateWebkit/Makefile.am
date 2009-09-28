@@ -1,6 +1,7 @@
 SUBDIRS = $(ESIDL) include os $(TOOLS) $(INIT) $(CMD) esjs
 DIST_SUBDIRS = esidl include os tools init cmd esjs
 
+
 EXTRA_DIST = \
 	setup \
 	setup.webkit \
