@@ -1,3 +1,12 @@
+2009-09-29 03:55  shiki.okasaka
+
+	* ChangeLog, cmd/configure, cmd/configure.ac, configure,
+	  configure.ac, esidl/configure, esidl/configure.ac,
+	  esjs/configure, esjs/configure.ac, init/configure,
+	  init/configure.ac, os/configure, os/configure.ac,
+	  os/npapi/configure.ac, tools/configure, tools/configure.ac: Set
+	  version to 0.1.5.
+
 2009-09-18 09:58  shiki.okasaka
 
 	* NEWS: (Release 0.1.5) : Add a note on fc11.
