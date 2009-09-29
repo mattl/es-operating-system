@@ -256,7 +256,7 @@ cd ../..
 cd src
 if [ ! -f libpng-1.2.40.tar.gz ]; 
 then
-	wget http://download.sourceforge.net/libpng/libpng-1.2.40.tar.gz
+	wget ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng-1.2.40.tar.gz
 	[ $? != 0 ] && exit 1
 fi
 rm -rf libpng-1.2.40
