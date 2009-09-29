@@ -13,8 +13,8 @@ participated in Google Summer of Code™ 2009.
    Please rebuild these before building the other parts of ES.
 
  * libpng, icu, jpegsrc, libxml2, cairo-1.8.6, and pixman have been ported
-   to ES to build WebKit. Please use 'setup' script to build them correctly
-   for ES.
+   to ES to build WebKit for ES. Please use 'setup' script to build these
+   libraries correctly.
 
  * To build WebKit for ES, please use 'setup.webkit' script. Two test 
    programs, testcanvas2d.elf and testsvg.elf' built by this script
@@ -29,8 +29,8 @@ participated in Google Summer of Code™ 2009.
    when the ES event manager process supports the DOM keyboard and mouse 
    events in the future release.
 
- * The ES kernel has some trouble with QEMU on Fedora 11 and in this
-   release the use of APIC is disabled. This issue should be fixed in
+ * The ES kernel has some trouble with QEMU on Fedora 11 and the use of
+   APIC is disabled in this release. This issue should be fixed in
    the future releases. Please also keep updating your Fedora 11. It
    looks QEMU on Fedora 11 has several issues, too.
 
