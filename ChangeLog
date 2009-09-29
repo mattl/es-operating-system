@@ -1,3 +1,2398 @@
+2009-09-18 09:58  shiki.okasaka
+
+	* NEWS: (Release 0.1.5) : Add a note on fc11.
+
+2009-09-18 09:38  shiki.okasaka
+
+	* NEWS: (Release 0.1.5) : Add a draft.
+
+2009-09-18 08:40  shiki.okasaka
+
+	* NOTICE: Updated the list of libraries ported to ES.
+
+2009-09-18 08:21  shiki.okasaka
+
+	* setup.webkit: Obtain ES specific modifications for WebKit if
+	  required.
+
+2009-09-18 07:37  shiki.okasaka
+
+	* NOTICE: Update GSoC 2009 student list.
+
+2009-09-18 07:26  shiki.okasaka
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in:
+	  (webcorees_sources) : Add PNGImageDecoder.
+
+2009-09-18 05:20  shiki.okasaka
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in:
+	  (EXTRA_DISK) : Remove webkit.44489.patch
+
+2009-09-18 04:32  shiki.okasaka
+
+	* setup: Add error checks for make and wget.
+
+2009-09-18 03:39  shiki.okasaka
+
+	* tools/Makefile.am, tools/Makefile.in: (dist_bin_SCRIPTS) : Add a
+	  dist_ prefix since scripts are not distributed by default.
+
+2009-09-17 07:55  shiki.okasaka
+
+	* Makefile.in, esidl/Makefile.in, esidl/aclocal.m4,
+	  esidl/configure, esidl/ltmain.sh, esidl/npapi/Makefile.in,
+	  esidl/npapi/include/Makefile.in,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/sample/Makefile.in, esidl/testsuite/Makefile.in,
+	  esidl/testsuite/runtime/Makefile.in, esjs/Makefile.in,
+	  esjs/aclocal.m4, esjs/configure, esjs/testsuite/Makefile.in,
+	  init/Makefile.in, init/aclocal.m4, init/configure,
+	  libraries/webkit/Makefile.in, os/libes++/Makefile.in,
+	  tools/aclocal.m4, tools/configure: Reconfigure on Fedora 11.
+
+2009-09-17 07:52  shiki.okasaka
+
+	* esidl/npapi/sample/Makefile.am: Clean up.
+
+2009-09-17 07:44  shiki.okasaka
+
+	* esjs/Makefile.am: (EXTRA_DIST) : Add transform.js.
+
+2009-09-17 07:43  shiki.okasaka
+
+	* patches/gcc-4.3.1.patch: (zlib) : Revise Makefile.am to install
+	  zlib.h and zconf.h
+
+2009-09-17 05:20  shiki.okasaka
+
+	* Makefile.am: (EXTRA_DIST) : Add setup.webkit and
+	  patches/libpng-1.2.40.patch.
+
+2009-09-15 08:08  plk1986
+
+	* ., libraries/webkit/Makefile.am,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo: merge to
+	  main trunk (code review #45)
+
+2009-09-15 08:04  plk1986
+
+	* ., patches/libpng-1.2.40.patch, setup: merge with main trunk.
+	  (code review #44)
+
+2009-09-12 14:19  Shiki.Okasaka
+
+	* os/kernel/pc/mps.cpp: (Mps()) : Add a workaround for qemu/Fedora
+	  11.
+
+2009-09-12 03:28  Shiki.Okasaka
+
+	* setup: (Prerequisites) : Add texinfo to yum.
+
+2009-09-10 02:28  shiki.okasaka
+
+	* patches/newlib-1.16.0.patch: (stdint.h) : Add check for
+	  __LONG_LONG_MAX__ to define int64_t.
+
+2009-09-09 13:09  Shiki.Okasaka
+
+	* setup.webkit: (esport) : Remove -u option from cp.
+
+2009-09-09 10:05  shiki.okasaka
+
+	* setup.webkit: (setup.webkit) : Eliminate the need for
+	  webkit.patch.
+
+2009-09-09 09:59  shiki.okasaka
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/aclocal.m4, libraries/webkit/configure,
+	  libraries/webkit/webkit.44489.patch, setup.webkit: (setup.webkit)
+	  : Eliminate the need for webkit.patch.
+
+2009-09-09 09:53  shiki.okasaka
+
+	* libraries/webkit/es/JavaScriptCore/runtime/DateMath.h,
+	  libraries/webkit/es/JavaScriptCore/wtf/Platform.h,
+	  libraries/webkit/es/WebCore/config.h,
+	  libraries/webkit/es/WebCore/dom/XMLTokenizerLibxml2.cpp,
+	  libraries/webkit/es/WebCore/loader/CachedResource.cpp,
+	  libraries/webkit/es/WebCore/page/DragController.cpp,
+	  libraries/webkit/es/WebCore/page/Page.cpp,
+	  libraries/webkit/es/WebCore/page/Page.h,
+	  libraries/webkit/es/WebCore/platform/Cursor.h,
+	  libraries/webkit/es/WebCore/platform/DragData.h,
+	  libraries/webkit/es/WebCore/platform/DragImage.h,
+	  libraries/webkit/es/WebCore/platform/Widget.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp,
+	  libraries/webkit/es/WebCore/platform/network/ResourceResponseBase.cpp:
+	  Apply webkit.44489.patch
+
+2009-09-09 09:49  shiki.okasaka
+
+	* setup: (prerequisite) : Add libjpeg-devel, libicu-devel, and
+	  gperf.
+
+2009-09-09 06:17  shiki.okasaka
+
+	* libraries/webkit/es/JavaScriptCore/runtime,
+	  libraries/webkit/es/JavaScriptCore/runtime/DateMath.h,
+	  libraries/webkit/es/JavaScriptCore/wtf/Platform.h,
+	  libraries/webkit/es/WebCore/config.h,
+	  libraries/webkit/es/WebCore/dom,
+	  libraries/webkit/es/WebCore/dom/XMLTokenizerLibxml2.cpp,
+	  libraries/webkit/es/WebCore/loader/CachedResource.cpp,
+	  libraries/webkit/es/WebCore/page/DragController.cpp,
+	  libraries/webkit/es/WebCore/page/Page.cpp,
+	  libraries/webkit/es/WebCore/page/Page.h,
+	  libraries/webkit/es/WebCore/platform/Cursor.h,
+	  libraries/webkit/es/WebCore/platform/DragData.h,
+	  libraries/webkit/es/WebCore/platform/DragImage.h,
+	  libraries/webkit/es/WebCore/platform/Widget.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/gtk,
+	  libraries/webkit/es/WebCore/platform/graphics/gtk/FontPlatformDataGtk.cpp,
+	  libraries/webkit/es/WebCore/platform/network/ResourceResponseBase.cpp:
+	  Copy from r44489.
+
+2009-09-08 09:56  plk1986
+
+	* ., libraries/webkit/testsvg.cpp: merge to main trunk. svg demo of
+	  Webkit (path)
+
+2009-09-08 05:23  shiki.okasaka
+
+	* esidl/include/reflect.h, esjs/include/value.h,
+	  os/libes++/Makefile.am: Fix for Fedora 11.
+
+2009-09-07 09:50  plk1986
+
+	* ., libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/es/WebCore/loader/FrameLoader.cpp,
+	  libraries/webkit/es/WebCore/loader/FrameLoader.h,
+	  libraries/webkit/main.cpp, libraries/webkit/main_linux.cpp,
+	  libraries/webkit/testcanvas2d.cpp, libraries/webkit/testsvg.cpp,
+	  setup.webkit: merge into main trunk
+
+2009-09-03 08:35  Shiki.Okasaka
+
+	* esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp,
+	  esidl/npapi/sample/sample.xml: (sample.xml) : New for SVG demo.
+
+2009-09-02 10:44  Shiki.Okasaka
+
+	* esidl/npapi/include/w3c/Makefile.am,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/include/w3c/svg.idl,
+	  esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp:
+	  (sample) : Include SVG interfaces.
+
+2009-09-02 10:42  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/forward.h,
+	  esidl/src/cxx.cpp, esidl/src/esidl.cpp, esidl/src/template.cpp:
+	  (esidl) : Generate C++ interface classes for mixins, and proxy
+	  template classes now inherit mixin classes.
+
+2009-09-01 07:33  plk1986
+
+	* libraries/webkit/Makefile.am,
+	  libraries/webkit/es/WebCore/loader/FrameLoader.h: add original
+	  file to webkit/es/
+
+2009-09-01 06:24  plk1986
+
+	* ., libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  merge with trunk
+
+2009-09-01 06:01  plk1986
+
+	* libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  revert to 1241
+
+2009-09-01 05:48  plk1986
+
+	* libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  changed version
+
+2009-09-01 05:45  plk1986
+
+	* libraries/webkit/es/WebCore/loader/FrameLoader.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  revert to r1234
+
+2009-08-31 10:21  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/npapi/include/esnpapi.h,
+	  esidl/npapi/include/proxyImpl.h,
+	  esidl/npapi/include/w3c/Makefile.am,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp,
+	  esidl/npapi/src/bridge.cpp, esidl/npapi/src/invoke.cpp,
+	  esidl/src/cxx.cpp, esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/template.cpp: (esidl) : Support interface multiple
+	  inheritance.
+
+2009-08-28 07:32  plk1986
+
+	* libraries/webkit/es/WebCore/loader/FrameLoader.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  changed version
+
+2009-08-28 07:29  plk1986
+
+	* libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  revert to original one
+
+2009-08-28 07:24  plk1986
+
+	* libraries/webkit/es/WebCore/loader,
+	  libraries/webkit/es/WebCore/loader/FrameLoader.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/es/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ImageSourceCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp:
+	  original file of Webkit
+
+2009-08-28 07:14  plk1986
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/es/WebCore/loader,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/es/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ImageSourceCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo,
+	  libraries/webkit/main.cpp, libraries/webkit/testsvg.cpp: revert
+	  1231
+
+2009-08-27 15:23  plk1986
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/es/WebCore/loader,
+	  libraries/webkit/es/WebCore/loader/FrameLoader.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/es/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ImageSourceCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.h,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp,
+	  libraries/webkit/main.cpp, libraries/webkit/testsvg.cpp: svg demo
+
+2009-08-24 06:31  Shiki.Okasaka
+
+	* esidl/es/ent.h, esidl/include/stringOffsetter.h,
+	  esidl/src/ent.cpp, esidl/src/entdump.cpp,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: Clean
+	  up.
+
+2009-08-24 06:02  Shiki.Okasaka
+
+	* esidl/testsuite/9.idl: New.
+
+2009-08-24 05:29  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/formatter.h: (esidl) :
+	  Indent comments properly in the generated header files.
+
+2009-08-24 03:42  Shiki.Okasaka
+
+	* NOTICE: Update for GSoC 2009
+
+2009-08-20 07:57  mahanthg74
+
+	* os/net/testsuite/testUrgReceive.cpp: clean up
+
+2009-08-20 06:39  mahanthg74
+
+	* os/net/testsuite/testUrgReceive.cpp: clean up
+
+2009-08-17 15:29  mahanthg74
+
+	* ., include/es/net/ISocket.idl, os/net/include/socket.h,
+	  os/net/include/stream.h, os/net/src/socket.cpp,
+	  os/net/testsuite/testUrgReceive.cpp: TCP OOB: Added an API in es
+	  socket to test urgent mode
+
+2009-08-14 10:42  ailvpeng25
+
+	* ., os/net/include/stream.h, os/net/src/socket.cpp,
+	  os/net/src/stream.cpp, os/net/src/streamInput.cpp,
+	  os/net/testsuite/Makefile.in,
+	  os/net/testsuite/tcpWriteTimeout.cpp: limited listen queue
+	  support.
+
+2009-08-13 09:01  plk1986
+
+	* ., setup: merge into main trunk
+
+2009-08-11 12:37  mahanthg74
+
+	* include/es/net/ISocket.idl, os/net/include/socket.h,
+	  os/net/include/stream.h, os/net/src/socket.cpp,
+	  os/net/src/stream.cpp, os/net/testsuite/Makefile.am,
+	  os/net/testsuite/Makefile.in,
+	  os/net/testsuite/testUrgReceive.cpp,
+	  os/net/testsuite/testUrgSend.cpp: TCP:support OOB byte read and
+	  write
+
+2009-08-11 09:06  Shiki.Okasaka
+
+	* esidl/include/forward.h: (at(const Interface*)) : Forward
+	  declarations for base classes are useless.
+
+2009-08-11 02:28  Shiki.Okasaka
+
+	* esidl/npapi/include/w3c/html5.idl: (Date, FileList) : Add notes.
+
+2009-08-10 17:02  plk1986
+
+	* ., README,
+	  libraries/webkit/es/WebCore/platform/es/TemporaryLinkStubs.cpp,
+	  setup, setup.webkit: merge to main trunk
+
+2009-08-10 14:08  Shiki.Okasaka
+
+	* ., esidl/include/esidl.h, esidl/include/forward.h,
+	  esidl/npapi/include/w3c/cssomview.idl,
+	  esidl/npapi/include/w3c/html5.idl, esidl/src/cxx.cpp,
+	  esidl/src/esidl.cpp, esidl/testsuite/115.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (esidl)
+	  : Support [Supplemental] (in progress). Update html5.idl and
+	  cssomview.idl based on the latest drafts
+
+2009-08-10 13:56  Shiki.Okasaka
+
+	* os/net/include/stream.h, os/net/src/socket.cpp,
+	  os/net/src/stream.cpp, os/net/src/streamInput.cpp,
+	  os/net/testsuite/Makefile.in,
+	  os/net/testsuite/tcpWriteTimeout.cpp: Revert r1189.
+
+2009-08-10 08:47  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (OmittableSpecials, Preprocessor) : Fix
+	  bugs. Follow line numbers correctly.
+
+2009-08-10 08:01  ailvpeng25
+
+	* ., os/net/include/stream.h, os/net/src/socket.cpp,
+	  os/net/src/stream.cpp, os/net/src/streamInput.cpp,
+	  os/net/testsuite/tcpWriteTimeout.cpp: limited listen queue
+	  support.
+
+2009-08-10 07:37  Shiki.Okasaka
+
+	* cmd/Makefile.am, cmd/Makefile.in, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/include/info.h,
+	  esidl/npapi/include/Makefile.am, esidl/npapi/include/Makefile.in,
+	  esidl/npapi/include/any.h, esidl/npapi/include/esnpapi.h,
+	  esidl/npapi/include/object.idl, esidl/npapi/include/proxyImpl.h,
+	  esidl/npapi/include/w3c/Makefile.am,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/include/w3c/dom.idl,
+	  esidl/npapi/include/w3c/html5.idl,
+	  esidl/npapi/include/w3c/ls.idl, esidl/npapi/sample/sample.h,
+	  esidl/src/cxx.cpp, esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/template.cpp,
+	  esidl/testsuite/103.idl, esidl/testsuite/27.idl,
+	  esidl/testsuite/28.idl, esidl/testsuite/29.idl,
+	  include/Makefile.am, include/Makefile.in,
+	  include/es/naming/IBinding.idl, include/es/naming/IContext.idl,
+	  include/es/net/IInternetAddress.idl,
+	  include/es/net/IInternetConfig.idl, include/es/object.idl,
+	  include/es/util/IIterator.idl, include/es/util/ISet.idl,
+	  include/w3c/dom.idl, include/w3c/html5.idl, include/w3c/ls.idl:
+	  (esidl) : Switch over to the new Web IDL grammar defined in the
+	  editor's draft. Modify 'Object' keyword to 'object'. Support
+	  leading '_' to escape an identifier from reserved keywords.
+
+2009-08-10 05:42  ailvpeng25
+
+	* ., os/net/include/stream.h, os/net/src/stream.cpp,
+	  os/net/testsuite/Makefile.am,
+	  os/net/testsuite/tcpWriteTimeout.cpp,
+	  os/net/testsuite/testListenBKlogs.cpp: listen backlogs clearing
+	  up upon abortion.
+
+2009-08-08 17:00  Shiki.Okasaka
+
+	* cmd/newlib.cpp, patches/newlib-1.16.0.patch: (newlib) : Add more
+	  posix functions for WebKit port.
+
+2009-08-06 13:22  plk1986
+
+	* ., libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/aclocal.m4, libraries/webkit/config.sub,
+	  libraries/webkit/configure, libraries/webkit/configure.ac,
+	  libraries/webkit/es/WebCore/platform/es/ImageBufferCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ImageSourceCairo.cpp,
+	  libraries/webkit/es/WebCore/platform/es/TemporaryLinkStubs.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ThreadGlobalData.h,
+	  libraries/webkit/main.cpp, libraries/webkit/main_linux.cpp,
+	  libraries/webkit/testcanvas2d.cpp,
+	  libraries/webkit/webkit.44489.patch, setup: merge to main trunk
+
+2009-08-04 04:57  Shiki.Okasaka
+
+	* esidl/README: Add basic installation description.
+
+2009-08-04 04:26  Shiki.Okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in: (esidl_SOURCES) : Add
+	  include/forward.h
+
+2009-08-04 04:18  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/cxx.cpp,
+	  esidl/src/esidl.cpp, esidl/src/skeleton.cpp,
+	  esidl/src/template.cpp: (getIncludedName) : Support multiple
+	  styles.
+
+2009-08-04 04:17  Shiki.Okasaka
+
+	* esidl/npapi/include/Makefile.am, esidl/npapi/include/Makefile.in,
+	  esidl/npapi/include/w3c/Makefile.am,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/sample/Makefile.am, esidl/npapi/sample/Makefile.in:
+	  (Makefile.am) : Update command line options for esidl and gcc.
+
+2009-08-04 04:00  Shiki.Okasaka
+
+	* esidl/src/driver.cpp: (main) : Fix bugs.
+
+2009-08-04 03:41  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (visitInterfaceElement) : Clean up.
+
+2009-08-04 02:12  Shiki.Okasaka
+
+	* esidl/npapi/sample/sample.cpp: Clean up.
+
+2009-08-03 10:13  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/include/formatter.h, esidl/src/cxx.cpp,
+	  esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/skeleton.cpp, esidl/src/template.cpp: (esidl) : Support
+	  -indent option. Valid style options are -indent webkit and
+	  -indent google. The default is ES style.
+
+2009-08-03 08:33  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/formatter.h,
+	  esidl/src/cxx.cpp, esidl/src/skeleton.cpp,
+	  esidl/src/template.cpp: (Formatter) : Prep for multiple styles
+	  support. Cont.
+
+2009-08-03 06:32  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/formatter.h,
+	  esidl/src/cxx.cpp, esidl/src/skeleton.cpp,
+	  esidl/src/template.cpp: (Formatter) : Prep for multiple styles
+	  support. Cont.
+
+2009-07-31 10:12  mahanthg74
+
+	* include/es/net/ISocket.idl, os/net/src/socket.cpp,
+	  os/net/src/stream.cpp, os/net/src/streamOutput.cpp,
+	  os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/net/testsuite/testUrgSend.cpp: Support TCP OOB byte
+
+2009-07-31 08:00  Shiki.Okasaka
+
+	* esidl/include/formatter.h, esidl/src/cxx.cpp: (Formatter) : Prep
+	  for multiple styles support.
+
+2009-07-29 06:02  Shiki.Okasaka
+
+	* esidl/src/esidl.cpp, esidl/testsuite/100.idl: (TreatNullAs,
+	  TreatUndefinedAs) : Switch over to the new Web IDL grammar
+	  defined in the editor's draft.
+
+2009-07-29 05:30  Shiki.Okasaka
+
+	* esidl/LICENSE, esidl/Makefile.am, esidl/Makefile.in,
+	  esidl/README, esidl/include/esidl.h, esidl/include/forward.h,
+	  esidl/include/info.h, esidl/include/stringOffsetter.h,
+	  esidl/npapi/include/any.h, esidl/npapi/include/object.idl,
+	  esidl/npapi/include/w3c/COPYRIGHT.html,
+	  esidl/npapi/include/w3c/css.idl,
+	  esidl/npapi/include/w3c/cssomview.idl,
+	  esidl/npapi/include/w3c/dom.idl,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/include/w3c/eventsource.idl,
+	  esidl/npapi/include/w3c/html5.idl,
+	  esidl/npapi/include/w3c/ls.idl,
+	  esidl/npapi/include/w3c/ranges.idl,
+	  esidl/npapi/include/w3c/smil.idl,
+	  esidl/npapi/include/w3c/stylesheets.idl,
+	  esidl/npapi/include/w3c/traversal.idl,
+	  esidl/npapi/include/w3c/validation.idl,
+	  esidl/npapi/include/w3c/views.idl, esidl/npapi/sample/sample.h,
+	  esidl/npapi/src/variant386.cpp, esidl/npapi/src/variantx64.S,
+	  esidl/src/esidl.cpp, esidl/testsuite/114.idl,
+	  esidl/testsuite/206.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/w3c/css.idl,
+	  include/w3c/cssomview.idl, include/w3c/dom.idl,
+	  include/w3c/events.idl, include/w3c/html5.idl,
+	  include/w3c/ls.idl, include/w3c/stylesheets.idl,
+	  include/w3c/svg.idl, include/w3c/traversal.idl,
+	  include/w3c/views.idl, include/w3c/webstorage.idl,
+	  include/w3c/webworkers.idl: (Forward) : Switch over to the new
+	  Web IDL grammar defined in the editor's draft. Generate interface
+	  forward declarations automatically.
+
+2009-07-27 09:11  mahanthg74
+
+	* ., esidl/include/stringOffsetter.h, esidl/npapi/include/any.h,
+	  esidl/npapi/include/object.idl,
+	  esidl/npapi/include/w3c/COPYRIGHT.html,
+	  esidl/npapi/include/w3c/css.idl,
+	  esidl/npapi/include/w3c/cssomview.idl,
+	  esidl/npapi/include/w3c/dom.idl,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/include/w3c/eventsource.idl,
+	  esidl/npapi/include/w3c/html5.idl,
+	  esidl/npapi/include/w3c/ls.idl,
+	  esidl/npapi/include/w3c/ranges.idl,
+	  esidl/npapi/include/w3c/smil.idl,
+	  esidl/npapi/include/w3c/stylesheets.idl,
+	  esidl/npapi/include/w3c/traversal.idl,
+	  esidl/npapi/include/w3c/validation.idl,
+	  esidl/npapi/include/w3c/views.idl,
+	  esidl/npapi/src/variant386.cpp, esidl/npapi/src/variantx64.S,
+	  esidl/testsuite/206.idl, os/net/src/stream.cpp,
+	  os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/net/testsuite/tcpWriteTimeout.cpp: support tcp write timeout
+
+2009-07-27 03:17  Shiki.Okasaka
+
+	* esidl/src/lexer.ll: (Identifier) : Switch over to the Web IDL
+	  syntax defined in the editor's draft.
+
+2009-07-24 07:00  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/npapi/include/w3c/cssomview.idl,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/include/w3c/html5.idl, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/112.idl,
+	  include/w3c/cssomview.idl, include/w3c/events.idl,
+	  include/w3c/html5.idl, include/w3c/webworkers.idl:
+	  (ImplementsStatement) : Switch over to the new Web IDL grammar
+	  defined in the editor's draft. Drop [ImplementedOn].
+
+2009-07-24 05:46  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/info.h,
+	  esidl/include/reflect.h, esidl/src/parser.yy,
+	  esidl/testsuite/113.idl: (Nullable) : Switch over to the new Web
+	  IDL grammar defined in the editor's draft.
+
+2009-07-24 04:57  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/npapi/include/w3c/html5.idl,
+	  esidl/src/esidl.cpp, esidl/src/lexer.ll, esidl/src/parser.yy,
+	  esidl/testsuite/113.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/w3c/html5.idl:
+	  (AttributeOrOperation) : Switch over to the new Web IDL grammar
+	  defined in the editor's draft. Drop [Stringifies].
+
+2009-07-24 03:31  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/info.h,
+	  esidl/npapi/include/w3c/html5.idl, esidl/src/esidl.cpp,
+	  esidl/src/parser.yy, esidl/src/print.cpp, esidl/src/skeleton.cpp,
+	  esidl/testsuite/108.idl, esidl/testsuite/109.idl,
+	  esidl/testsuite/202.idl, esidl/testsuite/23.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/es/util/IOrderedMap.idl, include/w3c/html5.idl,
+	  include/w3c/webstorage.idl: (OmittableSpecials) : New to support
+	  new Web IDL grammar defined in the editor's draft. Drop
+	  [Callable], [IndexGetter], [IndexSetter], [IndexCreator],
+	  [IndexDeleter], [NameGetter], [NameSetter], [NameCreator],
+	  [NameDeleter], and [NoIndexingOperations].
+
+2009-07-24 01:43  Shiki.Okasaka
+
+	* esidl/src/lexer.ll, esidl/src/parser.yy: (Definitions) : Switch
+	  over to the new Web IDL grammar defined in the editor's draft.
+	  Add new keywords.
+
+2009-07-24 01:00  Shiki.Okasaka
+
+	* esidl/include/expr.h, esidl/src/cxx.cpp, esidl/src/lexer.ll,
+	  esidl/src/parser.yy, esidl/testsuite/3.idl: (BooleanLiteral) :
+	  Switch over to the new Web IDL grammar defined in the editor's
+	  draft. Change TRUE and FALSE to lowercase.
+
+2009-07-23 06:34  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/parser.yy,
+	  esidl/testsuite/2.idl: (ScopedName) : Switch over to the new Web
+	  IDL grammar defined in the editor's draft. AbsoluteScopedName is
+	  now supported.
+
+2009-07-23 05:21  Shiki.Okasaka
+
+	* esidl/npapi/include/w3c/html5.idl, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/103.idl,
+	  esidl/testsuite/110.idl, include/w3c/html5.idl,
+	  include/w3c/webstorage.idl, include/w3c/webworkers.idl:
+	  (Optional) : New to support new Web IDL grammar defined in the
+	  editor's draft. Drop [Optional].
+
+2009-07-23 05:08  Shiki.Okasaka
+
+	* esidl/npapi/include/w3c/html5.idl, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/107.idl,
+	  esidl/testsuite/110.idl, esidl/testsuite/111.idl,
+	  include/w3c/html5.idl, include/w3c/webworkers.idl: (Ellipsis) :
+	  New to support new Web IDL grammar defined in the editor's draft.
+	  Drop [Variadic].
+
+2009-07-23 04:45  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (ForwardDcl) : Move to the ES extensions
+	  section.
+
+2009-07-23 04:26  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (UnsignedIntegerType) : Switch over to the
+	  new Web IDL grammar defined in the editor's draft.
+
+2009-07-23 03:09  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (ConstType) : Add a note.
+
+2009-07-22 08:56  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (ExtendedAttributeList) : Switch over to the
+	  new Web IDL grammar defined in the editor's draft.
+
+2009-07-22 05:28  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (esidl) : Switching over to the new Web IDL
+	  grammar defined in the editor's draft; in progress.
+
+2009-07-22 05:03  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (Definitions) : Reorder the rules in the
+	  same order as in the editor's draft.
+
+2009-07-22 04:22  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (esidl) : Switching over to the new Web IDL
+	  grammar defined in the editor's draft; in progress.
+
+2009-07-22 03:18  Shiki.Okasaka
+
+	* cmd/IEventQueue.idl, esidl/npapi/include/w3c/dom.idl,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/include/w3c/ls.idl,
+	  esidl/npapi/include/w3c/ranges.idl, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/14.idl,
+	  esidl/testsuite/15.idl, esidl/testsuite/16.idl,
+	  esidl/testsuite/18.idl, esidl/testsuite/19.idl,
+	  esidl/testsuite/206.idl, esidl/testsuite/25.idl,
+	  esidl/testsuite/3.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/es/base/IRuntime.idl,
+	  include/es/device/ICursor.idl,
+	  include/es/device/INetworkInterface.idl, include/w3c/dom.idl,
+	  include/w3c/events.idl, include/w3c/ls.idl,
+	  include/w3c/ranges.idl: (esidl) : Switching over to the new Web
+	  IDL grammar defined in the editor's draft; not yet completed.
+
+2009-07-21 08:19  Shiki.Okasaka
+
+	* esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp:
+	  (drawCharts) : Add more examples.
+
+2009-07-21 08:18  Shiki.Okasaka
+
+	* esidl/npapi/include/proxyImpl.h, esidl/npapi/src/bridge.cpp:
+	  (Proxy_Base) : New.
+
+2009-07-21 08:17  Shiki.Okasaka
+
+	* esidl/npapi/src/invoke.cpp: (invoke) : Support variadic
+	  operation.
+
+2009-07-21 08:15  Shiki.Okasaka
+
+	* esidl/npapi/include/w3c/html5.idl: (HTMLDivElement) : New.
+
+2009-07-21 08:08  Shiki.Okasaka
+
+	* esidl/src/template.cpp: (TemplateVisitor) : Add intprt_t casts
+	  when converting a pointer to Any.
+
+2009-07-21 03:53  Shiki.Okasaka
+
+	* esidl/include/info.h, esidl/include/reflect.h,
+	  esidl/testsuite/runtime/method.cpp: (Reflect) : Add isVariadic()
+	  to Method class. Modify esidl to support this.
+
+2009-07-20 06:10  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (at(const OpDcl*)) : Fix not to output a
+	  semicolon at the end in constructor mode.
+
+2009-07-20 05:56  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/parser.yy, esidl/src/print.cpp,
+	  esidl/src/template.cpp, include/es/base/IInterfaceStore.idl,
+	  include/es/base/IStream.idl, include/es/device/IDmac.idl,
+	  include/es/net/IInternetAddress.idl,
+	  include/es/net/IResolver.idl, include/es/net/ISocket.idl: (esidl)
+	  : Unify param_type_spec and simple_type_spec following the
+	  editor's draft. Remove C++ binding specific members from Node
+	  class.
+
+2009-07-17 07:01  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: Clean up.
+
+2009-07-17 06:53  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h: Clean up.
+
+2009-07-17 05:58  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/npapi/include/esnpapi.h,
+	  esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp,
+	  esidl/npapi/sample/sample.h, esidl/npapi/src/bridge.cpp,
+	  esidl/npapi/src/invoke.cpp, esidl/src/template.cpp: (esidl) :
+	  Expand mixins in the right order in template classes.
+
+2009-07-16 01:35  Shiki.Okasaka
+
+	* esidl/include/info.h, esidl/include/reflect.h,
+	  include/Makefile.am, include/Makefile.in, include/es/reflect.h:
+	  (Reflect) : Include ImplementedOn information.
+
+2009-07-16 01:05  Shiki.Okasaka
+
+	* esidl/npapi/include/esnpapi.h, esidl/npapi/sample/sample.h: Clean
+	  up.
+
+2009-07-16 01:00  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/esidl.cpp,
+	  esidl/src/skeleton.cpp, esidl/src/template.cpp,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/Makefile.am, include/Makefile.in, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in: (esidl) : Suppress skeleton and template
+	  generation for ImplementedOn interfaces.
+
+2009-07-15 12:36  Shiki.Okasaka
+
+	* esidl/config.sub, esidl/src/cxx.cpp: (at(const Interface*)) :
+	  Clean up.
+
+2009-07-15 09:54  Shiki.Okasaka
+
+	* esidl/configure, esidl/configure.ac, esidl/include/esidl.h,
+	  esidl/include/info.h, esidl/npapi/include/Makefile.am,
+	  esidl/npapi/include/Makefile.in, esidl/npapi/include/esnpapi.h,
+	  esidl/npapi/include/w3c/Makefile.am,
+	  esidl/npapi/include/w3c/Makefile.in,
+	  esidl/npapi/sample/Makefile.am, esidl/npapi/sample/Makefile.in,
+	  esidl/npapi/sample/npp_sample.cpp, esidl/src/driver.cpp,
+	  esidl/src/esidl.cpp, esidl/src/parser.yy, include/w3c/css.idl,
+	  include/w3c/cssomview.idl, include/w3c/events.idl,
+	  include/w3c/eventsource.idl, include/w3c/html2.idl,
+	  include/w3c/html5.idl, include/w3c/ls.idl,
+	  include/w3c/ranges.idl, include/w3c/smil.idl,
+	  include/w3c/stylesheets.idl, include/w3c/svg.idl,
+	  include/w3c/traversal.idl, include/w3c/validation.idl,
+	  include/w3c/views.idl, include/w3c/websockets.idl,
+	  include/w3c/webstorage.idl, include/w3c/webworkers.idl,
+	  include/w3c/xhr.idl: (esidl) : Process specified IDL files at
+	  once to expand mixins defined in the other IDL files.
+
+2009-07-14 11:27  plk1986@gmail.com
+
+	* ., Makefile.am, Makefile.in, patches/README,
+	  patches/icu-4.2.1.patch, setup: merge to the trunk. Add ICU lib.
+
+2009-07-14 07:59  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/esidl.cpp: (Node::search) : Skip
+	  forward declarations if there is the interface definition.
+
+2009-07-14 06:50  Shiki.Okasaka
+
+	* cmd/canvas.cpp, cmd/canvas.h, cmd/newlib.cpp, esidl/Makefile.am,
+	  esidl/Makefile.in, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/include/expr.h, esidl/src/cxx.cpp,
+	  esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/skeleton.cpp, esidl/src/template.cpp,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/Makefile.am, include/Makefile.in, include/es.h,
+	  include/es/formatter.h, os/kernel/include/i386/8254.h,
+	  os/kernel/include/i386/apic.h, os/kernel/include/i386/core.h,
+	  os/kernel/port/line.cpp, os/libes++/src/formatter.cpp,
+	  os/net/src/inetConfig.cpp, os/testsuite/canvas2d.cpp,
+	  os/testsuite/canvas2d.h: (esidl) : Drop ENT file format support.
+	  Preparing handling all IDL files at once to support mixins.
+
+2009-07-13 04:00  Shiki.Okasaka
+
+	* esidl/npapi/include/esnpapi.h, esidl/npapi/sample/npp_sample.cpp,
+	  esidl/npapi/sample/sample.cpp: (HTMLCanvasElement) : Add to the
+	  interface database for the sample.
+
+2009-07-12 07:14  Shiki.Okasaka
+
+	* setup: (libtool) : Add to prerequisite for esidl.
+
+2009-07-10 16:45  Shiki.Okasaka
+
+	* esidl/npapi/src/invoke.cpp: Clean up.
+
+2009-07-10 16:23  Shiki.Okasaka
+
+	* esidl/npapi/include/esnpapi.h, esidl/npapi/sample/npp_sample.cpp,
+	  esidl/npapi/src/bridge.cpp, esidl/npapi/src/invoke.cpp:
+	  (addInterfaceData, getInterfaceData) : New.
+
+2009-07-10 15:23  Shiki.Okasaka
+
+	* esidl/npapi/include/Makefile.am, esidl/npapi/include/Makefile.in:
+	  Fix clean-local.
+
+2009-07-10 15:04  Shiki.Okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/aclocal.m4,
+	  esidl/config.guess, esidl/config.sub, esidl/configure,
+	  esidl/configure.ac, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/include/expr.h,
+	  esidl/include/formatter.h, esidl/include/info.h,
+	  esidl/include/reflect.h, esidl/include/string.h,
+	  esidl/include/stringOffsetter.h, esidl/include/utf.h,
+	  esidl/ltmain.sh, esidl/npapi, esidl/npapi/Makefile.am,
+	  esidl/npapi/Makefile.in, esidl/npapi/include,
+	  esidl/npapi/include/Makefile.am, esidl/npapi/include/Makefile.in,
+	  esidl/npapi/include/any.h, esidl/npapi/include/esnpapi.h,
+	  esidl/npapi/include/npapi, esidl/npapi/include/npapi/npapi.h,
+	  esidl/npapi/include/npapi/npruntime.h,
+	  esidl/npapi/include/npapi/nptypes.h,
+	  esidl/npapi/include/npapi/npupp.h,
+	  esidl/npapi/include/object.idl, esidl/npapi/include/proxyImpl.h,
+	  esidl/npapi/include/w3c, esidl/npapi/include/w3c/COPYRIGHT.html,
+	  esidl/npapi/include/w3c/css.idl,
+	  esidl/npapi/include/w3c/cssomview.idl,
+	  esidl/npapi/include/w3c/dom.idl,
+	  esidl/npapi/include/w3c/events.idl,
+	  esidl/npapi/include/w3c/eventsource.idl,
+	  esidl/npapi/include/w3c/html5.idl,
+	  esidl/npapi/include/w3c/ls.idl,
+	  esidl/npapi/include/w3c/ranges.idl,
+	  esidl/npapi/include/w3c/smil.idl,
+	  esidl/npapi/include/w3c/stylesheets.idl,
+	  esidl/npapi/include/w3c/traversal.idl,
+	  esidl/npapi/include/w3c/validation.idl,
+	  esidl/npapi/include/w3c/views.idl, esidl/npapi/sample,
+	  esidl/npapi/sample/Makefile.am, esidl/npapi/sample/Makefile.in,
+	  esidl/npapi/sample/np_entry.cpp, esidl/npapi/sample/npn_gate.cpp,
+	  esidl/npapi/sample/npp_gate.cpp,
+	  esidl/npapi/sample/npp_sample.cpp, esidl/npapi/sample/sample.cpp,
+	  esidl/npapi/sample/sample.h, esidl/npapi/sample/sample.html,
+	  esidl/npapi/src, esidl/npapi/src/bridge.cpp,
+	  esidl/npapi/src/invoke.cpp, esidl/npapi/src/variant386.cpp,
+	  esidl/npapi/src/variantx64.S, esidl/src/ent.cpp,
+	  esidl/src/template.cpp, esidl/testsuite/Makefile.in,
+	  esidl/testsuite/runtime/Makefile.in: (esidl/npapi) : Initial
+	  check-in.
+
+2009-07-10 04:06  Shiki.Okasaka
+
+	* esidl/src/template.cpp: (TemplateVisitor) : Fix method invocation
+	  that returns an object.
+
+2009-07-08 07:59  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (hasCustomStringType) : New to support
+	  std::string as DOMString.
+
+2009-07-08 02:06  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/src/variant386.cpp: (apply) : Invoke function without
+	  using asm to make -fnon-call-exceptions unnecessary.
+
+2009-07-07 10:27  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/src/variant386.S, os/libes++/src/variant386.cpp,
+	  os/libes++/testsuite/variant.cpp: (apply) : Rewrite to support
+	  C++ exception.
+
+2009-07-07 10:23  Shiki.Okasaka
+
+	* include/es/reflect.h: Sync up with updated esidl.
+
+2009-07-04 03:53  Shiki.Okasaka
+
+	* ., esidl/include/formatter.h, esidl/include/info.h,
+	  esidl/include/reflect.h, esidl/testsuite/205.idl,
+	  esidl/testsuite/runtime/param.cpp, include/es/interfaceData.h,
+	  os/libes++/testsuite/testInterfaceList.cpp,
+	  os/testsuite/testInterfaceStore.cpp: Remove unwanted
+	  svn:mergeinfo
+
+2009-07-03 17:13  plk1986@gmail.com
+
+	* ., Makefile.am, Makefile.in, esidl/include/formatter.h,
+	  esidl/include/info.h, esidl/include/reflect.h,
+	  esidl/testsuite/205.idl, esidl/testsuite/runtime/param.cpp,
+	  patches/README, patches/jpegsrc.v7.patch,
+	  patches/libxml2-2.7.3.patch, setup: add libjpeg v7 & libxml2
+	  2.7.3
+
+2009-07-03 10:08  mahanthg74
+
+	* ., esidl/include/formatter.h, esidl/include/info.h,
+	  esidl/include/reflect.h, esidl/testsuite/205.idl,
+	  esidl/testsuite/runtime/param.cpp, include/es/interfaceData.h,
+	  os/libes++/testsuite/testInterfaceList.cpp,
+	  os/net/include/icmp4.h, os/net/include/inet4.h,
+	  os/net/src/icmp4.cpp, os/net/src/inet4.cpp,
+	  os/testsuite/testInterfaceStore.cpp: basic icmp redirect message
+	  receipt
+
+2009-07-03 07:08  Shiki.Okasaka
+
+	* esidl/testsuite/runtime/method.cpp: Clean up.
+
+2009-07-03 07:05  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/info.h,
+	  esidl/include/reflect.h, esidl/testsuite/runtime/method.cpp:
+	  (info) : Support Indexed properties and Named properties.
+
+2009-07-01 10:38  Shiki.Okasaka
+
+	* os/Makefile.in, os/aclocal.m4, os/bootsect/Makefile.in,
+	  os/configure, os/fs/Makefile.in, os/fs/fat/Makefile.in,
+	  os/fs/fat/testsuite/Makefile.in, os/fs/iso9660/Makefile.in,
+	  os/fs/iso9660/testsuite/Makefile.in,
+	  os/kernel/testsuite/Makefile.in, os/net/Makefile.in,
+	  os/net/posix/Makefile.in, os/net/testsuite/Makefile.in:
+	  (Makefile.in) : Update.
+
+2009-07-01 10:28  Shiki.Okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/driver.cpp,
+	  esidl/src/esidl.cpp, esidl/src/lexer.ll, esidl/src/parser.yy,
+	  esidl/src/template.cpp, esidl/testsuite/107.idl,
+	  esidl/testsuite/3.idl, esidl/testsuite/8.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/es/device/IDmac.idl, include/es/net/ISocket.idl,
+	  os/kernel/include/i386/8237a.h, os/kernel/pc/8237a.cpp,
+	  os/net/include/socket.h, os/net/src/socket.cpp,
+	  os/net/testsuite/config.cpp, os/net/testsuite/udpEchoClient.cpp,
+	  os/net/testsuite/udpEchoServer.cpp: (esidl) : Make 'in' optional.
+	  Retire 'out', 'inout', and string constants.
+
+2009-06-29 15:37  Shiki.Okasaka
+
+	* Makefile.in, aclocal.m4, cmd/Makefile.am, cmd/Makefile.in,
+	  cmd/aclocal.m4, cmd/configure, cmd/eventManager.cpp,
+	  cmd/testsuite/Makefile.in, configure, esjs/src/esjs.cpp,
+	  esjs/src/interface.cpp, esjs/testsuite/65.js,
+	  esjs/testsuite/Makefile.am, include/Makefile.am,
+	  include/Makefile.in, include/es/base/IInterfaceStore.idl,
+	  include/es/hashtable.h, include/es/interfaceData.h,
+	  include/es/reflect.h, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/interfaceStore.h,
+	  os/kernel/port/interface.cpp, os/kernel/port/process.cpp,
+	  os/kernel/port/syscall.cpp, os/kernel/port/upcall.cpp,
+	  os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/include/interfaceData.h, os/libes++/interfaceList.awk,
+	  os/libes++/src/interfaceStore.cpp,
+	  os/libes++/src/posix_system.cpp,
+	  os/libes++/testsuite/Makefile.am,
+	  os/libes++/testsuite/Makefile.in,
+	  os/libes++/testsuite/hashtable.cpp,
+	  os/libes++/testsuite/interfaceList.cpp,
+	  os/libes++/testsuite/testInterfaceList.cpp,
+	  os/testsuite/Makefile.am, os/testsuite/Makefile.in,
+	  os/testsuite/canvas.cpp, os/testsuite/canvas2d.cpp,
+	  os/testsuite/interfaceStore.cpp,
+	  os/testsuite/testInterfaceStore.cpp, tools/Makefile.am,
+	  tools/Makefile.in: Switch over to string encoded interface
+	  metadata. Retire ENT format.
+
+2009-06-29 14:06  Shiki.Okasaka
+
+	* esidl/include/reflect.h, esidl/testsuite/runtime/method.cpp:
+	  (isParam) : Check kPointer
+
+2009-06-29 05:05  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in,
+	  esidl/testsuite/runtime/Makefile.am,
+	  esidl/testsuite/runtime/Makefile.in: (Makefile.am) : Replace -I
+	  with -iquote.
+
+2009-06-29 05:04  shiki.okasaka
+
+	* esidl/include/info.h: (setter) : Fix a bug.
+
+2009-06-26 01:03  shiki.okasaka
+
+	* esidl/include/reflect.h: (Reflect) : Fix bugs.
+
+2009-06-25 13:17  Shiki.Okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in: (clean-local) :
+	  Add -f
+
+2009-06-25 10:17  shiki.okasaka
+
+	* patches/jpegsrc.v6b.patch, patches/libxml2-2.7.3.patch, setup:
+	  Revert to 1025.
+
+2009-06-25 10:03  plk1986
+
+	* patches/jpegsrc.v6b.patch, patches/libxml2-2.7.3.patch, setup:
+	  add libjpeg & libxml2
+
+2009-06-25 08:56  shiki.okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in,
+	  os/libes++/include/interfaceData.h, os/libes++/interfaceList.awk,
+	  os/libes++/testsuite/Makefile.am,
+	  os/libes++/testsuite/Makefile.in,
+	  os/libes++/testsuite/interfaceList.cpp: (interfaceData) : New.
+
+2009-06-25 08:47  shiki.okasaka
+
+	* esidl/src/cxx.cpp: (createInstance) : Return pointer to the
+	  created instance.
+
+2009-06-25 08:23  shiki.okasaka
+
+	* include/w3c/webworkers.idl: (Navigator) : Comment out for now.
+
+2009-06-25 08:19  shiki.okasaka
+
+	* include/Makefile.am, include/Makefile.in:
+	  (includeAllInterfaces.h) : New.
+
+2009-06-25 07:17  shiki.okasaka
+
+	* esidl/src/cxx.cpp: (createInstance) : Return 0 if constructor is
+	  not set.
+
+2009-06-24 18:25  mahanthg74
+
+	* ., esidl/include/formatter.h, esidl/include/info.h,
+	  esidl/testsuite/runtime/param.cpp, os/net/src/stream.cpp,
+	  os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/net/testsuite/tcpTimeout.cpp: tcp read time out test
+
+2009-06-24 14:56  Shiki.Okasaka
+
+	* include/Makefile.am, include/Makefile.in: (interface.list) : New.
+
+2009-06-24 09:48  shiki.okasaka
+
+	* esidl/include/cplusplus.h: (asParam) : Remove.
+
+2009-06-24 09:21  shiki.okasaka
+
+	* esidl/include/reflect.h: (skipType) : Check kPointer.
+
+2009-06-24 09:19  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/aclocal.m4,
+	  esidl/configure, esidl/configure.ac, esidl/include/esidl.h,
+	  esidl/include/info.h, esidl/include/reflect.h, esidl/src/cxx.cpp,
+	  esidl/src/esidl.cpp, esidl/src/print.cpp, esidl/testsuite/6.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  esidl/testsuite/runtime, esidl/testsuite/runtime/Makefile.am,
+	  esidl/testsuite/runtime/Makefile.in,
+	  esidl/testsuite/runtime/array.cpp,
+	  esidl/testsuite/runtime/constant.cpp,
+	  esidl/testsuite/runtime/interface.cpp,
+	  esidl/testsuite/runtime/method.cpp,
+	  esidl/testsuite/runtime/param.cpp,
+	  esidl/testsuite/runtime/sequence.cpp: (esidl) : Generate string
+	  encoded interface meta-data.
+
+2009-06-24 06:40  shiki.okasaka
+
+	* Makefile.in: Sync with Makefile.am
+
+2009-06-22 11:03  ailvpeng25
+
+	* ., esidl/include/formatter.h, os/net/testsuite/Makefile.am,
+	  os/net/testsuite/Makefile.in, os/net/testsuite/tcpDaytime.cpp,
+	  os/net/testsuite/tcpDaytimeClient.cpp,
+	  os/net/testsuite/tcpDaytimeServer.cpp: Daytime Protocol
+
+2009-06-22 08:26  shiki.okasaka
+
+	* esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/205.idl,
+	  esidl/testsuite/3.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (char) : Obsolete in Web IDL.)
+
+2009-06-22 08:20  shiki.okasaka
+
+	* esidl/include/expr.h: (Literal::operator) : Add 'inline'
+	  specifier.
+
+2009-06-19 04:11  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/include/expr.h, esidl/src/ent.cpp,
+	  esidl/src/entdump.cpp, esidl/src/parser.yy,
+	  esidl/testsuite/3.idl: ((long double) : Obsolete in Web IDL.)
+
+2009-06-18 05:45  shiki.okasaka
+
+	* esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/11.idl,
+	  esidl/testsuite/20.idl, esidl/testsuite/21.idl,
+	  esidl/testsuite/25.idl, esidl/testsuite/5.idl,
+	  esidl/testsuite/6.idl, esidl/testsuite/8.idl,
+	  esidl/testsuite/9.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (struct) : Obsolete in Web IDL.
+
+2009-06-18 05:03  shiki.okasaka
+
+	* cmd/IEventQueue.idl, cmd/eventManager.h, init/makeScript, setup:
+	  (EventQueue) : Move struct definitions into eventManager.h to
+	  obsolete 'struct' in IDL. Turn off Squeak temporarily.
+
+2009-06-18 04:29  shiki.okasaka
+
+	* cmd/ILocation.idl, cmd/Makefile.am, cmd/Makefile.in,
+	  cmd/location.cpp, cmd/location.h, cmd/locationClient.cpp:
+	  (location, locationClient) : Remove to obsolete 'struct' in IDL.
+
+2009-06-18 04:14  shiki.okasaka
+
+	* include/es/device/INetworkInterface.idl,
+	  os/kernel/include/i386/dp8390d.h, os/kernel/include/loopback.h,
+	  os/kernel/include/posix/tap.h, os/kernel/pc/dp8390d.cpp,
+	  os/kernel/posix/posix_ethernet.cpp,
+	  os/kernel/testsuite/ethernet.cpp, os/net/testsuite/Makefile.in:
+	  (NetworkInterface::Statistics) : Replace by integer attributes to
+	  obsolete 'struct' in IDL.
+
+2009-06-18 02:32  shiki.okasaka
+
+	* os/libes++/Makefile.am, os/libes++/Makefile.in: Clean up.
+
+2009-06-18 02:28  shiki.okasaka
+
+	* include/Makefile.am, include/Makefile.in,
+	  include/es/device/IDisk.idl, os/fs/fat/fatFormat.cpp,
+	  os/fs/fat/fatStream.h, os/fs/fat/testsuite/vdisk.h,
+	  os/fs/iso9660/iso9660Stream.h, os/fs/iso9660/testsuite/vdisk.h,
+	  os/kernel/Makefile.am, os/kernel/Makefile.in,
+	  os/kernel/include/i386/ataController.h,
+	  os/kernel/include/i386/fdc.h, os/kernel/include/interfaceStore.h,
+	  os/kernel/pc/ataDevice.cpp, os/kernel/pc/ataPacket.cpp,
+	  os/kernel/pc/fdd.cpp, os/kernel/pc/pc_init.cpp,
+	  os/kernel/port/init.cpp, os/kernel/port/interface.cpp,
+	  os/kernel/posix/posix_init.cpp, os/kernel/testsuite/Makefile.am,
+	  os/kernel/testsuite/Makefile.in, os/kernel/testsuite/ata.cpp,
+	  os/kernel/testsuite/cdrom.cpp, os/kernel/testsuite/fdc.cpp,
+	  os/kernel/testsuite/fdc_diskChange.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/src/interfaceStore.cpp,
+	  os/testsuite/Makefile.in, os/testsuite/interfaceStore.cpp,
+	  tools/vdisk.h: (IDisk) : New to obsolete 'struct' in IDL.
+
+2009-06-17 12:23  Shiki.Okasaka
+
+	* esidl/include/formatter.h: (Formatter(const Formatter*)) : New.
+
+2009-06-17 04:16  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in: (include/formatter.h) :
+	  New.
+
+2009-06-17 04:14  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/formatter.h,
+	  esidl/src/cxx.cpp: (Formatter) : Isolate from CPlusPlus.
+
+2009-06-16 04:29  shiki.okasaka
+
+	* esidl/src/cxx.cpp: (at(const Interface)) : Expand mixin methods
+	  and attributes in the implemented-on interface.
+
+2009-06-16 03:37  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/cxx.cpp, esidl/src/ent.cpp,
+	  esidl/src/esidl.cpp, esidl/src/skeleton.cpp:
+	  (USE_FUNCTION_CALLBACK) : Remove.
+
+2009-06-16 03:29  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/src/esidl.cpp,
+	  esidl/src/skeleton.cpp: (Interface::processExtendedAttributes) :
+	  Fix ImplementedOn to be unidirectional.
+
+2009-06-15 08:03  mahanthg74
+
+	* os/net/testsuite/tcpdiscardServer.cpp: a glitch error fix
+
+2009-06-15 07:54  mahanthg74
+
+	* ., os/net/testsuite/Makefile.am, os/net/testsuite/Makefile.in,
+	  os/net/testsuite/tcpdiscardClient.cpp,
+	  os/net/testsuite/tcpdiscardServer.cpp: added discard c/s apps to
+	  trunk
+
+2009-06-11 04:58  plk1986@gmail.com
+
+	* ., Makefile.am, cmd/Makefile.am, cmd/Makefile.in,
+	  esjs/Makefile.am, esjs/Makefile.in, os/testsuite/Makefile.am,
+	  os/testsuite/Makefile.in, patches/cairo-1.8.6.patch,
+	  patches/pixman-0.15.10.patch, setup: merge into trunk (upgrade
+	  Cairo lib)
+
+2009-06-10 09:08  shiki.okasaka
+
+	* libraries/webkit/Makefile.am, libraries/webkit/Makefile.in,
+	  libraries/webkit/html5_canvasrenderingcontext2d.h,
+	  libraries/webkit/testcanvas2d.cpp:
+	  (CanvasRenderingContext2D_Impl) : Test Web IDL C++ binding for
+	  WebKit.
+
+2009-06-10 05:16  shiki.okasaka
+
+	* esidl/src/skeleton.cpp: (at(const Interface*)) : Disable skeleton
+	  generation for interfaces with ImplementedOn attribute.
+
+2009-06-08 09:57  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/include/esidl.h,
+	  esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/skeleton.cpp, esidl/testsuite/112.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in:
+	  (printSkeleton) : Add C++ skeleton class generator.
+
+2009-06-08 04:25  Shiki.Okasaka
+
+	* libraries/webkit/setup: Execute autotools in the right directory.
+
+2009-06-08 04:24  plk1986@gmail.com
+
+	* ., cmd/canvas.cpp, cmd/canvas.h, esjs/scripts/transform.js,
+	  init/makeScript, os/testsuite/canvas.cpp,
+	  os/testsuite/canvas2d.cpp, os/testsuite/canvas2d.h: transform
+	  function, both demo in pc and local
+
+2009-06-08 03:10  shiki.okasaka
+
+	* libraries/webkit/setup: Enable checkout.
+
+2009-06-08 01:22  Shiki.Okasaka
+
+	* libraries, libraries/webkit, libraries/webkit/Makefile.am,
+	  libraries/webkit/Makefile.in, libraries/webkit/aclocal.m4,
+	  libraries/webkit/autotoolsconfig.h.in, libraries/webkit/compile,
+	  libraries/webkit/config.guess, libraries/webkit/config.sub,
+	  libraries/webkit/configure, libraries/webkit/configure.ac,
+	  libraries/webkit/depcomp, libraries/webkit/es,
+	  libraries/webkit/es/JavaScriptCore,
+	  libraries/webkit/es/JavaScriptCore/wtf,
+	  libraries/webkit/es/JavaScriptCore/wtf/es,
+	  libraries/webkit/es/JavaScriptCore/wtf/es/MainThreadES.cpp,
+	  libraries/webkit/es/WebCore,
+	  libraries/webkit/es/WebCore/bindings,
+	  libraries/webkit/es/WebCore/bindings/es,
+	  libraries/webkit/es/WebCore/bindings/es/ScheduledAction.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScheduledAction.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCachedFrameData.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCachedFrameData.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCallFrame.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCallFrame.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCallStack.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptCallStack.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptController.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptController.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptEventListener.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptEventListener.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptFunctionCall.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptFunctionCall.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptInstance.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptInstance.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptObject.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptObject.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptObjectQuarantine.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptObjectQuarantine.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptSourceCode.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptSourceCode.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptState.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptState.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptString.h,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptValue.cpp,
+	  libraries/webkit/es/WebCore/bindings/es/ScriptValue.h,
+	  libraries/webkit/es/WebCore/page,
+	  libraries/webkit/es/WebCore/page/es,
+	  libraries/webkit/es/WebCore/page/es/DragControllerES.cpp,
+	  libraries/webkit/es/WebCore/page/es/EventHandlerES.cpp,
+	  libraries/webkit/es/WebCore/page/es/FrameES.cpp,
+	  libraries/webkit/es/WebCore/platform,
+	  libraries/webkit/es/WebCore/platform/es,
+	  libraries/webkit/es/WebCore/platform/es/ClipboardES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ClipboardES.h,
+	  libraries/webkit/es/WebCore/platform/es/ContextMenuES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ContextMenuItemES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/CursorES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/DragDataES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/DragDataRef.h,
+	  libraries/webkit/es/WebCore/platform/es/DragImageES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/DragImageRef.h,
+	  libraries/webkit/es/WebCore/platform/es/Language.cpp,
+	  libraries/webkit/es/WebCore/platform/es/LocalizedStringsES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/MIMETypeRegistryES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/PasteboardES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/PlatformCursor.h,
+	  libraries/webkit/es/WebCore/platform/es/PlatformKeyEventES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/PlatformScreenES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/PlatformWidget.h,
+	  libraries/webkit/es/WebCore/platform/es/PopupMenuES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/RenderThemeES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/RenderThemeES.h,
+	  libraries/webkit/es/WebCore/platform/es/ScrollbarThemeES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/ScrollbarThemeES.h,
+	  libraries/webkit/es/WebCore/platform/es/SearchPopupMenuES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/SharedTimerES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/SoundES.cpp,
+	  libraries/webkit/es/WebCore/platform/es/TemporaryLinkStubs.cpp,
+	  libraries/webkit/es/WebCore/platform/es/WidgetES.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics,
+	  libraries/webkit/es/WebCore/platform/graphics/es,
+	  libraries/webkit/es/WebCore/platform/graphics/es/FontES.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/es/IconES.cpp,
+	  libraries/webkit/es/WebCore/platform/graphics/es/ImageES.cpp,
+	  libraries/webkit/es/WebCore/platform/network,
+	  libraries/webkit/es/WebCore/platform/network/es,
+	  libraries/webkit/es/WebCore/platform/network/es/AuthenticationChallenge.h,
+	  libraries/webkit/es/WebCore/platform/network/es/CookieJarES.cpp,
+	  libraries/webkit/es/WebCore/platform/network/es/ResourceError.h,
+	  libraries/webkit/es/WebCore/platform/network/es/ResourceHandleES.cpp,
+	  libraries/webkit/es/WebCore/platform/network/es/ResourceRequest.h,
+	  libraries/webkit/es/WebCore/platform/network/es/ResourceResponse.h,
+	  libraries/webkit/es/WebCore/platform/text,
+	  libraries/webkit/es/WebCore/platform/text/es,
+	  libraries/webkit/es/WebCore/platform/text/es/TextBreakIteratorInternalICUES.cpp,
+	  libraries/webkit/es/WebKit, libraries/webkit/es/WebKit/es,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/ChromeClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/ChromeClientES.h,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/ContextMenuClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/ContextMenuClientES.h,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/DragClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/DragClientES.h,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/EditorClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/EditorClientES.h,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/FrameLoaderClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/FrameLoaderClientES.h,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/InspectorClientES.cpp,
+	  libraries/webkit/es/WebKit/es/WebCoreSupport/InspectorClientES.h,
+	  libraries/webkit/es/WebKit/es/WebFrameES.cpp,
+	  libraries/webkit/es/WebKit/es/WebFrameES.h,
+	  libraries/webkit/es/WebKit/es/WebViewES.cpp,
+	  libraries/webkit/es/WebKit/es/WebViewES.h,
+	  libraries/webkit/install-sh, libraries/webkit/main.cpp,
+	  libraries/webkit/missing, libraries/webkit/setup,
+	  libraries/webkit/testcanvas2d.cpp,
+	  libraries/webkit/webkit.44489.patch: (webkit) : WebKit r44489
+	  plus ES port.
+
+2009-06-02 05:26  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/include/expr.h: (Literal) : Make it
+	  more portable using standard int types.
+
+2009-05-26 02:33  shiki.okasaka
+
+	* os/kernel/testsuite/monitor2.cpp: (main) : Fix a compile error.
+
+2009-05-25 08:08  nvpsswaroop
+
+	* os/kernel/testsuite/monitor2.cpp: Fixed warning in
+	  trunk/os/kernel/testsuite/monitor2.cpp by replacing char* with
+	  const char*.
+
+2009-05-23 02:31  Shiki.Okasaka
+
+	* os/fs/fat/fatStream.h: Clean up.
+
+2009-05-22 21:18  mahanthg74
+
+	* os/fs/fat/fatStream.h: this change removes a compiler warning due
+	  to variables of class FatStream being not initialised in the
+	  order they have been declared in fatstream.h
+
+2009-05-22 08:46  ailvpeng25
+
+	* ., os/kernel/include/line.h, os/kernel/pc/gdbstub.cpp,
+	  os/kernel/port/line.cpp, os/libes++/src/rpc.cpp: Fix some
+	  warning.
+
+2009-05-20 23:14  shiki.okasaka
+
+	* ., os/kernel/include/line.h, os/kernel/pc/gdbstub.cpp,
+	  os/kernel/port/line.cpp, os/kernel/port/pageSet.cpp,
+	  os/libes++/src/rpc.cpp: Revert to r894.
+
+2009-05-20 15:53  ailvpeng25
+
+	* ., os/kernel/include/line.h, os/kernel/pc/gdbstub.cpp,
+	  os/kernel/port/line.cpp, os/kernel/port/pageSet.cpp,
+	  os/libes++/src/rpc.cpp: merge and commit
+
+2009-05-20 13:52  plk1986@gmail.com
+
+	* ., esjs/include/esjs.h: copy!
+
+2009-05-20 13:18  plk1986@gmail.com
+
+	* .: merge and commit
+
+2009-05-20 11:36  Shiki.Okasaka
+
+	* ., cmd/ILocation.idl: Clean up.
+
+2009-05-15 05:25  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (Cxx::at(const Interface*)) : Generate 'name'
+	  as a const pointer.
+
+2009-05-15 05:12  Shiki.Okasaka
+
+	* cmd/canvas.cpp, cmd/canvas.h, cmd/console.cpp,
+	  include/Makefile.am, include/Makefile.in,
+	  os/libes++/src/posix_system.cpp, os/testsuite/canvas.cpp,
+	  os/testsuite/canvas2d.cpp, os/testsuite/canvas2d.h: (include) :
+	  Generate every interface class in namespace 'es'.
+
+2009-05-15 05:09  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/esidl.cpp,
+	  esidl/src/parser.yy, esidl/testsuite/28.idl,
+	  esidl/testsuite/29.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (esidl) : Support -namespace option
+	  to keep every interface in a single specified namespace.
+
+2009-05-14 04:11  Shiki.Okasaka
+
+	* esidl/es/ent.h, esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/esidl.cpp, include/es/object.idl,
+	  tools/reflect.cpp: Revert to r856.
+
+2009-05-14 02:29  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/esidl.cpp:
+	  (printCxx) : Take the default namespace name as an argument.
+
+2009-05-13 08:52  Shiki.Okasaka
+
+	* cmd/Makefile.am, cmd/Makefile.in, cmd/binder.cpp, cmd/canvas.h,
+	  cmd/client.cpp, cmd/console.cpp, cmd/eventManager.cpp,
+	  cmd/location.cpp, cmd/main.cpp, cmd/server.cpp,
+	  cmd/squeak-3.7.1/es/vm/intplugins/FilePlugin/sqEsFile.cpp,
+	  cmd/squeak-3.7.1/es/vm/intplugins/SocketPlugin/sqEsSocket.cpp,
+	  cmd/squeak-3.7.1/es/vm/sqEs.cpp, cmd/testsuite/binder.cpp,
+	  cmd/testsuite/console.cpp, cmd/testsuite/eventManager.cpp,
+	  cmd/testsuite/location.cpp, cmd/testsuite/main.cpp,
+	  cmd/testsuite/newlib.cpp, cmd/testsuite/start.cpp,
+	  cmd/testsuite/upcallTest.cpp, cmd/upcallTest.cpp,
+	  esjs/include/interface.h, esjs/src/interface.cpp,
+	  include/Makefile.am, include/Makefile.in, include/es/any.h,
+	  include/es/base/IInterface.idl, include/es/context.h,
+	  include/es/handle.h, include/es/object.idl,
+	  include/es/orderedMap.h, init/es.cpp, os/fs/fat/fatBinding.cpp,
+	  os/fs/fat/fatContext.cpp, os/fs/fat/fatFileSystem.cpp,
+	  os/fs/fat/fatIterator.cpp, os/fs/fat/fatStream.cpp,
+	  os/fs/fat/fatStream.h, os/fs/fat/testsuite/fat.cpp,
+	  os/fs/fat/testsuite/fat16.cpp,
+	  os/fs/fat/testsuite/fat16_attribute.cpp,
+	  os/fs/fat/testsuite/fat16_createdir.cpp,
+	  os/fs/fat/testsuite/fat16_createfile.cpp,
+	  os/fs/fat/testsuite/fat16_createmax.cpp,
+	  os/fs/fat/testsuite/fat16_getStream.cpp,
+	  os/fs/fat/testsuite/fat16_object.cpp,
+	  os/fs/fat/testsuite/fat16_readwrite.cpp,
+	  os/fs/fat/testsuite/fat16_removedir.cpp,
+	  os/fs/fat/testsuite/fat16_replace.cpp,
+	  os/fs/fat/testsuite/fat16_size.cpp,
+	  os/fs/fat/testsuite/fat16_time.cpp,
+	  os/fs/fat/testsuite/fat16_writemax.cpp,
+	  os/fs/fat/testsuite/fat32_attribute.cpp,
+	  os/fs/fat/testsuite/fat32_createdir.cpp,
+	  os/fs/fat/testsuite/fat32_createfile.cpp,
+	  os/fs/fat/testsuite/fat32_createmax.cpp,
+	  os/fs/fat/testsuite/fat32_getStream.cpp,
+	  os/fs/fat/testsuite/fat32_object.cpp,
+	  os/fs/fat/testsuite/fat32_readwrite.cpp,
+	  os/fs/fat/testsuite/fat32_removedir.cpp,
+	  os/fs/fat/testsuite/fat32_replace.cpp,
+	  os/fs/fat/testsuite/fat32_size.cpp,
+	  os/fs/fat/testsuite/fat32_test.cpp,
+	  os/fs/fat/testsuite/fat32_time.cpp,
+	  os/fs/fat/testsuite/fat32_writemax.cpp,
+	  os/fs/fat/testsuite/fat_attribute.cpp,
+	  os/fs/fat/testsuite/fat_createdir.cpp,
+	  os/fs/fat/testsuite/fat_createfile.cpp,
+	  os/fs/fat/testsuite/fat_createmax.cpp,
+	  os/fs/fat/testsuite/fat_getStream.cpp,
+	  os/fs/fat/testsuite/fat_object.cpp,
+	  os/fs/fat/testsuite/fat_readwrite.cpp,
+	  os/fs/fat/testsuite/fat_removedir.cpp,
+	  os/fs/fat/testsuite/fat_size.cpp,
+	  os/fs/fat/testsuite/fat_time.cpp,
+	  os/fs/fat/testsuite/fat_writemax.cpp,
+	  os/fs/fat/testsuite/fileSystem.cpp,
+	  os/fs/fat/testsuite/replace.cpp, os/fs/fat/testsuite/vdisk.h,
+	  os/fs/iso9660/iso9660Binding.cpp,
+	  os/fs/iso9660/iso9660Context.cpp,
+	  os/fs/iso9660/iso9660FileSystem.cpp,
+	  os/fs/iso9660/iso9660Iterator.cpp,
+	  os/fs/iso9660/iso9660Stream.cpp, os/fs/iso9660/iso9660Stream.h,
+	  os/fs/iso9660/testsuite/iso9660.cpp,
+	  os/fs/iso9660/testsuite/iso9660_attribute.cpp,
+	  os/fs/iso9660/testsuite/iso9660_create.cpp,
+	  os/fs/iso9660/testsuite/iso9660_getStream.cpp,
+	  os/fs/iso9660/testsuite/iso9660_maxLevel.cpp,
+	  os/fs/iso9660/testsuite/iso9660_object.cpp,
+	  os/fs/iso9660/testsuite/iso9660_read.cpp,
+	  os/fs/iso9660/testsuite/iso9660_readwrite.cpp,
+	  os/fs/iso9660/testsuite/iso9660_remove.cpp,
+	  os/fs/iso9660/testsuite/iso9660_rename.cpp,
+	  os/fs/iso9660/testsuite/iso9660_size.cpp,
+	  os/fs/iso9660/testsuite/iso9660_time.cpp,
+	  os/fs/iso9660/testsuite/vdisk.h, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/alarm.h,
+	  os/kernel/include/cache.h, os/kernel/include/i386/8042.h,
+	  os/kernel/include/i386/8237a.h, os/kernel/include/i386/8254.h,
+	  os/kernel/include/i386/8259.h, os/kernel/include/i386/apic.h,
+	  os/kernel/include/i386/ataController.h,
+	  os/kernel/include/i386/cga.h, os/kernel/include/i386/core.h,
+	  os/kernel/include/i386/dp8390d.h,
+	  os/kernel/include/i386/es1370.h, os/kernel/include/i386/fdc.h,
+	  os/kernel/include/i386/rtc.h, os/kernel/include/i386/sb16.h,
+	  os/kernel/include/i386/vesa.h,
+	  os/kernel/include/interfaceStore.h, os/kernel/include/line.h,
+	  os/kernel/include/loopback.h, os/kernel/include/partition.h,
+	  os/kernel/include/posix/core.h, os/kernel/include/posix/tap.h,
+	  os/kernel/include/process.h, os/kernel/include/thread.h,
+	  os/kernel/include/uart.h, os/kernel/include/zero.h,
+	  os/kernel/pc/8042.cpp, os/kernel/pc/8237a.cpp,
+	  os/kernel/pc/8254.cpp, os/kernel/pc/8259.cpp,
+	  os/kernel/pc/apic.cpp, os/kernel/pc/ataController.cpp,
+	  os/kernel/pc/ataDevice.cpp, os/kernel/pc/ataPacket.cpp,
+	  os/kernel/pc/cga.cpp, os/kernel/pc/dp8390d.cpp,
+	  os/kernel/pc/es1370.cpp, os/kernel/pc/fdc.cpp,
+	  os/kernel/pc/fdd.cpp, os/kernel/pc/pc_core.cpp,
+	  os/kernel/pc/pc_init.cpp, os/kernel/pc/rtc.cpp,
+	  os/kernel/pc/sb16.cpp, os/kernel/pc/uart.cpp,
+	  os/kernel/pc/vesa.cpp, os/kernel/port/alarm.cpp,
+	  os/kernel/port/cache.cpp, os/kernel/port/cacheFactory.cpp,
+	  os/kernel/port/interface.cpp, os/kernel/port/line.cpp,
+	  os/kernel/port/loopback.cpp, os/kernel/port/monitor.cpp,
+	  os/kernel/port/pageSet.cpp, os/kernel/port/partitionContext.cpp,
+	  os/kernel/port/partitionIterator.cpp,
+	  os/kernel/port/partitionStream.cpp, os/kernel/port/process.cpp,
+	  os/kernel/port/sched.cpp, os/kernel/port/stream.cpp,
+	  os/kernel/port/syscall.cpp, os/kernel/port/thread.cpp,
+	  os/kernel/port/upcall.cpp, os/kernel/port/zero.cpp,
+	  os/kernel/posix/posix_core.cpp,
+	  os/kernel/posix/posix_ethernet.cpp,
+	  os/kernel/posix/posix_init.cpp,
+	  os/kernel/posix/posix_monitor.cpp,
+	  os/kernel/posix/posix_thread.cpp, os/kernel/testsuite/8042.cpp,
+	  os/kernel/testsuite/ata.cpp, os/kernel/testsuite/beep.cpp,
+	  os/kernel/testsuite/bpi.cpp, os/kernel/testsuite/bpi2.cpp,
+	  os/kernel/testsuite/bpi3.cpp, os/kernel/testsuite/cache.cpp,
+	  os/kernel/testsuite/cdrom.cpp, os/kernel/testsuite/context.cpp,
+	  os/kernel/testsuite/create_release.cpp,
+	  os/kernel/testsuite/datetime.cpp, os/kernel/testsuite/es1370.cpp,
+	  os/kernel/testsuite/ethernet.cpp,
+	  os/kernel/testsuite/exception.cpp, os/kernel/testsuite/fdc.cpp,
+	  os/kernel/testsuite/fdc_diskChange.cpp,
+	  os/kernel/testsuite/fpu.cpp,
+	  os/kernel/testsuite/getPageCount.cpp,
+	  os/kernel/testsuite/handle.cpp, os/kernel/testsuite/heap.cpp,
+	  os/kernel/testsuite/interlocked.cpp,
+	  os/kernel/testsuite/invalidate.cpp,
+	  os/kernel/testsuite/loopback.cpp,
+	  os/kernel/testsuite/memoryStream.h,
+	  os/kernel/testsuite/monitor0.cpp,
+	  os/kernel/testsuite/monitor1.cpp,
+	  os/kernel/testsuite/monitor2.cpp,
+	  os/kernel/testsuite/monitor3.cpp, os/kernel/testsuite/page.cpp,
+	  os/kernel/testsuite/pageSet.cpp,
+	  os/kernel/testsuite/partition.cpp,
+	  os/kernel/testsuite/partition_bind.cpp,
+	  os/kernel/testsuite/partition_error.cpp,
+	  os/kernel/testsuite/partition_extended.cpp,
+	  os/kernel/testsuite/partition_iterator.cpp,
+	  os/kernel/testsuite/partition_over8GB.cpp,
+	  os/kernel/testsuite/partition_print.cpp,
+	  os/kernel/testsuite/position.cpp, os/kernel/testsuite/read.cpp,
+	  os/kernel/testsuite/replace.cpp, os/kernel/testsuite/ring.cpp,
+	  os/kernel/testsuite/sb16.cpp, os/kernel/testsuite/size.cpp,
+	  os/kernel/testsuite/thread.cpp,
+	  os/kernel/testsuite/thread_cancel.cpp,
+	  os/kernel/testsuite/thread_smp.cpp,
+	  os/kernel/testsuite/timer.cpp, os/kernel/testsuite/tsd.cpp,
+	  os/kernel/testsuite/utf.cpp, os/kernel/testsuite/vdisk.h,
+	  os/kernel/testsuite/vesa.cpp, os/kernel/testsuite/write.cpp,
+	  os/kernel/testsuite/write_read.cpp,
+	  os/kernel/testsuite/write_read2.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/include/core.h,
+	  os/libes++/include/posix_system.h,
+	  os/libes++/include/posix_video.h, os/libes++/src/context.cpp,
+	  os/libes++/src/interfaceStore.cpp,
+	  os/libes++/src/posix_system.cpp, os/libes++/src/posix_video.cpp,
+	  os/libes++/src/system.cpp, os/libes++/src/variant386.S,
+	  os/libes++/src/variantx64.S, os/libes++/testsuite/broker.cpp,
+	  os/libes++/testsuite/smartptr.cpp, os/net/include/inet4address.h,
+	  os/net/include/inet6address.h, os/net/include/inetConfig.h,
+	  os/net/include/resolver.h, os/net/include/socket.h,
+	  os/net/src/dhcp.cpp, os/net/src/inet4address.cpp,
+	  os/net/src/inet6address.cpp, os/net/src/inetConfig.cpp,
+	  os/net/src/resolver.cpp, os/net/src/socket.cpp,
+	  os/net/testsuite/anon.cpp, os/net/testsuite/config.cpp,
+	  os/net/testsuite/dhcp.cpp, os/net/testsuite/dns.cpp,
+	  os/net/testsuite/frag.cpp, os/net/testsuite/inet4.cpp,
+	  os/net/testsuite/mcast.cpp, os/net/testsuite/tcp.cpp,
+	  os/net/testsuite/tcp1.cpp, os/net/testsuite/tcp2.cpp,
+	  os/net/testsuite/timeout.cpp, os/net/testsuite/udpEchoClient.cpp,
+	  os/net/testsuite/udpEchoServer.cpp, os/net/testsuite/unreach.cpp,
+	  os/npapi/src/exportedObject.cpp, os/testsuite/canvas2d.h,
+	  os/testsuite/interfaceStore.cpp, tools/vcopy.cpp, tools/vdel.cpp,
+	  tools/vdisk.h, tools/vformat.cpp, tools/vget.cpp,
+	  tools/vlist.cpp: (object.idl) : New. Retire IInterface.idl.
+
+2009-05-13 07:48  Shiki.Okasaka
+
+	* esidl/src/parser.yy: (esidl) : Make it possible to define Object
+	  interface.
+
+2009-05-13 07:11  Shiki.Okasaka
+
+	* cmd/canvas.h, cmd/client.cpp, cmd/console.cpp,
+	  cmd/eventManager.cpp, cmd/location.cpp, cmd/server.cpp,
+	  cmd/upcallTest.cpp, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/27.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/Makefile.am, include/Makefile.in,
+	  include/es/base/IInterface.idl, include/es/context.h,
+	  include/es/handle.h, include/es/orderedMap.h,
+	  os/fs/fat/fatFileSystem.cpp, os/fs/fat/fatIterator.cpp,
+	  os/fs/fat/fatStream.cpp, os/fs/fat/fatStream.h,
+	  os/fs/fat/testsuite/vdisk.h, os/fs/iso9660/iso9660FileSystem.cpp,
+	  os/fs/iso9660/iso9660Iterator.cpp,
+	  os/fs/iso9660/iso9660Stream.cpp, os/fs/iso9660/iso9660Stream.h,
+	  os/fs/iso9660/testsuite/vdisk.h, os/kernel/include/alarm.h,
+	  os/kernel/include/cache.h, os/kernel/include/i386/8042.h,
+	  os/kernel/include/i386/8237a.h, os/kernel/include/i386/8254.h,
+	  os/kernel/include/i386/8259.h, os/kernel/include/i386/apic.h,
+	  os/kernel/include/i386/ataController.h,
+	  os/kernel/include/i386/cga.h, os/kernel/include/i386/dp8390d.h,
+	  os/kernel/include/i386/es1370.h, os/kernel/include/i386/fdc.h,
+	  os/kernel/include/i386/rtc.h, os/kernel/include/i386/sb16.h,
+	  os/kernel/include/i386/vesa.h,
+	  os/kernel/include/interfaceStore.h, os/kernel/include/line.h,
+	  os/kernel/include/loopback.h, os/kernel/include/partition.h,
+	  os/kernel/include/posix/core.h, os/kernel/include/posix/tap.h,
+	  os/kernel/include/process.h, os/kernel/include/thread.h,
+	  os/kernel/include/uart.h, os/kernel/include/zero.h,
+	  os/kernel/pc/8042.cpp, os/kernel/pc/8237a.cpp,
+	  os/kernel/pc/8254.cpp, os/kernel/pc/8259.cpp,
+	  os/kernel/pc/apic.cpp, os/kernel/pc/ataController.cpp,
+	  os/kernel/pc/ataDevice.cpp, os/kernel/pc/ataPacket.cpp,
+	  os/kernel/pc/cga.cpp, os/kernel/pc/dp8390d.cpp,
+	  os/kernel/pc/es1370.cpp, os/kernel/pc/fdc.cpp,
+	  os/kernel/pc/fdd.cpp, os/kernel/pc/pc_core.cpp,
+	  os/kernel/pc/rtc.cpp, os/kernel/pc/sb16.cpp,
+	  os/kernel/pc/uart.cpp, os/kernel/pc/vesa.cpp,
+	  os/kernel/port/alarm.cpp, os/kernel/port/cache.cpp,
+	  os/kernel/port/cacheFactory.cpp, os/kernel/port/interface.cpp,
+	  os/kernel/port/line.cpp, os/kernel/port/loopback.cpp,
+	  os/kernel/port/monitor.cpp, os/kernel/port/pageSet.cpp,
+	  os/kernel/port/partitionContext.cpp,
+	  os/kernel/port/partitionIterator.cpp,
+	  os/kernel/port/partitionStream.cpp, os/kernel/port/process.cpp,
+	  os/kernel/port/sched.cpp, os/kernel/port/stream.cpp,
+	  os/kernel/port/syscall.cpp, os/kernel/port/thread.cpp,
+	  os/kernel/port/upcall.cpp, os/kernel/port/zero.cpp,
+	  os/kernel/posix/posix_core.cpp,
+	  os/kernel/posix/posix_ethernet.cpp,
+	  os/kernel/posix/posix_monitor.cpp,
+	  os/kernel/posix/posix_thread.cpp, os/kernel/testsuite/bpi2.cpp,
+	  os/kernel/testsuite/bpi3.cpp, os/kernel/testsuite/context.cpp,
+	  os/kernel/testsuite/handle.cpp,
+	  os/kernel/testsuite/memoryStream.h, os/kernel/testsuite/vdisk.h,
+	  os/libes++/include/posix_system.h,
+	  os/libes++/include/posix_video.h, os/libes++/src/context.cpp,
+	  os/libes++/src/posix_system.cpp, os/libes++/src/posix_video.cpp,
+	  os/libes++/src/system.cpp, os/libes++/testsuite/smartptr.cpp,
+	  os/net/include/inet4address.h, os/net/include/inet6address.h,
+	  os/net/include/inetConfig.h, os/net/include/resolver.h,
+	  os/net/include/socket.h, os/net/src/dhcp.cpp,
+	  os/net/src/inet4address.cpp, os/net/src/inet6address.cpp,
+	  os/net/src/inetConfig.cpp, os/net/src/resolver.cpp,
+	  os/net/src/socket.cpp, os/testsuite/canvas2d.h, tools/vdisk.h:
+	  (esidl) : Make it possible to define Object interface.
+
+2009-05-12 06:39  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  include/es/naming/IBinding.idl, include/es/naming/IContext.idl,
+	  include/es/net/IInternetAddress.idl,
+	  include/es/net/IInternetConfig.idl,
+	  include/es/util/IIterator.idl, include/es/util/ISet.idl: (esidl)
+	  : Use Object instead of Interface in IDL files.
+
+2009-05-11 09:09  Shiki.Okasaka
+
+	* esidl/src/parser.yy, esidl/testsuite/203.idl,
+	  esidl/testsuite/204.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (parser.yy) : Print the error
+	  location.
+
+2009-05-11 07:48  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/esidl.cpp: (esidl) : Support
+	  -fexceptions and -fno-exceptions command line options.
+
+2009-05-11 06:00  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/driver.cpp, esidl/src/ent.cpp, esidl/src/parser.yy,
+	  esidl/testsuite/13.idl, esidl/testsuite/4.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (esidl)
+	  : Support getraises and setraises for attributes.
+
+2009-05-08 05:49  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/expr.h, esidl/src/ent.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/21.idl,
+	  esidl/testsuite/3.idl: (wchar, wstring) : Remove which are not
+	  used in Web IDL.
+
+2009-05-08 05:37  Shiki.Okasaka
+
+	* cmd/canvas.cpp, cmd/canvas.h, cmd/location.cpp, cmd/server.cpp,
+	  esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/esidl.cpp, include/es/context.h,
+	  include/es/orderedMap.h, os/fs/fat/fatBinding.cpp,
+	  os/fs/fat/fatStream.h, os/fs/iso9660/iso9660Ascii.cpp,
+	  os/fs/iso9660/iso9660Stream.h, os/kernel/include/cache.h,
+	  os/kernel/include/partition.h,
+	  os/kernel/port/partitionIterator.cpp, os/kernel/port/stream.cpp,
+	  os/libes++/include/posix_system.h, os/libes++/src/context.cpp,
+	  os/net/include/inet4address.h, os/net/include/inet6address.h,
+	  os/net/include/inetConfig.h, os/net/include/resolver.h,
+	  os/net/src/inet4address.cpp, os/net/src/inet6address.cpp,
+	  os/net/src/inetConfig.cpp, os/net/src/resolver.cpp,
+	  os/testsuite/canvas2d.cpp, os/testsuite/canvas2d.h: (esidl) :
+	  Make C++ string type name configurable.
+
+2009-05-08 05:26  Shiki.Okasaka
+
+	* cmd/IEventQueue.idl, cmd/ILocation.idl: (#pragma ID) : Remove
+	  since it is not used in Web IDL.
+
+2009-05-08 04:13  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/include/string.h, esidl/src/cxx.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/src/print.cpp,
+	  esidl/testsuite/13.idl: (#pragma ID) : Remove which is not used
+	  in Web IDL.
+
+2009-05-08 03:09  Shiki.Okasaka
+
+	* esidl/src/driver.cpp, esidl/src/esidl.cpp: (esidl) : Add -string
+	  and -namespace command line options.
+
+2009-05-07 04:18  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/cxx.cpp:
+	  (USE_FUNCTION_CALLBACK) : Disable by default.
+
+2009-04-24 01:06  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (printCxx) : Insert a blank line between
+	  imports and predeclarations.
+
+2009-04-24 00:43  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (at(const ConstDcl*)) : Remove extra spaces
+	  before JavaDoc.
+
+2009-04-24 00:19  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/cxx.cpp, esidl/src/esidl.cpp:
+	  (Predeclaration) : Suppress empty class generation.
+
+2009-04-23 22:32  Shiki.Okasaka
+
+	* include/w3c/html5.idl: Revert web storage related methods.
+
+2009-04-23 22:32  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (Predeclaration) : Generate forward class
+	  declarations first.
+
+2009-04-23 20:56  Shiki.Okasaka
+
+	* include/w3c/smil.idl, include/w3c/svg.idl: Clean up.
+
+2009-04-23 20:55  Shiki.Okasaka
+
+	* include/w3c/html5.idl: (HTMLBrowserButtonElement) : Revert
+	  'supported'.
+
+2009-04-23 20:42  Shiki.Okasaka
+
+	* include/w3c/xhr.idl: (Function) : Remove redundant typedef.
+
+2009-04-23 20:12  Shiki.Okasaka
+
+	* include/w3c/webstorage.idl: (webstorage) : Add predeclarations.
+
+2009-04-23 20:01  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (at(const Interface*)) : Clean up.
+
+2009-04-23 19:59  Shiki.Okasaka
+
+	* include/w3c/cssomview.idl, include/w3c/eventsource.idl,
+	  include/w3c/html2.idl, include/w3c/websockets.idl,
+	  include/w3c/webstorage.idl, include/w3c/webworkers.idl,
+	  include/w3c/xhr.idl: Update module names, add predeclarations,
+	  etc.
+
+2009-04-23 18:20  Shiki.Okasaka
+
+	* include/w3c/webstorage.idl: Add one more predeclaration.
+
+2009-04-23 18:14  Shiki.Okasaka
+
+	* esidl/src/cxx.cpp: (at(const Interface*)) : Fix callback and
+	  optional staging.
+
+2009-04-22 17:30  Shiki.Okasaka
+
+	* include/w3c/webstorage.idl: Add predeclarations.
+
+2009-04-22 03:12  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/parser.yy: (SequenceType) :
+	  Support sequence of interfaces.
+
+2009-04-22 00:56  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (USE_FUNCTION_ATTRIBUTE) : Disable by
+	  default.
+
+2009-04-22 00:00  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/ent.cpp,
+	  esidl/src/esidl.cpp: (esidl) : Use C++ default arguments for
+	  [Variadic].
+
+2009-04-21 21:05  Shiki.Okasaka
+
+	* include/Makefile.am, include/Makefile.in,
+	  include/w3c/eventsource.idl, include/w3c/html5.idl,
+	  include/w3c/websockets.idl, include/w3c/webstorage.idl,
+	  include/w3c/webworkers.idl, include/w3c/xhr.idl: Compile new W3C
+	  IDL files with esidl with a little modifications to each IDL
+	  files.
+
+2009-04-21 20:29  Shiki.Okasaka
+
+	* esidl/src/ent.cpp: (at(const Interface*)) : Fix for handling
+	  interfaces with predeclarations only.
+
+2009-04-20 22:44  Shiki.Okasaka
+
+	* esidl/src/esidl.cpp, esidl/src/parser.yy:
+	  (interface_inheritance_spec) : Check if interfaces are declared.
+
+2009-04-20 22:41  Shiki.Okasaka
+
+	* esidl/src/lexer.ll: (MultiLineComment) : Update yylloc.
+
+2009-04-20 18:45  Shiki.Okasaka
+
+	* include/w3c/cssomview.idl, include/w3c/events.idl,
+	  include/w3c/eventsource.idl, include/w3c/websockets.idl,
+	  include/w3c/webstorage.idl, include/w3c/webworkers.idl,
+	  include/w3c/xhr.idl: Scraped IDL definitions from W3C
+	  specifications.
+
+2009-04-20 18:02  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/testsuite/111.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (esidl)
+	  : Support [Callback=FunctionOnly] interface attributes.
+
+2009-04-20 17:58  Shiki.Okasaka
+
+	* include/Makefile.am, include/Makefile.in: Remove -C option from
+	  esidl.
+
+2009-04-16 17:22  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, include/es/base/IFile.idl,
+	  include/es/device/IDmac.idl, include/es/net/IInternetAddress.idl,
+	  include/es/net/ISocket.idl, os/kernel/include/alarm.h,
+	  os/kernel/include/i386/dp8390d.h, os/kernel/include/loopback.h,
+	  os/kernel/include/posix/tap.h, os/kernel/pc/dp8390d.cpp,
+	  os/kernel/port/alarm.cpp, os/kernel/posix/posix_ethernet.cpp,
+	  os/net/include/socket.h, os/net/src/datagram.cpp,
+	  os/net/src/socket.cpp, os/net/src/stream.cpp,
+	  os/testsuite/interfaceStore.cpp: (esidl) : Use get prefix even
+	  for boolean attributes following the Web IDL Java binding.
+
+2009-04-14 20:35  Shiki.Okasaka
+
+	* esidl/src/lexer.ll: Clean up.
+
+2009-04-13 21:41  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/driver.cpp, esidl/src/esidl.cpp,
+	  esidl/src/lexer.ll, esidl/src/parser.yy, esidl/testsuite/201.idl,
+	  esidl/testsuite/202.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/es/orderedMap.h,
+	  include/es/util/IOrderedMap.idl: (esidl) : Keep track of the
+	  location of each construct.
+
+2009-04-11 03:10  Shiki.Okasaka
+
+	* esidl/src/lexer.ll, esidl/src/parser.yy: (%pure-parser) : Remove
+	  to generate a normal non-reentrant parser.
+
+2009-04-11 02:38  Shiki.Okasaka
+
+	* esidl/src/esidl.cpp, esidl/testsuite/201.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (main)
+	  : Check the returned value from yyparse().
+
+2009-04-10 10:24  Shiki.Okasaka
+
+	* esidl/include/esidl.h, esidl/src/esidl.cpp:
+	  (ProcessExtendedAttributes) : Process extended attributes after
+	  yyparse() to deal with forward declarations.
+
+2009-04-09 07:34  shiki.okasaka
+
+	* setup: (apt-get) : Add libxi-dev to the install packages.
+
+2009-04-08 06:35  Shiki.Okasaka
+
+	* include/w3c/html5.idl: Add required predeclarations, etc.
+
+2009-04-07 07:25  Shiki.Okasaka
+
+	* esidl/testsuite/Interface.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, esidl/testsuite/dom.idl,
+	  esidl/testsuite/events.idl, esidl/testsuite/html.idl,
+	  esidl/testsuite/views.idl: (TESTS) : Remove extra files.
+
+2009-04-06 10:11  Shiki.Okasaka
+
+	* esidl/include/esidl.h: (collectImplementedOn) : Fix not to
+	  include leaves.
+
+2009-04-06 09:30  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (savedContext) : Include overloading
+	  stage counts.
+
+2009-04-06 05:51  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (savedContext) : New.
+
+2009-04-06 03:38  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (at(const ParamDcl*)) : Accept
+	  callback interface pointer even if [Callback=FunctionOnly] for
+	  C++.
+
+2009-04-05 05:35  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (at(const ParamDcl*)) : Do not add
+	  'const' for sequence of objects.
+
+2009-04-05 05:27  Shiki.Okasaka
+
+	* esidl/include/esidl.h: (compare) : Fix the return value type.
+
+2009-04-03 09:40  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (paramMode) : New.
+
+2009-04-03 02:22  Shiki.Okasaka
+
+	* setup: (freetype-2.3.5.tar.bz2) : Updated URL to get
+	  freetype-2.3.5.tar.bz2.
+
+2009-04-02 06:05  Shiki.Okasaka
+
+	* include/w3c/cssomview.idl, include/w3c/events.idl: Add extended
+	  attributes.
+
+2009-04-02 05:33  Shiki.Okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in: Revert to the previous
+	  version.
+
+2009-04-02 05:31  Shiki.Okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, include/Makefile.am,
+	  include/Makefile.in, include/w3c/cssomview.idl,
+	  include/w3c/views.idl, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/interfaceStore.h,
+	  os/kernel/port/interface.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/src/interfaceStore.cpp:
+	  (cssomview.idl) : Make it default superseding views.idl.
+
+2009-04-02 04:59  Shiki.Okasaka
+
+	* include/w3c/cssomview.idl: Add required predeclarations.
+
+2009-04-02 04:51  Shiki.Okasaka
+
+	* include/w3c/cssomview.idl: (CSSOM View Module) : New.
+
+2009-04-01 07:27  Shiki.Okasaka
+
+	* cmd/canvas.cpp, cmd/canvas.h, cmd/console.cpp,
+	  esjs/scripts/figure.js, include/Makefile.am, include/Makefile.in,
+	  include/es/util/ICanvasRenderingContext2D.idl,
+	  include/w3c/html5.idl, os/kernel/Makefile.am,
+	  os/kernel/Makefile.in, os/kernel/include/interfaceStore.h,
+	  os/kernel/port/interface.cpp, os/libes++/Makefile.am,
+	  os/libes++/Makefile.in, os/libes++/src/interfaceStore.cpp,
+	  os/libes++/src/posix_system.cpp, os/testsuite/canvas.cpp,
+	  os/testsuite/canvas2d.cpp, os/testsuite/canvas2d.h:
+	  (CanvasRenderingContext2D) : Switch over to
+	  html5::CanvasRenderingContext2D from
+	  es::CanvasRenderingContext2D.
+
+2009-03-31 08:42  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (at(const ParamDcl*)) : Fix to print
+	  the parameter name instead of the callback method name.
+
+2009-03-31 07:50  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (at(const OpDcl*)) : Fix not to put a
+	  redundant comma.
+
+2009-03-31 07:11  Shiki.Okasaka
+
+	* include/w3c/html5.idl: Add required predeclarations.
+
+2009-03-31 03:19  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h: (esidl) : Fix
+	  problems to support the base object name specified in a qualified
+	  name format.
+
+2009-03-30 15:06  Shiki.Okasaka
+
+	* NOTICE, include/w3c/css.idl, include/w3c/dom.idl,
+	  include/w3c/events.idl, include/w3c/html5.idl,
+	  include/w3c/ls.idl, include/w3c/ranges.idl, include/w3c/smil.idl,
+	  include/w3c/stylesheets.idl, include/w3c/svg.idl,
+	  include/w3c/traversal.idl, include/w3c/validation.idl,
+	  include/w3c/views.idl: (w3c/*.idl) : Fix compile errors detected
+	  by esidl.
+
+2009-03-30 15:02  Shiki.Okasaka
+
+	* cmd/Makefile.am, cmd/Makefile.in, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  esidl/src/parser.yy, include/Makefile.am, include/Makefile.in:
+	  (esidl) : The base object name is specified in a qualified name
+	  format; Fix associated bugs.
+
+2009-03-30 14:52  Shiki.Okasaka
+
+	* esidl/es/ent.h: (addConstant) : Fix bugs.
+
+2009-03-30 14:40  Shiki.Okasaka
+
+	* include/w3c/html5.idl: Fix indentation.
+
+2009-03-30 04:44  Shiki.Okasaka
+
+	* include/w3c/html5.idl: (html5.idl) : Copy from Web Hypertext
+	  Application Technology Working Group.
+
+2009-03-30 04:42  Shiki.Okasaka
+
+	* include/w3c, include/w3c/COPYRIGHT.html, include/w3c/css.idl,
+	  include/w3c/dom.idl, include/w3c/events.idl,
+	  include/w3c/html2.idl, include/w3c/ls.idl,
+	  include/w3c/ranges.idl, include/w3c/smil.idl,
+	  include/w3c/stylesheets.idl, include/w3c/svg.idl,
+	  include/w3c/traversal.idl, include/w3c/validation.idl,
+	  include/w3c/views.idl: (w3c) : Copy from World Wide Web
+	  Consortium.
+
+2009-03-29 13:52  Shiki.Okasaka
+
+	* tools/idl_scraper.pl: Eliminate unnecessary definitions.
+
+2009-03-29 06:59  Shiki.Okasaka
+
+	* tools/Makefile.am, tools/Makefile.in, tools/idl_scraper.pl:
+	  (idl_scraper.pl) : New.
+
+2009-03-25 08:10  shiki.okasaka
+
+	* esidl/testsuite/17.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, esidl/testsuite/dom.idl,
+	  esidl/testsuite/events.idl, esidl/testsuite/html.idl:
+	  (events.idl) : New.
+
+2009-03-25 08:07  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/src/esidl.cpp: (AdjustMethodCount) :
+	  Adjust interface method counts later to deal with forward
+	  interface declarations.
+
+2009-03-25 05:30  Shiki.Okasaka
+
+	* esidl/include/esidl.h: (collectImplementedOn) : Check mixins
+	  specified in base interfaces.
+
+2009-03-25 05:23  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (printChildren) : Save the original
+	  currentNode.
+
+2009-03-24 05:21  shiki.okasaka
+
+	* esidl/src/parser.yy: (scoped_name) : Print an error message and
+	  exit instead of assert().
+
+2009-03-23 14:41  Shiki.Okasaka
+
+	* esidl/testsuite/21.idl: Remove definitions using Object, which
+	  should be checked later.
+
+2009-03-23 14:14  shiki.okasaka
+
+	* esidl/src/driver.cpp, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (main) : Return EXIT_FAILURE if
+	  terminated abnormally.
+
+2009-03-23 13:52  shiki.okasaka
+
+	* esidl/include/esidl.h: (ConstDcl::value) : Change type to
+	  uint64_t.
+
+2009-03-23 10:24  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h: (isCallback) : New.
+
+2009-03-10 06:56  Shiki.Okasaka
+
+	* esidl/es/ent.h: (CallbackMask) : Fix the value.
+
+2009-03-10 06:51  Shiki.Okasaka
+
+	* esidl/include/esidl.h: (CallbackMask) : Fix the value.
+
+2009-03-04 06:50  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/es, esidl/es/ent.h,
+	  include/Makefile.am, include/Makefile.in, include/es/ent.h:
+	  (esidl): Make esidl tarball stand-alone compilable.
+
+2009-03-04 05:38  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/src/reflect.cpp,
+	  tools/Makefile.am, tools/Makefile.in, tools/reflect.cpp:
+	  (reflect) : Move to tools.
+
+2009-03-04 05:18  shiki.okasaka
+
+	* esidl/Makefile.am, esidl/Makefile.in, esidl/include/cplusplus.h,
+	  esidl/include/esidl.h, esidl/include/expr.h,
+	  esidl/include/guid.h, esidl/include/utf.h, esidl/src/ent.cpp,
+	  esidl/src/entdump.cpp, esidl/src/guid.cpp, esidl/src/lexer.ll,
+	  esidl/src/parser.yy, esidl/src/reflect.cpp,
+	  esjs/src/interface.cpp, include/es/ent.h, include/es/reflect.h:
+	  (esidl) : Remove obsolete UUID related code.
+
+2009-03-04 02:20  shiki.okasaka
+
+	* cmd/Makefile.am, cmd/Makefile.in, esidl/src/driver.cpp,
+	  esidl/src/esidl.cpp, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/Makefile.am,
+	  include/Makefile.in: (esidl) : Make ENT file generation optional
+	  using the -ent option
+
+2009-03-02 08:47  shiki.okasaka
+
+	* esidl/include/esidl.h: (collectImplementedOn) : New.
+
+2009-02-24 04:21  shiki.okasaka
+
+	* esidl/include/cplusplus.h: (getParamCount, getVariadic) : New.
+
+2009-02-20 07:54  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/src/ent.cpp,
+	  esidl/src/esidl.cpp: (esidl) : Generate an extra operation for
+	  [Variadic] with no variadic arguments.
+
+2009-02-20 07:38  shiki.okasaka
+
+	* esidl/testsuite/110.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (110.idl) : New.
+
+2009-02-20 06:25  shiki.okasaka
+
+	* esidl/include/esidl.h: (Node::rbegin, rend) : New.
+
+2009-02-20 06:24  shiki.okasaka
+
+	* esidl/testsuite/109.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in: (109.idl) : New.
+
+2009-02-20 04:40  shiki.okasaka
+
+	* esidl/include/esidl.h, esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  esidl/testsuite/108.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/es/ent.h: (namespace Ent) :
+	  Clean up attribute bits.
+
+2009-02-18 08:58  shiki.okasaka
+
+	* esidl/include/esidl.h: (Interface::getCallable) : New.
+
+2009-02-18 08:46  shiki.okasaka
+
+	* esidl/testsuite/100.idl: Add tests for parameters.
+
+2009-02-18 08:24  shiki.okasaka
+
+	* esidl/include/esidl.h: (Attribute::getAttr) : New.
+
+2009-02-18 07:40  shiki.okasaka
+
+	* esidl/include/esidl.h: (Node::isBaseObject) : New.
+
+2009-02-18 05:47  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/print.cpp, esidl/testsuite/107.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/es/ent.h: (esidl) : Support [Variadic] extended
+	  attribute.
+
+2009-02-18 02:40  shiki.okasaka
+
+	* esidl/src/esidl.cpp, esidl/testsuite/106.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (esidl)
+	  : Parse [NamedConstructor] extended attribute.
+
+2009-02-16 12:17  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  esidl/testsuite/104.idl, esidl/testsuite/105.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in: (esidl)
+	  : Support [PutForwards] and [Replaceable] extended attributes.
+
+2009-02-16 11:15  Shiki.Okasaka
+
+	* esidl/src/lexer.ll: (DOMString) : DOMString is an intrinsic type
+	  in Web IDL.
+
+2009-02-16 08:19  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp, esidl/src/ent.cpp, esidl/src/esidl.cpp,
+	  esidl/testsuite/102.idl, esidl/testsuite/103.idl,
+	  esidl/testsuite/Makefile.am, esidl/testsuite/Makefile.in,
+	  include/es/ent.h: (esidl) : Support [Callback] and [Optional]
+	  extended attributes.
+
+2009-02-16 08:16  shiki.okasaka
+
+	* os/libes++/include/posix_system.h: (getName) : Fix the bug.
+
+2009-02-13 03:32  shiki.okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/cxx.cpp: Clean up.
+
+2009-02-12 12:00  Shiki.Okasaka
+
+	* esidl/include/cplusplus.h, esidl/include/esidl.h,
+	  esidl/src/ent.cpp, esidl/src/esidl.cpp, esidl/src/parser.yy,
+	  esidl/src/print.cpp, esidl/testsuite/100.idl,
+	  esidl/testsuite/101.idl, esidl/testsuite/Makefile.am,
+	  esidl/testsuite/Makefile.in, include/es/ent.h: (esidl) : Parse
+	  more extended attributes.
+
+2009-02-08 06:10  Shiki.Okasaka
+
+	* Makefile: Please use 'setup' instead.
+
+2009-02-08 05:56  Shiki.Okasaka
+
+	* setup: (setup) : Do not use symbolic link to the squeak source.
+
+2009-02-08 05:16  Shiki.Okasaka
+
+	* ChangeLog, NEWS, cmd/squeak-3.7.1/ChangeLog: es 0.1.4 released.
+
 2009-02-08 05:04  Shiki.Okasaka
 
 	* setup: (setup) : Download Squeak tarballs by default.
