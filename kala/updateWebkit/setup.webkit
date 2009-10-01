@@ -27,7 +27,7 @@ else
 fi
 
 # Check out the original WebKit at REV
-REV=44489
+REV=48746
 cd webkit
 if [ ! -d trunk ];
 then
