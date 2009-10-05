@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "ScriptController.h"
+#include "XSSAuditor.h"
 
 #include "NotImplemented.h"
 
@@ -36,6 +37,7 @@ namespace WebCore {
 
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
+    , m_XSSAuditor(new XSSAuditor(frame))
 {
 }
 
@@ -52,7 +54,6 @@ void ScriptController::evaluateInIsolatedWorld(unsigned /* worldID */, const Vec
 {
     notImplemented();
 }
-
 
 bool ScriptController::haveWindowShell() const
 {

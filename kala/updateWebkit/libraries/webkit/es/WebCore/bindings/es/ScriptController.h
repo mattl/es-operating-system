@@ -32,6 +32,7 @@
 
 #include "ScriptInstance.h"
 #include "ScriptValue.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Event;
@@ -49,6 +50,7 @@ namespace WebCore {
         ~ScriptController();
 
         ScriptValue evaluate(const ScriptSourceCode&);
+	void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
         bool haveWindowShell() const;
         ScriptController* windowShell();
         bool isEnabled() const;

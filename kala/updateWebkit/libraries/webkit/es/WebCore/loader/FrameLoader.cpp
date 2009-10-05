@@ -123,89 +123,6 @@ using namespace SVGNames;
 #endif
 using namespace HTMLNames;
 
-struct ScheduledRedirection {
-    enum Type { redirection, locationChange, historyNavigation, formSubmission };
-
-    const Type type;
-    const double delay;
-    const String url;
-    const String referrer;
-    const FrameLoadRequest frameRequest;
-    const RefPtr<Event> event;
-    const RefPtr<FormState> formState;
-    const int historySteps;
-    const bool lockHistory;
-    const bool lockBackForwardList;
-    const bool wasUserGesture;
-    const bool wasRefresh;
-    const bool wasDuringLoad;
-    bool toldClient;
-
-    ScheduledRedirection(double delay, const String& url, bool lockHistory, bool lockBackForwardList, bool wasUserGesture, bool refresh)
-        : type(redirection)
-        , delay(delay)
-        , url(url)
-        , historySteps(0)
-        , lockHistory(lockHistory)
-        , lockBackForwardList(lockBackForwardList)
-        , wasUserGesture(wasUserGesture)
-        , wasRefresh(refresh)
-        , wasDuringLoad(false)
-        , toldClient(false)
-    {
-        ASSERT(!url.isEmpty());
-    }
-
-    ScheduledRedirection(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture, bool refresh, bool duringLoad)
-        : type(locationChange)
-        , delay(0)
-        , url(url)
-        , referrer(referrer)
-        , historySteps(0)
-        , lockHistory(lockHistory)
-        , lockBackForwardList(lockBackForwardList)
-        , wasUserGesture(wasUserGesture)
-        , wasRefresh(refresh)
-        , wasDuringLoad(duringLoad)
-        , toldClient(false)
-    {
-        ASSERT(!url.isEmpty());
-    }
-
-    explicit ScheduledRedirection(int historyNavigationSteps)
-        : type(historyNavigation)
-        , delay(0)
-        , historySteps(historyNavigationSteps)
-        , lockHistory(false)
-        , lockBackForwardList(false)
-        , wasUserGesture(false)
-        , wasRefresh(false)
-        , wasDuringLoad(false)
-        , toldClient(false)
-    {
-    }
-
-    ScheduledRedirection(const FrameLoadRequest& frameRequest,
-            bool lockHistory, bool lockBackForwardList, PassRefPtr<Event> event, PassRefPtr<FormState> formState,
-            bool duringLoad)
-        : type(formSubmission)
-        , delay(0)
-        , frameRequest(frameRequest)
-        , event(event)
-        , formState(formState)
-        , historySteps(0)
-        , lockHistory(lockHistory)
-        , lockBackForwardList(lockBackForwardList)
-        , wasUserGesture(false)
-        , wasRefresh(false)
-        , wasDuringLoad(duringLoad)
-        , toldClient(false)
-    {
-        ASSERT(!frameRequest.isEmpty());
-        ASSERT(this->formState);
-    }
-};
- 
 #if ENABLE(XHTMLMP)
 static const char defaultAcceptHeader[] = "application/xml,application/vnd.wap.xhtml+xml,application/xhtml+xml;profile='http://www.wapforum.org/xhtml',text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
 #else
@@ -267,12 +184,10 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_unloadEventBeingDispatched(false)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
-    , m_cancellingWithLoadInProgress(false)
     , m_needsClear(false)
     , m_receivedData(false)
     , m_encodingWasChosenByUser(false)
     , m_containsPlugIns(false)
-    , m_redirectionTimer(this, &FrameLoader::redirectionTimerFired)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
@@ -308,8 +223,7 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
-    //m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
-    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), DocumentType, 0, String(), String()));
+    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
     begin(KURL(), false);
     end();
@@ -333,7 +247,7 @@ void FrameLoader::setDefersLoading(bool defers)
         m_policyDocumentLoader->setDefersLoading(defers);
 
     if (!defers) {
-        startRedirectionTimer();
+        m_frame->redirectScheduler()->startTimer();
         startCheckCompleteTimer();
     }
 }
@@ -447,7 +361,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->loader()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, isProcessingUserGesture());
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, isProcessingUserGesture());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     
@@ -582,7 +496,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     frameRequest.resourceRequest().setURL(u);
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
-    targetFrame->loader()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
+    targetFrame->redirectScheduler()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
 }
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolicy databasePolicy)
@@ -640,7 +554,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->loader()->stopLoading(unloadEventPolicy);
 
-    cancelRedirection();
+    m_frame->redirectScheduler()->cancel();
 }
 
 void FrameLoader::stop()
@@ -669,13 +583,6 @@ bool FrameLoader::closeURL()
     return true;
 }
 
-void FrameLoader::cancelRedirection(bool cancelWithLoadInProgress)
-{
-    m_cancellingWithLoadInProgress = cancelWithLoadInProgress;
-
-    stopRedirectionTimer();
-}
-
 KURL FrameLoader::iconURL()
 {
     // If this isn't a top level frame, return nothing
@@ -701,13 +608,13 @@ KURL FrameLoader::iconURL()
 
 bool FrameLoader::didOpenURL(const KURL& url)
 {
-    if (m_scheduledRedirection && m_scheduledRedirection->wasDuringLoad) {
+    if (m_frame->redirectScheduler()->redirectScheduledDuringLoad()) {
         // A redirect was scheduled before the document was created.
         // This can happen when one frame changes another frame's location.
         return false;
     }
 
-    cancelRedirection();
+    m_frame->redirectScheduler()->cancel();
     m_frame->editor()->clearLastEditCommand();
     closeURL();
 
@@ -744,7 +651,7 @@ void FrameLoader::didExplicitOpen()
     // from a subsequent window.document.open / window.document.write call. 
     // Cancelling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
-    cancelRedirection(); 
+    m_frame->redirectScheduler()->cancel(); 
     if (m_frame->document()->url() != blankURL())
         m_URL = m_frame->document()->url();
 }
@@ -808,7 +715,7 @@ ScriptValue FrameLoader::executeScript(const ScriptSourceCode& sourceCode)
 
 void FrameLoader::cancelAndClear()
 {
-    cancelRedirection();
+    m_frame->redirectScheduler()->cancel();
 
     if (!m_isComplete)
         closeURL();
@@ -859,8 +766,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     if (clearScriptObjects)
         m_frame->script()->clearScriptObjects();
 
-    m_redirectionTimer.stop();
-    m_scheduledRedirection.clear();
+    m_frame->redirectScheduler()->clear();
 
     m_checkTimer.stop();
     m_shouldCallCheckCompleted = false;
@@ -901,7 +807,7 @@ void FrameLoader::receivedFirstData()
     else
         url = m_frame->document()->completeURL(url).string();
 
-    scheduleHTTPRedirection(delay, url);
+    m_frame->redirectScheduler()->scheduleRedirect(delay, url);
 }
 
 const String& FrameLoader::responseMIMEType() const
@@ -953,9 +859,9 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     m_outgoingReferrer = ref.string();
     m_URL = url;
 
+    document->setURL(m_URL);
     m_frame->setDocument(document);
 
-    document->setURL(m_URL);
     if (m_decoder)
         document->setDecoder(m_decoder.get());
     if (forcedSecurityOrigin)
@@ -1304,7 +1210,7 @@ void FrameLoader::checkCompleted()
     RefPtr<Frame> protect(m_frame);
     checkCallImplicitClose(); // if we didn't do it before
 
-    startRedirectionTimer();
+    m_frame->redirectScheduler()->startTimer();
 
     completed();
     if (m_frame->page())
@@ -1367,181 +1273,6 @@ KURL FrameLoader::completeURL(const String& url)
 {
     ASSERT(m_frame->document());
     return m_frame->document()->completeURL(url);
-}
-
-void FrameLoader::scheduleHTTPRedirection(double delay, const String& url)
-{
-    if (delay < 0 || delay > INT_MAX / 1000)
-        return;
-        
-    if (!m_frame->page())
-        return;
-
-    if (url.isEmpty())
-        return;
-
-    // We want a new history item if the refresh timeout is > 1 second.
-    if (!m_scheduledRedirection || delay <= m_scheduledRedirection->delay)
-        scheduleRedirection(new ScheduledRedirection(delay, url, true, delay <= 1, false, false));
-}
-
-static bool mustLockBackForwardList(Frame* targetFrame)
-{
-    // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.
-    // The definition of "during load" is any time before all handlers for the load event have been run.
-    // See https://bugs.webkit.org/show_bug.cgi?id=14957 for the original motivation for this.
-    
-    for (Frame* ancestor = targetFrame->tree()->parent(); ancestor; ancestor = ancestor->tree()->parent()) {
-        Document* document = ancestor->document();
-        if (!ancestor->loader()->isComplete() || document && document->processingLoadEvent())
-            return true;
-    }
-    return false;
-}    
-
-void FrameLoader::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
-{
-    if (!m_frame->page())
-        return;
-
-    if (url.isEmpty())
-        return;
-
-    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
-
-    // If the URL we're going to navigate to is the same as the current one, except for the
-    // fragment part, we don't need to schedule the location change.
-    KURL parsedURL(ParsedURLString, url);
-    if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_URL, parsedURL)) {
-        changeLocation(completeURL(url), referrer, lockHistory, lockBackForwardList, wasUserGesture);
-        return;
-    }
-
-    // Handle a location change of a page with no document as a special case.
-    // This may happen when a frame changes the location of another frame.
-    bool duringLoad = !m_committedFirstRealDocumentLoad;
-
-    scheduleRedirection(new ScheduledRedirection(url, referrer, lockHistory, lockBackForwardList, wasUserGesture, false, duringLoad));
-}
-
-void FrameLoader::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
-    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
-{
-    ASSERT(m_frame->page());
-    ASSERT(!frameRequest.isEmpty());
-
-    // FIXME: Do we need special handling for form submissions where the URL is the same
-    // as the current one except for the fragment part? See scheduleLocationChange above.
-
-    // Handle a location change of a page with no document as a special case.
-    // This may happen when a frame changes the location of another frame.
-    bool duringLoad = !m_committedFirstRealDocumentLoad;
-
-    scheduleRedirection(new ScheduledRedirection(frameRequest, lockHistory, mustLockBackForwardList(m_frame), event, formState, duringLoad));
-}
-
-void FrameLoader::scheduleRefresh(bool wasUserGesture)
-{
-    if (!m_frame->page())
-        return;
-
-    if (m_URL.isEmpty())
-        return;
-
-    scheduleRedirection(new ScheduledRedirection(m_URL.string(), m_outgoingReferrer, true, true, wasUserGesture, true, false));
-}
-
-bool FrameLoader::isLocationChange(const ScheduledRedirection& redirection)
-{
-    switch (redirection.type) {
-        case ScheduledRedirection::redirection:
-            return false;
-        case ScheduledRedirection::historyNavigation:
-        case ScheduledRedirection::locationChange:
-        case ScheduledRedirection::formSubmission:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void FrameLoader::scheduleHistoryNavigation(int steps)
-{
-    if (!m_frame->page())
-        return;
-
-    scheduleRedirection(new ScheduledRedirection(steps));
-}
-
-void FrameLoader::goBackOrForward(int distance)
-{
-    if (distance == 0)
-        return;
-        
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    BackForwardList* list = page->backForwardList();
-    if (!list)
-        return;
-    
-    HistoryItem* item = list->itemAtIndex(distance);
-    if (!item) {
-        if (distance > 0) {
-            int forwardListCount = list->forwardListCount();
-            if (forwardListCount > 0) 
-                item = list->itemAtIndex(forwardListCount);
-        } else {
-            int backListCount = list->backListCount();
-            if (backListCount > 0)
-                item = list->itemAtIndex(-backListCount);
-        }
-    }
-    
-    ASSERT(item); // we should not reach this line with an empty back/forward list
-    if (item)
-        page->goToItem(item, FrameLoadTypeIndexedBackForward);
-}
-
-void FrameLoader::redirectionTimerFired(Timer<FrameLoader>*)
-{
-    ASSERT(m_frame->page());
-
-    if (m_frame->page()->defersLoading())
-        return;
-
-    OwnPtr<ScheduledRedirection> redirection(m_scheduledRedirection.release());
-
-    switch (redirection->type) {
-        case ScheduledRedirection::redirection:
-        case ScheduledRedirection::locationChange:
-            changeLocation(KURL(ParsedURLString, redirection->url), redirection->referrer,
-                redirection->lockHistory, redirection->lockBackForwardList, redirection->wasUserGesture, redirection->wasRefresh);
-            return;
-        case ScheduledRedirection::historyNavigation:
-            if (redirection->historySteps == 0) {
-                // Special case for go(0) from a frame -> reload only the frame
-                urlSelected(m_URL, "", 0, redirection->lockHistory, redirection->lockBackForwardList, redirection->wasUserGesture);
-                return;
-            }
-            // go(i!=0) from a frame navigates into the history of the frame only,
-            // in both IE and NS (but not in Mozilla). We can't easily do that.
-            if (canGoBackOrForward(redirection->historySteps))
-                goBackOrForward(redirection->historySteps);
-            return;
-        case ScheduledRedirection::formSubmission:
-            // The submitForm function will find a target frame before using the redirection timer.
-            // Now that the timer has fired, we need to repeat the security check which normally is done when
-            // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
-            // without leaving a time window. If we fail the check just silently drop the form submission.
-            if (!redirection->formState->sourceFrame()->loader()->shouldAllowNavigation(m_frame))
-                return;
-            loadFrameRequest(redirection->frameRequest, redirection->lockHistory, redirection->lockBackForwardList,
-                redirection->event, redirection->formState);
-            return;
-    }
-
-    ASSERT_NOT_REACHED();
 }
 
 void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, Frame* childFrame)
@@ -1828,7 +1559,7 @@ void FrameLoader::handleFallbackContent()
 void FrameLoader::provisionalLoadStarted()
 {    
     m_firstLayoutDone = false;
-    cancelRedirection(true);
+    m_frame->redirectScheduler()->cancel(true);
     m_client->provisionalLoadStarted();
 }
 
@@ -2115,7 +1846,7 @@ private:
     
     RefPtr<Document> m_document;
 };
-    
+
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void FrameLoader::scrollToAnchor(const KURL& url)
@@ -2145,78 +1876,11 @@ bool FrameLoader::isComplete() const
     return m_isComplete;
 }
 
-void FrameLoader::scheduleRedirection(PassOwnPtr<ScheduledRedirection> redirection)
-{
-    ASSERT(m_frame->page());
-
-    // If a redirect was scheduled during a load, then stop the current load.
-    // Otherwise when the current load transitions from a provisional to a 
-    // committed state, pending redirects may be cancelled. 
-    if (redirection->wasDuringLoad) {
-        if (m_provisionalDocumentLoader)
-            m_provisionalDocumentLoader->stopLoading();
-        stopLoading(UnloadEventPolicyUnloadAndPageHide);   
-    }
-
-    stopRedirectionTimer();
-    m_scheduledRedirection = redirection;
-    if (!m_isComplete && m_scheduledRedirection->type != ScheduledRedirection::redirection)
-        completed();
-    startRedirectionTimer();
-}
-
-void FrameLoader::startRedirectionTimer()
-{
-    if (!m_scheduledRedirection)
-        return;
-
-    ASSERT(m_frame->page());
-
-    if (m_redirectionTimer.isActive())
-        return;
-
-    if (m_scheduledRedirection->type == ScheduledRedirection::redirection && !allAncestorsAreComplete())
-        return;
-
-    m_redirectionTimer.startOneShot(m_scheduledRedirection->delay);
-
-    switch (m_scheduledRedirection->type) {
-        case ScheduledRedirection::locationChange:
-        case ScheduledRedirection::redirection:
-            if (m_scheduledRedirection->toldClient)
-                return;
-            m_scheduledRedirection->toldClient = true;
-            clientRedirected(KURL(ParsedURLString, m_scheduledRedirection->url),
-                m_scheduledRedirection->delay,
-                currentTime() + m_redirectionTimer.nextFireInterval(),
-                m_scheduledRedirection->lockBackForwardList);
-            return;
-        case ScheduledRedirection::formSubmission:
-            // FIXME: It would make sense to report form submissions as client redirects too.
-            // But we didn't do that in the past when form submission used a separate delay
-            // mechanism, so doing it will be a behavior change.
-            return;
-        case ScheduledRedirection::historyNavigation:
-            // Don't report history navigations.
-            return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-void FrameLoader::stopRedirectionTimer()
-{
-    m_redirectionTimer.stop();
-
-    OwnPtr<ScheduledRedirection> redirection(m_scheduledRedirection.release());
-    if (redirection && redirection->toldClient)
-        clientRedirectCancelledOrFinished(m_cancellingWithLoadInProgress);
-}
-
 void FrameLoader::completed()
 {
     RefPtr<Frame> protect(m_frame);
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->startRedirectionTimer();
+        child->redirectScheduler()->startTimer();
     if (Frame* parent = m_frame->tree()->parent())
         parent->loader()->checkCompleted();
     if (m_frame->view())
@@ -2318,9 +1982,6 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const String& frameName, bool lockHistory, FrameLoadType newLoadType,
     PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
 {
-    if (m_unloadEventBeingDispatched)
-        return;
-
     RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
     
@@ -2342,6 +2003,9 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         targetFrame->loader()->loadURL(newURL, referrer, String(), lockHistory, newLoadType, event, formState.release());
         return;
     }
+
+    if (m_unloadEventBeingDispatched)
+        return;
 
     NavigationAction action(newURL, newLoadType, isFormSubmission, event);
 
@@ -3136,7 +2800,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     ASSERT(m_frame->page());
     ASSERT(m_frame->page()->mainFrame() == m_frame);
 
-    cancelRedirection();
+    m_frame->redirectScheduler()->cancel();
 
     // We still have to close the previous part page.
     closeURL();
@@ -4268,26 +3932,6 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     return false;
 }
 
-bool FrameLoader::canGoBackOrForward(int distance) const
-{
-    if (Page* page = m_frame->page()) {
-        if (distance == 0)
-            return true;
-        if (distance > 0 && distance <= page->backForwardList()->forwardListCount())
-            return true;
-        if (distance < 0 && -distance <= page->backForwardList()->backListCount())
-            return true;
-    }
-    return false;
-}
-
-int FrameLoader::getHistoryLength()
-{
-    if (Page* page = m_frame->page())
-        return page->backForwardList()->backListCount() + 1;
-    return 0;
-}
-
 void FrameLoader::addHistoryItemForFragmentScroll()
 {
     addBackForwardItemClippedAtTarget(false);
@@ -5081,94 +4725,6 @@ void FrameLoader::didCancelAuthenticationChallenge(ResourceLoader* loader, const
     m_client->dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
-PolicyCheck::PolicyCheck()
-    : m_navigationFunction(0)
-    , m_newWindowFunction(0)
-    , m_contentFunction(0)
-{
-}
-
-void PolicyCheck::clear()
-{
-    clearRequest();
-    m_navigationFunction = 0;
-    m_newWindowFunction = 0;
-    m_contentFunction = 0;
-}
-
-void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
-    NavigationPolicyDecisionFunction function, void* argument)
-{
-    m_request = request;
-    m_formState = formState;
-    m_frameName = String();
-
-    m_navigationFunction = function;
-    m_newWindowFunction = 0;
-    m_contentFunction = 0;
-    m_argument = argument;
-}
-
-void PolicyCheck::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
-    const String& frameName, NewWindowPolicyDecisionFunction function, void* argument)
-{
-    m_request = request;
-    m_formState = formState;
-    m_frameName = frameName;
-
-    m_navigationFunction = 0;
-    m_newWindowFunction = function;
-    m_contentFunction = 0;
-    m_argument = argument;
-}
-
-void PolicyCheck::set(ContentPolicyDecisionFunction function, void* argument)
-{
-    m_request = ResourceRequest();
-    m_formState = 0;
-    m_frameName = String();
-
-    m_navigationFunction = 0;
-    m_newWindowFunction = 0;
-    m_contentFunction = function;
-    m_argument = argument;
-}
-
-void PolicyCheck::call(bool shouldContinue)
-{
-    if (m_navigationFunction)
-        m_navigationFunction(m_argument, m_request, m_formState.get(), shouldContinue);
-    if (m_newWindowFunction)
-        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, shouldContinue);
-    ASSERT(!m_contentFunction);
-}
-
-void PolicyCheck::call(PolicyAction action)
-{
-    ASSERT(!m_navigationFunction);
-    ASSERT(!m_newWindowFunction);
-    ASSERT(m_contentFunction);
-    m_contentFunction(m_argument, action);
-}
-
-void PolicyCheck::clearRequest()
-{
-    m_request = ResourceRequest();
-    m_formState = 0;
-    m_frameName = String();
-}
-
-void PolicyCheck::cancel()
-{
-    clearRequest();
-    if (m_navigationFunction)
-        m_navigationFunction(m_argument, m_request, m_formState.get(), false);
-    if (m_newWindowFunction)
-        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, false);
-    if (m_contentFunction)
-        m_contentFunction(m_argument, PolicyIgnore);
-}
-
 void FrameLoader::setTitle(const String& title)
 {
     documentLoader()->setTitle(title);
@@ -5199,6 +4755,8 @@ void FrameLoader::dispatchWindowObjectAvailable()
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page()) {
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->inspectedWindowScriptObjectCleared(m_frame);
         if (InspectorController* inspector = page->parentInspectorController())
             inspector->windowScriptObjectAvailable();
     }

@@ -51,6 +51,7 @@
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
+#include "TransformSource.h"
 #include "XMLTokenizerScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -73,7 +74,7 @@ using namespace std;
 
 namespace WebCore {
 
-class PendingCallbacks : Noncopyable {
+class PendingCallbacks : public Noncopyable {
 public:
     ~PendingCallbacks()
     {
@@ -196,7 +197,8 @@ private:
     };  
     
     struct PendingStartElementNSCallback : public PendingCallback {
-        virtual ~PendingStartElementNSCallback() {
+        virtual ~PendingStartElementNSCallback()
+        {
             xmlFree(xmlLocalName);
             xmlFree(xmlPrefix);
             xmlFree(xmlURI);
@@ -209,7 +211,8 @@ private:
             xmlFree(attributes);
         }
         
-        virtual void call(XMLTokenizer* tokenizer) {
+        virtual void call(XMLTokenizer* tokenizer)
+        {
             tokenizer->startElementNs(xmlLocalName, xmlPrefix, xmlURI, 
                                       nb_namespaces, const_cast<const xmlChar**>(namespaces),
                                       nb_attributes, nb_defaulted, const_cast<const xmlChar**>(attributes));
@@ -313,7 +316,7 @@ private:
     struct PendingErrorCallback: public PendingCallback {
         virtual ~PendingErrorCallback() 
         {
-            free (message);
+            free(message);
         }
         
         virtual void call(XMLTokenizer* tokenizer) 
@@ -345,7 +348,8 @@ class OffsetBuffer {
 public:
     OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
     
-    int readOutBytes(char* outputBuffer, unsigned askedToRead) {
+    int readOutBytes(char* outputBuffer, unsigned askedToRead)
+    {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
         unsigned lenToCopy = min(askedToRead, bytesLeft);
         if (lenToCopy) {
@@ -669,7 +673,7 @@ typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 static inline void handleElementNamespaces(Element* newElement, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
-    for(int i = 0; i < nb_namespaces; i++) {
+    for (int i = 0; i < nb_namespaces; i++) {
         String namespaceQName = "xmlns";
         String namespaceURI = toString(namespaces[i].uri);
         if (namespaces[i].prefix)
@@ -692,7 +696,7 @@ typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 static inline void handleElementAttributes(Element* newElement, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
-    for(int i = 0; i < nb_attributes; i++) {
+    for (int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);
@@ -949,7 +953,7 @@ void XMLTokenizer::cdataBlock(const xmlChar* s, int len)
     
     exitText();
 
-    RefPtr<Node> newNode = new CDATASection(m_doc, toString(s, len));
+    RefPtr<Node> newNode = CDATASection::create(m_doc, toString(s, len));
     if (!m_currentNode->addChild(newNode.get()))
         return;
     if (m_view && !newNode->attached())
@@ -968,7 +972,7 @@ void XMLTokenizer::comment(const xmlChar* s)
     
     exitText();
 
-    RefPtr<Node> newNode = new Comment(m_doc, toString(s));
+    RefPtr<Node> newNode = Comment::create(m_doc, toString(s));
     m_currentNode->addChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
@@ -1278,7 +1282,8 @@ void XMLTokenizer::doEnd()
 {
 #if ENABLE(XSLT)
     if (m_sawXSLTransform) {
-        m_doc->setTransformSource(xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string()));
+        void* doc = xmlDocPtrForString(m_doc->docLoader(), m_originalSourceForTransform, m_doc->url().string());
+        m_doc->setTransformSource(new TransformSource(doc));
         
         m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
         m_doc->updateStyleSelector();
@@ -1408,7 +1413,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     state->gotAttributes = true;
     
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
-    for(int i = 0; i < nb_attributes; i++) {
+    for (int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);

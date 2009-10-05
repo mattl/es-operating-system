@@ -54,12 +54,15 @@ namespace WebCore {
     class EditorClient;
     class FocusController;
     class Frame;
+    class HaltablePlugin;
     class InspectorClient;
     class InspectorController;
     class InspectorTimelineAgent;
     class Node;
     class PageGroup;
     class PluginData;
+    class PluginHalter;
+    class PluginHalterClient;
     class PluginView;
     class ProgressTracker;
     class RenderTheme;
@@ -82,7 +85,7 @@ namespace WebCore {
     public:
         static void setNeedsReapplyStyles();
 
-        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*);
+        Page(ChromeClient*, ContextMenuClient*, EditorClient*, DragClient*, InspectorClient*, PluginHalterClient*);
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
@@ -108,7 +111,10 @@ namespace WebCore {
         // makes more sense when that class exists.
         bool goBack();
         bool goForward();
+        bool canGoBackOrForward(int distance) const;
+        void goBackOrForward(int distance);
         void goToItem(HistoryItem*, FrameLoadType);
+        int getHistoryLength();
 
         HistoryItem* globalHistoryItem() const { return m_globalHistoryItem.get(); }
         void setGlobalHistoryItem(HistoryItem*);

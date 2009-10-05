@@ -69,7 +69,7 @@ WebViewES::WebViewES()
     HTMLFrameOwnerElement* parentFrame = 0;
 
     EditorClientES* editorClient = new EditorClientES();
-    page = new Page(new ChromeClientES(), new ContextMenuClientES(), editorClient, new DragClientES(), new InspectorClientES());
+    page = new Page(new ChromeClientES(), new ContextMenuClientES(), editorClient, new DragClientES(), new InspectorClientES(), NULL);
 
     mainFrame = new WebFrameES(this);
 

@@ -755,7 +755,7 @@ void DOMWindow::close()
         settings && settings->allowScriptsToCloseWindows();
 
     if (m_frame->loader()->openedByDOM()
-        || m_frame->loader()->getHistoryLength() <= 1
+        || page->getHistoryLength() <= 1
         || allowScriptsToCloseWindows)
         m_frame->scheduleClose();
 }
@@ -1308,6 +1308,14 @@ void DOMWindow::dispatchLoadEvent()
         ownerEvent->setTarget(ownerElement);
         ownerElement->dispatchGenericEvent(ownerEvent.release());
     }
+
+#if ENABLE(INSPECTOR)
+    if (!frame() || !frame()->page())
+        return;
+
+    if (InspectorController* controller = frame()->page()->inspectorController())
+        controller->mainResourceFiredLoadEvent(frame()->loader()->documentLoader(), url());
+#endif
 }
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
