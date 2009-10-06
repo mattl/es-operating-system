@@ -457,6 +457,7 @@
 
 #if PLATFORM(ES)
 #define WTF_USE_PTHREADS 1
+#define WTF_USE_ICU_UNICODE 1
 #endif
 
 #if PLATFORM(HAIKU)

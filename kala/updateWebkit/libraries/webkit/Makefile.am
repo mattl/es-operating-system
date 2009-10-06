@@ -1566,6 +1566,17 @@ webcore_sources += \
 	trunk/WebCore/platform/text/TextStream.h \
 	trunk/WebCore/platform/text/UnicodeRange.cpp \
 	trunk/WebCore/platform/text/UnicodeRange.h \
+	trunk/WebCore/plugins/MimeType.cpp \
+	trunk/WebCore/plugins/MimeType.h \
+	trunk/WebCore/plugins/MimeTypeArray.cpp \
+	trunk/WebCore/plugins/MimeTypeArray.h \
+	trunk/WebCore/plugins/Plugin.cpp \
+	trunk/WebCore/plugins/Plugin.h \
+	trunk/WebCore/plugins/PluginArray.cpp \
+	trunk/WebCore/plugins/PluginArray.h \
+	trunk/WebCore/plugins/PluginData.cpp \
+	trunk/WebCore/plugins/PluginData.h \
+	trunk/WebCore/plugins/PluginDataNone.cpp \
 	trunk/WebCore/rendering/AutoTableLayout.cpp \
 	trunk/WebCore/rendering/AutoTableLayout.h \
 	trunk/WebCore/rendering/CounterNode.cpp \
