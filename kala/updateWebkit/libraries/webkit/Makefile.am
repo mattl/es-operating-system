@@ -278,6 +278,7 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/MallocZoneSupport.h \
 	trunk/JavaScriptCore/wtf/dtoa.cpp \
 	trunk/JavaScriptCore/wtf/dtoa.h	
+
 #	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
 #	trunk/JavaScriptCore/wtf/TCSystemAlloc.h 
 
@@ -374,7 +375,7 @@ webcore_built_sources += \
 	DerivedSources/HTMLNames.cpp \
 	DerivedSources/UserAgentStyleSheets.h \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
-	DerivedSources/XMLNames.cpp 
+	DerivedSources/XMLNames.cpp
 
 #	DerivedSources/HTMLElementFactory.h \
 #	DerivedSources/HTMLNames.h \
@@ -1046,7 +1047,7 @@ webcore_sources += \
 	trunk/WebCore/html/PreloadScanner.h \
 	trunk/WebCore/html/TextMetrics.h \
 	trunk/WebCore/html/ValidityState.cpp \
-	trunk/WebCore/html/ValidityState.h 
+	trunk/WebCore/html/ValidityState.h \
 	trunk/WebCore/html/VoidCallback.h \
 	trunk/WebCore/icu/unicode/parseerr.h \
 	trunk/WebCore/icu/unicode/platform.h \
@@ -1565,34 +1566,6 @@ webcore_sources += \
 	trunk/WebCore/platform/text/TextStream.h \
 	trunk/WebCore/platform/text/UnicodeRange.cpp \
 	trunk/WebCore/platform/text/UnicodeRange.h \
-	trunk/WebCore/plugins/MimeType.cpp \
-	trunk/WebCore/plugins/MimeType.h \
-	trunk/WebCore/plugins/MimeTypeArray.cpp \
-	trunk/WebCore/plugins/MimeTypeArray.h \
-	trunk/WebCore/plugins/Plugin.cpp \
-	trunk/WebCore/plugins/Plugin.h \
-	trunk/WebCore/plugins/PluginArray.cpp \
-	trunk/WebCore/plugins/PluginArray.h \
-	trunk/WebCore/plugins/PluginData.cpp \
-	trunk/WebCore/plugins/PluginData.h \
-	trunk/WebCore/plugins/PluginDatabase.cpp \
-	trunk/WebCore/plugins/PluginDatabase.h \
-	trunk/WebCore/plugins/PluginDatabaseClient.h \
-	trunk/WebCore/plugins/PluginDebug.cpp \
-	trunk/WebCore/plugins/PluginDebug.h \
-	trunk/WebCore/plugins/PluginInfoStore.cpp \
-	trunk/WebCore/plugins/PluginInfoStore.h \
-	trunk/WebCore/plugins/PluginMainThreadScheduler.cpp \
-	trunk/WebCore/plugins/PluginMainThreadScheduler.h \
-	trunk/WebCore/plugins/PluginPackage.cpp \
-	trunk/WebCore/plugins/PluginPackage.h \
-	trunk/WebCore/plugins/PluginQuirkSet.h \
-	trunk/WebCore/plugins/PluginStream.cpp \
-	trunk/WebCore/plugins/PluginStream.h \
-	trunk/WebCore/plugins/PluginView.cpp \
-	trunk/WebCore/plugins/PluginView.h \
-	trunk/WebCore/plugins/npapi.cpp \
-	trunk/WebCore/plugins/npfunctions.h \
 	trunk/WebCore/rendering/AutoTableLayout.cpp \
 	trunk/WebCore/rendering/AutoTableLayout.h \
 	trunk/WebCore/rendering/CounterNode.cpp \

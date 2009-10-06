@@ -592,7 +592,7 @@
 #endif
 
 #if !defined(ENABLE_INSPECTOR)
-#define ENABLE_INSPECTOR 1
+#define ENABLE_INSPECTOR 0
 #endif
 
 #if !defined(ENABLE_MAC_JAVA_BRIDGE)
