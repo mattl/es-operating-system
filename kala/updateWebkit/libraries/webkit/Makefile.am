@@ -141,7 +141,7 @@ javascriptcore_built_nosources += \
 
 trunk/JavaScriptCore/pcre/chartables.c: $(srcdir)/trunk/JavaScriptCore/pcre/dftables
 	perl $^ $@
-	
+
 # WebCore
 nodist_EXTRA_libWebCore_a_SOURCES = \
 	$(webcore_built_nosources)
@@ -203,8 +203,12 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/Assertions.h \
 	trunk/JavaScriptCore/wtf/ByteArray.cpp \
 	trunk/JavaScriptCore/wtf/ByteArray.h \
+	trunk/JavaScriptCore/wtf/CrossThreadRefCounted.h \
+	trunk/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	trunk/JavaScriptCore/wtf/CurrentTime.cpp \
 	trunk/JavaScriptCore/wtf/CurrentTime.h \
+	trunk/JavaScriptCore/wtf/DateMath.cpp \
+	trunk/JavaScriptCore/wtf/DateMath.h \
 	trunk/JavaScriptCore/wtf/Deque.h \
 	trunk/JavaScriptCore/wtf/DisallowCType.h \
 	trunk/JavaScriptCore/wtf/Forward.h \
@@ -228,8 +232,10 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/NotFound.h \
 	trunk/JavaScriptCore/wtf/OwnArrayPtr.h \
 	trunk/JavaScriptCore/wtf/OwnPtr.h \
+	trunk/JavaScriptCore/wtf/PassOwnPtr.h \
 	trunk/JavaScriptCore/wtf/PassRefPtr.h \
 	trunk/JavaScriptCore/wtf/Platform.h \
+	trunk/JavaScriptCore/wtf/PossiblyNull.h \
 	trunk/JavaScriptCore/wtf/PtrAndFlags.h \
 	trunk/JavaScriptCore/wtf/RandomNumber.cpp \
 	trunk/JavaScriptCore/wtf/RandomNumber.h \
@@ -240,6 +246,7 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/RefPtr.h \
 	trunk/JavaScriptCore/wtf/RefPtrHashMap.h \
 	trunk/JavaScriptCore/wtf/RetainPtr.h \
+	trunk/JavaScriptCore/wtf/SegmentedVector.h \
 	trunk/JavaScriptCore/wtf/StdLibExtras.h \
 	trunk/JavaScriptCore/wtf/StringExtras.h \
 	trunk/JavaScriptCore/wtf/TCPackedCache.h \

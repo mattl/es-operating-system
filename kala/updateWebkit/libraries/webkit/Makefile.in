@@ -562,8 +562,12 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/Assertions.h \
 	trunk/JavaScriptCore/wtf/ByteArray.cpp \
 	trunk/JavaScriptCore/wtf/ByteArray.h \
+	trunk/JavaScriptCore/wtf/CrossThreadRefCounted.h \
+	trunk/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	trunk/JavaScriptCore/wtf/CurrentTime.cpp \
 	trunk/JavaScriptCore/wtf/CurrentTime.h \
+	trunk/JavaScriptCore/wtf/DateMath.cpp \
+	trunk/JavaScriptCore/wtf/DateMath.h \
 	trunk/JavaScriptCore/wtf/Deque.h \
 	trunk/JavaScriptCore/wtf/DisallowCType.h \
 	trunk/JavaScriptCore/wtf/Forward.h \
@@ -587,8 +591,10 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/NotFound.h \
 	trunk/JavaScriptCore/wtf/OwnArrayPtr.h \
 	trunk/JavaScriptCore/wtf/OwnPtr.h \
+	trunk/JavaScriptCore/wtf/PassOwnPtr.h \
 	trunk/JavaScriptCore/wtf/PassRefPtr.h \
 	trunk/JavaScriptCore/wtf/Platform.h \
+	trunk/JavaScriptCore/wtf/PossiblyNull.h \
 	trunk/JavaScriptCore/wtf/PtrAndFlags.h \
 	trunk/JavaScriptCore/wtf/RandomNumber.cpp \
 	trunk/JavaScriptCore/wtf/RandomNumber.h \
@@ -599,6 +605,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/RefPtr.h \
 	trunk/JavaScriptCore/wtf/RefPtrHashMap.h \
 	trunk/JavaScriptCore/wtf/RetainPtr.h \
+	trunk/JavaScriptCore/wtf/SegmentedVector.h \
 	trunk/JavaScriptCore/wtf/StdLibExtras.h \
 	trunk/JavaScriptCore/wtf/StringExtras.h \
 	trunk/JavaScriptCore/wtf/TCPackedCache.h \
@@ -1663,16 +1670,6 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	trunk/WebCore/platform/network/soup/AuthenticationChallenge.h \
-	trunk/WebCore/platform/network/soup/CookieJarSoup.cpp \
-	trunk/WebCore/platform/network/soup/CookieJarSoup.h \
-	trunk/WebCore/platform/network/soup/DNSSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceError.h \
-	trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceRequest.h \
-	trunk/WebCore/platform/network/soup/ResourceResponse.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.cpp \
@@ -1766,6 +1763,7 @@ am__objects_1 =  \
 	trunk/JavaScriptCore/wtf/libWebCore_a-Assertions.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-ByteArray.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.$(OBJEXT) \
+	trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-MainThread.$(OBJEXT) \
 	trunk/JavaScriptCore/wtf/libWebCore_a-RandomNumber.$(OBJEXT) \
@@ -2296,11 +2294,6 @@ am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	trunk/WebCore/platform/image-decoders/jpeg/libWebCore_a-JPEGImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/png/libWebCore_a-PNGImageDecoder.$(OBJEXT) \
 	trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT) \
-	trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.$(OBJEXT) \
-	trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.$(OBJEXT) \
-	trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.$(OBJEXT) \
-	trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.$(OBJEXT) \
-	trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.$(OBJEXT) \
 	trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT) \
 	trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.$(OBJEXT) \
 	trunk/WebCore/bindings/es/libWebCore_a-ScheduledAction.$(OBJEXT) \
@@ -2592,8 +2585,12 @@ javascriptcore_sources := trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/Assertions.h \
 	trunk/JavaScriptCore/wtf/ByteArray.cpp \
 	trunk/JavaScriptCore/wtf/ByteArray.h \
+	trunk/JavaScriptCore/wtf/CrossThreadRefCounted.h \
+	trunk/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	trunk/JavaScriptCore/wtf/CurrentTime.cpp \
 	trunk/JavaScriptCore/wtf/CurrentTime.h \
+	trunk/JavaScriptCore/wtf/DateMath.cpp \
+	trunk/JavaScriptCore/wtf/DateMath.h \
 	trunk/JavaScriptCore/wtf/Deque.h \
 	trunk/JavaScriptCore/wtf/DisallowCType.h \
 	trunk/JavaScriptCore/wtf/Forward.h \
@@ -2617,8 +2614,10 @@ javascriptcore_sources := trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/NotFound.h \
 	trunk/JavaScriptCore/wtf/OwnArrayPtr.h \
 	trunk/JavaScriptCore/wtf/OwnPtr.h \
+	trunk/JavaScriptCore/wtf/PassOwnPtr.h \
 	trunk/JavaScriptCore/wtf/PassRefPtr.h \
 	trunk/JavaScriptCore/wtf/Platform.h \
+	trunk/JavaScriptCore/wtf/PossiblyNull.h \
 	trunk/JavaScriptCore/wtf/PtrAndFlags.h \
 	trunk/JavaScriptCore/wtf/RandomNumber.cpp \
 	trunk/JavaScriptCore/wtf/RandomNumber.h \
@@ -2629,6 +2628,7 @@ javascriptcore_sources := trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/JavaScriptCore/wtf/RefPtr.h \
 	trunk/JavaScriptCore/wtf/RefPtrHashMap.h \
 	trunk/JavaScriptCore/wtf/RetainPtr.h \
+	trunk/JavaScriptCore/wtf/SegmentedVector.h \
 	trunk/JavaScriptCore/wtf/StdLibExtras.h \
 	trunk/JavaScriptCore/wtf/StringExtras.h \
 	trunk/JavaScriptCore/wtf/TCPackedCache.h \
@@ -3387,16 +3387,6 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	trunk/WebCore/platform/network/soup/AuthenticationChallenge.h \
-	trunk/WebCore/platform/network/soup/CookieJarSoup.cpp \
-	trunk/WebCore/platform/network/soup/CookieJarSoup.h \
-	trunk/WebCore/platform/network/soup/DNSSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceError.h \
-	trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
-	trunk/WebCore/platform/network/soup/ResourceRequest.h \
-	trunk/WebCore/platform/network/soup/ResourceResponse.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp \
 	trunk/WebCore/bindings/es/ScheduledAction.cpp \
@@ -3768,6 +3758,9 @@ trunk/JavaScriptCore/wtf/libWebCore_a-ByteArray.$(OBJEXT):  \
 	trunk/JavaScriptCore/wtf/$(am__dirstamp) \
 	trunk/JavaScriptCore/wtf/$(DEPDIR)/$(am__dirstamp)
 trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.$(OBJEXT):  \
+	trunk/JavaScriptCore/wtf/$(am__dirstamp) \
+	trunk/JavaScriptCore/wtf/$(DEPDIR)/$(am__dirstamp)
+trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.$(OBJEXT):  \
 	trunk/JavaScriptCore/wtf/$(am__dirstamp) \
 	trunk/JavaScriptCore/wtf/$(DEPDIR)/$(am__dirstamp)
 trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.$(OBJEXT):  \
@@ -5513,27 +5506,6 @@ trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp):
 trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT):  \
 	trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp) \
 	trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/$(am__dirstamp):
-	@$(MKDIR_P) trunk/WebCore/platform/network/soup
-	@: > trunk/WebCore/platform/network/soup/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) trunk/WebCore/platform/network/soup/$(DEPDIR)
-	@: > trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.$(OBJEXT):  \
-	trunk/WebCore/platform/network/soup/$(am__dirstamp) \
-	trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.$(OBJEXT):  \
-	trunk/WebCore/platform/network/soup/$(am__dirstamp) \
-	trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.$(OBJEXT):  \
-	trunk/WebCore/platform/network/soup/$(am__dirstamp) \
-	trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.$(OBJEXT):  \
-	trunk/WebCore/platform/network/soup/$(am__dirstamp) \
-	trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.$(OBJEXT):  \
-	trunk/WebCore/platform/network/soup/$(am__dirstamp) \
-	trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.$(OBJEXT):  \
 	trunk/WebCore/platform/graphics/cairo/$(am__dirstamp) \
 	trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/$(am__dirstamp)
@@ -5846,6 +5818,7 @@ mostlyclean-compile:
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-Assertions.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-ByteArray.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.$(OBJEXT)
+	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-FastMalloc.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.$(OBJEXT)
 	-rm -f trunk/JavaScriptCore/wtf/libWebCore_a-MainThread.$(OBJEXT)
@@ -6232,11 +6205,6 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/network/es/libWebCore_a-CookieJarES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/network/es/libWebCore_a-ResourceHandleES.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.$(OBJEXT)
-	-rm -f trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/posix/libWebCore_a-FileSystemPOSIX.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/text/es/libWebCore_a-TextBreakIteratorInternalICUES.$(OBJEXT)
 	-rm -f trunk/WebCore/rendering/libWebCore_a-PointerEventsHitRules.$(OBJEXT)
@@ -6461,6 +6429,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-Assertions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-ByteArray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-CurrentTime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-FastMalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-HashTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-MainThread.Po@am__quote@
@@ -6848,11 +6817,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR)/libWebCore_a-XBMImageDecoder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/es/$(DEPDIR)/libWebCore_a-CookieJarES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/es/$(DEPDIR)/libWebCore_a-ResourceHandleES.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/posix/$(DEPDIR)/libWebCore_a-FileSystemPOSIX.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/text/es/$(DEPDIR)/libWebCore_a-TextBreakIteratorInternalICUES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/rendering/$(DEPDIR)/libWebCore_a-PointerEventsHitRules.Po@am__quote@
@@ -7219,6 +7183,20 @@ trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.obj: trunk/JavaScriptCore/wtf/
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/CurrentTime.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-CurrentTime.obj `if test -f 'trunk/JavaScriptCore/wtf/CurrentTime.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/CurrentTime.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/CurrentTime.cpp'; fi`
+
+trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.o: trunk/JavaScriptCore/wtf/DateMath.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.o -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.o `test -f 'trunk/JavaScriptCore/wtf/DateMath.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/DateMath.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/DateMath.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.o `test -f 'trunk/JavaScriptCore/wtf/DateMath.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/DateMath.cpp
+
+trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.obj: trunk/JavaScriptCore/wtf/DateMath.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.obj -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.obj `if test -f 'trunk/JavaScriptCore/wtf/DateMath.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/DateMath.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/DateMath.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Tpo trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-DateMath.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/JavaScriptCore/wtf/DateMath.cpp' object='trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/JavaScriptCore/wtf/libWebCore_a-DateMath.obj `if test -f 'trunk/JavaScriptCore/wtf/DateMath.cpp'; then $(CYGPATH_W) 'trunk/JavaScriptCore/wtf/DateMath.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/JavaScriptCore/wtf/DateMath.cpp'; fi`
 
 trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.o: trunk/JavaScriptCore/wtf/HashTable.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.o -MD -MP -MF trunk/JavaScriptCore/wtf/$(DEPDIR)/libWebCore_a-HashTable.Tpo -c -o trunk/JavaScriptCore/wtf/libWebCore_a-HashTable.o `test -f 'trunk/JavaScriptCore/wtf/HashTable.cpp' || echo '$(srcdir)/'`trunk/JavaScriptCore/wtf/HashTable.cpp
@@ -14626,76 +14604,6 @@ trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj: trun
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/image-decoders/xbm/libWebCore_a-XBMImageDecoder.obj `if test -f 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp'; fi`
 
-trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.o: trunk/WebCore/platform/network/soup/CookieJarSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.o -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.o `test -f 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/CookieJarSoup.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/CookieJarSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.o `test -f 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/CookieJarSoup.cpp
-
-trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.obj: trunk/WebCore/platform/network/soup/CookieJarSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.obj -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-CookieJarSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/CookieJarSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-CookieJarSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/CookieJarSoup.cpp'; fi`
-
-trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.o: trunk/WebCore/platform/network/soup/DNSSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.o -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.o `test -f 'trunk/WebCore/platform/network/soup/DNSSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/DNSSoup.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/DNSSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.o `test -f 'trunk/WebCore/platform/network/soup/DNSSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/DNSSoup.cpp
-
-trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.obj: trunk/WebCore/platform/network/soup/DNSSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.obj -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/DNSSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/DNSSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/DNSSoup.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-DNSSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/DNSSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-DNSSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/DNSSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/DNSSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/DNSSoup.cpp'; fi`
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.o: trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.o -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.obj: trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.obj -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceHandleSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceHandleSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceHandleSoup.cpp'; fi`
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.o: trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.o -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.obj: trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.obj -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceRequestSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceRequestSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceRequestSoup.cpp'; fi`
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.o: trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.o -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.o `test -f 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp
-
-trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.obj: trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.obj -MD -MP -MF trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Tpo -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Tpo trunk/WebCore/platform/network/soup/$(DEPDIR)/libWebCore_a-ResourceResponseSoup.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp' object='trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/network/soup/libWebCore_a-ResourceResponseSoup.obj `if test -f 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/network/soup/ResourceResponseSoup.cpp'; fi`
-
 trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o: trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o -MD -MP -MF trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo -c -o trunk/WebCore/platform/graphics/cairo/libWebCore_a-ImageBufferCairo.o `test -f 'trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp
 @am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Tpo trunk/WebCore/platform/graphics/cairo/$(DEPDIR)/libWebCore_a-ImageBufferCairo.Po
@@ -15911,8 +15819,6 @@ distclean-generic:
 	-rm -f trunk/WebCore/platform/image-decoders/xbm/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/network/es/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/network/es/$(am__dirstamp)
-	-rm -f trunk/WebCore/platform/network/soup/$(DEPDIR)/$(am__dirstamp)
-	-rm -f trunk/WebCore/platform/network/soup/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/posix/$(DEPDIR)/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/posix/$(am__dirstamp)
 	-rm -f trunk/WebCore/platform/text/es/$(DEPDIR)/$(am__dirstamp)
@@ -15945,7 +15851,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/network/soup/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -15981,7 +15887,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/network/soup/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) DerivedSources/$(DEPDIR) trunk/JavaScriptCore/pcre/$(DEPDIR) trunk/JavaScriptCore/wtf/$(DEPDIR) trunk/JavaScriptCore/wtf/es/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/$(DEPDIR) trunk/JavaScriptCore/wtf/unicode/icu/$(DEPDIR) trunk/WebCore/accessibility/$(DEPDIR) trunk/WebCore/bindings/es/$(DEPDIR) trunk/WebCore/css/$(DEPDIR) trunk/WebCore/dom/$(DEPDIR) trunk/WebCore/dom/default/$(DEPDIR) trunk/WebCore/editing/$(DEPDIR) trunk/WebCore/history/$(DEPDIR) trunk/WebCore/html/$(DEPDIR) trunk/WebCore/html/canvas/$(DEPDIR) trunk/WebCore/loader/icon/$(DEPDIR) trunk/WebCore/page/es/$(DEPDIR) trunk/WebCore/platform/es/$(DEPDIR) trunk/WebCore/platform/graphics/cairo/$(DEPDIR) trunk/WebCore/platform/graphics/es/$(DEPDIR) trunk/WebCore/platform/graphics/gtk/$(DEPDIR) trunk/WebCore/platform/image-decoders/bmp/$(DEPDIR) trunk/WebCore/platform/image-decoders/gif/$(DEPDIR) trunk/WebCore/platform/image-decoders/ico/$(DEPDIR) trunk/WebCore/platform/image-decoders/jpeg/$(DEPDIR) trunk/WebCore/platform/image-decoders/png/$(DEPDIR) trunk/WebCore/platform/image-decoders/xbm/$(DEPDIR) trunk/WebCore/platform/network/es/$(DEPDIR) trunk/WebCore/platform/posix/$(DEPDIR) trunk/WebCore/platform/text/es/$(DEPDIR) trunk/WebCore/rendering/$(DEPDIR) trunk/WebCore/rendering/style/$(DEPDIR) trunk/WebCore/svg/$(DEPDIR) trunk/WebCore/svg/animation/$(DEPDIR) trunk/WebCore/svg/graphics/$(DEPDIR) trunk/WebCore/svg/graphics/filters/$(DEPDIR) trunk/WebKit/es/$(DEPDIR) trunk/WebKit/es/WebCoreSupport/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
