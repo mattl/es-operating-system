@@ -118,6 +118,8 @@
 
 namespace WebCore {
 
+static char* FrameLoader::documentType;
+
 #if ENABLE(SVG)
 using namespace SVGNames;
 #endif
@@ -129,7 +131,6 @@ static const char defaultAcceptHeader[] = "application/xml,application/vnd.wap.x
 static const char defaultAcceptHeader[] = "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
 #endif
 static double storedTimeOfLastCompletedLoad;
-static FrameLoader::LocalLoadPolicy localLoadPolicy = FrameLoader::AllowLocalLoadsForLocalOnly;
 
 bool isBackForwardLoadType(FrameLoadType type)
 {
@@ -192,7 +193,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
     , m_opener(0)
-    , m_openedByDOM(false)
     , m_creatingInitialEmptyDocument(false)
     , m_isDisplayingInitialEmptyDocument(false)
     , m_committedFirstRealDocumentLoad(false)
@@ -386,12 +386,12 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
         marginHeight = o->getMarginHeight();
     }
 
-    if (!canLoad(url, referrer)) {
+    if (!SecurityOrigin::canLoad(url, referrer, 0)) {
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return 0;
     }
 
-    bool hideReferrer = shouldHideReferrer(url, referrer);
+    bool hideReferrer = SecurityOrigin::shouldHideReferrer(url, referrer);
     RefPtr<Frame> frame = m_client->createFrame(url, name, ownerElement, hideReferrer ? String() : referrer, allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {
@@ -1063,21 +1063,6 @@ void FrameLoader::startIconLoader()
     m_iconLoader->startLoading();
 }
 
-void FrameLoader::setLocalLoadPolicy(LocalLoadPolicy policy)
-{
-    localLoadPolicy = policy;
-}
-
-bool FrameLoader::restrictAccessToLocal()
-{
-    return localLoadPolicy != FrameLoader::AllowLocalLoadsForAll;
-}
-
-bool FrameLoader::allowSubstituteDataAccessToLocal()
-{
-    return localLoadPolicy != FrameLoader::AllowLocalLoadsForLocalOnly;
-}
-
 void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 {
     ASSERT(iconDatabase());
@@ -1465,7 +1450,7 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
     if (renderer && !useFallback) {
         HTMLPlugInElement* element = toPlugInElement(renderer->node());
 
-        if (!canLoad(url, String(), frame()->document())) {
+        if (!SecurityOrigin::canLoad(url, String(), frame()->document())) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return false;
         }
@@ -1536,16 +1521,6 @@ void FrameLoader::setOpener(Frame* opener)
         m_frame->document()->initSecurityContext();
         m_frame->domWindow()->setSecurityOrigin(m_frame->document()->securityOrigin());
     }
-}
-
-bool FrameLoader::openedByDOM() const
-{
-    return m_openedByDOM;
-}
-
-void FrameLoader::setOpenedByDOM()
-{
-    m_openedByDOM = true;
 }
 
 void FrameLoader::handleFallbackContent()
@@ -1947,13 +1922,13 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 
     ASSERT(frame()->document());
     if (SecurityOrigin::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
-        if (!canLoad(url, String(), frame()->document()) && !canLoad(url, referrer)) {
+        if (!SecurityOrigin::canLoad(url, String(), frame()->document()) && !SecurityOrigin::canLoad(url, referrer, 0)) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return;
         }
     }
 
-    if (shouldHideReferrer(url, referrer))
+    if (SecurityOrigin::shouldHideReferrer(url, referrer))
         referrer = String();
     
     FrameLoadType loadType;
@@ -2160,26 +2135,6 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     }
 }
 
-bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Document* doc)
-{
-    return canLoad(url, referrer, doc ? doc->securityOrigin() : 0);
-}
-
-bool FrameLoader::canLoad(const KURL& url, const String& referrer, const SecurityOrigin* securityOrigin)
-{
-    // We can always load any URL that isn't considered local (e.g. http URLs).
-    if (!SecurityOrigin::shouldTreatURLAsLocal(url.string()))
-        return true;
-
-    // If we were provided a document, we let its local file policy dictate the result,
-    // otherwise we allow local loads only if the supplied referrer is also local.
-    if (securityOrigin)
-        return securityOrigin->canLoadLocalResources();
-    if (!referrer.isEmpty())
-        return SecurityOrigin::shouldTreatURLAsLocal(referrer);
-    return false;
-}
-
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
 {
     ASSERT(!url.isEmpty());
@@ -2187,22 +2142,6 @@ void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
         return;
 
     frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Not allowed to load local resource: " + url, 0, String());
-}
-
-bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
-{
-    bool referrerIsSecureURL = protocolIs(referrer, "https");
-    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
-
-    if (!referrerIsWebURL)
-        return true;
-
-    if (!referrerIsSecureURL)
-        return false;
-
-    bool URLIsSecureURL = url.protocolIs("https");
-
-    return !URLIsSecureURL;
 }
 
 const ResourceRequest& FrameLoader::initialRequest() const
@@ -2213,6 +2152,23 @@ const ResourceRequest& FrameLoader::initialRequest() const
 void FrameLoader::receivedData(const char* data, int length)
 {
     activeDocumentLoader()->receivedData(data, length);
+}
+
+bool FrameLoader::willLoadMediaElementURL(KURL& url)
+{
+    if (!m_client->shouldLoadMediaElementURL(url))
+        return false;
+
+    ResourceRequest request(url);
+
+    unsigned long identifier;
+    ResourceError error;
+    requestFromDelegate(request, identifier, error);
+    sendRemainingDelegateMessages(identifier, ResourceResponse(url, String(), -1, String(), String()), -1, error);
+
+    url = request.url();
+
+    return error.isNull();
 }
 
 void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
@@ -3455,7 +3411,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
 unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     String referrer = m_outgoingReferrer;
-    if (shouldHideReferrer(request.url(), referrer))
+    if (SecurityOrigin::shouldHideReferrer(request.url(), referrer))
         referrer = String();
     
     ResourceRequest initialRequest = request;
@@ -3835,7 +3791,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     if (frameName != "_blank")
         mainFrame->tree()->setName(frameName);
 
-    mainFrame->loader()->setOpenedByDOM();
+    mainFrame->page()->setOpenedByDOM();
     mainFrame->loader()->m_client->dispatchShow();
     mainFrame->loader()->setOpener(frame.get());
     mainFrame->loader()->loadWithNavigationAction(request, NavigationAction(), false, FrameLoadTypeStandard, formState);
@@ -4781,7 +4737,7 @@ PassRefPtr<Widget> FrameLoader::createJavaAppletWidget(const IntSize& size, HTML
 
     if (!codeBaseURLString.isEmpty()) {
         KURL codeBaseURL = completeURL(codeBaseURLString);
-        if (!canLoad(codeBaseURL, String(), element->document())) {
+        if (!SecurityOrigin::canLoad(codeBaseURL, String(), element->document())) {
             FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
             return 0;
         }

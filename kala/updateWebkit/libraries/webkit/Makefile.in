@@ -2421,6 +2421,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/bindings/es/ScriptString.h \
 	trunk/WebCore/bindings/es/ScriptValue.cpp \
 	trunk/WebCore/bindings/es/ScriptValue.h \
+	trunk/WebCore/bindings/es/SerializedScriptValue.h \
 	trunk/WebCore/page/es/DragControllerES.cpp \
 	trunk/WebCore/page/es/EventHandlerES.cpp \
 	trunk/WebCore/page/es/FrameES.cpp \
@@ -2433,6 +2434,7 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/platform/es/DragDataRef.h \
 	trunk/WebCore/platform/es/DragImageES.cpp \
 	trunk/WebCore/platform/es/DragImageRef.h \
+	trunk/WebCore/platform/es/ImageDecoderES.cpp \
 	trunk/WebCore/platform/es/Language.cpp \
 	trunk/WebCore/platform/es/LocalizedStringsES.cpp \
 	trunk/WebCore/platform/es/MIMETypeRegistryES.cpp \
@@ -3329,6 +3331,7 @@ am__objects_4 = trunk/WebCore/platform/graphics/cairo/libWebCore_a-FontCairo.$(O
 	trunk/WebCore/platform/es/libWebCore_a-CursorES.$(OBJEXT) \
 	trunk/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT) \
 	trunk/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT) \
+	trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.$(OBJEXT) \
 	trunk/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT) \
 	trunk/WebCore/platform/es/libWebCore_a-LocalizedStringsES.$(OBJEXT) \
 	trunk/WebCore/platform/es/libWebCore_a-MIMETypeRegistryES.$(OBJEXT) \
@@ -3689,8 +3692,6 @@ webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebKit/es/WebCoreSupport \
 	-I$(srcdir)/trunk/WebCore \
 	-I$(srcdir)/trunk/WebCore/accessibility \
-	-I$(srcdir)/trunk/WebCore/bridge \
-	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/css -I$(srcdir)/trunk/WebCore/dom \
 	-I$(srcdir)/trunk/WebCore/dom/default \
 	-I$(srcdir)/trunk/WebCore/editing \
@@ -3702,6 +3703,7 @@ webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/loader/appcache \
 	-I$(srcdir)/trunk/WebCore/loader/archive \
 	-I$(srcdir)/trunk/WebCore/loader/icon \
+	-I$(srcdir)/trunk/WebCore/notifications \
 	-I$(srcdir)/trunk/WebCore/page \
 	-I$(srcdir)/trunk/WebCore/page/animation \
 	-I$(srcdir)/trunk/WebCore/platform \
@@ -3722,6 +3724,7 @@ webcore_cppflags := -I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/plugins \
 	-I$(srcdir)/trunk/WebCore/rendering \
 	-I$(srcdir)/trunk/WebCore/rendering/style \
+	-I$(srcdir)/trunk/WebCore/storage \
 	-I$(srcdir)/trunk/WebCore/workers \
 	-I$(srcdir)/trunk/WebCore/xml \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/cairo \
@@ -5150,6 +5153,7 @@ webcorees_sources :=  \
 	trunk/WebCore/bindings/es/ScriptString.h \
 	trunk/WebCore/bindings/es/ScriptValue.cpp \
 	trunk/WebCore/bindings/es/ScriptValue.h \
+	trunk/WebCore/bindings/es/SerializedScriptValue.h \
 	trunk/WebCore/page/es/DragControllerES.cpp \
 	trunk/WebCore/page/es/EventHandlerES.cpp \
 	trunk/WebCore/page/es/FrameES.cpp \
@@ -5162,6 +5166,7 @@ webcorees_sources :=  \
 	trunk/WebCore/platform/es/DragDataRef.h \
 	trunk/WebCore/platform/es/DragImageES.cpp \
 	trunk/WebCore/platform/es/DragImageRef.h \
+	trunk/WebCore/platform/es/ImageDecoderES.cpp \
 	trunk/WebCore/platform/es/Language.cpp \
 	trunk/WebCore/platform/es/LocalizedStringsES.cpp \
 	trunk/WebCore/platform/es/MIMETypeRegistryES.cpp \
@@ -8287,6 +8292,9 @@ trunk/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT):  \
 trunk/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT):  \
 	trunk/WebCore/platform/es/$(am__dirstamp) \
 	trunk/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.$(OBJEXT):  \
+	trunk/WebCore/platform/es/$(am__dirstamp) \
+	trunk/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT):  \
 	trunk/WebCore/platform/es/$(am__dirstamp) \
 	trunk/WebCore/platform/es/$(DEPDIR)/$(am__dirstamp)
@@ -8946,6 +8954,7 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-CursorES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-DragDataES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-DragImageES.$(OBJEXT)
+	-rm -f trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-Language.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-LocalizedStringsES.$(OBJEXT)
 	-rm -f trunk/WebCore/platform/es/libWebCore_a-MIMETypeRegistryES.$(OBJEXT)
@@ -9869,6 +9878,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-CursorES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragDataES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-DragImageES.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-Language.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-LocalizedStringsES.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-MIMETypeRegistryES.Po@am__quote@
@@ -22248,6 +22258,20 @@ trunk/WebCore/platform/es/libWebCore_a-DragImageES.obj: trunk/WebCore/platform/e
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/es/DragImageES.cpp' object='trunk/WebCore/platform/es/libWebCore_a-DragImageES.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/es/libWebCore_a-DragImageES.obj `if test -f 'trunk/WebCore/platform/es/DragImageES.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/es/DragImageES.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/es/DragImageES.cpp'; fi`
+
+trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.o: trunk/WebCore/platform/es/ImageDecoderES.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.o -MD -MP -MF trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Tpo -c -o trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.o `test -f 'trunk/WebCore/platform/es/ImageDecoderES.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/es/ImageDecoderES.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Tpo trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/es/ImageDecoderES.cpp' object='trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.o `test -f 'trunk/WebCore/platform/es/ImageDecoderES.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/es/ImageDecoderES.cpp
+
+trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.obj: trunk/WebCore/platform/es/ImageDecoderES.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.obj -MD -MP -MF trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Tpo -c -o trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.obj `if test -f 'trunk/WebCore/platform/es/ImageDecoderES.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/es/ImageDecoderES.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/es/ImageDecoderES.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Tpo trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-ImageDecoderES.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/platform/es/ImageDecoderES.cpp' object='trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/platform/es/libWebCore_a-ImageDecoderES.obj `if test -f 'trunk/WebCore/platform/es/ImageDecoderES.cpp'; then $(CYGPATH_W) 'trunk/WebCore/platform/es/ImageDecoderES.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/platform/es/ImageDecoderES.cpp'; fi`
 
 trunk/WebCore/platform/es/libWebCore_a-Language.o: trunk/WebCore/platform/es/Language.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/platform/es/libWebCore_a-Language.o -MD -MP -MF trunk/WebCore/platform/es/$(DEPDIR)/libWebCore_a-Language.Tpo -c -o trunk/WebCore/platform/es/libWebCore_a-Language.o `test -f 'trunk/WebCore/platform/es/Language.cpp' || echo '$(srcdir)/'`trunk/WebCore/platform/es/Language.cpp

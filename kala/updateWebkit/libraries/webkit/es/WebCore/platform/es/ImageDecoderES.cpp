@@ -28,32 +28,24 @@
  */
 
 #include "config.h"
-#include "RenderThemeES.h"
+#include "ImageDecoder.h"
 
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-RenderTheme* theme()
-{
-    static RenderThemeES esTheme;
-    return &esTheme;
-}
-
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 {
     notImplemented();
 }
 
-RenderThemeES::RenderThemeES()
+bool RGBA32Buffer::hasAlpha() const
 {
+    notImplemented();
+    return false;
 }
 
-RenderThemeES::~RenderThemeES()
-{
-}
-
-void RenderThemeES::systemFont(int, FontDescription&) const
+NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
     notImplemented();
 }

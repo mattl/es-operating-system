@@ -377,12 +377,12 @@ bool FrameLoaderClientES::shouldGoToHistoryItem(WebCore::HistoryItem*) const
     return true;
 }
 
-void didDisplayInsecureContent()
+void FrameLoaderClientES::didDisplayInsecureContent()
 {
     notImplemented();
 }
 
-void didRunInsecureContent(SecurityOrigin* security) 
+void FrameLoaderClientES::didRunInsecureContent(SecurityOrigin* security) 
 {
     notImplemented();
 }	

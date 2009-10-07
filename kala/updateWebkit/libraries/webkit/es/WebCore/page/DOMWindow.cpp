@@ -34,11 +34,7 @@
 #include "CString.h"
 #include "Chrome.h"
 #include "Console.h"
-
-#if ENABLE(DOM_STORAGE)
 #include "Database.h"
-#endif
-
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
 #include "DOMTimer.h"
@@ -61,25 +57,18 @@
 #include "Media.h"
 #include "MessageEvent.h"
 #include "Navigator.h"
-
-#if ENABLE(NOTIFICATIONS)
 #include "NotificationCenter.h"
-#endif
-
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
+#include "SerializedScriptValue.h"
 #include "Settings.h"
-
-#if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
-#endif
-
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include <algorithm>
@@ -92,7 +81,7 @@ namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
 public:
-    PostMessageTimer(DOMWindow* window, const String& message, const String& sourceOrigin, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortChannelArray> channels, SecurityOrigin* targetOrigin)
+    PostMessageTimer(DOMWindow* window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortChannelArray> channels, SecurityOrigin* targetOrigin)
         : m_window(window)
         , m_message(message)
         , m_origin(sourceOrigin)
@@ -116,7 +105,7 @@ private:
     }
 
     RefPtr<DOMWindow> m_window;
-    String m_message;
+    RefPtr<SerializedScriptValue> m_message;
     String m_origin;
     RefPtr<DOMWindow> m_source;
     OwnPtr<MessagePortChannelArray> m_channels;
@@ -647,7 +636,7 @@ NotificationCenter* DOMWindow::webkitNotifications() const
 }
 #endif
 
-void DOMWindow::postMessage(const String& message, MessagePort* port, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
+void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
 {
     MessagePortArray ports;
     if (port)
@@ -655,7 +644,7 @@ void DOMWindow::postMessage(const String& message, MessagePort* port, const Stri
     postMessage(message, &ports, targetOrigin, source, ec);
 }
 
-void DOMWindow::postMessage(const String& message, const MessagePortArray* ports, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
+void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, const String& targetOrigin, DOMWindow* source, ExceptionCode& ec)
 {
     if (!m_frame)
         return;
@@ -751,12 +740,9 @@ void DOMWindow::close()
         return;
 
     Settings* settings = m_frame->settings();
-    bool allowScriptsToCloseWindows =
-        settings && settings->allowScriptsToCloseWindows();
+    bool allowScriptsToCloseWindows = settings && settings->allowScriptsToCloseWindows();
 
-    if (m_frame->loader()->openedByDOM()
-        || page->getHistoryLength() <= 1
-        || allowScriptsToCloseWindows)
+    if (page->openedByDOM() || page->getHistoryLength() <= 1 || allowScriptsToCloseWindows)
         m_frame->scheduleClose();
 }
 

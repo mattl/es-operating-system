@@ -312,8 +312,6 @@ webcore_cppflags += \
 webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore \
 	-I$(srcdir)/trunk/WebCore/accessibility \
-	-I$(srcdir)/trunk/WebCore/bridge \
-	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/css \
 	-I$(srcdir)/trunk/WebCore/dom \
 	-I$(srcdir)/trunk/WebCore/dom/default \
@@ -326,6 +324,7 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/loader/appcache \
 	-I$(srcdir)/trunk/WebCore/loader/archive \
 	-I$(srcdir)/trunk/WebCore/loader/icon \
+	-I$(srcdir)/trunk/WebCore/notifications \
 	-I$(srcdir)/trunk/WebCore/page \
 	-I$(srcdir)/trunk/WebCore/page/animation \
 	-I$(srcdir)/trunk/WebCore/platform \
@@ -346,6 +345,7 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/plugins \
 	-I$(srcdir)/trunk/WebCore/rendering \
 	-I$(srcdir)/trunk/WebCore/rendering/style \
+	-I$(srcdir)/trunk/WebCore/storage \
 	-I$(srcdir)/trunk/WebCore/workers \
 	-I$(srcdir)/trunk/WebCore/xml \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/cairo \
@@ -2253,6 +2253,7 @@ webcorees_sources += \
 	trunk/WebCore/bindings/es/ScriptString.h \
 	trunk/WebCore/bindings/es/ScriptValue.cpp \
 	trunk/WebCore/bindings/es/ScriptValue.h \
+	trunk/WebCore/bindings/es/SerializedScriptValue.h \
 	trunk/WebCore/page/es/DragControllerES.cpp \
 	trunk/WebCore/page/es/EventHandlerES.cpp \
 	trunk/WebCore/page/es/FrameES.cpp \
@@ -2265,6 +2266,7 @@ webcorees_sources += \
 	trunk/WebCore/platform/es/DragDataRef.h \
 	trunk/WebCore/platform/es/DragImageES.cpp \
 	trunk/WebCore/platform/es/DragImageRef.h \
+	trunk/WebCore/platform/es/ImageDecoderES.cpp \
 	trunk/WebCore/platform/es/Language.cpp \
 	trunk/WebCore/platform/es/LocalizedStringsES.cpp \
 	trunk/WebCore/platform/es/MIMETypeRegistryES.cpp \
