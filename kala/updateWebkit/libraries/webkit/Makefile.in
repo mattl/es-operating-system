@@ -1371,8 +1371,10 @@ am__libWebCore_a_SOURCES_DIST = trunk/JavaScriptCore/pcre/pcre.h \
 	trunk/WebCore/loader/PlaceholderDocument.h \
 	trunk/WebCore/loader/PluginDocument.cpp \
 	trunk/WebCore/loader/PluginDocument.h \
-	trunk/WebCore/loader/PolicyCheck.cpp \
-	trunk/WebCore/loader/PolicyCheck.h \
+	trunk/WebCore/loader/PolicyCallback.cpp \
+	trunk/WebCore/loader/PolicyCallback.h \
+	trunk/WebCore/loader/PolicyChecker.cpp \
+	trunk/WebCore/loader/PolicyChecker.h \
 	trunk/WebCore/loader/ProgressTracker.cpp \
 	trunk/WebCore/loader/ProgressTracker.h \
 	trunk/WebCore/loader/RedirectScheduler.cpp \
@@ -3038,7 +3040,8 @@ am__objects_3 = trunk/WebCore/accessibility/libWebCore_a-AXObjectCache.$(OBJEXT)
 	trunk/WebCore/loader/libWebCore_a-NetscapePlugInStreamLoader.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-PlaceholderDocument.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-PluginDocument.$(OBJEXT) \
-	trunk/WebCore/loader/libWebCore_a-PolicyCheck.$(OBJEXT) \
+	trunk/WebCore/loader/libWebCore_a-PolicyCallback.$(OBJEXT) \
+	trunk/WebCore/loader/libWebCore_a-PolicyChecker.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-ProgressTracker.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-RedirectScheduler.$(OBJEXT) \
 	trunk/WebCore/loader/libWebCore_a-Request.$(OBJEXT) \
@@ -4468,8 +4471,10 @@ webcore_sources := trunk/WebCore/WebCorePrefix.h \
 	trunk/WebCore/loader/PlaceholderDocument.h \
 	trunk/WebCore/loader/PluginDocument.cpp \
 	trunk/WebCore/loader/PluginDocument.h \
-	trunk/WebCore/loader/PolicyCheck.cpp \
-	trunk/WebCore/loader/PolicyCheck.h \
+	trunk/WebCore/loader/PolicyCallback.cpp \
+	trunk/WebCore/loader/PolicyCallback.h \
+	trunk/WebCore/loader/PolicyChecker.cpp \
+	trunk/WebCore/loader/PolicyChecker.h \
 	trunk/WebCore/loader/ProgressTracker.cpp \
 	trunk/WebCore/loader/ProgressTracker.h \
 	trunk/WebCore/loader/RedirectScheduler.cpp \
@@ -6669,7 +6674,10 @@ trunk/WebCore/loader/libWebCore_a-PlaceholderDocument.$(OBJEXT):  \
 trunk/WebCore/loader/libWebCore_a-PluginDocument.$(OBJEXT):  \
 	trunk/WebCore/loader/$(am__dirstamp) \
 	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
-trunk/WebCore/loader/libWebCore_a-PolicyCheck.$(OBJEXT):  \
+trunk/WebCore/loader/libWebCore_a-PolicyCallback.$(OBJEXT):  \
+	trunk/WebCore/loader/$(am__dirstamp) \
+	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
+trunk/WebCore/loader/libWebCore_a-PolicyChecker.$(OBJEXT):  \
 	trunk/WebCore/loader/$(am__dirstamp) \
 	trunk/WebCore/loader/$(DEPDIR)/$(am__dirstamp)
 trunk/WebCore/loader/libWebCore_a-ProgressTracker.$(OBJEXT):  \
@@ -8895,7 +8903,8 @@ mostlyclean-compile:
 	-rm -f trunk/WebCore/loader/libWebCore_a-NetscapePlugInStreamLoader.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-PlaceholderDocument.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-PluginDocument.$(OBJEXT)
-	-rm -f trunk/WebCore/loader/libWebCore_a-PolicyCheck.$(OBJEXT)
+	-rm -f trunk/WebCore/loader/libWebCore_a-PolicyCallback.$(OBJEXT)
+	-rm -f trunk/WebCore/loader/libWebCore_a-PolicyChecker.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-ProgressTracker.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-RedirectScheduler.$(OBJEXT)
 	-rm -f trunk/WebCore/loader/libWebCore_a-Request.$(OBJEXT)
@@ -9792,7 +9801,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-NetscapePlugInStreamLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PlaceholderDocument.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PluginDocument.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ProgressTracker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-RedirectScheduler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-Request.Po@am__quote@
@@ -15553,19 +15563,33 @@ trunk/WebCore/loader/libWebCore_a-PluginDocument.obj: trunk/WebCore/loader/Plugi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PluginDocument.obj `if test -f 'trunk/WebCore/loader/PluginDocument.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PluginDocument.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PluginDocument.cpp'; fi`
 
-trunk/WebCore/loader/libWebCore_a-PolicyCheck.o: trunk/WebCore/loader/PolicyCheck.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyCheck.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyCheck.o `test -f 'trunk/WebCore/loader/PolicyCheck.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyCheck.cpp
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyCheck.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyCheck.o' libtool=no @AMDEPBACKSLASH@
+trunk/WebCore/loader/libWebCore_a-PolicyCallback.o: trunk/WebCore/loader/PolicyCallback.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyCallback.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyCallback.o `test -f 'trunk/WebCore/loader/PolicyCallback.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyCallback.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyCallback.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyCallback.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyCheck.o `test -f 'trunk/WebCore/loader/PolicyCheck.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyCheck.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyCallback.o `test -f 'trunk/WebCore/loader/PolicyCallback.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyCallback.cpp
 
-trunk/WebCore/loader/libWebCore_a-PolicyCheck.obj: trunk/WebCore/loader/PolicyCheck.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyCheck.obj -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyCheck.obj `if test -f 'trunk/WebCore/loader/PolicyCheck.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyCheck.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyCheck.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCheck.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyCheck.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyCheck.obj' libtool=no @AMDEPBACKSLASH@
+trunk/WebCore/loader/libWebCore_a-PolicyCallback.obj: trunk/WebCore/loader/PolicyCallback.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyCallback.obj -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyCallback.obj `if test -f 'trunk/WebCore/loader/PolicyCallback.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyCallback.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyCallback.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyCallback.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyCallback.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyCallback.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyCheck.obj `if test -f 'trunk/WebCore/loader/PolicyCheck.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyCheck.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyCheck.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyCallback.obj `if test -f 'trunk/WebCore/loader/PolicyCallback.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyCallback.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyCallback.cpp'; fi`
+
+trunk/WebCore/loader/libWebCore_a-PolicyChecker.o: trunk/WebCore/loader/PolicyChecker.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyChecker.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyChecker.o `test -f 'trunk/WebCore/loader/PolicyChecker.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyChecker.cpp
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyChecker.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyChecker.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyChecker.o `test -f 'trunk/WebCore/loader/PolicyChecker.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/PolicyChecker.cpp
+
+trunk/WebCore/loader/libWebCore_a-PolicyChecker.obj: trunk/WebCore/loader/PolicyChecker.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-PolicyChecker.obj -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Tpo -c -o trunk/WebCore/loader/libWebCore_a-PolicyChecker.obj `if test -f 'trunk/WebCore/loader/PolicyChecker.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyChecker.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyChecker.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Tpo trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-PolicyChecker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trunk/WebCore/loader/PolicyChecker.cpp' object='trunk/WebCore/loader/libWebCore_a-PolicyChecker.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -c -o trunk/WebCore/loader/libWebCore_a-PolicyChecker.obj `if test -f 'trunk/WebCore/loader/PolicyChecker.cpp'; then $(CYGPATH_W) 'trunk/WebCore/loader/PolicyChecker.cpp'; else $(CYGPATH_W) '$(srcdir)/trunk/WebCore/loader/PolicyChecker.cpp'; fi`
 
 trunk/WebCore/loader/libWebCore_a-ProgressTracker.o: trunk/WebCore/loader/ProgressTracker.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libWebCore_a_CPPFLAGS) $(CPPFLAGS) $(libWebCore_a_CXXFLAGS) $(CXXFLAGS) -MT trunk/WebCore/loader/libWebCore_a-ProgressTracker.o -MD -MP -MF trunk/WebCore/loader/$(DEPDIR)/libWebCore_a-ProgressTracker.Tpo -c -o trunk/WebCore/loader/libWebCore_a-ProgressTracker.o `test -f 'trunk/WebCore/loader/ProgressTracker.cpp' || echo '$(srcdir)/'`trunk/WebCore/loader/ProgressTracker.cpp
