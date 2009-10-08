@@ -118,7 +118,7 @@
 
 namespace WebCore {
 
-static char* FrameLoader::documentType;
+char* FrameLoader::documentType;
 
 #if ENABLE(SVG)
 using namespace SVGNames;
@@ -168,12 +168,10 @@ static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     : m_frame(frame)
     , m_client(client)
+    , m_policyChecker(frame)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
-    , m_policyLoadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
-    , m_delegateIsDecidingNavigationPolicy(false)
-    , m_delegateIsHandlingUnimplementablePolicy(false)
     , m_firstLayoutDone(false)
     , m_quickRedirectComing(false)
     , m_sentRedirectNotification(false)
@@ -223,7 +221,7 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
-    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), documentType, 0, String(), String()));
+    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
     begin(KURL(), false);
     end();
@@ -1985,7 +1983,8 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     NavigationAction action(newURL, newLoadType, isFormSubmission, event);
 
     if (!targetFrame && !frameName.isEmpty()) {
-        checkNewWindowPolicy(action, request, formState.release(), frameName);
+        policyChecker()->checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy,
+            request, formState.release(), frameName, this);
         return;
     }
 
@@ -1998,9 +1997,9 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     // work properly.
     if (shouldScrollToAnchor(isFormSubmission, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
-        stopPolicyCheck();
-        m_policyLoadType = newLoadType;
-        checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
+        policyChecker()->stopCheck();
+        policyChecker()->setLoadType(newLoadType);
+        policyChecker()->checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
             callContinueFragmentScrollAfterNavigationPolicy, this);
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
@@ -2049,7 +2048,7 @@ void FrameLoader::load(const ResourceRequest& request, const String& frameName, 
         return;
     }
 
-    checkNewWindowPolicy(NavigationAction(request.url(), NavigationTypeOther), request, 0, frameName);
+    policyChecker()->checkNewWindowPolicy(NavigationAction(request.url(), NavigationTypeOther), FrameLoader::callContinueLoadAfterNewWindowPolicy, request, 0, frameName, this);
 }
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, bool lockHistory, FrameLoadType type, PassRefPtr<FormState> formState)
@@ -2107,30 +2106,30 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     if (m_unloadEventBeingDispatched)
         return;
 
-    m_policyLoadType = type;
+    policyChecker()->setLoadType(type);
     RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
 
     const KURL& newURL = loader->request().url();
 
-    if (shouldScrollToAnchor(isFormSubmission, m_policyLoadType, newURL)) {
+    if (shouldScrollToAnchor(isFormSubmission, policyChecker()->loadType(), newURL)) {
         RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
-        NavigationAction action(newURL, m_policyLoadType, isFormSubmission);
+        NavigationAction action(newURL, policyChecker()->loadType(), isFormSubmission);
 
         oldDocumentLoader->setTriggeringAction(action);
-        stopPolicyCheck();
-        checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState,
+        policyChecker()->stopCheck();
+        policyChecker()->checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState,
             callContinueFragmentScrollAfterNavigationPolicy, this);
     } else {
         if (Frame* parent = m_frame->tree()->parent())
             loader->setOverrideEncoding(parent->loader()->documentLoader()->overrideEncoding());
 
-        stopPolicyCheck();
+        policyChecker()->stopCheck();
         setPolicyDocumentLoader(loader);
         if (loader->triggeringAction().isEmpty())
-            loader->setTriggeringAction(NavigationAction(newURL, m_policyLoadType, isFormSubmission));
+            loader->setTriggeringAction(NavigationAction(newURL, policyChecker()->loadType(), isFormSubmission));
 
-        checkNavigationPolicy(loader->request(), loader, formState,
+        policyChecker()->checkNavigationPolicy(loader->request(), loader, formState,
             callContinueLoadAfterNavigationPolicy, this);
     }
 }
@@ -2171,16 +2170,16 @@ bool FrameLoader::willLoadMediaElementURL(KURL& url)
     return error.isNull();
 }
 
-void FrameLoader::handleUnimplementablePolicy(const ResourceError& error)
+void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
 {
     m_delegateIsHandlingUnimplementablePolicy = true;
-    m_client->dispatchUnableToImplementPolicy(error);
+    m_frame->loader()->client()->dispatchUnableToImplementPolicy(error);
     m_delegateIsHandlingUnimplementablePolicy = false;
 }
 
-void FrameLoader::cannotShowMIMEType(const ResourceResponse& response)
+void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
 {
-    handleUnimplementablePolicy(m_client->cannotShowMIMETypeError(response));
+    handleUnimplementablePolicy(m_frame->loader()->client()->cannotShowMIMETypeError(response));
 }
 
 ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request)
@@ -2188,33 +2187,24 @@ ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceReques
     return m_client->interruptForPolicyChangeError(request);
 }
 
-void FrameLoader::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function, void* argument)
+PolicyChecker::PolicyChecker(Frame* frame)
+    : m_frame(frame)
+    , m_delegateIsDecidingNavigationPolicy(false)
+    , m_delegateIsHandlingUnimplementablePolicy(false)
+    , m_loadType(FrameLoadTypeStandard)
 {
-    checkNavigationPolicy(newRequest, activeDocumentLoader(), 0, function, argument);
 }
 
-void FrameLoader::checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction function, void* argument)
+void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, NavigationPolicyDecisionFunction function, void* argument)
 {
-    ASSERT(activeDocumentLoader());
-    
-    // Always show content with valid substitute data.
-    if (activeDocumentLoader()->substituteData().isValid()) {
-        function(argument, PolicyUse);
-        return;
-    }
+    checkNavigationPolicy(newRequest, m_frame->loader()->activeDocumentLoader(), 0, function, argument);
+}
 
-#if ENABLE(FTPDIR)
-    // Respect the hidden FTP Directory Listing pref so it can be tested even if the policy delegate might otherwise disallow it
-    Settings* settings = m_frame->settings();
-    if (settings && settings->forceFTPDirectoryListings() && MIMEType == "application/x-ftp-directory") {
-        function(argument, PolicyUse);
-        return;
-    }
-#endif
-
+void PolicyChecker::checkContentPolicy(const String& MIMEType, ContentPolicyDecisionFunction function, void* argument)
+{
     m_policyCheck.set(function, argument);
-    m_client->dispatchDecidePolicyForMIMEType(&FrameLoader::continueAfterContentPolicy,
-        MIMEType, activeDocumentLoader()->request());
+    m_frame->loader()->client()->dispatchDecidePolicyForMIMEType(&PolicyChecker::continueAfterContentPolicy,
+        MIMEType, m_frame->loader()->activeDocumentLoader()->request());
 }
 
 bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader)
@@ -2224,7 +2214,7 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader)
     if (unreachableURL.isEmpty())
         return false;
 
-    if (!isBackForwardLoadType(m_policyLoadType))
+    if (!isBackForwardLoadType(policyChecker()->loadType()))
         return false;
 
     // We only treat unreachableURLs specially during the delegate callbacks
@@ -2233,7 +2223,7 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader* docLoader)
     // case handles malformed URLs and unknown schemes. Loading alternate content
     // at other times behaves like a standard load.
     DocumentLoader* compareDocumentLoader = 0;
-    if (m_delegateIsDecidingNavigationPolicy || m_delegateIsHandlingUnimplementablePolicy)
+    if (policyChecker()->delegateIsDecidingNavigationPolicy() || policyChecker()->delegateIsHandlingUnimplementablePolicy())
         compareDocumentLoader = m_policyDocumentLoader.get();
     else if (m_delegateIsHandlingProvisionalLoadError)
         compareDocumentLoader = m_provisionalDocumentLoader.get();
@@ -2388,7 +2378,7 @@ void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy)
 
     m_inStopAllLoaders = true;
 
-    stopPolicyCheck();
+    policyChecker()->stopCheck();
 
     stopLoadingSubframes();
     if (m_provisionalDocumentLoader)
@@ -2868,9 +2858,9 @@ String FrameLoader::generatedMIMETypeForURLScheme(const String& URLScheme)
     return m_client->generatedMIMETypeForURLScheme(URLScheme);
 }
 
-void FrameLoader::cancelContentPolicyCheck()
+void PolicyChecker::cancelCheck()
 {
-    m_client->cancelPolicyCheck();
+    m_frame->loader()->client()->cancelPolicyCheck();
     m_policyCheck.clear();
 }
 
@@ -2993,9 +2983,9 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
     return CachePolicyVerify;
 }
 
-void FrameLoader::stopPolicyCheck()
+void PolicyChecker::stopCheck()
 {
-    m_client->cancelPolicyCheck();
+    m_frame->loader()->client()->cancelPolicyCheck();
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
     check.cancel();
@@ -3099,14 +3089,21 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     ASSERT_NOT_REACHED();
 }
 
-void FrameLoader::continueAfterContentPolicy(PolicyAction policy)
+void PolicyChecker::continueAfterContentPolicy(PolicyAction policy)
 {
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
     check.call(policy);
 }
 
-void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
+void PolicyChecker::continueLoadAfterWillSubmitForm(PolicyAction)
+{
+    // See header file for an explaination of why this function
+    // isn't like the others.
+    m_frame->loader()->continueLoadAfterWillSubmitForm();
+}
+
+void FrameLoader::continueLoadAfterWillSubmitForm()
 {
     if (!m_provisionalDocumentLoader)
         return;
@@ -3403,7 +3400,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
         if (Frame* targetFrame = formState ? 0 : findFrameForNavigation(frameName))
             targetFrame->loader()->loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());
         else
-            checkNewWindowPolicy(action, workingResourceRequest, formState.release(), frameName);
+            policyChecker()->checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy, workingResourceRequest, formState.release(), frameName, this);
     } else
         loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());    
 }
@@ -3542,7 +3539,7 @@ void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    bool isRedirect = m_quickRedirectComing || m_policyLoadType == FrameLoadTypeRedirectWithLockedBackForwardList;
+    bool isRedirect = m_quickRedirectComing || policyChecker()->loadType() == FrameLoadTypeRedirectWithLockedBackForwardList;
     m_quickRedirectComing = false;
 
     if (!shouldContinue)
@@ -3598,16 +3595,15 @@ bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType load
         && !m_frame->document()->isFrameSet();
 }
 
-void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, const ResourceRequest& request,
-    PassRefPtr<FormState> formState, const String& frameName)
+void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, NewWindowPolicyDecisionFunction function,
+    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, void* argument)
 {
-    m_policyCheck.set(request, formState, frameName,
-        callContinueLoadAfterNewWindowPolicy, this);
-    m_client->dispatchDecidePolicyForNewWindowAction(&FrameLoader::continueAfterNewWindowPolicy,
+    m_policyCheck.set(request, formState, frameName, function, argument);
+    m_frame->loader()->client()->dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
         action, request, formState, frameName);
 }
 
-void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
+void PolicyChecker::continueAfterNewWindowPolicy(PolicyAction policy)
 {
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
@@ -3617,7 +3613,7 @@ void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
             check.clearRequest();
             break;
         case PolicyDownload:
-            m_client->startDownload(check.request());
+            m_frame->loader()->client()->startDownload(check.request());
             check.clearRequest();
             break;
         case PolicyUse:
@@ -3627,7 +3623,7 @@ void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
     check.call(policy == PolicyUse);
 }
 
-void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader,
+void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, DocumentLoader* loader,
     PassRefPtr<FormState> formState, NavigationPolicyDecisionFunction function, void* argument)
 {
     NavigationAction action = loader->triggeringAction();
@@ -3635,7 +3631,7 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
         action = NavigationAction(request.url(), NavigationTypeOther);
         loader->setTriggeringAction(action);
     }
-        
+
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
@@ -3647,8 +3643,8 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
     if (loader->substituteData().isValid() && !loader->substituteData().failingURL().isEmpty()) {
-        if (isBackForwardLoadType(m_policyLoadType))
-            m_policyLoadType = FrameLoadTypeReload;
+        if (isBackForwardLoadType(m_loadType))
+            m_loadType = FrameLoadTypeReload;
         function(argument, request, 0, true);
         return;
     }
@@ -3658,31 +3654,31 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
     m_policyCheck.set(request, formState.get(), function, argument);
 
     m_delegateIsDecidingNavigationPolicy = true;
-    m_client->dispatchDecidePolicyForNavigationAction(&FrameLoader::continueAfterNavigationPolicy,
+    m_frame->loader()->client()->dispatchDecidePolicyForNavigationAction(&PolicyChecker::continueAfterNavigationPolicy,
         action, request, formState);
     m_delegateIsDecidingNavigationPolicy = false;
 }
 
-void FrameLoader::continueAfterNavigationPolicy(PolicyAction policy)
+void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
 {
     PolicyCheck check = m_policyCheck;
     m_policyCheck.clear();
 
     bool shouldContinue = policy == PolicyUse;
-    
+
     switch (policy) {
         case PolicyIgnore:
             check.clearRequest();
             break;
         case PolicyDownload:
-            m_client->startDownload(check.request());
+            m_frame->loader()->client()->startDownload(check.request());
             check.clearRequest();
             break;
         case PolicyUse: {
             ResourceRequest request(check.request());
-            
-            if (!m_client->canHandleRequest(request)) {
-                handleUnimplementablePolicy(m_client->cannotShowURLError(check.request()));
+
+            if (!m_frame->loader()->client()->canHandleRequest(request)) {
+                handleUnimplementablePolicy(m_frame->loader()->cannotShowURLError(check.request()));
                 check.clearRequest();
                 shouldContinue = false;
             }
@@ -3727,7 +3723,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(m_policyLoadType))
+        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(policyChecker()->loadType()))
             if (Page* page = m_frame->page()) {
                 Frame* mainFrame = page->mainFrame();
                 if (HistoryItem* resetItem = mainFrame->loader()->m_currentHistoryItem.get()) {
@@ -3739,7 +3735,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         return;
     }
 
-    FrameLoadType type = m_policyLoadType;
+    FrameLoadType type = policyChecker()->loadType();
     stopAllLoaders();
     
     // <rdar://problem/6250856> - In certain circumstances on pages with multiple frames, stopAllLoaders()
@@ -3764,7 +3760,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         return;
 
     if (formState)
-        m_client->dispatchWillSubmitForm(&FrameLoader::continueLoadAfterWillSubmitForm, formState);
+        m_client->dispatchWillSubmitForm(&PolicyChecker::continueLoadAfterWillSubmitForm, formState);
     else
         continueLoadAfterWillSubmitForm();
 }
