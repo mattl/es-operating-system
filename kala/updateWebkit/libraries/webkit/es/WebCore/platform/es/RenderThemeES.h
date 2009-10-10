@@ -36,6 +36,8 @@ namespace WebCore {
 
 class RenderThemeES : public RenderTheme {
 public:
+    static PassRefPtr<RenderTheme> create();
+
     RenderThemeES();
     virtual ~RenderThemeES();
 
