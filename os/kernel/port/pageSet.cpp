@@ -235,7 +235,6 @@ standby(Page* page)
     {
         SpinLock::Synchronized method(spinLock);
 
-        bool notify = standbyList.isEmpty();
         standbyList.addLast(page);
         ++standbyCount;
     }
@@ -248,7 +247,6 @@ standby(Page* page)
 es::PageSet* PageSet::
 fork()
 {
-    void* objectPtr = 0;
     PageSet* instance = new PageSet(this);
     if (!instance)
     {
@@ -303,7 +301,7 @@ report()
     PageList::Iterator iterFree(freeList.begin());
     while ((page = iterFree.next()))
     {
-        esReport("  %p: cache %p, offset %p, flags %02x, ref %lu\n",
+        esReport("  %p: cache %p, offset 0x%llx, flags %02x, ref %lu\n",
                  page->getPointer(),
                  page->cache,
                  page->getOffset(),
@@ -317,7 +315,7 @@ report()
     PageList::Iterator iter(standbyList.begin());
     while ((page = iter.next()))
     {
-        esReport("  %p: cache %p, offset %p, flags %02x, ref %lu\n",
+        esReport("  %p: cache %p, offset 0x%llx, flags %02x, ref %lu\n",
                  page->getPointer(),
                  page->cache,
                  page->getOffset(),

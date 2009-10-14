@@ -198,7 +198,7 @@ report()
          count < pageCount;
          ++page, ++count)
     {
-        esReport("%p: cache %p, offset %p, flags %02x, ref %lu\n",
+        esReport("%p: cache %p, offset 0x%llx, flags %02x, ref %lu\n",
                  page->getPointer(),
                  page->cache,
                  page->getOffset(),

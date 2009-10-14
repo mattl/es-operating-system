@@ -44,7 +44,7 @@ dump()
     Map::List::Iterator iter = mapList.begin();
     while ((map = iter.next()))
     {
-        esReport("%p-%p (%x) %x %x\n",
+        esReport("%p-%p (%lx) %x %x\n",
                  map->start, map->end, map->length,
                  map->prot, map->flags);
         ASSERT(map->start < map->end);
