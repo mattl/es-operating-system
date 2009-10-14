@@ -1,5 +1,21 @@
 #!/bin/bash -v
 
+# function to manually copy files if wget fails
+manual_input()
+{
+    echo -n "'$1' failed. Manually enter path for $2: "
+    read path
+    if [ "$path" ]
+    then
+            # currently in src/. Copy here.
+      	    cp $path/$2 .
+	    estatus=$?
+ 	    [ $estatus != 0 ] && exit $estatus
+    else
+	    exit 1
+    fi
+}
+
 dist_dir=$(expr substr $0 1 $(expr $(expr length $0) - 5))
 
 # Check prerequisites
@@ -22,7 +38,28 @@ fi
 mkdir -p $ES_SDK
 mkdir -p src
 mkdir -p opt
-export PATH=$ES_SDK/bin:$PATH
+
+# Check whether $ES_SDK/bin is contained in PATH
+# if not append the path to ~/.bashrc
+
+echo $PATH | grep -q "$ES_SDK/bin"
+if [ $? != 0 ]
+then
+	export PATH=$PATH:$ES_SDK/bin
+	# Check whether already appended in ~/.bashrc
+	grep -q "# Added by es install" ~/.bashrc
+	if [ $? != 0 ]
+  	then
+		echo -n "Add export statement to ~/.bashrc [y|n]? "
+		read input
+		if [ $input == "y" -o $input == "Y" ]
+		then
+			echo "# Added by es install" >> ~/.bashrc
+   			echo "export PATH=\$PATH:$ES_SDK/bin" >> ~/.bashrc
+  		fi
+	fi
+fi
+
 
 if [ -e $dist_dir/configure ];
 then
@@ -65,9 +102,11 @@ else
 	cd local
 fi
 make
-[ $? != 0 ] && exit 1
+estatus=$?
+[ $estatus != 0 ] && exit $estatus
 make install-exec
-[ $? != 0 ] && exit 1
+estatus=$?
+[ $estatus != 0 ] && exit $estatus
 cd ..
 
 # Binutils
@@ -75,7 +114,7 @@ if [ ! -f src/binutils-2.19.tar.bz2 ];
 then
 	cd src
 	wget ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.tar.bz2
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "binutils-2.19.tar.bz2"
 	cd ..
 fi
 if [ ! -d src/binutils-2.19 ] || [ ! -f opt/binutils/Makefile ] || [ -n "`find trunk/patches/binutils-2.19.patch -newer opt/binutils/Makefile -print`" ];
@@ -93,9 +132,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/binutils-2.19.patch -new
 then
 	../../src/binutils-2.19/configure --target=i386-pc-es --prefix=$ES_SDK
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -104,7 +145,7 @@ if [ ! -f src/gcc-4.3.1.tar.bz2 ];
 then
 	cd src
 	wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "gcc-4.3.1.tar.bz2"
 	cd ..
 fi
 if [ ! -d src/gcc-4.3.1 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/gcc-4.3.1.patch -newer opt/gcc/Makefile -print`" ];
@@ -119,7 +160,7 @@ if [ ! -f src/newlib-1.16.0.tar.gz ];
 then
 	cd src
 	wget ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "newlib-1.16.0.tar.gz"
 	cd ..
 fi
 if [ ! -d src/newlib-1.16.0 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/newlib-1.16.0.patch -newer opt/gcc/Makefile -print`" ];
@@ -140,9 +181,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/gcc-4.3.1.patch -newer M
 then
 	../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=$ES_SDK
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -151,7 +194,7 @@ cd src
 if [ ! -f pcre-7.8.tar.bz2 ]; 
 then
 	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "pcre-7.8.tar.bz2"
 fi
 rm -rf pcre-7.8
 tar -jxf pcre-7.8.tar.bz2
@@ -163,9 +206,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-7.8.patch -newer Ma
 then
 	../../src/pcre-7.8/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --program-prefix=es-
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -174,7 +219,7 @@ cd src
 if [ ! -f freetype-2.3.5.tar.bz2 ]; 
 then
 	wget http://ftp.twaren.net/Unix/NonGNU/freetype/freetype-2.3.5.tar.bz2
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "freetype-2.3.5.tar.bz2"
 fi
 rm -rf freetype-2.3.5
 tar -jxf freetype-2.3.5.tar.bz2
@@ -186,9 +231,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/freetype-2.3.5.patch -ne
 then
 	../../src/freetype-2.3.5/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
 	make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	mv $ES_SDK/bin/freetype-config $ES_SDK/bin/es-freetype-config
 fi
 cd ../..
@@ -198,7 +245,7 @@ cd src
 if [ ! -f expat-2.0.1.tar.gz ]; 
 then
 	wget http://superb-west.dl.sourceforge.net/sourceforge/expat/expat-2.0.1.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "expat-2.0.1.tar.gz"
 fi
 rm -rf expat-2.0.1
 tar -zxf expat-2.0.1.tar.gz
@@ -210,9 +257,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/expat-2.0.1.patch -newer
 then
 	../../src/expat-2.0.1/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make installlib
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -221,7 +270,7 @@ cd src
 if [ ! -f fontconfig-2.4.2.tar.gz ]; 
 then
 	wget http://fontconfig.org/release/fontconfig-2.4.2.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "fontconfig-2.4.2.tar.gz"
 fi
 rm -rf fontconfig-2.4.2
 tar -zxf fontconfig-2.4.2.tar.gz
@@ -233,7 +282,8 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/fontconfig-2.4.2.patch -
 then
 	../../src/fontconfig-2.4.2/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-arch=i386-pc-es --with-expat-includes=$ES_SDK/include --with-expat-lib=$ES_SDK/lib --with-freetype-config=$ES_SDK/bin/es-freetype-config --with-default-fonts=/file/fonts --with-cache-dir=/file --with-confdir=/file --program-prefix=es-
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install  # Ignore an error for this
 fi
 cd ../..
@@ -246,9 +296,11 @@ if [ ! -f Makefile ];
 then
 	../../src/gcc-4.3.1/zlib/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-multilib
 	make 
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -257,7 +309,7 @@ cd src
 if [ ! -f libpng-1.2.40.tar.gz ]; 
 then
 	wget ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng-1.2.40.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "libpng-1.2.40.tar.gz"
 fi
 rm -rf libpng-1.2.40
 tar -zxf libpng-1.2.40.tar.gz
@@ -269,9 +321,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libpng-1.2.40.patch -new
 then
 	../../src/libpng-1.2.40/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-static --disable-shared LDFLAGS=-L$ES_SDK/lib CFLAGS=-I$ES_SDK/include
 	make 
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -280,7 +334,7 @@ cd src
 if [ ! -f jpegsrc.v7.tar.gz ]; 
 then
 	wget http://www.ijg.org/files/jpegsrc.v7.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "jpegsrc.v7.tar.gz"
 fi
 rm -rf jpeg-7
 tar -zxf jpegsrc.v7.tar.gz
@@ -292,9 +346,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/jpegsrc.v7.patch -newer 
 then
 	../../src/jpeg-7/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld
 	make 
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -303,7 +359,7 @@ cd src
 if [ ! -f libxml2-2.7.3.tar.gz ]; 
 then
 	wget ftp://xmlsoft.org/libxml2/libxml2-2.7.3.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget ftp" "libxml2-2.7.3.tar.gz"
 fi
 rm -rf libxml2-2.7.3
 tar -zxf libxml2-2.7.3.tar.gz
@@ -315,9 +371,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libxml2-2.7.3.patch -new
 then
         ../../src/libxml2-2.7.3/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-shared --with-gnu-ld --without-debug --without-ftp --without-http  --without-python --program-prefix=es-
 	make 
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -326,7 +384,7 @@ cd src
 if [ ! -f pixman-0.15.10.tar.gz ]; 
 then
 	wget http://cairographics.org/releases/pixman-0.15.10.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "pixman-0.15.10.tar.gz"
 fi
 rm -rf pixman-0.15.10
 tar -zxf pixman-0.15.10.tar.gz
@@ -338,9 +396,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pixman-0.15.10.patch -ne
 then
 	../../src/pixman-0.15.10/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-gtk --disable-sse2 --disable-mmx
 	make 
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 fi
 cd ../..
 
@@ -349,7 +409,7 @@ cd src
 if [ ! -f cairo-1.8.6.tar.gz ]; 
 then
 	wget http://cairographics.org/releases/cairo-1.8.6.tar.gz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "cairo-1.8.6.tar.gz"
 fi
 rm -rf cairo-1.8.6
 tar -zxf cairo-1.8.6.tar.gz
@@ -361,9 +421,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/cairo-1.8.6.patch -newer
 then
 	../../src/cairo-1.8.6/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-xlib --disable-ps --disable-svg --enable-pdf=no FREETYPE_CFLAGS="-I$ES_SDK/include/freetype2 -I$ES_SDK/include" FREETYPE_LIBS="-L$ES_SDK/lib -lfreetype" FONTCONFIG_CFLAGS=-I$ES_SDK/include FONTCONFIG_LIBS="-L$ES_SDK/lib -lfontconfig" pixman_CFLAGS="-I$ES_SDK/include/pixman-1 -I$ES_SDK/include" pixman_LIBS="-L$ES_SDK/lib -lpixman-1" png_CFLAGS="-I$ES_SDK/include/libpng12 -I$ES_SDK/include" png_LIBS="-L$ES_SDK/lib -lz -lpng -lpng12"
 	make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
 	make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
         rm $ES_SDK/bin/libpng12-config $ES_SDK/bin/libpng-config
 fi
 cd ../..
@@ -373,7 +435,7 @@ if [ ! -f src/icu4c-4_2_1-src.tgz ];
 then
 	cd src
 	wget http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz
-	[ $? != 0 ] && exit 1
+	[ $? != 0 ] && manual_input "wget http" "icu4c-4_2_1-src.tgz"
 	cd ..
 fi
 if [ ! -d src/icu ] || [ ! -f opt/icu/Makefile ] || [ -n "`find trunk/patches/icu-4.2.1.patch -newer opt/icu/Makefile -print`" ];
@@ -394,9 +456,11 @@ if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/icu-4.2.1.patch -newer M
 then
          ../../src/icu/source/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --with-cross-build=$ES_SDK/../src/icu/source --disable-shared --disable-release --disable-debug --enable-static --with-data-packaging=common
         make
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
         make install
-	[ $? != 0 ] && exit 1
+	estatus=$?
+	[ $estatus != 0 ] && exit $estatus
         rm $ES_SDK/bin/icu-config
 fi
 cd ../..
@@ -411,9 +475,11 @@ else
 	cd pc
 fi
 make
-[ $? != 0 ] && exit 1
+estatus=$?
+[ $estatus != 0 ] && exit $estatus
 make install
-[ $? != 0 ] && exit 1
+estatus=$?
+[ $estatus != 0 ] && exit $estatus
 cd ..
 
 # Generate ES boot disk image
