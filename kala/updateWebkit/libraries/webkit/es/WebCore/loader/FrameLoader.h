@@ -335,7 +335,9 @@ namespace WebCore {
         // introduce a proper callback type for this function, we should make it private again.
         void continueLoadAfterWillSubmitForm();
 
+#if PLATFORM(ES)
         static void setDocumentType(char*);
+#endif
 
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);
@@ -551,7 +553,10 @@ namespace WebCore {
 #ifndef NDEBUG
         bool m_didDispatchDidCommitLoad;
 #endif
+
+#if PLATFORM(ES)
         static char* documentType;
+#endif
     };
 
 } // namespace WebCore

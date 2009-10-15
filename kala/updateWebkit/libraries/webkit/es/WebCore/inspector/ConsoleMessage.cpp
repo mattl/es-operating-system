@@ -35,7 +35,11 @@
 #include "ScriptCallStack.h"
 #include "ScriptObject.h"
 #include "ScriptObjectQuarantine.h"
+
+// For Line 117, usage of UNUSED_PARAM
+#if PLATFORM(ES)
 #include <wtf/UnusedParam.h>
+#endif
 
 namespace WebCore {
 

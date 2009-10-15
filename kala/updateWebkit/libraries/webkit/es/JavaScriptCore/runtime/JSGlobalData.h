@@ -31,8 +31,10 @@
 
 #include "Collector.h"
 
-//#include "ExecutableAllocator.h"
-//#include "JITStubs.h"
+#if !PLATFORM(ES)
+#include "ExecutableAllocator.h"
+#include "JITStubs.h"
+#endif
 
 #include "JSValue.h"
 #include "MarkStack.h"
