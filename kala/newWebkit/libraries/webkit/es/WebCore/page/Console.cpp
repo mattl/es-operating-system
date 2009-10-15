@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include <profiler/Profiler.h>

@@ -377,6 +377,16 @@ bool FrameLoaderClientES::shouldGoToHistoryItem(WebCore::HistoryItem*) const
     return true;
 }
 
+void FrameLoaderClientES::didDisplayInsecureContent()
+{
+    notImplemented();
+}
+
+void FrameLoaderClientES::didRunInsecureContent(SecurityOrigin* security) 
+{
+    notImplemented();
+}	
+
 WebCore::ResourceError FrameLoaderClientES::cancelledError(const WebCore::ResourceRequest& request)
 {
     notImplemented();
@@ -546,7 +556,7 @@ PassRefPtr<Frame> FrameLoaderClientES::createFrame(const KURL& url, const String
     return 0;
 }
 
-Widget* FrameLoaderClientES::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually)
+PassRefPtr<Widget> FrameLoaderClientES::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually)
 {
     notImplemented();
     return 0;
@@ -558,7 +568,7 @@ void FrameLoaderClientES::redirectDataToPlugin(Widget* pluginWidget)
     return;
 }
 
-Widget* FrameLoaderClientES::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
+PassRefPtr<Widget> FrameLoaderClientES::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
                                                     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     notImplemented();

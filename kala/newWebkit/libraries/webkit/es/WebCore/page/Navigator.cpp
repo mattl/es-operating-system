@@ -37,7 +37,10 @@
 #include "PluginData.h"
 #include "ScriptController.h"
 #include "Settings.h"
+
+#if ENABLE(DOM_STORAGE)
 #include "StorageNamespace.h"
+#endif
 
 namespace WebCore {
 

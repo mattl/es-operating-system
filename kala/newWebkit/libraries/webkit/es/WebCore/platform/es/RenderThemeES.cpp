@@ -34,10 +34,15 @@
 
 namespace WebCore {
 
-RenderTheme* theme()
+PassRefPtr<RenderTheme> RenderThemeES::create()
 {
-    static RenderThemeES esTheme;
-    return &esTheme;
+    return adoptRef(new RenderThemeES());
+}
+
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+{
+    static RenderTheme* rt = RenderThemeES::create().releaseRef();
+    return rt;
 }
 
 RenderThemeES::RenderThemeES()

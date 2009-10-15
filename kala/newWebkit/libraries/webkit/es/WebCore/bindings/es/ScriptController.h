@@ -32,6 +32,7 @@
 
 #include "ScriptInstance.h"
 #include "ScriptValue.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Event;
@@ -41,6 +42,7 @@ namespace WebCore {
     class ScriptState;
     class String;
     class Widget;
+    class XSSAuditor;
 
     class ScriptController {
     public:
@@ -48,6 +50,7 @@ namespace WebCore {
         ~ScriptController();
 
         ScriptValue evaluate(const ScriptSourceCode&);
+	void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
         bool haveWindowShell() const;
         ScriptController* windowShell();
         bool isEnabled() const;
@@ -64,8 +67,12 @@ namespace WebCore {
         void clearScriptObjects();
         void updatePlatformScriptObjects();
 
+	XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
+
     private:
         Frame* m_frame;
+
+	OwnPtr<XSSAuditor> m_XSSAuditor;
     };
 
 } // namespace WebCore

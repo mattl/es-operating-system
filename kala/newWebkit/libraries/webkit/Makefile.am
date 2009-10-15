@@ -124,21 +124,10 @@ javascriptcore_cppflags += \
 	
 javascriptcore_cppflags += \
 	-I$(srcdir)/trunk/JavaScriptCore \
-	-I$(srcdir)/trunk/JavaScriptCore/API \
-	-I$(srcdir)/trunk/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/trunk/JavaScriptCore/interpreter \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecode \
-	-I$(srcdir)/trunk/JavaScriptCore/bytecompiler \
-	-I$(srcdir)/trunk/JavaScriptCore/debugger \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
 	-I$(srcdir)/trunk/JavaScriptCore/pcre \
-	-I$(srcdir)/trunk/JavaScriptCore/profiler \
 	-I$(srcdir)/trunk/JavaScriptCore/runtime \
-	-I$(srcdir)/trunk/JavaScriptCore/wrec \
-	-I$(srcdir)/trunk/JavaScriptCore/jit \
-	-I$(srcdir)/trunk/JavaScriptCore/assembler \
+	-I$(srcdir)/trunk/JavaScriptCore/wtf \
 	-I$(srcdir)/trunk/JavaScriptCore/wtf/unicode \
-	-I$(srcdir)/trunk/JavaScriptCore/yarr \
 	-I$(top_builddir)/trunk/JavaScriptCore/pcre
 	
 javascriptcore_cppflags += \
@@ -152,7 +141,7 @@ javascriptcore_built_nosources += \
 
 trunk/JavaScriptCore/pcre/chartables.c: $(srcdir)/trunk/JavaScriptCore/pcre/dftables
 	perl $^ $@
-	
+
 # WebCore
 nodist_EXTRA_libWebCore_a_SOURCES = \
 	$(webcore_built_nosources)
@@ -214,8 +203,12 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/Assertions.h \
 	trunk/JavaScriptCore/wtf/ByteArray.cpp \
 	trunk/JavaScriptCore/wtf/ByteArray.h \
+	trunk/JavaScriptCore/wtf/CrossThreadRefCounted.h \
+	trunk/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	trunk/JavaScriptCore/wtf/CurrentTime.cpp \
 	trunk/JavaScriptCore/wtf/CurrentTime.h \
+	trunk/JavaScriptCore/wtf/DateMath.cpp \
+	trunk/JavaScriptCore/wtf/DateMath.h \
 	trunk/JavaScriptCore/wtf/Deque.h \
 	trunk/JavaScriptCore/wtf/DisallowCType.h \
 	trunk/JavaScriptCore/wtf/Forward.h \
@@ -239,8 +232,10 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/NotFound.h \
 	trunk/JavaScriptCore/wtf/OwnArrayPtr.h \
 	trunk/JavaScriptCore/wtf/OwnPtr.h \
+	trunk/JavaScriptCore/wtf/PassOwnPtr.h \
 	trunk/JavaScriptCore/wtf/PassRefPtr.h \
 	trunk/JavaScriptCore/wtf/Platform.h \
+	trunk/JavaScriptCore/wtf/PossiblyNull.h \
 	trunk/JavaScriptCore/wtf/PtrAndFlags.h \
 	trunk/JavaScriptCore/wtf/RandomNumber.cpp \
 	trunk/JavaScriptCore/wtf/RandomNumber.h \
@@ -251,6 +246,7 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/RefPtr.h \
 	trunk/JavaScriptCore/wtf/RefPtrHashMap.h \
 	trunk/JavaScriptCore/wtf/RetainPtr.h \
+	trunk/JavaScriptCore/wtf/SegmentedVector.h \
 	trunk/JavaScriptCore/wtf/StdLibExtras.h \
 	trunk/JavaScriptCore/wtf/StringExtras.h \
 	trunk/JavaScriptCore/wtf/TCPackedCache.h \
@@ -282,6 +278,7 @@ javascriptcore_sources += \
 	trunk/JavaScriptCore/wtf/MallocZoneSupport.h \
 	trunk/JavaScriptCore/wtf/dtoa.cpp \
 	trunk/JavaScriptCore/wtf/dtoa.h	
+
 #	trunk/JavaScriptCore/wtf/TCSystemAlloc.cpp \
 #	trunk/JavaScriptCore/wtf/TCSystemAlloc.h 
 
@@ -302,6 +299,8 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(srcdir)/trunk/WebCore/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/trunk/WebCore/bindings/es \
+	-I$(srcdir)/trunk/WebCore/bridge \
+	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/page/es \
 	-I$(srcdir)/trunk/WebCore/platform/es \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/es \
@@ -313,18 +312,19 @@ webcore_cppflags += \
 webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore \
 	-I$(srcdir)/trunk/WebCore/accessibility \
-	-I$(srcdir)/trunk/WebCore/bridge \
-	-I$(srcdir)/trunk/WebCore/bridge/c \
 	-I$(srcdir)/trunk/WebCore/css \
 	-I$(srcdir)/trunk/WebCore/dom \
+	-I$(srcdir)/trunk/WebCore/dom/default \
 	-I$(srcdir)/trunk/WebCore/editing \
 	-I$(srcdir)/trunk/WebCore/history \
 	-I$(srcdir)/trunk/WebCore/html \
+	-I$(srcdir)/trunk/WebCore/html/canvas \
 	-I$(srcdir)/trunk/WebCore/inspector \
 	-I$(srcdir)/trunk/WebCore/loader \
 	-I$(srcdir)/trunk/WebCore/loader/appcache \
 	-I$(srcdir)/trunk/WebCore/loader/archive \
 	-I$(srcdir)/trunk/WebCore/loader/icon \
+	-I$(srcdir)/trunk/WebCore/notifications \
 	-I$(srcdir)/trunk/WebCore/page \
 	-I$(srcdir)/trunk/WebCore/page/animation \
 	-I$(srcdir)/trunk/WebCore/platform \
@@ -339,11 +339,13 @@ webcore_cppflags += \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/jpeg \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/trunk/WebCore/platform/image-decoders/xbm \
+	-I$(srcdir)/trunk/WebCore/platform/mock \
 	-I$(srcdir)/trunk/WebCore/platform/network \
 	-I$(srcdir)/trunk/WebCore/platform/text \
 	-I$(srcdir)/trunk/WebCore/plugins \
 	-I$(srcdir)/trunk/WebCore/rendering \
 	-I$(srcdir)/trunk/WebCore/rendering/style \
+	-I$(srcdir)/trunk/WebCore/storage \
 	-I$(srcdir)/trunk/WebCore/workers \
 	-I$(srcdir)/trunk/WebCore/xml \
 	-I$(srcdir)/trunk/WebCore/platform/graphics/cairo \
@@ -369,14 +371,15 @@ webcore_built_sources += \
 	DerivedSources/CSSPropertyNames.h \
 	DerivedSources/CSSValueKeywords.h \
 	DerivedSources/HTMLElementFactory.cpp \
-	DerivedSources/HTMLElementFactory.h \
 	DerivedSources/HTMLEntityNames.c \
 	DerivedSources/HTMLNames.cpp \
-	DerivedSources/HTMLNames.h \
 	DerivedSources/UserAgentStyleSheets.h \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
-	DerivedSources/XMLNames.cpp \
-	DerivedSources/XMLNames.h
+	DerivedSources/XMLNames.cpp
+
+#	DerivedSources/HTMLElementFactory.h \
+#	DerivedSources/HTMLNames.h \
+#	DerivedSources/XMLNames.h
 
 if ENABLE_SVG
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
@@ -409,10 +412,14 @@ webcore_sources += \
 	trunk/WebCore/accessibility/AccessibilityListBox.h \
 	trunk/WebCore/accessibility/AccessibilityListBoxOption.cpp \
 	trunk/WebCore/accessibility/AccessibilityListBoxOption.h \
+	trunk/WebCore/accessibility/AccessibilityMediaControls.cpp \
+	trunk/WebCore/accessibility/AccessibilityMediaControls.h \
 	trunk/WebCore/accessibility/AccessibilityObject.cpp \
 	trunk/WebCore/accessibility/AccessibilityObject.h \
 	trunk/WebCore/accessibility/AccessibilityRenderObject.cpp \
 	trunk/WebCore/accessibility/AccessibilityRenderObject.h \
+	trunk/WebCore/accessibility/AccessibilitySlider.cpp \
+	trunk/WebCore/accessibility/AccessibilitySlider.h \
 	trunk/WebCore/accessibility/AccessibilityTable.cpp \
 	trunk/WebCore/accessibility/AccessibilityTable.h \
 	trunk/WebCore/accessibility/AccessibilityTableCell.cpp \
@@ -521,6 +528,8 @@ webcore_sources += \
 	trunk/WebCore/css/FontValue.h \
 	trunk/WebCore/css/MediaFeatureNames.cpp \
 	trunk/WebCore/css/MediaFeatureNames.h \
+	trunk/WebCore/css/Media.cpp \
+	trunk/WebCore/css/Media.h \
 	trunk/WebCore/css/MediaList.cpp \
 	trunk/WebCore/css/MediaList.h \
 	trunk/WebCore/css/MediaQuery.cpp \
@@ -530,6 +539,8 @@ webcore_sources += \
 	trunk/WebCore/css/MediaQueryExp.cpp \
 	trunk/WebCore/css/MediaQueryExp.h \
 	trunk/WebCore/css/Pair.h \
+	trunk/WebCore/css/RGBColor.cpp \
+	trunk/WebCore/css/RGBColor.h \
 	trunk/WebCore/css/Rect.h \
 	trunk/WebCore/css/ShadowValue.cpp \
 	trunk/WebCore/css/ShadowValue.h \
@@ -590,9 +601,6 @@ webcore_sources += \
 	trunk/WebCore/dom/DOMCoreException.h \
 	trunk/WebCore/dom/DOMImplementation.cpp \
 	trunk/WebCore/dom/DOMImplementation.h \
-	trunk/WebCore/dom/DOMStringList.cpp \
-	trunk/WebCore/dom/DOMStringList.h \
-	trunk/WebCore/dom/DocPtr.h \
 	trunk/WebCore/dom/Document.cpp \
 	trunk/WebCore/dom/Document.h \
 	trunk/WebCore/dom/DocumentFragment.cpp \
@@ -611,10 +619,8 @@ webcore_sources += \
 	trunk/WebCore/dom/Entity.h \
 	trunk/WebCore/dom/EntityReference.cpp \
 	trunk/WebCore/dom/EntityReference.h \
-	trunk/WebCore/dom/ExceptionBase.cpp \
-	trunk/WebCore/dom/ExceptionBase.h \
-	trunk/WebCore/dom/ExceptionCode.cpp \
-	trunk/WebCore/dom/ExceptionCode.h \
+	trunk/WebCore/dom/ErrorEvent.cpp \
+	trunk/WebCore/dom/ErrorEvent.h \
 	trunk/WebCore/dom/Event.cpp \
 	trunk/WebCore/dom/Event.h \
 	trunk/WebCore/dom/EventException.h \
@@ -623,6 +629,10 @@ webcore_sources += \
 	trunk/WebCore/dom/EventNames.h \
 	trunk/WebCore/dom/EventTarget.cpp \
 	trunk/WebCore/dom/EventTarget.h \
+	trunk/WebCore/dom/ExceptionBase.cpp \
+	trunk/WebCore/dom/ExceptionBase.h \
+	trunk/WebCore/dom/ExceptionCode.cpp \
+	trunk/WebCore/dom/ExceptionCode.h \
 	trunk/WebCore/dom/InputElement.cpp \
 	trunk/WebCore/dom/InputElement.h \
 	trunk/WebCore/dom/KeyboardEvent.cpp \
@@ -636,7 +646,8 @@ webcore_sources += \
 	trunk/WebCore/dom/MessageEvent.h \
 	trunk/WebCore/dom/MessagePort.cpp \
 	trunk/WebCore/dom/MessagePort.h \
-	trunk/WebCore/dom/MessagePortProxy.h \
+	trunk/WebCore/dom/MessagePortChannel.cpp \
+	trunk/WebCore/dom/MessagePortChannel.h \
 	trunk/WebCore/dom/MouseEvent.cpp \
 	trunk/WebCore/dom/MouseEvent.h \
 	trunk/WebCore/dom/MouseRelatedEvent.cpp \
@@ -670,6 +681,8 @@ webcore_sources += \
 	trunk/WebCore/dom/OptionElement.h \
 	trunk/WebCore/dom/OverflowEvent.cpp \
 	trunk/WebCore/dom/OverflowEvent.h \
+	trunk/WebCore/dom/PageTransitionEvent.cpp \
+	trunk/WebCore/dom/PageTransitionEvent.h \
 	trunk/WebCore/dom/Position.cpp \
 	trunk/WebCore/dom/Position.h \
 	trunk/WebCore/dom/PositionIterator.cpp \
@@ -696,8 +709,6 @@ webcore_sources += \
 	trunk/WebCore/dom/SelectorNodeList.h \
 	trunk/WebCore/dom/StaticNodeList.cpp \
 	trunk/WebCore/dom/StaticNodeList.h \
-	trunk/WebCore/dom/StaticStringList.cpp \
-	trunk/WebCore/dom/StaticStringList.h \
 	trunk/WebCore/dom/StyleElement.cpp \
 	trunk/WebCore/dom/StyleElement.h \
 	trunk/WebCore/dom/StyledElement.cpp \
@@ -728,6 +739,8 @@ webcore_sources += \
 	trunk/WebCore/dom/XMLTokenizerLibxml2.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.cpp \
 	trunk/WebCore/dom/XMLTokenizerScope.h \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.cpp \
+	trunk/WebCore/dom/default/PlatformMessagePortChannel.h  \
 	trunk/WebCore/editing/AppendNodeCommand.cpp \
 	trunk/WebCore/editing/AppendNodeCommand.h \
 	trunk/WebCore/editing/ApplyStyleCommand.cpp \
@@ -836,19 +849,28 @@ webcore_sources += \
 	trunk/WebCore/history/HistoryItem.h \
 	trunk/WebCore/history/PageCache.cpp \
 	trunk/WebCore/history/PageCache.h \
-	trunk/WebCore/html/CanvasGradient.cpp \
-	trunk/WebCore/html/CanvasGradient.h \
-	trunk/WebCore/html/CanvasPattern.cpp \
-	trunk/WebCore/html/CanvasPattern.h \
-	trunk/WebCore/html/CanvasPixelArray.cpp \
-	trunk/WebCore/html/CanvasPixelArray.h \
-	trunk/WebCore/html/CanvasRenderingContext2D.cpp \
-	trunk/WebCore/html/CanvasRenderingContext2D.h \
-	trunk/WebCore/html/CanvasStyle.cpp \
-	trunk/WebCore/html/CanvasStyle.h \
+	trunk/WebCore/html/canvas/CanvasGradient.cpp \
+	trunk/WebCore/html/canvas/CanvasGradient.h \
+	trunk/WebCore/html/canvas/CanvasPattern.cpp \
+	trunk/WebCore/html/canvas/CanvasPattern.h \
+	trunk/WebCore/html/canvas/CanvasPixelArray.cpp \
+	trunk/WebCore/html/canvas/CanvasPixelArray.h \
+	trunk/WebCore/html/canvas/CanvasRenderingContext.cpp \
+	trunk/WebCore/html/canvas/CanvasRenderingContext.h \
+	trunk/WebCore/html/canvas/CanvasRenderingContext2D.cpp \
+	trunk/WebCore/html/canvas/CanvasRenderingContext2D.h \
+	trunk/WebCore/html/canvas/CanvasStyle.cpp \
+	trunk/WebCore/html/canvas/CanvasStyle.h \
 	trunk/WebCore/html/CollectionCache.cpp \
 	trunk/WebCore/html/CollectionCache.h \
 	trunk/WebCore/html/CollectionType.h \
+	trunk/WebCore/html/DataGridColumn.cpp \
+	trunk/WebCore/html/DataGridColumn.h \
+	trunk/WebCore/html/DataGridColumnList.cpp \
+	trunk/WebCore/html/DataGridColumnList.h \
+	trunk/WebCore/html/DataGridDataSource.h \
+	trunk/WebCore/html/DOMDataGridDataSource.cpp \
+	trunk/WebCore/html/DOMDataGridDataSource.h \
 	trunk/WebCore/html/File.cpp \
 	trunk/WebCore/html/File.h \
 	trunk/WebCore/html/FileList.cpp \
@@ -877,6 +899,16 @@ webcore_sources += \
 	trunk/WebCore/html/HTMLCanvasElement.h \
 	trunk/WebCore/html/HTMLCollection.cpp \
 	trunk/WebCore/html/HTMLCollection.h \
+	trunk/WebCore/html/HTMLDataGridElement.cpp \
+	trunk/WebCore/html/HTMLDataGridElement.h \
+	trunk/WebCore/html/HTMLDataGridCellElement.cpp \
+	trunk/WebCore/html/HTMLDataGridCellElement.h \
+	trunk/WebCore/html/HTMLDataGridColElement.cpp \
+	trunk/WebCore/html/HTMLDataGridColElement.h \
+	trunk/WebCore/html/HTMLDataGridRowElement.cpp \
+	trunk/WebCore/html/HTMLDataGridRowElement.h \
+	trunk/WebCore/html/HTMLDataListElement.cpp \
+	trunk/WebCore/html/HTMLDataListElement.h \
 	trunk/WebCore/html/HTMLDListElement.cpp \
 	trunk/WebCore/html/HTMLDListElement.h \
 	trunk/WebCore/html/HTMLDirectoryElement.cpp \
@@ -1014,11 +1046,46 @@ webcore_sources += \
 	trunk/WebCore/html/PreloadScanner.cpp \
 	trunk/WebCore/html/PreloadScanner.h \
 	trunk/WebCore/html/TextMetrics.h \
+	trunk/WebCore/html/ValidityState.cpp \
+	trunk/WebCore/html/ValidityState.h \
 	trunk/WebCore/html/VoidCallback.h \
+	trunk/WebCore/icu/unicode/parseerr.h \
+	trunk/WebCore/icu/unicode/platform.h \
+	trunk/WebCore/icu/unicode/putil.h \
+	trunk/WebCore/icu/unicode/ubrk.h \
+	trunk/WebCore/icu/unicode/uchar.h \
+	trunk/WebCore/icu/unicode/ucnv.h \
+	trunk/WebCore/icu/unicode/ucnv_cb.h \
+	trunk/WebCore/icu/unicode/ucnv_err.h \
+	trunk/WebCore/icu/unicode/ucol.h \
+	trunk/WebCore/icu/unicode/uconfig.h \
+	trunk/WebCore/icu/unicode/uenum.h \
+	trunk/WebCore/icu/unicode/uidna.h \
+	trunk/WebCore/icu/unicode/uiter.h \
+	trunk/WebCore/icu/unicode/uloc.h \
+	trunk/WebCore/icu/unicode/umachine.h \
+	trunk/WebCore/icu/unicode/unorm.h \
+	trunk/WebCore/icu/unicode/urename.h \
+	trunk/WebCore/icu/unicode/uscript.h \
+	trunk/WebCore/icu/unicode/uset.h \
+	trunk/WebCore/icu/unicode/ushape.h \
+	trunk/WebCore/icu/unicode/ustring.h \
+	trunk/WebCore/icu/unicode/utf.h \
+	trunk/WebCore/icu/unicode/utf16.h \
+	trunk/WebCore/icu/unicode/utf8.h \
+	trunk/WebCore/icu/unicode/utf_old.h \
+	trunk/WebCore/icu/unicode/utypes.h \
+	trunk/WebCore/icu/unicode/uversion.h \
 	trunk/WebCore/inspector/ConsoleMessage.cpp \
 	trunk/WebCore/inspector/ConsoleMessage.h \
+	trunk/WebCore/inspector/DOMDispatchTimelineItem.cpp \
+	trunk/WebCore/inspector/DOMDispatchTimelineItem.h \
+	trunk/WebCore/inspector/InspectorBackend.cpp \
+	trunk/WebCore/inspector/InspectorBackend.h \
 	trunk/WebCore/inspector/InspectorDatabaseResource.cpp \
 	trunk/WebCore/inspector/InspectorDatabaseResource.h \
+	trunk/WebCore/inspector/InspectorDOMAgent.cpp \
+	trunk/WebCore/inspector/InspectorDOMAgent.h \
 	trunk/WebCore/inspector/InspectorDOMStorageResource.cpp \
 	trunk/WebCore/inspector/InspectorDOMStorageResource.h \
 	trunk/WebCore/inspector/InspectorClient.h \
@@ -1028,6 +1095,8 @@ webcore_sources += \
 	trunk/WebCore/inspector/InspectorFrontend.h \
 	trunk/WebCore/inspector/InspectorResource.cpp \
 	trunk/WebCore/inspector/InspectorResource.h \
+	trunk/WebCore/inspector/InspectorTimelineAgent.cpp \
+	trunk/WebCore/inspector/InspectorTimelineAgent.h \
 	trunk/WebCore/inspector/JavaScriptCallFrame.cpp \
 	trunk/WebCore/inspector/JavaScriptCallFrame.h \
 	trunk/WebCore/inspector/JavaScriptDebugListener.h \
@@ -1037,7 +1106,8 @@ webcore_sources += \
 	trunk/WebCore/inspector/JavaScriptProfile.h \
 	trunk/WebCore/inspector/JavaScriptProfileNode.cpp \
 	trunk/WebCore/inspector/JavaScriptProfileNode.h \
-	trunk/WebCore/inspector/JSONObject.cpp \
+	trunk/WebCore/inspector/TimelineItem.cpp \
+	trunk/WebCore/inspector/TimelineItem.h \
 	trunk/WebCore/loader/Cache.cpp \
 	trunk/WebCore/loader/Cache.h \
 	trunk/WebCore/loader/CachePolicy.h \
@@ -1092,10 +1162,18 @@ webcore_sources += \
 	trunk/WebCore/loader/NavigationAction.h \
 	trunk/WebCore/loader/NetscapePlugInStreamLoader.cpp \
 	trunk/WebCore/loader/NetscapePlugInStreamLoader.h \
+	trunk/WebCore/loader/PlaceholderDocument.cpp \
+	trunk/WebCore/loader/PlaceholderDocument.h \
 	trunk/WebCore/loader/PluginDocument.cpp \
 	trunk/WebCore/loader/PluginDocument.h \
+	trunk/WebCore/loader/PolicyCallback.cpp \
+	trunk/WebCore/loader/PolicyCallback.h \
+	trunk/WebCore/loader/PolicyChecker.cpp \
+	trunk/WebCore/loader/PolicyChecker.h \
 	trunk/WebCore/loader/ProgressTracker.cpp \
 	trunk/WebCore/loader/ProgressTracker.h \
+	trunk/WebCore/loader/RedirectScheduler.cpp \
+	trunk/WebCore/loader/RedirectScheduler.h \
 	trunk/WebCore/loader/Request.cpp \
 	trunk/WebCore/loader/Request.h \
 	trunk/WebCore/loader/ResourceLoader.cpp \
@@ -1138,7 +1216,6 @@ webcore_sources += \
 	trunk/WebCore/page/ContextMenuController.cpp \
 	trunk/WebCore/page/ContextMenuController.h \
 	trunk/WebCore/page/Coordinates.h \
-	trunk/WebCore/page/Coordinates.cpp \
 	trunk/WebCore/page/DOMSelection.cpp \
 	trunk/WebCore/page/DOMSelection.h \
 	trunk/WebCore/page/DOMTimer.cpp \
@@ -1152,6 +1229,8 @@ webcore_sources += \
 	trunk/WebCore/page/EditorClient.h \
 	trunk/WebCore/page/EventHandler.cpp \
 	trunk/WebCore/page/EventHandler.h \
+	trunk/WebCore/page/EventSource.cpp \
+	trunk/WebCore/page/EventSource.h \
 	trunk/WebCore/page/FocusController.cpp \
 	trunk/WebCore/page/FocusController.h \
 	trunk/WebCore/page/FocusDirection.h \
@@ -1164,8 +1243,8 @@ webcore_sources += \
 	trunk/WebCore/page/FrameView.h \
 	trunk/WebCore/page/Geolocation.cpp \
 	trunk/WebCore/page/Geolocation.h \
-	trunk/WebCore/page/Geoposition.cpp \
 	trunk/WebCore/page/Geoposition.h \
+	trunk/WebCore/page/HaltablePlugin.h \
 	trunk/WebCore/page/History.cpp \
 	trunk/WebCore/page/History.h \
 	trunk/WebCore/page/Location.cpp \
@@ -1176,12 +1255,17 @@ webcore_sources += \
 	trunk/WebCore/page/Navigator.h \
 	trunk/WebCore/page/NavigatorBase.cpp \
 	trunk/WebCore/page/NavigatorBase.h \
+	trunk/WebCore/page/OriginAccessEntry.cpp \
+	trunk/WebCore/page/OriginAccessEntry.h \
 	trunk/WebCore/page/Page.cpp \
 	trunk/WebCore/page/Page.h \
 	trunk/WebCore/page/PageGroup.cpp \
 	trunk/WebCore/page/PageGroup.h \
 	trunk/WebCore/page/PageGroupLoadDeferrer.cpp \
 	trunk/WebCore/page/PageGroupLoadDeferrer.h \
+	trunk/WebCore/page/PluginHalter.cpp \
+	trunk/WebCore/page/PluginHalter.h \
+	trunk/WebCore/page/PluginHalterClient.h \
 	trunk/WebCore/page/PositionCallback.h \
 	trunk/WebCore/page/PositionError.h \
 	trunk/WebCore/page/PositionErrorCallback.h \
@@ -1195,9 +1279,17 @@ webcore_sources += \
 	trunk/WebCore/page/SecurityOriginHash.h \
 	trunk/WebCore/page/Settings.cpp \
 	trunk/WebCore/page/Settings.h \
+	trunk/WebCore/page/UserContentURLPattern.cpp \
+	trunk/WebCore/page/UserContentURLPattern.h \
+	trunk/WebCore/page/UserScript.h \
+	trunk/WebCore/page/UserScriptTypes.h \
+	trunk/WebCore/page/UserStyleSheet.h \
+	trunk/WebCore/page/UserStyleSheetTypes.h \
 	trunk/WebCore/page/WebKitPoint.h \
 	trunk/WebCore/page/WindowFeatures.cpp \
 	trunk/WebCore/page/WindowFeatures.h \
+	trunk/WebCore/page/XSSAuditor.cpp \
+	trunk/WebCore/page/XSSAuditor.h \
 	trunk/WebCore/page/animation/AnimationBase.cpp \
 	trunk/WebCore/page/animation/AnimationBase.h \
 	trunk/WebCore/page/animation/AnimationController.cpp \
@@ -1217,6 +1309,7 @@ webcore_sources += \
 	trunk/WebCore/platform/ContextMenu.cpp \
 	trunk/WebCore/platform/ContextMenu.h \
 	trunk/WebCore/platform/ContextMenuItem.h \
+	trunk/WebCore/platform/Cookie.h \
 	trunk/WebCore/platform/CookieJar.h \
 	trunk/WebCore/platform/CrossThreadCopier.cpp \
 	trunk/WebCore/platform/CrossThreadCopier.h \
@@ -1236,6 +1329,7 @@ webcore_sources += \
 	trunk/WebCore/platform/GeolocationService.cpp \
 	trunk/WebCore/platform/GeolocationService.h \
 	trunk/WebCore/platform/HostWindow.h \
+	trunk/WebCore/platform/KeyboardCodes.h \
 	trunk/WebCore/platform/KURL.cpp \
 	trunk/WebCore/platform/KURL.h \
 	trunk/WebCore/platform/KURLHash.h \
@@ -1251,6 +1345,8 @@ webcore_sources += \
 	trunk/WebCore/platform/Logging.h \
 	trunk/WebCore/platform/MIMETypeRegistry.cpp \
 	trunk/WebCore/platform/MIMETypeRegistry.h \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.cpp \
+	trunk/WebCore/platform/mock/GeolocationServiceMock.h \
 	trunk/WebCore/platform/NotImplemented.h \
 	trunk/WebCore/platform/Pasteboard.h \
 	trunk/WebCore/platform/PlatformKeyboardEvent.h \
@@ -1324,6 +1420,7 @@ webcore_sources += \
 	trunk/WebCore/platform/graphics/FontFastPath.cpp \
 	trunk/WebCore/platform/graphics/FontRenderingMode.h \
 	trunk/WebCore/platform/graphics/FontSelector.h \
+	trunk/WebCore/platform/graphics/FontSmoothingMode.h \
 	trunk/WebCore/platform/graphics/FontTraitsMask.h \
 	trunk/WebCore/platform/graphics/GeneratedImage.cpp \
 	trunk/WebCore/platform/graphics/GeneratedImage.h \
@@ -1344,7 +1441,9 @@ webcore_sources += \
 	trunk/WebCore/platform/graphics/Image.cpp \
 	trunk/WebCore/platform/graphics/Image.h \
 	trunk/WebCore/platform/graphics/ImageBuffer.h \
+	trunk/WebCore/platform/graphics/ImageBuffer.cpp \
 	trunk/WebCore/platform/graphics/ImageObserver.h \
+	trunk/WebCore/platform/graphics/ImageSource.cpp \
 	trunk/WebCore/platform/graphics/ImageSource.h \
 	trunk/WebCore/platform/graphics/IntPoint.h \
 	trunk/WebCore/platform/graphics/IntRect.cpp \
@@ -1371,10 +1470,6 @@ webcore_sources += \
 	trunk/WebCore/platform/graphics/UnitBezier.h \
 	trunk/WebCore/platform/graphics/WidthIterator.cpp \
 	trunk/WebCore/platform/graphics/WidthIterator.h \
-	trunk/WebCore/platform/graphics/filters/FEBlend.h \
-	trunk/WebCore/platform/graphics/filters/FEColorMatrix.h \
-	trunk/WebCore/platform/graphics/filters/FEComponentTransfer.h \
-	trunk/WebCore/platform/graphics/filters/FEComposite.h \
 	trunk/WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	trunk/WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	trunk/WebCore/platform/graphics/transforms/MatrixTransformOperation.h \
@@ -1515,6 +1610,7 @@ webcore_sources += \
 	trunk/WebCore/rendering/RenderBR.h \
 	trunk/WebCore/rendering/RenderBlock.cpp \
 	trunk/WebCore/rendering/RenderBlock.h \
+	trunk/WebCore/rendering/RenderBlockLineLayout.cpp \
 	trunk/WebCore/rendering/RenderBox.cpp \
 	trunk/WebCore/rendering/RenderBox.h \
 	trunk/WebCore/rendering/RenderBoxModelObject.cpp \
@@ -1523,6 +1619,8 @@ webcore_sources += \
 	trunk/WebCore/rendering/RenderButton.h \
 	trunk/WebCore/rendering/RenderCounter.cpp \
 	trunk/WebCore/rendering/RenderCounter.h \
+	trunk/WebCore/rendering/RenderDataGrid.cpp \
+	trunk/WebCore/rendering/RenderDataGrid.h \
 	trunk/WebCore/rendering/RenderFieldset.cpp \
 	trunk/WebCore/rendering/RenderFieldset.h \
 	trunk/WebCore/rendering/RenderFileUploadControl.cpp \
@@ -1560,6 +1658,7 @@ webcore_sources += \
 	trunk/WebCore/rendering/RenderObject.h \
 	trunk/WebCore/rendering/RenderObjectChildList.cpp \
 	trunk/WebCore/rendering/RenderObjectChildList.h \
+	trunk/WebCore/rendering/RenderOverflow.h \
 	trunk/WebCore/rendering/RenderPart.cpp \
 	trunk/WebCore/rendering/RenderPart.h \
 	trunk/WebCore/rendering/RenderPartObject.cpp \
@@ -1607,6 +1706,7 @@ webcore_sources += \
 	trunk/WebCore/rendering/RenderView.h \
 	trunk/WebCore/rendering/RenderWidget.cpp \
 	trunk/WebCore/rendering/RenderWidget.h \
+	trunk/WebCore/rendering/RenderWidgetProtector.h \
 	trunk/WebCore/rendering/RenderWordBreak.cpp \
 	trunk/WebCore/rendering/RenderWordBreak.h \
 	trunk/WebCore/rendering/RootInlineBox.cpp \
@@ -1618,8 +1718,6 @@ webcore_sources += \
 	trunk/WebCore/rendering/TextControlInnerElements.h \
 	trunk/WebCore/rendering/TransformState.cpp \
 	trunk/WebCore/rendering/TransformState.h \
-	trunk/WebCore/rendering/bidi.cpp \
-	trunk/WebCore/rendering/bidi.h \
 	trunk/WebCore/rendering/break_lines.cpp \
 	trunk/WebCore/rendering/break_lines.h \
 	trunk/WebCore/rendering/style/BindingURI.cpp \
@@ -1788,8 +1886,6 @@ webcore_sources += \
 	trunk/WebCore/svg/SVGComponentTransferFunctionElement.h \
 	trunk/WebCore/svg/SVGCursorElement.cpp \
 	trunk/WebCore/svg/SVGCursorElement.h \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.cpp \
-	trunk/WebCore/svg/SVGDefinitionSrcElement.h \
 	trunk/WebCore/svg/SVGDefsElement.cpp \
 	trunk/WebCore/svg/SVGDefsElement.h \
 	trunk/WebCore/svg/SVGDescElement.cpp \
@@ -1998,7 +2094,7 @@ webcore_sources += \
 	trunk/WebCore/svg/SVGTextElement.cpp \
 	trunk/WebCore/svg/SVGTextElement.h \
 	trunk/WebCore/svg/SVGTextPathElement.cpp \
-	trunk/WebCore/svg/SVGTextPathElement.h \
+	rrunk/WebCore/svg/SVGTextPathElement.h \
 	trunk/WebCore/svg/SVGTextPositioningElement.cpp \
 	trunk/WebCore/svg/SVGTextPositioningElement.h \
 	trunk/WebCore/svg/SVGTitleElement.cpp \
@@ -2127,7 +2223,6 @@ webcorees_sources += \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	trunk/WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
 	trunk/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	trunk/WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	trunk/WebCore/platform/posix/FileSystemPOSIX.cpp
 
 # ES
@@ -2160,6 +2255,7 @@ webcorees_sources += \
 	trunk/WebCore/bindings/es/ScriptString.h \
 	trunk/WebCore/bindings/es/ScriptValue.cpp \
 	trunk/WebCore/bindings/es/ScriptValue.h \
+	trunk/WebCore/bindings/es/SerializedScriptValue.h \
 	trunk/WebCore/page/es/DragControllerES.cpp \
 	trunk/WebCore/page/es/EventHandlerES.cpp \
 	trunk/WebCore/page/es/FrameES.cpp \
@@ -2172,6 +2268,7 @@ webcorees_sources += \
 	trunk/WebCore/platform/es/DragDataRef.h \
 	trunk/WebCore/platform/es/DragImageES.cpp \
 	trunk/WebCore/platform/es/DragImageRef.h \
+	trunk/WebCore/platform/es/ImageDecoderES.cpp \
 	trunk/WebCore/platform/es/Language.cpp \
 	trunk/WebCore/platform/es/LocalizedStringsES.cpp \
 	trunk/WebCore/platform/es/MIMETypeRegistryES.cpp \
@@ -2344,7 +2441,7 @@ DerivedSources/CSSGrammar.cpp: $(srcdir)/trunk/WebCore/css/CSSGrammar.y
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
-	$(srcdir)/trunk/WebCore/css/html4.css \
+	$(srcdir)/trunk/WebCore/css/html.css \
 	$(srcdir)/trunk/WebCore/css/quirks.css \
 	$(srcdir)/trunk/WebCore/css/view-source.css \
 	$(srcdir)/trunk/WebCore/css/svg.css \

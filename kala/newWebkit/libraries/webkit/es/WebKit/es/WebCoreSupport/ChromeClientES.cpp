@@ -169,6 +169,7 @@ void ChromeClientES::setResizable(bool)
 }
 
 void ChromeClientES::addMessageToConsole(MessageSource source,
+					 MessageType type,
                                          MessageLevel level,
                                          const String& message,
                                          unsigned int lineNumber,
@@ -257,7 +258,7 @@ IntPoint ChromeClientES::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-PlatformWidget ChromeClientES::platformWindow() const
+PlatformWidget ChromeClientES::platformPageClient() const
 {
     notImplemented();
     return 0;
@@ -273,12 +274,22 @@ void ChromeClientES::scrollRectIntoView(const IntRect&, const ScrollView*) const
     notImplemented();
 }
 
+void ChromeClientES::scrollbarsModeDidChange() const
+{
+    notImplemented();
+}
+
 void ChromeClientES::mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags)
 {
     notImplemented();
 }
 
 void ChromeClientES::setToolTip(const String& tip)
+{
+    notImplemented();
+}
+
+void ChromeClientES::setToolTip(const String&, TextDirection)
 {
     notImplemented();
 }

@@ -35,6 +35,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptObject.h"
 #include "ScriptObjectQuarantine.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

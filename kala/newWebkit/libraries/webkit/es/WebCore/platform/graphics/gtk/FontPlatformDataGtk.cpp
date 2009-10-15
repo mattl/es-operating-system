@@ -32,9 +32,8 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
-#if !PLATFORM(ES)
-#include <gtk/gtk.h>
-#endif
+
+//#include <gtk/gtk.h>
 
 namespace WebCore {
 
@@ -111,10 +110,8 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     cairo_matrix_init_scale(&fontMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
     cairo_matrix_init_identity(&ctm);
 
-#if !PLATFORM(ES)
-    if (GdkScreen* screen = gdk_screen_get_default())
-        options = gdk_screen_get_font_options(screen);
-#endif
+    //if (GdkScreen* screen = gdk_screen_get_default())
+    //    options = gdk_screen_get_font_options(screen);
 
     // gdk_screen_get_font_options() returns NULL if no default options are
     // set, so we always have to check.
@@ -153,10 +150,8 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool b
     static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
     const cairo_font_options_t* options = NULL;
 
-#if !PLATFORM(ES)
-    if (GdkScreen* screen = gdk_screen_get_default())
-        options = gdk_screen_get_font_options(screen);
-#endif
+    //if (GdkScreen* screen = gdk_screen_get_default())
+    //    options = gdk_screen_get_font_options(screen);
 
     // gdk_screen_get_font_options() returns NULL if no default options are
     // set, so we always have to check.
@@ -230,10 +225,8 @@ FontPlatformData::~FontPlatformData()
         m_fallbacks = 0;
     }
 
-    if (m_scaledFont) {
+    if (m_scaledFont)
         cairo_scaled_font_destroy(m_scaledFont);
-        m_scaledFont = 0;
-    }
 }
 
 bool FontPlatformData::isFixedPitch()
@@ -248,13 +241,6 @@ bool FontPlatformData::isFixedPitch()
     return false;
 }
 
-void FontPlatformData::setFont(cairo_t* cr) const
-{
-    ASSERT(m_scaledFont);
-
-    cairo_set_scaled_font(cr, m_scaledFont);
-}
-
 bool FontPlatformData::operator==(const FontPlatformData& other) const
 {
     if (m_pattern == other.m_pattern)
@@ -264,5 +250,12 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
         return false;
     return FcPatternEqual(m_pattern, other.m_pattern);
 }
+
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
 
 }
