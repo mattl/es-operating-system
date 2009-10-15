@@ -118,7 +118,9 @@
 
 namespace WebCore {
 
+#if PLATFORM(ES)
 char* FrameLoader::documentType = "text/html";
+#endif
 
 #if ENABLE(SVG)
 using namespace SVGNames;
@@ -221,7 +223,13 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, "")), SubstituteData()).get());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
+
+#if PLATFORM(ES)
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), documentType, 0, String(), String()));
+#else
+    m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
+#endif
+
     m_provisionalDocumentLoader->finishedLoading();
     begin(KURL(), false);
     end();
@@ -230,10 +238,12 @@ void FrameLoader::init()
     m_didCallImplicitClose = true;
 }
 
+#if PLATFORM(ES)
 void FrameLoader::setDocumentType(char* type)
 {
     documentType = type;
 }
+#endif
 
 void FrameLoader::setDefersLoading(bool defers)
 {
