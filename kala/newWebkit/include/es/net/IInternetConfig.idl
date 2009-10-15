@@ -1,0 +1,135 @@
+/*
+ * Copyright 2008, 2009 Google Inc.
+ * Copyright 2006, 2007 Nintendo Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
+#define NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
+
+#include "es/device/INetworkInterface.idl"
+#include "es/net/IInternetAddress.idl"
+
+module es
+{
+    /**
+     * This interface provides methods for managing network configurations.
+     */
+    interface InternetConfig
+    {
+        /** Adds the specified internet address as a local host address with the
+         * specified prefix to the TCP/IP network subsystem.
+         * @param address the internet address to be registered.
+         * @param prefix length of the prefix.
+         * @see IInternetAddress
+         */
+        void addAddress(in InternetAddress address, in unsigned long prefix);
+
+        /** Gets the internet address of the network interface
+         * corresponding to the specified scope ID.
+         * @param scopeID the scope ID of the network interface.
+         * @return the internet address.
+         */
+        InternetAddress getAddress(in unsigned long scopeID);
+
+        /** Removes the specified internet local host address from the TCP/IP
+         * network subsystem.
+         * @param address the internet address of the network interface.
+         */
+        void removeAddress(in InternetAddress address);
+
+        /** Adds the specified internet address as a router to the TCP/IP
+         * network subsystem.
+         * @param router the internet address of the router.
+         */
+        void addRouter(in InternetAddress router);
+
+        /** Gets the router address from the TCP/IP network subsystem.
+         * @return the internet address of the router.
+         */
+        InternetAddress getRouter();
+
+        /** Removes the specified router from the TCP/IP network subsystem.
+         * @param router the internet address of the router to be removed.
+         */
+        void removeRouter(in InternetAddress router);
+
+        /** Adds the specified network interface to the TCP/IP network
+         * subsystem.
+         * @param stream stream of the network interface to be registered.
+         * @param hrd the hardware type of the network interface (ARPHdr::HRD_*).
+         * @return DIX ID of the network interface.
+         * @see ARPHdr
+         */
+        long addInterface(in NetworkInterface networkInterface);
+
+        /** Gets the network interface corresponding to the specified scope ID.
+         * @param scope the scope ID of the network interface.
+         * @return the network interface.
+         */
+        object getInterface(in long scopeID);
+
+        /** Gets the scope identifier of the specified network interface.
+         * @return this scope identifier, or zero if the specified network
+         *         interface is not registered.
+         */
+        long getScopeID(in NetworkInterface networkInterface);
+
+        /** Removes the specified network interface from the TCP/IP network
+         * subsystem.
+         * @param stream stream of the network interface to be unregistered.
+         */
+        void removeInterface(in NetworkInterface networkInterface);
+
+        /** Adds the specified internet address as a DNS server to the TCP/IP
+        * network subsystem.
+         * @param address the internet address of the DNS server.
+         */
+        void addNameServer(in InternetAddress address);
+
+        /** Gets the DNS server address from the TCP/IP network subsystem.
+         * @return the internet address of the DNS server.
+         */
+        InternetAddress getNameServer();
+
+        /** Removes the specified DNS server from the TCP/IP network subsystem.
+         * @param address the internet address of the DNS server to be removed.
+         */
+        void removeNameServer(in InternetAddress address);
+
+        /** Adds the specified domain with which non-FQDN hostnames are
+        * concatenated before being resolved by the DNS system.
+         * @param address domain name.
+         */
+        void addSearchDomain(in string address);
+
+        /** Gets the first search domain used by the DNS resolver.
+         * @return the first search domain of the DNS server.
+         */
+        string getSearchDomain();
+
+        /** Gets the nth search domain used by the DNS resolver.
+         * @param pos position of search domain in list.
+         * @return search domain in position pos used by the DNS server.
+         */
+        string getSearchDomain(in long pos);
+
+        /** Removes the specified search domain from use by the DNS resolver.
+         * @param address the search domain to be removed.
+         */
+        void removeSearchDomain(in string address);
+    };
+};
+
+#endif // NINTENDO_ES_NET_IINTERNETCONFIG_IDL_INCLUDED
