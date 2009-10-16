@@ -58,9 +58,13 @@
 #include "RenderView.h"
 #include "ReplaceSelectionCommand.h"
 #include "ResourceRequest.h"
+
+#if PLATFORM(ES)
+#include "SecurityOrigin.h"
+#endif
+
 #include "SelectionController.h"
 #include "Settings.h"
-#include "SecurityOrigin.h"
 #include "Text.h"
 #include "htmlediting.h"
 #include "markup.h"
@@ -650,6 +654,14 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
 
     if (isDHTMLDrag)
         dragImage = clipboard->createDragImage(dragImageOffset);
+#if !PLATFORM(ES)
+    else {
+        // This drag operation is not a DHTML drag and may go outside the WebView.
+        // We provide a default set of allowed drag operations that follows from:
+        // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
+        m_sourceDragOperation = (DragOperation)(DragOperationGeneric | DragOperationCopy);
+    }
+#endif
 
     // We allow DHTML/JS to set the drag image, even if its a link, image or text we're dragging.
     // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
