@@ -37,4 +37,9 @@ const char* currentTextBreakLocaleID()
     return "en_us";
 }
 
+const char* currentSearchLocaleID()
+{
+    return "";
+}
+
 }

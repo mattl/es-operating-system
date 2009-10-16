@@ -36,6 +36,11 @@
 #include "ScriptObject.h"
 #include "ScriptObjectQuarantine.h"
 
+// For Line 117, usage of UNUSED_PARAM
+#if PLATFORM(ES)
+#include <wtf/UnusedParam.h>
+#endif
+
 namespace WebCore {
 
 ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u, unsigned g)

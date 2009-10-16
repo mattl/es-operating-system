@@ -28,60 +28,26 @@
  */
 
 #include "config.h"
-#include "ContextMenuClientES.h"
+#include "ImageDecoder.h"
 
-#include "ContextMenu.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-ContextMenuClientES::~ContextMenuClientES()
-{
-}
-
-void ContextMenuClientES::contextMenuDestroyed()
-{
-    delete this;
-}
-
-PlatformMenuDescription ContextMenuClientES::getCustomMenuFromDefaultItems(ContextMenu* menu)
-{
-    return menu->releasePlatformDescription();
-}
-
-void ContextMenuClientES::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data)
 {
     notImplemented();
 }
 
-void ContextMenuClientES::downloadURL(const KURL&)
+bool RGBA32Buffer::hasAlpha() const
+{
+    notImplemented();
+    return false;
+}
+
+NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
     notImplemented();
 }
 
-void ContextMenuClientES::searchWithGoogle(const Frame*)
-{
-    notImplemented();
-}
-
-void ContextMenuClientES::lookUpInDictionary(Frame*)
-{
-    notImplemented();
-}
-
-bool ContextMenuClientES::isSpeaking()
-{
-    notImplemented();
-}
-
-void ContextMenuClientES::speak(const String&)
-{
-    notImplemented();
-}
-
-void ContextMenuClientES::stopSpeaking()
-{
-    notImplemented();
-}
-
-}
+} // namespace WebCore

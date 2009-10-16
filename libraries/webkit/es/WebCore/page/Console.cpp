@@ -40,6 +40,10 @@
 #include "PageGroup.h"
 #include "PlatformString.h"
 
+#if PLATFORM(ES)
+#include <wtf/UnusedParam.h>
+#endif
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include <profiler/Profiler.h>
 #endif

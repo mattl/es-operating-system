@@ -30,8 +30,12 @@
 #define JSGlobalData_h
 
 #include "Collector.h"
+
+#if !PLATFORM(ES)
 #include "ExecutableAllocator.h"
 #include "JITStubs.h"
+#endif
+
 #include "JSValue.h"
 #include "MarkStack.h"
 #include "NumericStrings.h"

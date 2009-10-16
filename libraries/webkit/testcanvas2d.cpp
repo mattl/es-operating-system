@@ -163,9 +163,6 @@ void test(cairo_t* cr)
 
     WTF::initializeThreading();
     
-    WebCore::FrameLoader::setDocumentType("text/html");
-    //FrameLoader::setDocumentType("text/html");
-
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
@@ -181,14 +178,14 @@ void test(cairo_t* cr)
 
     // Create and append the canvas element
     ec = 0;
-    WTF::PassRefPtr<WebCore::HTMLCanvasElement> canvasElement = WTF::static_pointer_cast<WebCore::HTMLCanvasElement>(document->createElement("canvas", ec));
+    WTF::PassRefPtr<WebCore::HTMLCanvasElement> canvasElement = WTF::static_pointer_cast<WebCore::HTMLCanvasElement>(static_cast<WebCore::Document*>(document)->createElement("canvas", ec));
     canvasElement->setWidth(1024);
     canvasElement->setHeight(768);
 
     WebCore::HTMLElement* body = document->body();
     body->appendChild(canvasElement.get(), ec);
 
-    WebCore::CanvasRenderingContext2D* canvasRenderingContext = canvasElement->getContext(WebCore::String::fromUTF8("2d"));
+    WebCore::CanvasRenderingContext2D* canvasRenderingContext = dynamic_cast<WebCore::CanvasRenderingContext2D*>(canvasElement->getContext(WebCore::String::fromUTF8("2d")));
 
     CanvasRenderingContext2D_Impl canvasImpl(canvasRenderingContext);
     

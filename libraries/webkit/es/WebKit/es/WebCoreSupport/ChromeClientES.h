@@ -74,7 +74,7 @@ public:
 
     virtual void setResizable(bool);
 
-    virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID);
+    virtual void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID);
 
     virtual bool canRunBeforeUnloadConfirmPanel();
     virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
@@ -94,13 +94,15 @@ public:
     virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual IntPoint screenToWindow(const IntPoint&) const;
     virtual IntRect windowToScreen(const IntRect&) const;
-    virtual PlatformWidget platformWindow() const;
+    virtual PlatformPageClient platformPageClient() const;
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const;
 
+    virtual void scrollbarsModeDidChange() const;
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
     virtual void setToolTip(const String&);
+    virtual void setToolTip(const String&, TextDirection);
 
     virtual void print(Frame*);
 

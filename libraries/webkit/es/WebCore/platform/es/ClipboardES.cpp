@@ -33,6 +33,8 @@
 #include "Editor.h"
 #include "StringHash.h"
 
+#include <wtf/RefPtr.h>
+
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -80,6 +82,11 @@ HashSet<String> ClipboardES::types() const
 {
     notImplemented();
     return HashSet<String>();
+}
+
+PassRefPtr<FileList> ClipboardES::files() const
+{
+    notImplemented();
 }
 
 void ClipboardES::setDragImage(CachedImage*, const IntPoint&)

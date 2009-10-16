@@ -122,4 +122,9 @@ void InspectorClientES::removeSetting(const String& key)
     notImplemented();
 }
 
+void InspectorClientES::inspectorWindowObjectCleared()
+{
+    notImplemented();
+}
+
 } // namespace WebCore
