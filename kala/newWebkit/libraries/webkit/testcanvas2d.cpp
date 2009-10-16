@@ -163,8 +163,6 @@ void test(cairo_t* cr)
 
     WTF::initializeThreading();
     
-    WebCore::FrameLoader::setDocumentType("text/html");
-
     WebCore::WebViewES* webView = new WebCore::WebViewES;
 
     WebCore::Frame* frame = webView->getMainFrame()->getFrame();
