@@ -39,7 +39,8 @@ target_triplet = @target@
 @POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
 @POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
 @POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
-@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT)
+@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT) \
+@POSIX_TRUE@	nullable$(EXEEXT)
 @POSIX_TRUE@noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = libes++/testsuite
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -54,7 +55,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @POSIX_TRUE@	colorTest$(EXEEXT) list$(EXEEXT) \
 @POSIX_TRUE@	hashtable$(EXEEXT) tree$(EXEEXT) rand$(EXEEXT) \
 @POSIX_TRUE@	smartptr$(EXEEXT) formatter$(EXEEXT) \
-@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT)
+@POSIX_TRUE@	variant$(EXEEXT) testInterfaceList$(EXEEXT) \
+@POSIX_TRUE@	nullable$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am__broker_SOURCES_DIST = broker.cpp
 @POSIX_TRUE@am_broker_OBJECTS = broker.$(OBJEXT)
@@ -86,6 +88,11 @@ am__list_SOURCES_DIST = list.cpp
 list_OBJECTS = $(am_list_OBJECTS)
 list_LDADD = $(LDADD)
 list_DEPENDENCIES = ../libessup++.a
+am__nullable_SOURCES_DIST = nullable.cpp
+@POSIX_TRUE@am_nullable_OBJECTS = nullable.$(OBJEXT)
+nullable_OBJECTS = $(am_nullable_OBJECTS)
+nullable_LDADD = $(LDADD)
+nullable_DEPENDENCIES = ../libessup++.a
 am__rand_SOURCES_DIST = rand.cpp
 @POSIX_TRUE@am_rand_OBJECTS = rand.$(OBJEXT)
 rand_OBJECTS = $(am_rand_OBJECTS)
@@ -123,14 +130,14 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(broker_SOURCES) $(collection_SOURCES) $(colorTest_SOURCES) \
 	$(formatter_SOURCES) $(hashtable_SOURCES) $(list_SOURCES) \
-	$(rand_SOURCES) $(smartptr_SOURCES) \
+	$(nullable_SOURCES) $(rand_SOURCES) $(smartptr_SOURCES) \
 	$(testInterfaceList_SOURCES) $(tree_SOURCES) \
 	$(variant_SOURCES)
 DIST_SOURCES = $(am__broker_SOURCES_DIST) \
 	$(am__collection_SOURCES_DIST) $(am__colorTest_SOURCES_DIST) \
 	$(am__formatter_SOURCES_DIST) $(am__hashtable_SOURCES_DIST) \
-	$(am__list_SOURCES_DIST) $(am__rand_SOURCES_DIST) \
-	$(am__smartptr_SOURCES_DIST) \
+	$(am__list_SOURCES_DIST) $(am__nullable_SOURCES_DIST) \
+	$(am__rand_SOURCES_DIST) $(am__smartptr_SOURCES_DIST) \
 	$(am__testInterfaceList_SOURCES_DIST) $(am__tree_SOURCES_DIST) \
 	$(am__variant_SOURCES_DIST)
 ETAGS = etags
@@ -258,6 +265,7 @@ AM_CPPFLAGS = \
 @POSIX_TRUE@formatter_SOURCES = formatter.cpp
 @POSIX_TRUE@variant_SOURCES = variant.cpp
 @POSIX_TRUE@testInterfaceList_SOURCES = testInterfaceList.cpp
+@POSIX_TRUE@nullable_SOURCES = nullable.cpp
 all: all-am
 
 .SUFFIXES:
@@ -313,6 +321,9 @@ hashtable$(EXEEXT): $(hashtable_OBJECTS) $(hashtable_DEPENDENCIES)
 list$(EXEEXT): $(list_OBJECTS) $(list_DEPENDENCIES) 
 	@rm -f list$(EXEEXT)
 	$(CXXLINK) $(list_OBJECTS) $(list_LDADD) $(LIBS)
+nullable$(EXEEXT): $(nullable_OBJECTS) $(nullable_DEPENDENCIES) 
+	@rm -f nullable$(EXEEXT)
+	$(CXXLINK) $(nullable_OBJECTS) $(nullable_LDADD) $(LIBS)
 rand$(EXEEXT): $(rand_OBJECTS) $(rand_DEPENDENCIES) 
 	@rm -f rand$(EXEEXT)
 	$(CXXLINK) $(rand_OBJECTS) $(rand_LDADD) $(LIBS)
@@ -341,6 +352,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/formatter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hashtable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nullable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartptr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testInterfaceList.Po@am__quote@
