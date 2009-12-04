@@ -11,6 +11,7 @@ use Web::Scraper;
 
 my $res = scraper {
     process 'pre.idl', 'idl[]' => 'TEXT';
+    process 'code.idl-code', 'idl[]' => 'TEXT';
     result 'idl';
 }->scrape(URI->new(shift));
 
@@ -20,9 +21,9 @@ while (my $def = shift(@$res)) {
         next;
     }
     # Ignore snippets
-    if (index($def, "interface") == -1) {
-        next;
-    }
+    # if (index($def, "interface") == -1) {
+    #     next;
+    # }
     # Ignore examples
     if (0 <= index($def, "interface Example") && 0 <= index($def, "// this is an IDL definition")) {
         next;
