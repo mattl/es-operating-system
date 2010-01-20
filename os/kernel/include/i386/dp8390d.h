@@ -268,10 +268,10 @@ public:
 
     bool getPromiscuousMode();
     void setPromiscuousMode(bool on);
-    int addMulticastAddress(const u8 mac[6]);
-    int removeMulticastAddress(const u8 mac[6]);
+    int addMulticastAddress(const u8* mac);
+    int removeMulticastAddress(const u8* mac);
 
-    void getMacAddress(u8 mac[6]);
+    int getMacAddress(u8* mac);
     bool getLinkState();
 
     unsigned long long getInOctets()

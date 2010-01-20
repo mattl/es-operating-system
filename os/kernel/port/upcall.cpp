@@ -556,13 +556,23 @@ copyIn(UpcallRecord* record)
         *argp++ = count;
         paramp += 2;
         break;
-    case Reflect::kSequence: // XXX
+    case Reflect::kSequence:
         // int op(xxx* buf, int len, ...);
-        count = returnType.getSize() * paramp[1];   // XXX check count
-        esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-        *argp++ = (int) esp;
-        *argp++ = paramp[1];
-        paramp += 2;
+        if ((count = returnType.getSize()) == 0)
+        {
+            Reflect::Sequence seq(returnType);
+            count = seq.getType().getSize() * paramp[1];   // XXX check count
+            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+            *argp++ = (int) esp;
+            *argp++ = paramp[1];
+            paramp += 2;
+        }
+        else
+        {
+            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+            *argp++ = (int) esp;
+            ++paramp;
+        }
         break;
     case Reflect::kArray:
         // void op(struct* buf, ...);
@@ -638,12 +648,23 @@ copyIn(UpcallRecord* record)
             break;
         case Reflect::kSequence:
             // xxx* buf, int len, ...
-            count = type.getSize() * paramp[1]; // XXX check count
-            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
-            *argp++ = (int) esp;
-            *argp++ = paramp[1];
-            paramp += 2;
+            if ((count = type.getSize()) == 0)
+            {
+                Reflect::Sequence seq(type);
+                count = seq.getType().getSize() * paramp[1]; // XXX check count
+                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
+                *argp++ = (int) esp;
+                *argp++ = paramp[1];
+                paramp += 2;
+            }
+            else
+            {
+                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+                write(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
+                *argp++ = (int) esp;
+                ++paramp;
+            }
             break;
         case Reflect::kArray:        // xxx[x] buf, ...
             count = type.getSize();
@@ -741,13 +762,26 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
         break;
     case Reflect::kSequence:
         // int op(xxx* buf, int len, ...);
-        count = returnType.getSize() * paramp[1];
-        esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-        if (0 < rc && rc <= paramp[1])
+        if ((count = returnType.getSize()) == 0)
         {
-            read(*reinterpret_cast<void**>(paramp), returnType.getSize() * rc, reinterpret_cast<long long>(esp));
+            Reflect::Sequence seq(returnType);
+            count = seq.getType().getSize() * paramp[1];   // XXX check count
+            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+            if (0 < rc && rc <= paramp[1])
+            {
+                read(*reinterpret_cast<void**>(paramp), seq.getType().getSize() * rc, reinterpret_cast<long long>(esp));
+            }
+            paramp += 2;
         }
-        paramp += 2;
+        else
+        {
+            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+            if (0 < rc)
+            {
+                read(*reinterpret_cast<void**>(paramp), count, reinterpret_cast<long long>(esp));
+            }
+            ++paramp;
+        }
         break;
     case Reflect::kArray:
         // void op(struct* buf, ...);
@@ -808,9 +842,18 @@ copyOut(UpcallRecord* record, const char*& iid, bool stringIsInterfaceName)
             break;
         case Reflect::kSequence:
             // xxx* buf, int len, ...
-            count = type.getSize() * paramp[1];
-            esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
-            paramp += 2;
+            if ((count = type.getSize()) == 0)
+            {
+                Reflect::Sequence seq(type);
+                count = seq.getType().getSize() * paramp[1]; // XXX check count
+                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+                paramp += 2;
+            }
+            else
+            {
+                esp -= (count + sizeof(int) - 1) & ~(sizeof(int) - 1);
+                ++paramp;
+            }
             break;
         case Reflect::kArray:        // xxx[x] buf, ...
             count = type.getSize();

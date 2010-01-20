@@ -275,13 +275,17 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         ptr = *reinterpret_cast<void**>(paramp);
         *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
         ++paramp;
-        if (!isValid(paramp, sizeof(int32_t)))
+        if ((count = returnType.getSize()) == 0)
         {
-            throw SystemException<EFAULT>();
+            if (!isValid(paramp, sizeof(int32_t)))
+            {
+                throw SystemException<EFAULT>();
+            }
+            Reflect::Sequence seq(returnType);
+            *argp++ = Any(static_cast<int32_t>(*paramp));
+            count = *paramp * seq.getType().getSize();
+            ++paramp;
         }
-        *argp++ = Any(static_cast<int32_t>(*paramp));
-        count = *paramp * returnType.getSize();
-        ++paramp;
         break;
     case Reflect::kArray:
         // void op(xxx[x] buf, ...);
@@ -321,7 +325,7 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
         case Reflect::kLongLong:
         case Reflect::kUnsignedLongLong:
         case Reflect::kDouble:
-        case Reflect::kSequence:
+        case Reflect::kSequence:    // TODO: stackBytes is 4 for a fixed length sequence
             stackBytes = 8;
             break;
         case Reflect::kAny:
@@ -435,9 +439,13 @@ systemCall(void** self, unsigned methodNumber, va_list paramv, void** base)
             ptr = *reinterpret_cast<void**>(paramp);
             *argp++ = Any(reinterpret_cast<intptr_t>(ptr));
             ++paramp;
-            *argp = Any(static_cast<int32_t>(*paramp));
-            count = *paramp * type.getSize();
-            ++paramp;
+            if ((count = type.getSize()) == 0)
+            {
+                Reflect::Sequence seq(type);
+                *argp = Any(static_cast<int32_t>(*paramp));
+                count = *paramp * seq.getType().getSize();
+                ++paramp;
+            }
             break;
         case Reflect::kArray:        // xxx[x] buf, ...
             ptr = *reinterpret_cast<void**>(paramp);

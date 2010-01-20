@@ -858,6 +858,7 @@ public:
         *argp++ = Any(exported->object);
 
         // Reserve space from rpcStack to store result
+        int count;
         void* resultPtr = 0;
         Reflect::Type returnType = method.getReturnType();
         switch (returnType.getType())
@@ -876,9 +877,19 @@ public:
             break;
         case Reflect::kSequence:
             // int op(xxx* buf, int len, ...);
-            resultPtr = RpcStack::alloc(returnType.getSize() * static_cast<int32_t>(argp[1]));
-            *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
-            ++argp;
+            if ((count = returnType.getSize()) == 0)
+            {
+                Reflect::Sequence seq(returnType);
+                count = seq.getType().getSize() * static_cast<int32_t>(argp[1]);
+                resultPtr = RpcStack::alloc(count);
+                *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
+                ++argp;
+            }
+            else
+            {
+                resultPtr = RpcStack::alloc(count);
+                *argp++ = Any(reinterpret_cast<intptr_t>(resultPtr));
+            }
             break;
         case Reflect::kArray:
             // void op(xxx[x] buf, ...);
@@ -931,8 +942,16 @@ public:
                 break;
             case Reflect::kSequence:
                 // xxx* buf, int len, ...
-                size = type.getSize() * static_cast<uint32_t>(argp[1]);
-                *argp++ = Any(reinterpret_cast<intptr_t>(data));
+                if ((size = type.getSize()) == 0)
+                {
+                    Reflect::Sequence seq(type);
+                    size = seq.getType().getSize() * static_cast<uint32_t>(argp[1]);
+                    *argp++ = Any(reinterpret_cast<intptr_t>(data));
+                }
+                else
+                {
+                    *argp = Any(reinterpret_cast<intptr_t>(data));
+                }
                 data += size;
                 break;
             case Reflect::kString:
@@ -1026,9 +1045,12 @@ public:
             }
             break;
         case Reflect::kSequence:
+        {
             res.result = apply(argc, argv, (int32_t (*)()) ((*object)[methodNumber]));
-            resultSize = sizeof(returnType.getSize() * static_cast<int32_t>(res.result));  // TODO: maybe set just the # of elements
+            Reflect::Sequence seq(returnType);
+            resultSize = seq.getType().getSize() * static_cast<int32_t>(res.result);  // TODO: maybe set just the # of elements
             break;
+        }
         case Reflect::kObject:  // TODO check Object and others
             res.result = apply(argc, argv, (Object* (*)()) ((*object)[methodNumber]));
             break;
@@ -1823,6 +1845,8 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     int fdv[8];
     int* fdp = fdv;
 
+    int count;
+
     // In the following implementation, we assume no out or inout attribute is
     // used for parameters.
     // Set up parameters
@@ -1837,11 +1861,18 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
     case Reflect::kAny:
         // Any op(void* buf, int len, ...);
         // FALL THROUGH
-    case Reflect::kSequence:
     case Reflect::kString:
         // const char* op(xxx* buf, int len, ...);
         *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
         *argp++ = Any(va_arg(ap, int32_t));
+        break;
+    case Reflect::kSequence:
+        // const int op(xxx* buf, int len, ...);
+        *argp++ = Any(reinterpret_cast<intptr_t>(va_arg(ap, void*)));
+        if (returnType.getSize() == 0)
+        {
+            *argp++ = Any(va_arg(ap, int32_t));
+        }
         break;
     case Reflect::kArray:
         // void op(xxx[x] buf, ...);
@@ -1888,9 +1919,14 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
         case Reflect::kSequence:
             // xxx* buf, int len, ...
             iop->iov_base = va_arg(ap, void*);
-            *argp++ = Any(reinterpret_cast<intptr_t>(iop->iov_base));
-            *argp = Any(va_arg(ap, int32_t));
-            iop->iov_len = type.getSize() * static_cast<int32_t>(*argp);
+            *argp = Any(reinterpret_cast<intptr_t>(iop->iov_base));
+            if ((count = type.getSize()) == 0)
+            {
+                Reflect::Sequence seq(type);
+                *++argp = Any(va_arg(ap, int32_t));
+                count = seq.getType().getSize() * static_cast<int32_t>(*argp);
+            }
+            iop->iov_len = count;
             ++iop;
             break;
         case Reflect::kString:
@@ -2110,8 +2146,9 @@ long long callRemote(const Capability& cap, unsigned methodNumber, va_list ap, R
                 rc = static_cast<int32_t>(res->result);
                 if (0 < rc)
                 {
+                    Reflect::Sequence seq(returnType);
                     memmove(reinterpret_cast<void*>(static_cast<intptr_t>(rpcmsg.argv[1])), res->getData(),
-                            returnType.getSize() * rc);
+                            seq.getType().getSize() * rc);
                 }
                 break;
             case Reflect::kObject:

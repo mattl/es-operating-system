@@ -20,7 +20,7 @@
 
 module es
 {
-    typedef octet Mac[6];
+    typedef sequence<unsigned byte, 6> Mac;
 
     interface NetworkInterface
     {

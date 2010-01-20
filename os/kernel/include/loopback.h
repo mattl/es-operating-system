@@ -42,13 +42,14 @@ public:
     }
 
     // INetworkInterface
-    int addMulticastAddress(const unsigned char mac[6])
+    int addMulticastAddress(const unsigned char* mac)
     {
         return 0;
     }
-    void getMacAddress(unsigned char mac[6])
+    int getMacAddress(unsigned char* mac)
     {
         memset(mac, 0, 6);
+        return 6;
     }
     int getMTU()
     {
@@ -114,7 +115,7 @@ public:
     {
         return es::NetworkInterface::Loopback;
     }
-    int removeMulticastAddress(const unsigned char mac[6])
+    int removeMulticastAddress(const unsigned char* mac)
     {
         return 0;
     }

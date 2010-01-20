@@ -72,10 +72,10 @@ public:
     bool getPromiscuousMode();
     void setPromiscuousMode(bool on);
 
-    int addMulticastAddress(const unsigned char macaddr[6]);
-    int removeMulticastAddress(const unsigned char macaddr[6]);
+    int addMulticastAddress(const unsigned char* macaddr);
+    int removeMulticastAddress(const unsigned char* macaddr);
 
-    void getMacAddress(unsigned char macaddr[6]);
+    int getMacAddress(unsigned char* macaddr);
 
     bool getLinkState();
 

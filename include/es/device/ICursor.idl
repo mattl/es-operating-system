@@ -20,8 +20,6 @@
 
 module es
 {
-    typedef unsigned long Pattern[32];
-
     /**
      * This interface provides methods for managing a cursor.
      */
@@ -56,7 +54,7 @@ module es
          * @param yHotSpot the positive offset of this cursor hotspot in y-direction.
          * The offset is measured from the top of this cursor.
          */
-        void setPattern(in Pattern data, in Pattern mask,
+        void setPattern(in sequence<unsigned long, 32> data, in sequence<unsigned long, 32> mask,
                         in unsigned short xHotSpot, in unsigned short yHotSpot);
     };
 };

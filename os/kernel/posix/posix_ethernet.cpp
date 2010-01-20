@@ -266,7 +266,7 @@ setPromiscuousMode(bool on)
 }
 
 int Tap::
-addMulticastAddress(const unsigned char macaddr[6])
+addMulticastAddress(const unsigned char* macaddr)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -284,7 +284,7 @@ addMulticastAddress(const unsigned char macaddr[6])
 }
 
 int Tap::
-removeMulticastAddress(const unsigned char macaddr[6])
+removeMulticastAddress(const unsigned char* macaddr)
 {
     Synchronized<es::Monitor*> method(monitor);
 
@@ -301,10 +301,11 @@ removeMulticastAddress(const unsigned char macaddr[6])
     return ioctl(sd, SIOCDELMULTI, &ifr);
 }
 
-void Tap::
+int Tap::
 getMacAddress(unsigned char* mac)
 {
     memmove(mac, this->mac, 6);
+    return 6;
 }
 
 bool Tap::

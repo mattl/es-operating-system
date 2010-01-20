@@ -579,12 +579,13 @@ removeMulticastAddress(const u8 macaddr[6])
     return 0;
 }
 
-void Dp8390d::
-getMacAddress(u8 mac[6])
+int Dp8390d::
+getMacAddress(u8* mac)
 {
     Synchronized<es::Monitor*> method(monitor);
 
     memmove(mac, this->mac, sizeof(this->mac));
+    return 6;
 }
 
 bool Dp8390d::
