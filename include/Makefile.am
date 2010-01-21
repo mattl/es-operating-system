@@ -15,10 +15,10 @@ es/object.h : es/object.idl
 else !ES
 
 %.h : %.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
+	../esidl/esidl -isystem $(srcdir) -include es/object.idl -namespace es -object Object $<
 
 es/object.h : es/object.idl
-	PATH=../esidl:$(PATH) ../esidl/esidl -isystem $(srcdir) -object Object $<
+	../esidl/esidl -isystem $(srcdir) -object Object $<
 
 endif !ES
 
