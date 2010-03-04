@@ -191,20 +191,20 @@ cd ../..
 
 # PCRE
 cd src
-if [ ! -f pcre-7.8.tar.bz2 ]; 
+if [ ! -f pcre-8.01.tar.bz2 ]; 
 then
-	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.8.tar.bz2
-	[ $? != 0 ] && manual_input "wget ftp" "pcre-7.8.tar.bz2"
+	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.01.tar.bz2
+	[ $? != 0 ] && manual_input "wget ftp" "pcre-8.01.tar.bz2"
 fi
-rm -rf pcre-7.8
-tar -jxf pcre-7.8.tar.bz2
-patch -p0 -d . < ../trunk/patches/pcre-7.8.patch
+rm -rf pcre-8.01
+tar -jxf pcre-8.01.tar.bz2
+patch -p0 -d . < ../trunk/patches/pcre-8.01.patch
 cd ../opt
 mkdir -p pcre
 cd pcre
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-7.8.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-8.01.patch -newer Makefile -print`" ];
 then
-	../../src/pcre-7.8/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --program-prefix=es-
+	../../src/pcre-8.01/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --program-prefix=es-
 	make
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus
