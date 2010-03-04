@@ -31,5 +31,6 @@ EXTRA_DIST = \
 	patches/pcre-7.1.patch \
 	patches/pcre-7.2.patch \
 	patches/pcre-7.8.patch \
+	patches/pcre-8.01.patch \
 	patches/pixman-0.15.10.patch
 

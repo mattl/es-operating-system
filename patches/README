@@ -25,10 +25,10 @@ original software.
     usage: $ tar -zxvf newlib-1.16.0.tar.gz
            $ patch -p0 -d . < newlib-1.16.0.patch
 
-- PCRE - Perl Compatible Regular Expressions library 7.8 (pcre-7.8.patch)
+- PCRE - Perl Compatible Regular Expressions library 8.01 (pcre-8.01.patch)
     http://www.pcre.org/
-    usage: $ tar -zxvf pcre-7.8.tar.gz
-           $ patch -p0 -d . < pcre-7.8.patch
+    usage: $ tar -zxvf pcre-8.01.tar.gz
+           $ patch -p0 -d . < pcre-8.01.patch
 
 - FreeType 2.3.5 (freetype-2.3.5.patch)
     http://www.freetype.org/
