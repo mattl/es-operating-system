@@ -137,7 +137,7 @@ public:
     {
         try
         {
-            return hashtable.get(iid).meta.getQualifiedName();
+            return hashtable.get(iid).meta.getMetaData();
         }
         catch (...)
         {

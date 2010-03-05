@@ -608,10 +608,10 @@ class InterfaceConstructor : public Code
     ObjectValue*             constructor;
     FormalParameterList*     arguments;
     InterfacePrototypeValue* prototype;
-    const char*              iid;
+    std::string              iid;
 
 public:
-    InterfaceConstructor(ObjectValue* object, const char* iid) :
+    InterfaceConstructor(ObjectValue* object, std::string iid) :
         constructor(object),
         arguments(new FormalParameterList),
         prototype(new InterfacePrototypeValue),
@@ -622,7 +622,7 @@ public:
         object->setParameterList(arguments);
         object->setScope(getGlobal());
 
-        Reflect::Interface interface = es::getInterface(iid);
+        Reflect::Interface interface = es::getInterface(iid.c_str());
         // PRINTF("interface: %s\n", interface.getName().c_str());
         for (int i = 0; i < interface.getMethodCount(); ++i)
         {
@@ -652,7 +652,7 @@ public:
                 if (method.isOperation())
                 {
                     ObjectValue* function = new ObjectValue;
-                    function->setCode(new InterfaceMethodCode(function, iid, i));
+                    function->setCode(new InterfaceMethodCode(function, iid.c_str(), i));
                     prototype->put(method.getName(), function);
 #if 0
                     if (method.isIndexGetter())
@@ -680,7 +680,7 @@ public:
                 else
                 {
                     // method is an attribute
-                    AttributeValue* attribute = new AttributeValue(iid);
+                    AttributeValue* attribute = new AttributeValue(iid.c_str());
                     if (method.isGetter())
                     {
                         attribute->addGetter(i);
@@ -720,7 +720,7 @@ public:
         if (constructor->hasInstance(getThis()))
         {
             // Constructor
-            Object* constructor = es::getConstructor(iid);
+            Object* constructor = es::getConstructor(iid.c_str());
             if (!constructor)
             {
                 throw getErrorInstance("TypeError");
@@ -742,7 +742,7 @@ public:
 
             Object* object;
             object = self->getObject();
-            if (!object || !(object = reinterpret_cast<Object*>(object->queryInterface(iid))))
+            if (!object || !(object = reinterpret_cast<Object*>(object->queryInterface(iid.c_str()))))
             {
                 // We should throw an error in case called by a new expression.
                 throw getErrorInstance("TypeError");
