@@ -1,5 +1,5 @@
 /*
- * Copyright 2008, 2009 Google Inc.
+ * Copyright 2008-2010 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,7 +184,9 @@ char* skipSpace(const char* str)
         "\xe2\x80\x8a",
         "\xe2\x80\xaf",
         "\xe2\x81\x9f",
-        "\xe3\x80\x80"
+        "\xe3\x80\x80",
+        // BOM
+        "\xef\xbb\xbf"
     };
 
     while (char c = *str)
@@ -192,27 +194,25 @@ char* skipSpace(const char* str)
         if (strchr(" \t\v\f\n\r", c))
         {
             ++str;
+            continue;
         }
-        else
+        int i;
+        for (i = 0; i < sizeof(rgsp) / sizeof(rgsp[0]); ++i)
         {
-            int i;
-            for (i = 0; i < sizeof(rgsp)/sizeof(rgsp[0]); ++i)
+            const char* sp = rgsp[i];
+            size_t len = strlen(sp);
+            if (strncmp(str, sp, len) == 0)
             {
-                const char* sp = rgsp[i];
-                size_t len = strlen(sp);
-                if (strncmp(str, sp, len) == 0)
-                {
-                    str += len;
-                    break;
-                }
+                str += len;
+                break;
             }
-            if (sizeof(rgsp)/sizeof(rgsp[0]) <= i)
-            {
-                return (char*) str;
-            }
+        }
+        if (sizeof(rgsp) / sizeof(rgsp[0]) <= i)
+        {
+            break;
         }
     }
-    return (char*) str;
+    return const_cast<char*>(str);
 }
 
 int report(const char* spec, ...)
