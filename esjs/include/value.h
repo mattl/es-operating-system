@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Google Inc.
+ * Copyright 2008-2010 Google Inc.
  * Copyright 2007 Nintendo Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -820,27 +820,28 @@ public:
 
     static double toNumber(const std::string& value)
     {
-        double number;
         const char* ptr = value.c_str();
         ptr = skipSpace(ptr);
-        char* end;
-        if (strncasecmp(ptr, "0x", 2) == 0)
+        const char* uptr = ptr;
+        bool negative = (*ptr == '-');
+        if (negative || *ptr == '+')
         {
-            ptr += 2;
-            number = strtoll(ptr, &end, 16);
+            ++uptr;
         }
-        else if (strncmp(ptr, "Infinity", 8) == 0)
+        char* end;
+        double number;
+        if (strncmp(uptr, "Infinity", 8) == 0)
         {
-            end = const_cast<char*>(ptr) + 8;
-            number = INFINITY;
+            end = const_cast<char*>(uptr) + 8;
+            number = negative ? -INFINITY : INFINITY;
         }
         else
         {
             number = strtod(ptr, &end);
-        }
-        if (end == ptr)
-        {
-            return NAN;
+            if (end == ptr)
+            {
+                return NAN;
+            }
         }
         end = skipSpace(end);
         if (*end != 0)
