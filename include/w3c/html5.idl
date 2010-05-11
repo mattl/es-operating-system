@@ -37,9 +37,6 @@ module html5 {
 
   typedef sequence<MessagePort> MessagePortArray;
 
-  // XXX
-  typedef any Date;
-
   interface HTMLCollection {
     readonly attribute unsigned long length;
     getter Element item(in unsigned long index);
