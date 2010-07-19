@@ -1,4 +1,5 @@
 /*
+ * Copyright 2010 Esrille Inc.
  * Copyright 2008 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -22,22 +23,22 @@
  * http://www.unicode.org/Public/4.1.0/ucd/CaseFolding.txt
  */
 
-#include <es.h>
 #include <es/utf.h>
+#include <assert.h>
 #include <stdlib.h>
 
 //
 // UTF-8 <==> UTF-32
 //
 
-char* utf8to32(const char* utf8, u32* utf32)
+char* utf8to32(const char* utf8, uint32_t* utf32)
 {
-    u32      u = 0;
-    u8       c;
+    uint32_t u = 0;
+    uint8_t  c;
     unsigned len;
     unsigned i;
 
-    c = (u8) *utf8;
+    c = (uint8_t) *utf8;
     if (c != '\0')
     {
         ++utf8;
@@ -70,7 +71,7 @@ char* utf8to32(const char* utf8, u32* utf32)
     for (i = 0; i < len; ++i)
     {
         u <<= 6;
-        c = (u8) *utf8++;
+        c = (uint8_t) *utf8++;
         if ((c & 0xc0u) != 0x80u)
         {
             return NULL;
@@ -109,7 +110,7 @@ char* utf8to32(const char* utf8, u32* utf32)
     return (char*) utf8;
 }
 
-char* utf32to8(u32 utf32, char* utf8)
+char* utf32to8(uint32_t utf32, char* utf8)
 {
     int len;
 
@@ -150,7 +151,7 @@ char* utf32to8(u32 utf32, char* utf8)
     return utf8;
 }
 
-size_t utf32to8len(u32 utf32)
+size_t utf32to8len(uint32_t utf32)
 {
     if (0xD800 <= utf32 && utf32 <= 0xDFFF) // Surrogate Area
     {
@@ -179,11 +180,11 @@ size_t utf32to8len(u32 utf32)
 // UTF-16 <==> UTF-32
 //
 
-u16* utf16to32(const u16* utf16, u32* utf32)
+uint16_t* utf16to32(const uint16_t* utf16, uint32_t* utf32)
 {
-    u16  w1;
-    u16  w2;
-    u32  u = 0;
+    uint16_t  w1;
+    uint16_t  w2;
+    uint32_t  u = 0;
 
     w1 = *utf16;
     if (w1 != 0)
@@ -213,10 +214,10 @@ u16* utf16to32(const u16* utf16, u32* utf32)
     }
 
     *utf32 = u;
-    return (u16*) utf16;
+    return (uint16_t*) utf16;
 }
 
-u16* utf32to16(u32 utf32, u16* utf16)
+uint16_t* utf32to16(uint32_t utf32, uint16_t* utf16)
 {
     if (0xD800 <= utf32 && utf32 <= 0xDFFF) // Surrogate Area
     {
@@ -225,15 +226,15 @@ u16* utf32to16(u32 utf32, u16* utf16)
 
     if (utf32 < 0x10000)
     {
-        *utf16++ = (u16) utf32;
+        *utf16++ = (uint16_t) utf32;
     }
     else if (utf32 <= 0x10FFFF)
     {
-        u16 w1 = 0xD800;
-        u16 w2 = 0xDC00;
+        uint16_t w1 = 0xD800;
+        uint16_t w2 = 0xDC00;
 
         utf32 -= 0x10000;
-        ASSERT(utf32 <= 0xFFFFF);
+        assert(utf32 <= 0xFFFFF);
         w1 |= (utf32 >> 10u);
         w2 |= (utf32 & 0x3ffu);
         *utf16++ = w1;
@@ -248,8 +249,8 @@ u16* utf32to16(u32 utf32, u16* utf16)
 
 typedef struct Folding
 {
-    u32 code;
-    u32 mapping;
+    uint32_t code;
+    uint32_t mapping;
 } Folding;
 
 static Folding CommonCase[] =
@@ -2055,8 +2056,8 @@ static Folding TurkicCase[] =
 
 typedef struct FullFolding
 {
-    u32 code;
-    u32 mapping[3];
+    uint32_t code;
+    uint32_t mapping[3];
 } FullFolding;
 
 static FullFolding FullCase[] =
@@ -2167,8 +2168,8 @@ static FullFolding FullCase[] =
 
 static int Compare(const void* key, const void* elm)
 {
-    u32 utf32 = *(const u32*) key;
-    u32 code = ((const Folding*) elm)->code;
+    uint32_t utf32 = *(const uint32_t*) key;
+    uint32_t code = ((const Folding*) elm)->code;
 
     if (utf32 == code)
     {
@@ -2179,8 +2180,8 @@ static int Compare(const void* key, const void* elm)
 
 static int CompareMapping(const void* key, const void* elm)
 {
-    u32 utf32 = *(const u32*) key;
-    u32 mapping = ((const Folding*) elm)->mapping;
+    uint32_t utf32 = *(const uint32_t*) key;
+    uint32_t mapping = ((const Folding*) elm)->mapping;
 
     if (utf32 == mapping)
     {
@@ -2189,16 +2190,16 @@ static int CompareMapping(const void* key, const void* elm)
     return (utf32 < mapping) ? -1 : 1;
 }
 
-u32 utftolower(u32 utf32)
+uint32_t utftolower(uint32_t utf32)
 {
     Folding* f;
 
-    f = bsearch(&utf32, CommonCase, sizeof CommonCase / sizeof(Folding), sizeof(Folding), Compare);
+    f = (Folding*) bsearch(&utf32, CommonCase, sizeof CommonCase / sizeof(Folding), sizeof(Folding), Compare);
     if (f)
     {
         return f->mapping;
     }
-    f = bsearch(&utf32, SimpleCase, sizeof SimpleCase / sizeof(Folding), sizeof(Folding), Compare);
+    f = (Folding*) bsearch(&utf32, SimpleCase, sizeof SimpleCase / sizeof(Folding), sizeof(Folding), Compare);
     if (f)
     {
         return f->mapping;
@@ -2206,17 +2207,17 @@ u32 utftolower(u32 utf32)
     return utf32;
 }
 
-u32 utftoupper(u32 utf32)
+uint32_t utftoupper(uint32_t utf32)
 {
     Folding* f;
 
-    f = bsearch(&utf32, CommonCaseInMappingOrder, sizeof CommonCaseInMappingOrder / sizeof(Folding), sizeof(Folding), CompareMapping);
+    f = (Folding*) bsearch(&utf32, CommonCaseInMappingOrder, sizeof CommonCaseInMappingOrder / sizeof(Folding), sizeof(Folding), CompareMapping);
     if (f)
     {
         return f->code;
     }
     // SimpleCase is sorted according to mapping field.
-    f = bsearch(&utf32, SimpleCase, sizeof SimpleCase / sizeof(Folding), sizeof(Folding), CompareMapping);
+    f = (Folding*) bsearch(&utf32, SimpleCase, sizeof SimpleCase / sizeof(Folding), sizeof(Folding), CompareMapping);
     if (f)
     {
         return f->code;
@@ -2224,7 +2225,7 @@ u32 utftoupper(u32 utf32)
     return utf32;
 }
 
-int utf16cmp(const u16* a, const u16* b)
+int utf16cmp(const uint16_t* a, const uint16_t* b)
 {
     for (; *a == *b; ++a, ++b)
     {
@@ -2236,12 +2237,12 @@ int utf16cmp(const u16* a, const u16* b)
     return (*a < *b) ? -1 : 1;
 }
 
-int utf16icmp(const u16* a, const u16* b)
+int utf16icmp(const uint16_t* a, const uint16_t* b)
 {
     for (;;)
     {
-        u16 ia = utftolower(*a);
-        u16 ib = utftolower(*b);
+        uint16_t ia = utftolower(*a);
+        uint16_t ib = utftolower(*b);
         if (ia != ib)
         {
             return (ia < ib) ? -1 : 1;
@@ -2256,7 +2257,7 @@ int utf16icmp(const u16* a, const u16* b)
     return 0;
 }
 
-int utf16ncmp(const u16* a, const u16* b, size_t len)
+int utf16ncmp(const uint16_t* a, const uint16_t* b, size_t len)
 {
     while (0 < len--)
     {
@@ -2274,12 +2275,12 @@ int utf16ncmp(const u16* a, const u16* b, size_t len)
     return 0;
 }
 
-int utf16nicmp(const u16* a, const u16* b, size_t len)
+int utf16nicmp(const uint16_t* a, const uint16_t* b, size_t len)
 {
     while (0 < len--)
     {
-        u16 ia = utftolower(*a);
-        u16 ib = utftolower(*b);
+        uint16_t ia = utftolower(*a);
+        uint16_t ib = utftolower(*b);
         if (ia != ib)
         {
             return (ia < ib) ? -1 : 1;
@@ -2294,9 +2295,9 @@ int utf16nicmp(const u16* a, const u16* b, size_t len)
     return 0;
 }
 
-u16* utf16cpy(u16* a, const u16* b)
+uint16_t* utf16cpy(uint16_t* a, const uint16_t* b)
 {
-    u16* s = a;
+    uint16_t* s = a;
     while ((*s++ = *b++) != 0)
     {
         ;
@@ -2304,9 +2305,9 @@ u16* utf16cpy(u16* a, const u16* b)
     return a;
 }
 
-u16* utf16ncpy(u16* a, const u16* b, size_t len)
+uint16_t* utf16ncpy(uint16_t* a, const uint16_t* b, size_t len)
 {
-    u16* s = a;
+    uint16_t* s = a;
     while (0 < len && *b != 0)
     {
         *s++ = *b++;
@@ -2319,20 +2320,20 @@ u16* utf16ncpy(u16* a, const u16* b, size_t len)
     return a;
 }
 
-size_t utf16len(const u16* s)
+size_t utf16len(const uint16_t* s)
 {
-    const u16* t;
+    const uint16_t* t;
 
     for (t = s; *t != 0; ++t)
         ;
     return t - s;
 }
 
-char* utf16cpy8(char* a, const u16* b)
+char* utf16cpy8(char* a, const uint16_t* b)
 {
     char* s = a;
     do {
-        u32 utf32;
+        uint32_t utf32;
         b = utf16to32(b, &utf32);
         s = utf32to8(utf32, s);
     } while (b && *b);
@@ -2340,14 +2341,14 @@ char* utf16cpy8(char* a, const u16* b)
     return a;
 }
 
-char* utf16ncpy8(char* a, const u16* b, size_t len)
+char* utf16ncpy8(char* a, const uint16_t* b, size_t len)
 {
     char* s = a;
     size_t n;
 
     while (0 < len && b && *b != 0)
     {
-        u32 utf32;
+        uint32_t utf32;
         b = utf16to32(b, &utf32);
         n = utf32to8len(utf32);
         if (len < n)

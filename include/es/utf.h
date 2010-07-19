@@ -1,4 +1,5 @@
 /*
+ * Copyright 2010 Esrille Inc.
  * Copyright 2008 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -18,30 +19,30 @@
 #ifndef NINTENDO_ES_UTF_H_INCLUDED
 #define NINTENDO_ES_UTF_H_INCLUDED
 
+#include <stdint.h>
 #include <string.h>
-#include <es/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-char* utf8to32(const char* utf8, u32* utf32);
-char* utf32to8(u32 utf32, char* utf8);
-size_t utf32to8len(u32 utf32);
-u16* utf16to32(const u16* utf16, u32* utf32);
-u16* utf32to16(u32 utf32, u16* utf16);
-u32 utftolower(u32 utf32);
-u32 utftoupper(u32 utf32);
-int utf16cmp(const u16* a, const u16* b);
-int utf16icmp(const u16* a, const u16* b);
-int utf16ncmp(const u16* a, const u16* b, size_t len);
-int utf16nicmp(const u16* a, const u16* b, size_t len);
-u16* utf16cpy(u16* a, const u16* b);
-u16* utf16ncpy(u16* a, const u16* b, size_t len);
-size_t utf16len(const u16* s);
+char* utf8to32(const char* utf8, uint32_t* utf32);
+char* utf32to8(uint32_t utf32, char* utf8);
+size_t utf32to8len(uint32_t utf32);
+uint16_t* utf16to32(const uint16_t* utf16, uint32_t* utf32);
+uint16_t* utf32to16(uint32_t utf32, uint16_t* utf16);
+uint32_t utftolower(uint32_t utf32);
+uint32_t utftoupper(uint32_t utf32);
+int utf16cmp(const uint16_t* a, const uint16_t* b);
+int utf16icmp(const uint16_t* a, const uint16_t* b);
+int utf16ncmp(const uint16_t* a, const uint16_t* b, size_t len);
+int utf16nicmp(const uint16_t* a, const uint16_t* b, size_t len);
+uint16_t* utf16cpy(uint16_t* a, const uint16_t* b);
+uint16_t* utf16ncpy(uint16_t* a, const uint16_t* b, size_t len);
+size_t utf16len(const uint16_t* s);
 
-char* utf16cpy8(char* a, const u16* b);
-char* utf16ncpy8(char* a, const u16* b, size_t len);
+char* utf16cpy8(char* a, const uint16_t* b);
+char* utf16ncpy8(char* a, const uint16_t* b, size_t len);
 
 #ifdef __cplusplus
 }
