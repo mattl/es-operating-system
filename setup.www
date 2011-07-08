@@ -4,7 +4,7 @@
 if [ -f /etc/redhat-release ];
 then
 	echo Fedora
-	sudo yum install subversion autoconf automake texinfo bison flex js-devel re2c libicu-devel freetype-devel freeglut-devel libpng-devel boost-devel boost-iostreams boost-system boost-regex
+	sudo yum install gcc gcc-c++ subversion autoconf automake libtool texinfo bison flex js-devel re2c libicu-devel freetype-devel freeglut-devel libpng-devel boost-devel boost-iostreams boost-system boost-regex
 elif  [ -f  /etc/debian_version ];
 then
 	echo Ubuntu
@@ -34,15 +34,15 @@ then
 	fi
 	for i in trunk trunk/tools trunk/os trunk/init trunk/cmd trunk/esjs
 	do
-		(cd $i; aclocal; autoconf; automake -a --foreign)
+		(cd $i; aclocal --force; autoconf -f; automake -a --foreign -f)
 	done
 	for i in trunk/esidl
 	do
-		(cd $i; aclocal; autoconf; libtoolize --force; automake -a --foreign)
+		(cd $i; aclocal --force; autoconf -f; libtoolize --force; automake -a --foreign -f)
 	done
 	for i in trunk/www
 	do
-		(cd $i; aclocal; autoconf; autoheader; automake -a --foreign)
+		(cd $i; aclocal --force; autoconf -f; autoheader -f; automake -a --foreign -f)
 	done
 else
 	cd trunk
@@ -50,18 +50,21 @@ else
 	cd ..
 fi
 
-# Configure
 if [ ! -d local ];
 then
 	mkdir local
-	cd local
-	CFLAGS=-g CXXFLAGS=-g ../trunk/configure --prefix=$ES_WWW_SDK
-else
-	cd local
 fi
+cd local
 
 # Build esidl
-cd esidl
+if [ ! -d esidl ];
+then
+	mkdir esidl
+	cd esidl
+	CFLAGS=-g CXXFLAGS=-g ../../trunk/esidl/configure --prefix=$ES_WWW_SDK --disable-npapi --disable-java
+else
+	cd esidl
+fi
 make
 estatus=$?
 [ $estatus != 0 ] && exit $estatus
