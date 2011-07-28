@@ -42,6 +42,8 @@ class ARPFamily : public AddressFamily
 {
     InFamily*                   inFamily;
 
+    // Cache Size
+    u32                         cacheSize;
     // Scope demultiplexer
     InetScopeAccessor           scopeAccessor;
     ConduitFactory              scopeFactory;
@@ -57,6 +59,13 @@ class ARPFamily : public AddressFamily
 
 public:
     ARPFamily(InFamily* inFamily);
+
+    Inet4Address* getLRUAddress();
+
+    void setCacheSize(u32 size)
+    {
+        cacheSize = size;
+    }
 
     int getAddressFamily()
     {
@@ -80,6 +89,13 @@ public:
     void addAddress(Inet4Address* address)
     {
         ASSERT(address);
+        Inet4Address* addr = getLRUAddress() ;
+        if (addr)
+        {
+            removeAddress(addr);
+            esReport("address %u replaced and ",addr->getAddress());
+        }
+        esReport("address %u Added\n",address->getAddress());
         if (address)
         {
             InetMessenger m;
@@ -92,6 +108,10 @@ public:
     void removeAddress(Inet4Address* address)
     {
         ASSERT(address);
+        u8 mac[6];
+        memset(mac, 0, 6);
+        address->setMacAddress(mac);
+        address->setState(Inet4Address::stateInit);
         if (address)
         {
             Adapter* adapter = dynamic_cast<Adapter*>(address->getAdapter());

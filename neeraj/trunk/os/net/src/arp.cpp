@@ -29,6 +29,7 @@ ARPFamily::ARPFamily(InFamily* inFamily) :
     arpMux(&arpAccessor, &arpFactory)
 {
     ASSERT(inFamily);
+    setCacheSize(3); //XXX: Default Cache Size
 
     arpProtocol.setReceiver(&arpReceiver);
     arpAdapter.setReceiver(&inFamily->addressAny);
@@ -37,6 +38,36 @@ ARPFamily::ARPFamily(InFamily* inFamily) :
     Conduit::connectBA(&arpProtocol, &arpMux);
 
     Socket::addAddressFamily(this);
+}
+
+// Get Least Recently Used Address from Cache
+
+Inet4Address* ARPFamily::getLRUAddress()
+{
+    u32 numEntries = 0;
+    Inet4Address* LRUaddr = 0;
+    Tree<void*, Conduit*>::Node* node;
+    Tree<void*, Conduit*>::Iterator iter = arpMux.list();
+    while ((node = iter.next()))
+    {
+        Conduit* conduit = node->getValue();
+        Inet4Address* addr = dynamic_cast<Inet4Address*>(conduit->getReceiver());
+        ASSERT(addr);
+        if (!LRUaddr || (LRUaddr->getLastUsed() > addr->getLastUsed()))
+        {
+            if (!addr->isPreferred() && addr != &inFamily->addressAny)
+            {
+                LRUaddr = addr;
+            }
+        }
+        numEntries++;
+    }
+    if (numEntries < cacheSize)
+    {
+        // Cache not full
+        return 0;
+    } 
+    return LRUaddr;
 }
 
 // StateInit

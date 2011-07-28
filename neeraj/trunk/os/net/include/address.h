@@ -22,6 +22,7 @@
 #include <es/collection.h>
 #include <es/list.h>
 #include <es/net/IInternetAddress.h>
+#include <es/dateTime.h>
 #include "conduit.h"
 
 class Socket;
@@ -31,17 +32,25 @@ class Address : public es::InternetAddress
     u8                      mac[6];
     Collection<Socket*>     sockets;
     Collection<Messenger*>  packets;
+    mutable DateTime        lastUsed;
 
 public:
     Address()
     {
         memset(mac, 0, sizeof mac);
+        lastUsed = DateTime::getNow();
     }
 
     virtual ~Address() {}
 
+    DateTime getLastUsed()
+    {
+       return lastUsed;
+    }
+
     void getMacAddress(u8 mac[6]) const
     {
+        lastUsed = DateTime::getNow();
         memmove(mac, this->mac, sizeof this->mac);
     }
 
