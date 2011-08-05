@@ -22,9 +22,9 @@ AM_CPPFLAGS = \
 	-I/usr/include/pixman-1
 
 if APPLE
-LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1 
+LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lpthread -lstdc++ -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1 
 else
-LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
+LDADD = ../libes++/libes++.a ../kernel/libeskernel.a ../libes++/libes++.a -lpthread -lstdc++ -lrt -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lcairo -lpixman-1
 endif
 
 endif

@@ -1,7 +1,7 @@
 if APPLE
-LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a
+LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lpthread -lstdc++
 else
-LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lrt
+LDADD = ../os/fs/fat/libesfat.a ../os/kernel/libeskernel.a ../os/libes++/libessup++.a -lpthread -lstdc++ -lrt
 endif
 	
 bin_PROGRAMS = trunc bm vformat vcopy vlist guidgen vget vdel
