@@ -1,0 +1,12 @@
+diff -burN pcre-8.12.org/pcretest.c pcre-8.12/pcretest.c
+--- pcre-8.12.org/pcretest.c	2010-11-26 20:11:25.000000000 +0900
++++ pcre-8.12/pcretest.c	2011-08-05 16:19:14.624834023 +0900
+@@ -1266,7 +1266,7 @@
+       ((stack_size = get_value((unsigned char *)argv[op+1], &endptr)),
+         *endptr == 0))
+     {
+-#if defined(_WIN32) || defined(WIN32)
++#if defined(_WIN32) || defined(WIN32) || defined(__es__)
+     printf("PCRE: -S not supported on this OS\n");
+     exit(1);
+ #else
