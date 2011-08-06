@@ -244,7 +244,7 @@ cd ../..
 cd src
 if [ ! -f expat-2.0.1.tar.gz ]; 
 then
-	wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz?use_mirror=garr
+	wget http://downloads.sourceforge.net/project/expat/expat/2.0.1/expat-2.0.1.tar.gz
 	[ $? != 0 ] && manual_input "wget http" "expat-2.0.1.tar.gz"
 fi
 rm -rf expat-2.0.1
