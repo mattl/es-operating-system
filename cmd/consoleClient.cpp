@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -15,6 +16,8 @@
  * limitations under the License.
  */
 
+#include <stdio.h>
+
 #include <es.h>
 #include <es/handle.h>
 #include <es/exception.h>
@@ -22,7 +25,6 @@
 #include <es/base/IStream.h>
 #include <es/base/IProcess.h>
 #include <es/usage.h>
-#include <string.h>
 #include <es/base/IService.h>
 
 #define TEST(exp)                           \

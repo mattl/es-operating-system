@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -22,7 +23,7 @@
 #include "cga.h"
 
 void Cga::
-putc(int c)
+putChar(int c)
 {
     unsigned long x;
 
@@ -137,7 +138,7 @@ write(const void* src, int count)
     const u8* ptr = static_cast<const u8*>(src);
     for (n = 0; n < count; ++n, ++ptr)
     {
-        putc(*ptr);
+        putChar(*ptr);
     }
     return n;
 }

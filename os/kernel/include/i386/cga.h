@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -36,7 +37,7 @@ class Cga : public es::Stream
     Ref     ref;
     char*   cga;
 
-    void putc(int c);
+    void putChar(int c);
 
 public:
     Cga();

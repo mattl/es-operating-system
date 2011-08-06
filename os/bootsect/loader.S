@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -544,9 +545,12 @@ text_mode:
 0:      pushl   %eax
         loop    0b
 
+        // Note the start address of es.img could vary depending on the
+        // compiler tool chains being used.
+        // TODO: This is basically a bug needed to be fixed.
         pushl   %eax                    // argv
         pushl   %eax                    // argc
-        ljmpl   $8, $0x81000010         // Jump to the es.img
+        ljmpl   $8, $0x810000bc         // Jump to the es.img
 
 .globl _shutdown
 _shutdown:

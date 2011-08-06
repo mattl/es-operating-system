@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -15,7 +16,6 @@
  * limitations under the License.
  */
 
-#include <stdlib.h>
 #include <es.h>
 #include <es/context.h>
 #include <es/exception.h>

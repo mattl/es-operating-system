@@ -21,10 +21,10 @@ dist_dir=$(expr substr $0 1 $(expr $(expr length $0) - 5))
 # Check prerequisites
 if which yum 
 then
-	sudo yum install subversion autoconf automake patch texinfo bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel libtool libjpeg-devel libicu-devel gperf
+	sudo yum install subversion autoconf automake patch texinfo bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel libmpc-devel libtool libjpeg-devel libicu-devel gperf
 elif which apt-get
 then
-	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev libxi-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev libtool libjpeg-dev libicu-dev gperf
+	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev libxi-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev libmpc-dev libtool libjpeg-dev libicu-dev gperf
 else
 	echo 'Your OS is probably not a supported development environment.'
 	exit 1
@@ -141,19 +141,19 @@ fi
 cd ../..
 
 # GCC and Newlib
-if [ ! -f src/gcc-4.3.1.tar.bz2 ]; 
+if [ ! -f src/gcc-4.6.1.tar.bz2 ]; 
 then
 	cd src
-	wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.3.1/gcc-4.3.1.tar.bz2
-	[ $? != 0 ] && manual_input "wget ftp" "gcc-4.3.1.tar.bz2"
+	wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.6.1/gcc-4.6.1.tar.bz2
+	[ $? != 0 ] && manual_input "wget ftp" "gcc-4.6.1.tar.bz2"
 	cd ..
 fi
-if [ ! -d src/gcc-4.3.1 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/gcc-4.3.1.patch -newer opt/gcc/Makefile -print`" ];
+if [ ! -d src/gcc-4.6.1 ] || [ ! -f opt/gcc/Makefile ] || [ -n "`find trunk/patches/gcc-4.6.1.patch -newer opt/gcc/Makefile -print`" ];
 then
 	cd src
-	rm -rf gcc-4.3.1
-	tar -jxf gcc-4.3.1.tar.bz2
-	patch -p0 -d . < ../trunk/patches/gcc-4.3.1.patch
+	rm -rf gcc-4.6.1
+	tar -jxf gcc-4.6.1.tar.bz2
+	patch -p0 -d . < ../trunk/patches/gcc-4.6.1.patch
 	cd ..
 fi
 if [ ! -f src/newlib-1.16.0.tar.gz ]; 
@@ -171,15 +171,15 @@ then
 	patch -p0 -d . < ../trunk/patches/newlib-1.16.0.patch
 	cd ..
 fi
-cd src/gcc-4.3.1
+cd src/gcc-4.6.1
 ln -fs ../newlib-1.16.0/newlib .
 ln -fs ../newlib-1.16.0/libgloss .
 cd ../../opt
 mkdir -p gcc
 cd gcc
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/gcc-4.3.1.patch -newer Makefile -print`" ] || [ -n "`find ../../trunk/patches/newlib-1.16.0.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/gcc-4.6.1.patch -newer Makefile -print`" ] || [ -n "`find ../../trunk/patches/newlib-1.16.0.patch -newer Makefile -print`" ];
 then
-	../../src/gcc-4.3.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=$ES_SDK
+	../../src/gcc-4.6.1/configure --target=i386-pc-es --enable-threads --enable-languages=c,c++ --with-gnu-as --with-gnu-ld --with-newlib --with-gmp=/usr --with-mpfr=/usr --disable-shared --prefix=$ES_SDK
 	make
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus
@@ -294,7 +294,7 @@ mkdir -p zlib
 cd zlib
 if [ ! -f Makefile ];
 then
-	../../src/gcc-4.3.1/zlib/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-multilib
+	../../src/gcc-4.6.1/zlib/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --disable-multilib
 	make 
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus

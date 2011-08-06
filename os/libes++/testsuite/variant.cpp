@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2008 Kenichi Ishibashi
  *
@@ -119,7 +120,7 @@ void* map(void* start, long long length, unsigned prot, unsigned flags, long lon
 int main()
 {
     VariantHolder vh;
-    char buf[128];
+    char buf[128]; 
     Any param[19];
     Any value;
 
@@ -133,13 +134,9 @@ int main()
     returnLongLong(1, 0.0, 2, 3, 4, 5, 6, 7, 8, 9,
                    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10);
 
-    param[0] = Any(12);
-    param[1] = Any(2);
-    value = apply(2, param, reinterpret_cast<Any (*)()>(returnVariant));
-    assert(value.getType() == Any::TypeLong);
-    assert(static_cast<int32_t>(value) == 24);
-    printf("int32 value: %d\n", static_cast<int32_t>(value));
-
+    value = returnVariant(2, 3);
+    printf("int32 value: %d\n", static_cast<int32_t>(value));       
+    
     param[0] = Any(1);
     param[1] = Any(0.0);
     param[2] = Any(2);
@@ -162,6 +159,13 @@ int main()
     value = apply(19, param, reinterpret_cast<int64_t (*)()>(returnLongLong));
     assert(value.getType() == Any::TypeLongLong);
     printf("int64 value: %lld\n", static_cast<int64_t>(value));
+
+    param[0] = Any(12);
+    param[1] = Any(2);
+    value = apply(2, param, reinterpret_cast<Any (*)()>(returnVariant));
+    assert(value.getType() == Any::TypeLong);
+    assert(static_cast<int32_t>(value) == 24);
+    printf("int32 value: %d\n", static_cast<int32_t>(value));
 
     param[0] = false;
     value = apply(1, param, reinterpret_cast<float (*)()>(returnFloat));

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -21,6 +22,8 @@
 #include "elfFile.h"
 #include "process.h"
 #include "interfaceStore.h"
+
+// #define VERBOSE
 
 extern es::CurrentProcess* esCurrentProcess();
 
@@ -598,12 +601,8 @@ set(SyscallProxy* table, void* interface, const char* iid, bool used)
         if (proxy->set(interface, iid, used))
         {
 #ifdef VERBOSE
-            esReport("Process::set(%p, {%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x}) : %d;\n",
-                     interface,
-                     iid.Data1, iid.Data2, iid.Data3,
-                     iid.Data4[0], iid.Data4[1], iid.Data4[2], iid.Data4[3],
-                     iid.Data4[4], iid.Data4[5], iid.Data4[6], iid.Data4[7],
-                     proxy - table);
+            esReport("Process::set(%p, %s) : %d;\n",
+                     interface, iid, proxy - table);
 #endif
             return proxy - table;
         }

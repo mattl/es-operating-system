@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -17,6 +18,7 @@
 
 #include <new>
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <es.h>
 #include <es/handle.h>
