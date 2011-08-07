@@ -1,4 +1,5 @@
 /*
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -34,6 +35,7 @@ class Formatter
     bool    leftJustified;
     bool    alt;            // show base
     bool    cap;            // uppercase
+    bool    textMode;
     int     mode;
     char    sign;
     int     base;
@@ -257,6 +259,17 @@ public:
     {
         cap = uppercase;
         return !cap;
+    }
+
+    bool getTextMode() const
+    {
+        return textMode;
+    }
+
+    bool setTextMode(bool mode)
+    {
+        textMode = mode;
+        return textMode;
     }
 
     int getMode() const

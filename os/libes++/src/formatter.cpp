@@ -1,4 +1,5 @@
 /*
+ * Copyright 20011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
@@ -31,14 +32,14 @@ extern "C"
 
 Formatter::
 Formatter(int (*putc)(int, void*), void* opt) throw() :
-    mode(Mode::C), putc(putc), opt(opt)
+    textMode(true), mode(Mode::C), putc(putc), opt(opt)
 {
     reset();
 }
 
 Formatter::
 Formatter(es::Stream* stream) throw() :
-    mode(Mode::C), putc(streamPutc), opt(stream)
+    textMode(true), mode(Mode::C), putc(streamPutc), opt(stream)
 {
     stream->addRef();
     reset();
@@ -46,14 +47,14 @@ Formatter(es::Stream* stream) throw() :
 
 Formatter::
 Formatter(std::string& string) throw() :
-    mode(Mode::C), putc(stringPutc), opt(&string)
+    textMode(true), mode(Mode::C), putc(stringPutc), opt(&string)
 {
     reset();
 }
 
 Formatter::
 Formatter(const Formatter& o) throw() :
-    mode(Mode::C), putc(o.putc), opt(o.opt)
+    textMode(o.textMode), mode(o.mode), putc(o.putc), opt(o.opt)
 {
     reset();
 }
@@ -71,6 +72,8 @@ Formatter::
 int Formatter::
 printChar(int c)
 {
+    if (c == '\n' && textMode)
+        putc('\r', opt);
     putc(c, opt);
     return 1;
 }
