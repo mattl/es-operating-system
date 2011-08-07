@@ -1,5 +1,5 @@
 /*
- * Copyright 20011 Esrille Inc.
+ * Copyright 2011 Esrille Inc.
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006, 2007 Nintendo Co., Ltd.
  *
