@@ -21,10 +21,10 @@ dist_dir=$(expr substr $0 1 $(expr $(expr length $0) - 5))
 # Check prerequisites
 if which yum 
 then
-	sudo yum install subversion autoconf automake patch texinfo bison flex gcc-c++ glibc pcre-devel qemu freeglut-devel cairo-devel libX11-devel libXmu-devel libXi-devel sazanami-fonts-mincho sazanami-fonts-gothic gmp-devel mpfr-devel libmpc-devel libtool libjpeg-devel libicu-devel gperf
+	sudo yum install autoconf automake bison boost-devel boost-iostreams boost-regex boost-system cairo-devel flex freeglut-devel freetype-devel gcc-c++ glibc gmp-devel gperf js-devel libX11-devel libXi-devel libXmu-devel libicu-devel libjpeg-devel libmpc-devel libpng-devel libtool mpfr-devel patch pcre-devel qemu re2c sazanami-fonts-gothic sazanami-fonts-mincho subversion texinfo
 elif which apt-get
 then
-	sudo apt-get install subversion autoconf automake patch texinfo bison flex gcc libc6-dev g++ libpcre3-dev qemu libcairo2-dev libX11-dev libxmu-dev libxi-dev ttf-liberation ttf-sazanami-mincho ttf-sazanami-gothic freeglut3-dev libmpfr-dev libmpc-dev libtool libjpeg-dev libicu-dev gperf
+	sudo apt-get install autoconf automake bison flex freeglut3-dev g++ gcc gperf libX11-dev libboost-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libc6-dev libcairo2-dev libfreetype6-dev libicu-dev libjpeg-dev libmozjs-dev libmpc-dev libmpfr-dev libpcre3-dev libpng-dev libtool libxi-dev libxmu-dev patch qemu re2c subversion texinfo ttf-liberation ttf-sazanami-gothic ttf-sazanami-mincho
 else
 	echo 'Your OS is probably not a supported development environment.'
 	exit 1
