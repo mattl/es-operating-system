@@ -25,6 +25,21 @@ then
 elif which apt-get
 then
 	sudo apt-get install autoconf automake bison flex freeglut3-dev g++ gcc gperf libX11-dev libboost-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libc6-dev libcairo2-dev libfreetype6-dev libicu-dev libjpeg-dev libmozjs-dev libmpc-dev libmpfr-dev libpcre3-dev libpng-dev libtool libxi-dev libxmu-dev patch qemu re2c subversion texinfo ttf-liberation ttf-sazanami-gothic ttf-sazanami-mincho
+elif which pacman # Arch Linux
+then
+  sys_arch=$(arch)
+  case $sys_arch in
+    "x86_64") # Install multilib pacakges
+      sudo pacman -S --needed autoconf automake bison flex freeglut gcc-multilib gperf libx11 boost boost-libs gcc-libs-multilib cairo freetype2 icu libjpeg-turbo js libmpc mpfr pcre libpng libtool-multilib libxi libxmu patch qemu-kvm re2c subversion texinfo ttf-liberation ttf-sazanami
+      ;;
+    "i686")
+      sudo pacman -S --needed autoconf automake bison flex freeglut gcc gperf libx11 boost boost-libs glibc cairo freetype2 icu libjpeg-turbo js libmpc mpfr pcre libpng libtool libxi libxmu patch qemu-kvm re2c subversion texinfo ttf-liberation ttf-sazanami
+      ;;
+    *)
+      echo 'Unknown architecture of Arch Linux.'
+      exit 1
+      ;;
+  esac
 else
 	echo 'Your OS is probably not a supported development environment.'
 	exit 1
@@ -33,6 +48,11 @@ fi
 if [ -z "$ES_SDK" ];
 then
 export ES_SDK=`pwd`/sdk
+fi
+
+if [ -z "$PKG_CONFIG_PATH"];
+then
+export PKG_CONFIG_PATH=$ES_SDK/lib/pkgconfig
 fi
 
 mkdir -p $ES_SDK
@@ -191,20 +211,20 @@ cd ../..
 
 # PCRE
 cd src
-if [ ! -f pcre-8.12.tar.bz2 ]; 
+if [ ! -f pcre-8.30.tar.bz2 ]; 
 then
-	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.12.tar.bz2
-	[ $? != 0 ] && manual_input "wget ftp" "pcre-8.12.tar.bz2"
+	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.30.tar.bz2
+	[ $? != 0 ] && manual_input "wget ftp" "pcre-8.30.tar.bz2"
 fi
-rm -rf pcre-8.12
-tar -jxf pcre-8.12.tar.bz2
-patch -p0 -d . < ../trunk/patches/pcre-8.12.patch
+rm -rf pcre-8.30
+tar -jxf pcre-8.30.tar.bz2
+patch -p0 -d . < ../trunk/patches/pcre-8.30.patch
 cd ../opt
 mkdir -p pcre
 cd pcre
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-8.12.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/pcre-8.30.patch -newer Makefile -print`" ];
 then
-	../../src/pcre-8.12/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --program-prefix=es-
+	../../src/pcre-8.30/configure --prefix=$ES_SDK --disable-shared --enable-utf8 --enable-unicode-properties --host=i386-pc-es --target=i386-pc-es --program-prefix=es-
 	make
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus
@@ -229,7 +249,7 @@ mkdir -p freetype
 cd freetype
 if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/freetype-2.3.5.patch -newer Makefile -print`" ];
 then
-	../../src/freetype-2.3.5/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
+	CC_BUILD=gcc ../../src/freetype-2.3.5/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es
 	make FTSYS_SRC=../../src/freetype-2.3.5/builds/unix/ftsystem.c
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus
