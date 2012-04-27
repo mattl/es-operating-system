@@ -40,19 +40,19 @@ module html5 {
   interface HTMLCollection {
     readonly attribute unsigned long length;
     getter Element item(in unsigned long index);
-    caller getter Element namedItem(in DOMString name);
+    legacycaller getter Element namedItem(in DOMString name);
   };
 
   interface HTMLFormControlsCollection {
     readonly attribute unsigned long length;
     getter HTMLElement item(in unsigned long index);
-    caller getter object namedItem(in DOMString name);
+    legacycaller getter object namedItem(in DOMString name);
   };
 
   interface HTMLOptionsCollection {
              attribute unsigned long length;
     getter HTMLOptionElement item(in unsigned long index);
-    caller getter object namedItem(in DOMString name);
+    legacycaller getter object namedItem(in DOMString name);
     void add(in HTMLElement element, in optional HTMLElement before);
     void add(in HTMLElement element, in long before);
     void remove(in long index);
@@ -630,7 +630,7 @@ module html5 {
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute long length;
     getter any item(in unsigned long index);
-    [OverrideBuiltins] caller getter any namedItem(in DOMString name);
+    [OverrideBuiltins] legacycaller getter any namedItem(in DOMString name);
 
     void submit();
     void reset();
@@ -751,7 +751,7 @@ module html5 {
     readonly attribute HTMLOptionsCollection options;
              attribute unsigned long length;
     getter any item(in unsigned long index);
-    caller getter any namedItem(in DOMString name);
+    legacycaller getter any namedItem(in DOMString name);
     void add(in HTMLElement element, in optional HTMLElement before);
     void add(in HTMLElement element, in long before);
     void remove(in long index);
