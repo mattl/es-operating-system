@@ -24,7 +24,7 @@ then
 	sudo yum install autoconf automake bison boost-devel boost-iostreams boost-regex boost-system cairo-devel flex freeglut-devel freetype-devel gcc-c++ glibc gmp-devel gperf js-devel v8-devel libX11-devel libXi-devel libXmu-devel libicu-devel libjpeg-devel libmpc-devel libpng-devel libtool mpfr-devel patch pcre-devel qemu re2c sazanami-fonts-gothic sazanami-fonts-mincho subversion texinfo
 elif which apt-get
 then
-	sudo apt-get install autoconf automake bison flex freeglut3-dev g++ gcc gperf libX11-dev libboost-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libc6-dev libcairo2-dev libfreetype6-dev libicu-dev libjpeg-dev libmozjs-dev libmpc-dev libmpfr-dev libpcre3-dev libpng-dev libtool libxi-dev libxmu-dev patch qemu re2c subversion texinfo ttf-liberation ttf-sazanami-gothic ttf-sazanami-mincho
+	sudo apt-get install autoconf automake bison flex freeglut3-dev g++ gcc gperf libX11-dev libboost-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libc6-dev libcairo2-dev libfreetype6-dev libicu-dev libjpeg-dev libmozjs-dev libmpc-dev libmpfr-dev libpcre3-dev libpng-dev libtool libv8-dev libxi-dev libxmu-dev patch qemu re2c subversion texinfo ttf-liberation ttf-sazanami-gothic ttf-sazanami-mincho
 elif which pacman # Arch Linux
 then
   sys_arch=$(arch)
@@ -326,20 +326,19 @@ cd ../..
 
 # Libpng
 cd src
-if [ ! -f libpng-1.2.40.tar.gz ]; 
+if [ ! -f libpng-1.5.10.tar.gz ]; 
 then
-	wget ftp://ftp.simplesystems.org/pub/png/src/history/libpng-1.2.40.tar.gz
-	[ $? != 0 ] && manual_input "wget ftp" "libpng-1.2.40.tar.gz"
+	wget ftp://ftp.simplesystems.org/pub/png/src/libpng-1.5.10.tar.gz
+	[ $? != 0 ] && manual_input "wget ftp" "libpng-1.5.10.tar.gz"
 fi
-rm -rf libpng-1.2.40
-tar -zxf libpng-1.2.40.tar.gz
-patch -p0 -d . < ../trunk/patches/libpng-1.2.40.patch
+rm -rf libpng-1.5.10
+tar -zxf libpng-1.5.10.tar.gz
 cd ../opt
 mkdir -p libpng
 cd libpng
-if [ ! -f Makefile ] || [ -n "`find ../../trunk/patches/libpng-1.2.40.patch -newer Makefile -print`" ];
+if [ ! -f Makefile ];
 then
-	../../src/libpng-1.2.40/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-static --disable-shared LDFLAGS=-L$ES_SDK/lib CFLAGS=-I$ES_SDK/include
+	../../src/libpng-1.5.10/configure --prefix=$ES_SDK --host=i386-pc-es --target=i386-pc-es --enable-static --disable-shared LDFLAGS=-L$ES_SDK/lib CFLAGS=-I$ES_SDK/include
 	make 
 	estatus=$?
 	[ $estatus != 0 ] && exit $estatus
