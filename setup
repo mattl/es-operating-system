@@ -21,7 +21,7 @@ dist_dir=$(expr substr $0 1 $(expr $(expr length $0) - 5))
 # Check prerequisites
 if which yum 
 then
-	sudo yum install autoconf automake bison boost-devel boost-iostreams boost-regex boost-system cairo-devel flex freeglut-devel freetype-devel gcc-c++ glibc gmp-devel gperf js-devel libX11-devel libXi-devel libXmu-devel libicu-devel libjpeg-devel libmpc-devel libpng-devel libtool mpfr-devel patch pcre-devel qemu re2c sazanami-fonts-gothic sazanami-fonts-mincho subversion texinfo
+	sudo yum install autoconf automake bison boost-devel boost-iostreams boost-regex boost-system cairo-devel flex freeglut-devel freetype-devel gcc-c++ glibc gmp-devel gperf js-devel v8-devel libX11-devel libXi-devel libXmu-devel libicu-devel libjpeg-devel libmpc-devel libpng-devel libtool mpfr-devel patch pcre-devel qemu re2c sazanami-fonts-gothic sazanami-fonts-mincho subversion texinfo
 elif which apt-get
 then
 	sudo apt-get install autoconf automake bison flex freeglut3-dev g++ gcc gperf libX11-dev libboost-dev libboost-iostreams-dev libboost-regex-dev libboost-system-dev libc6-dev libcairo2-dev libfreetype6-dev libicu-dev libjpeg-dev libmozjs-dev libmpc-dev libmpfr-dev libpcre3-dev libpng-dev libtool libxi-dev libxmu-dev patch qemu re2c subversion texinfo ttf-liberation ttf-sazanami-gothic ttf-sazanami-mincho
