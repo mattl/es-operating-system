@@ -4,11 +4,11 @@
 if [ -f /etc/redhat-release ];
 then
 	echo Fedora
-	sudo yum install gcc gcc-c++ subversion autoconf automake libtool texinfo bison flex js-devel re2c libicu-devel freetype-devel freeglut-devel libpng-devel libjpeg-devel boost-devel boost-iostreams boost-system boost-regex
+	sudo yum install gcc gcc-c++ subversion autoconf automake libtool texinfo bison flex js-devel v8-devel re2c libicu-devel freetype-devel freeglut-devel giflib-devel libpng-devel libjpeg-devel boost-devel boost-iostreams boost-system boost-regex ipa-gothic-fonts ipa-mincho-fonts ipa-pgothic-fonts ipa-pmincho-fonts gdouros-aegean-fonts
 elif  [ -f  /etc/debian_version ];
 then
 	echo Ubuntu
-	sudo apt-get install subversion autoconf automake libtool texinfo bison flex libmozjs-dev re2c libicu-dev libfreetype6-dev freeglut3-dev libpng-dev libjpeg-dev libboost-dev libboost-iostreams-dev libboost-system-dev libboost-regex-dev
+	sudo apt-get install g++ subversion autoconf automake libtool texinfo bison flex libmozjs-dev libv8-dev re2c libicu-dev libfreetype6-dev freeglut3-dev libgif-dev libpng-dev libjpeg-dev libboost-dev libboost-iostreams-dev libboost-system-dev libboost-regex-dev fonts-takao-mincho fonts-takao-gothic ttf-ancient-fonts
 fi
 
 if [ -z "$ES_WWW_SDK" ];
@@ -34,15 +34,15 @@ then
 	fi
 	for i in trunk trunk/tools trunk/os trunk/init trunk/cmd trunk/esjs
 	do
-		(cd $i; aclocal --force; autoconf -f; automake -a --foreign -f)
+		(cd $i; aclocal; autoconf; automake -a --foreign)
 	done
 	for i in trunk/esidl
 	do
-		(cd $i; aclocal --force; autoconf -f; libtoolize --force; automake -a --foreign -f)
+		(cd $i; aclocal; autoconf; libtoolize; automake -a --foreign)
 	done
 	for i in trunk/www
 	do
-		(cd $i; aclocal --force; autoconf -f; autoheader -f; automake -a --foreign -f)
+		(cd $i; aclocal; autoconf; autoheader; automake -a --foreign)
 	done
 else
 	cd trunk
