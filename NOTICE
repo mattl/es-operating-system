@@ -1,10 +1,11 @@
 ES operating system
 http://code.google.com/p/es-operating-system/
+Copyright 2010-2012 Esrille Inc.
 Copyright 2008-2010 Google Inc.
 Copyright 2006, 2007 Nintendo Co., Ltd.
 
-This product includes software developed at Google Inc. Portions of this
-software were developed at Nintendo Co., Ltd.
+This product includes software developed at Esrille Inc. Portions of this
+software were developed at Google Inc., and Nintendo Co., Ltd.
 
 This product includes software developed by the following contributors:
     Aron Homberg
@@ -32,9 +33,10 @@ This software contains security software derived from the RSA Data Security
 Inc. MD5 Message-Digest Algorithm.
     http://www.rsa.com/
 
-Newlib is used for the C library. Newlib is covered by several licenses,
-please read the code of each particular package in the source distribution
-for copyright information. The original software is available from
+Newlib is used for the standard C library. Newlib is covered by several
+licenses, please read the code of each particular package in the source 
+distribution for copyright information. The original software is available
+from
     http://sources.redhat.com/newlib/
 
 The Perl Compatible Regular Expressions (PCRE) library is used for the
@@ -66,24 +68,34 @@ reference library and is available under the libpng license. The original
 software is available from
     http://www.libpng.org/pub/png/libpng.html
 
-zlib is a compression library used by libpng. The original software is 
-available from
+zlib is a compression library used by libpng. zlib is available under zlib
+license. The original software is available from
     http://www.zlib.net/
 
-WebKit is used as an HTML/SVG rendering engine. WebCore and JavaScriptCore
-are available under the Lesser GNU Public License. WebKit is available under
-a BSD-style license. The original software is available from
-    http://webkit.org/
-
-jpegsrc is used for JPEG support in WebKit. The original software is
-available from
-    http://www.ijg.org/
-
-ICU is used for Unicode and globalization support in WebKit. The original
-software is available from
+ICU is used for Unicode and globalization support. ICU is released under
+ICU License. The original software is available from
     http://icu-project.org/ 
 
-Libxml2 is the XML C parser and toolkit and is used in WebKit. The original
+Boost C++ Libraries are used in addition to the C++ standard library. Boost
+C++ Libraries is released under the Boost license. The original software is
+available from
+    http://www.boost.org/
+    
+freeglut is used as a graphics backend for the es web browser. freeglut is
+released under the X-Consortium license. The original software is available
+from
+    http://freeglut.sourceforge.net/
+    
+Libjpeg is used for reading and writing JPEG image files. The original
 software is available from
-    http://xmlsoft.org/index.html
+    http://libjpeg.sourceforge.net/
+    
+SpiderMonkey may be used as a JavaScript engine for the es web browser.
+SpiderMonkey is available under MPL/GPL/LGPL tri-license. The original
+software is available from
+    https://developer.mozilla.org/en/SpiderMonkey
 
+V8 may be used as a JavaScript engine for the es web browser. V8 is 
+available under the new BSD license. The original software is available 
+from
+    http://code.google.com/p/v8/
