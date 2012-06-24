@@ -33,6 +33,53 @@ This software contains security software derived from the RSA Data Security
 Inc. MD5 Message-Digest Algorithm.
     http://www.rsa.com/
 
+Boost C++ Libraries are used in addition to the C++ standard library. Boost
+C++ Libraries is released under the Boost license. The original software is
+available from
+    http://www.boost.org/
+    
+Cairo is used for the 2D graphics. Cairo is free software and is available
+to be redistributed and/or modified under the terms of either LGPL 2.1 or
+MPL 1.1. The original software is available from
+    http://cairographics.org/
+
+The Expat XML Parser is used as an XML parser for fontconfig. Expat is
+released under the MIT license. The original software is available from
+    http://expat.sourceforge.net/
+
+Fontconfig is used for font customization and configuration. Fontconfig is
+distributed under the terms of "Historical Permission Notice and Disclaimer".
+The original software is available from
+    http://fontconfig.org/
+
+freeglut is used as a graphics backend for the es web browser. freeglut is
+released under the X-Consortium license. The original software is available
+from
+    http://freeglut.sourceforge.net/
+    
+FreeType 2 is used as a software font engine. FreeType 2 is released under
+two open-source licenses: their own BSD-like FreeType License and the GPL.
+The original software is available from
+    http://www.freetype.org/
+
+GIFLIB is used for processing GIFs. GIFLIB is released under an X
+Consortium-like open-source license. The original software is available
+from
+    http://sourceforge.net/projects/giflib/
+    
+ICU is used for Unicode and globalization support. ICU is released under
+ICU License. The original software is available from
+    http://icu-project.org/ 
+    
+Libjpeg is used for reading and writing JPEG image files. The original
+software is available from
+    http://libjpeg.sourceforge.net/
+    
+libpng is used for PNG support in Cairo. libpng is the official PNG
+reference library and is available under the libpng license. The original
+software is available from
+    http://www.libpng.org/pub/png/libpng.html
+
 Newlib is used for the standard C library. Newlib is covered by several
 licenses, please read the code of each particular package in the source 
 distribution for copyright information. The original software is available
@@ -44,52 +91,6 @@ regular expression support. PCRE is distributed under the terms of the BSD
 license. The original software is available from
     http://www.pcre.org/
 
-FreeType 2 is used as a software font engine. FreeType 2 is released under
-two open-source licenses: their own BSD-like FreeType License and the GPL.
-The original software is available from
-    http://www.freetype.org/
-
-Fontconfig is used for font customization and configuration. Fontconfig is
-distributed under the terms of "Historical Permission Notice and Disclaimer".
-The original software is available from
-    http://fontconfig.org/
-
-The Expat XML Parser is used as an XML parser for fontconfig. Expat is
-released under the MIT license. The original software is available from
-    http://expat.sourceforge.net/
-
-Cairo is used for the 2D graphics. Cairo is free software and is available
-to be redistributed and/or modified under the terms of either LGPL 2.1 or
-MPL 1.1. The original software is available from
-    http://cairographics.org/
-
-libpng is used for PNG support in Cairo. libpng is the official PNG
-reference library and is available under the libpng license. The original
-software is available from
-    http://www.libpng.org/pub/png/libpng.html
-
-zlib is a compression library used by libpng. zlib is available under zlib
-license. The original software is available from
-    http://www.zlib.net/
-
-ICU is used for Unicode and globalization support. ICU is released under
-ICU License. The original software is available from
-    http://icu-project.org/ 
-
-Boost C++ Libraries are used in addition to the C++ standard library. Boost
-C++ Libraries is released under the Boost license. The original software is
-available from
-    http://www.boost.org/
-    
-freeglut is used as a graphics backend for the es web browser. freeglut is
-released under the X-Consortium license. The original software is available
-from
-    http://freeglut.sourceforge.net/
-    
-Libjpeg is used for reading and writing JPEG image files. The original
-software is available from
-    http://libjpeg.sourceforge.net/
-    
 SpiderMonkey may be used as a JavaScript engine for the es web browser.
 SpiderMonkey is available under MPL/GPL/LGPL tri-license. The original
 software is available from
@@ -99,3 +100,7 @@ V8 may be used as a JavaScript engine for the es web browser. V8 is
 available under the new BSD license. The original software is available 
 from
     http://code.google.com/p/v8/
+
+zlib is a compression library used by libpng. zlib is available under zlib
+license. The original software is available from
+    http://www.zlib.net/
