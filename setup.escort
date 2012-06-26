@@ -40,7 +40,7 @@ then
 	do
 		(cd $i; aclocal; autoconf; libtoolize; automake -a --foreign)
 	done
-	for i in trunk/www
+	for i in trunk/escort
 	do
 		(cd $i; aclocal; autoconf; autoheader; automake -a --foreign)
 	done
@@ -73,14 +73,14 @@ estatus=$?
 [ $estatus != 0 ] && exit $estatus
 cd ..
 
-# Build ES Web browser
-if [ ! -d www ];
+# Build Escort Web browser
+if [ ! -d escort ];
 then
-	mkdir www
-	cd www
-	CFLAGS=-g CXXFLAGS=-g ../../trunk/www/configure --prefix=$ES_WWW_SDK
+	mkdir escort
+	cd escort
+	CFLAGS=-g CXXFLAGS=-g ../../trunk/escort/configure --prefix=$ES_WWW_SDK
 else
-	cd www
+	cd escort
 fi
 make
 estatus=$?
