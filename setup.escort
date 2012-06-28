@@ -8,7 +8,7 @@ then
 elif  [ -f  /etc/debian_version ];
 then
 	echo Ubuntu
-	sudo apt-get install g++ subversion autoconf automake libtool texinfo bison flex libmozjs-dev libv8-dev re2c libicu-dev libfreetype6-dev freeglut3-dev libgif-dev libpng-dev libjpeg-dev libboost-dev libboost-iostreams-dev libboost-system-dev libboost-regex-dev fonts-takao-mincho fonts-takao-gothic ttf-ancient-fonts
+	sudo apt-get install g++ subversion autoconf automake libtool texinfo bison flex libmozjs-dev libv8-dev re2c libicu-dev libfreetype6-dev freeglut3-dev libgif-dev libpng-dev libjpeg-dev libxmu-dev libboost-dev libboost-iostreams-dev libboost-system-dev libboost-regex-dev fonts-takao-mincho fonts-takao-gothic ttf-ancient-fonts
 fi
 
 if [ -z "$ES_WWW_SDK" ];
