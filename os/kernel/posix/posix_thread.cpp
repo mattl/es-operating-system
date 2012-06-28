@@ -1,4 +1,5 @@
 /*
+ * Copyright 2012 Esrille Inc. 
  * Copyright 2008, 2009 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *
@@ -19,6 +20,8 @@
 
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
+
 #include <es.h>
 #include <es/exception.h>
 #include "core.h"

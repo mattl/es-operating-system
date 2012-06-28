@@ -1,4 +1,5 @@
 /*
+ * Copyright 2012 Esrille Inc. 
  * Copyright 2008 Google Inc.
  * Copyright 2006 Nintendo Co., Ltd.
  *  
@@ -17,6 +18,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <es/uuid.h>
 #include <es/dateTime.h>
 
