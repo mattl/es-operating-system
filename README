@@ -1,27 +1,12 @@
-This directory contains ES operating system.
+This directory contains the esidl Web IDL compiler.
 
-To build the ES operating system, a variety of development tools including
-binutils, GCC, Newlib, and other runtime libraries need to be built. To
-automatically set up the ES operating system software development kit, run
-the 'setup' script out of the source directory, e.g.:
+The esidl Web IDL compiler is an Web IDL compiler being developed for the ES
+operating system; it can be used for products other than the ES operating
+system. The directory named 'npapi' contains an library and example programs
+for creating NPAPI/Pepper modules using the C++ DOM API. More information
+about the C++ DOM API can be found at:
 
-	cd
-	mkdir es
-	cd es
-	wget http://es-operating-system.googlecode.com/files/es-x.y.z.tar.gz
-	tar -zxvf es-x.y.z.tar.gz
-	es-x.y.z/setup
-
-The 'setup' script will download the required files from the Internet, and
-generate build tools, runtime libraries, and ES operating system disk image.
-Note once the 'setup' script is started, it tries to install the prerequisites
-like gcc, bison, etc., using 'yum' or 'apt-get' which requires you to execute
-the 'sudo' command.
-
-The 'setup.webkit' script will download the required file of webkit, and 
-build webkit demo file for both Linux and ES operating system.
-Note that you need to build ES operating system environment before invoke 
-this script.
+        http://code.google.com/p/es-operating-system/wiki/CplusplusDOM
 
 ES operating system is open source software. See the file LICENSE for 
 copying permission. The manuals, and some of the software programs, are
