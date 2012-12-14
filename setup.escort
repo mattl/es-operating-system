@@ -42,7 +42,7 @@ then
 	done
 	for i in trunk/escort
 	do
-		(cd $i; aclocal; autoconf; autoheader; automake -a --foreign)
+		(cd $i; aclocal -I m4; autoconf; autoheader; automake -a --foreign)
 	done
 else
 	cd trunk
